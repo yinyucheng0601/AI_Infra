@@ -51,6 +51,12 @@ main{padding:18px 24px 20px}.compact-header{align-items:center;justify-content:s
 @media(max-width:1100px){.atlas-toolbar{gap:10px;flex-wrap:wrap}.atlas-toolbar .legend{margin-left:auto}}@media(max-width:760px){main{padding:16px}.compact-header{flex-wrap:wrap;gap:4px}.compact-header h1{font-size:18px}.atlas-toolbar{margin-top:8px}.matrix-tabs button{font-size:11px;padding:7px 8px}.atlas-toolbar .legend{margin-left:0}.alert-jump{margin-left:auto}.atlas-pane .view svg{max-height:none;min-height:0}.settings-popover{width:260px}.run-context{font-size:10px}}
 
 .diagnosis{position:static;margin:0 0 18px;padding:8px 10px 10px 12px}.diagnosis[hidden],.alert-jump[hidden]{display:none}.tensor-info .tip{right:auto;left:0;width:300px;max-width:calc(100vw - 80px)}.info-line{display:block;margin-bottom:8px}.info-line:last-child{margin-bottom:0}.sample-legend .tensor-info{font:15px sans-serif;padding:3px 5px}.inspect .diagnosis h3{margin:0 0 4px;font-size:15px}.inspect .diagnosis dl{margin:10px 0;gap:5px;font-size:12px}.tensor-detail .sample-legend{position:relative;margin-bottom:6px}
+
+/* Keep navigation anchored while the model and inspector use the remaining height. */
+@media(min-width:1001px){
+ html,body{height:100%;overflow:hidden}main{height:100dvh;display:flex;flex-direction:column;padding-bottom:0}.compact-header,.atlas-toolbar{flex-shrink:0}.workspace-split{flex:1;min-height:0;align-items:stretch;margin-top:14px}.atlas-pane{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto}.atlas-pane .view{display:flex;min-height:0;overflow:hidden}.atlas-pane .view svg{height:100%;width:100%;min-height:0;max-height:none}.bottom{position:sticky;bottom:0;z-index:6;background:#111111;padding:12px 0 10px;flex-shrink:0}.tensor-detail{position:relative;top:auto;min-height:0;height:100%;max-height:none;overflow-y:auto;padding-bottom:24px}.layer-top{margin-bottom:8px}.layer-scroll{padding-top:22px}.bar-heading{margin-bottom:4px}
+}
+@media(max-width:1000px){main{padding-bottom:240px}.bottom{position:fixed;left:18px;right:18px;bottom:0;z-index:15;background:#111111;padding:10px 0 max(8px,env(safe-area-inset-bottom))}.bottom .layer-top{margin-bottom:6px}.bottom .layer-scroll{padding-top:20px}.bottom .bar-heading{margin-bottom:4px}.atlas-pane .view svg{min-height:0;max-height:none}.layer-top{font-size:11px}}
 </style>
 </head>
 <body>
@@ -62,9 +68,9 @@ main{padding:18px 24px 20px}.compact-header{align-items:center;justify-content:s
 <button id="jump-alert" class="alert-jump" title="定位异常层；玫红表示采样值超出规则阈值"><span id="alert-summary" aria-live="polite"></span><span aria-hidden="true"> ↗</span></button>
 <details class="display-settings"><summary>显示设置</summary><div class="settings-popover"><label>数据场景 <select id="scenario" class="scenario-select" aria-label="示例场景"><option value="anomaly">异常示例</option><option value="normal">参考快照</option></select></label><label><input type="checkbox" id="anomaly-overlay" checked> 显示玫红异常标记</label><div id="phase-note" class="training-note"></div><span class="settings-note">数值及异常阈值均为模拟示例</span></div></details>
 </div>
-<div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><svg id="scene" viewBox="0 0 1400 850" role="img" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation" pointer-events="none"></g></svg></div>
+<div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><svg id="scene" viewBox="-120 0 1600 850" role="img" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation" pointer-events="none"></g></svg></div>
 <div class="bottom"><div class="layer-top"><div id="selected-summary" aria-live="polite">Layer 18 · 权重矩阵</div><span>全部 49 层 / L0–L48</span></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="各层 RMS 柱状图，点击选择模型层"></nav></div>
-<div class="controls"><button id="previous" class="arrow-button" aria-label="上一层">←</button><button id="next" class="arrow-button" aria-label="下一层">→</button></div>
+
 
 
 </div>
@@ -94,7 +100,10 @@ function value(l,r,c,type){
 const heatStops=[[0,[36,36,36]],[.25,[80,80,80]],[.5,[136,136,136]],[.75,[188,188,188]],[1,[238,238,238]]];
 function shade(v){const t=Math.pow(Math.max(0,Math.min(1,v)),.8);let i=0;while(i<heatStops.length-2&&t>heatStops[i+1][0])i++;const [a,ca]=heatStops[i],[b,cb]=heatStops[i+1],f=(t-a)/(b-a);return 'rgb('+ca.map((x,j)=>Math.round(x+(cb[j]-x)*f)).join(',')+')'}
 
-function position(l,raised){return {x:170+l*20,y:Math.max(45,365-l*6-(raised?155:0))}}
+// The foreground is l < selected in the existing painter order.
+// Move it as one group along the frontward stacking direction (-x,+y).
+// 220px opens a horizontal gap: nearest foreground right edge = selected.x - 24.
+function position(l,raised){const forward=l<selected;return {x:170+l*20-(forward?220:0),y:Math.max(45,365-l*6-(raised?155:0))+(forward?66:0)}}
 for(let l=0;l<49;l++){
  const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · 代表性张量矩阵（模拟）`));g.append(el('rect',{x:0,y:0,width:300,height:300,fill:'#131313',stroke:'#393939','class':'outline'}));
  const label=el('text',{x:18,y:27,fill:'#8c8c8c','font-size':12,'font-family':'monospace'},'');g.append(label);labels.push(label);
@@ -103,7 +112,7 @@ for(let l=0;l<49;l++){
  g.append(matrix);g.addEventListener('click',()=>choose(l));groups.push(g);layers.push(l);
  const b=document.createElement('button');b.type='button';b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';const numberLabel=document.createElement('span');numberLabel.className='bar-value';bar.append(numberLabel);track.append(bar);bars.push(bar);const number=document.createElement('span');number.className='layer-number';number.textContent=l;b.append(track,number);b.setAttribute('aria-label',`Layer ${l}`);b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(l));nav.append(b);buttons.push(b);
 }
-// Fixed painter order preserves real front-to-back occlusion, including the selected plane.
+// Preserve painter order; foreground translation clears the selected plane.
 for(let l=48;l>=0;l--)planes.append(groups[l]);
 const guide=document.getElementById('guides');for(const[x,y]of [[100,280],[1290,280],[100,660],[1290,660]])guide.append(el('path',{d:`M${x-6},${y}h12 M${x},${y-6}v12`,stroke:'#2f2f2f','stroke-width':1}));
 // Equal-size tensor blocks: sqrt(mean(element^2)), then tensor RMS from
@@ -205,14 +214,12 @@ function redraw(){
  annotation.append(el('text',{x:anchor.x-43,y:anchor.y+34,'text-anchor':'end','class':'scene-small'},modes[mode].name+'矩阵'));
  document.getElementById('selected-summary').textContent=`Layer ${selected} / ${modes[mode].name}矩阵 · RMS ${format(summaries[selected])}`;
  drawDetail();drawDiagnosis();
- document.getElementById('previous').disabled=selected===0;document.getElementById('next').disabled=selected===48;
 }
 function choose(l){selected=Math.max(0,Math.min(48,l));redraw()}
 document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));drawMatrices();redraw()}));
 document.getElementById('scenario').addEventListener('change',e=>{scenario=e.target.value;cache=scenario==='anomaly'?observed:baseline;drawMatrices();redraw()});
 document.getElementById('anomaly-overlay').addEventListener('change',e=>{showAnomaly=e.target.checked;drawMatrices();redraw()});
 document.getElementById('jump-alert').addEventListener('click',()=>{const next=layers.find(l=>l>selected&&alertCount(l)>0)??layers.find(l=>alertCount(l)>0);if(next!==undefined)choose(next)});
-document.getElementById('previous').addEventListener('click',()=>choose(selected-1));document.getElementById('next').addEventListener('click',()=>choose(selected+1));
 nav.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();choose(selected+(e.key==='ArrowRight'?1:-1));buttons[selected].focus()}});
 document.querySelectorAll('.help').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('open')));
 document.querySelector('.ramp').style.background='linear-gradient(90deg,'+Array.from({length:33},(_,i)=>shade(i/32)+' '+(100*i/32)+'%').join(',')+')';
