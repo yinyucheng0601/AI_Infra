@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PanGu · Layer Atlas</title>
+<style>
+:root{color-scheme:dark;--bg:#111111;--fg:#e8e8e8;--muted:#a0a0a0;--border:#2e2e2e}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}main{max-width:1600px;margin:auto;padding:34px 42px 24px}header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px}h1{font-size:25px;letter-spacing:-.7px;font-weight:500;margin:0}h1 span{color:#7a7a7a;font-weight:400}.meta{margin-top:10px;color:var(--muted);font-size:12px}.status{font-size:11px;border:1px solid #363636;border-radius:20px;padding:8px 13px;white-space:nowrap;color:#adadad}.status:before{content:"";display:inline-block;width:5px;height:5px;background:#bababa;border-radius:50%;margin-right:8px}.view{position:relative;margin-top:16px}.view svg{display:block;width:100%;height:auto;max-height:76vh;min-height:350px}.view-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;color:var(--muted);font-size:12px}.view-head strong{font-weight:400;color:#cfcfcf}.legend{display:flex;align-items:center;gap:10px}.ramp{width:65px;height:5px;background:linear-gradient(90deg,#161616,#f0f0f0)}.plane{cursor:pointer}.plane .outline{stroke-width:1.5;vector-effect:non-scaling-stroke}.plane:hover .outline{stroke-width:1.5}.plane.chosen .outline{stroke-width:1.5}.plane .matrix-cell{pointer-events:none}.scene-label{fill:#e0e0e0;font-size:19px;font-weight:500}.scene-small{fill:#a0a0a0;font-size:12px}.bottom{border-top:1px solid var(--border);padding-top:19px}.layer-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:14px}.layer-top span{color:var(--muted)}.layer-list{display:grid;grid-template-columns:repeat(49,minmax(0,1fr));gap:4px;min-width:980px}.layer-button{min-width:0;border:0;background:transparent;padding:0 3px 9px;color:#888888;cursor:pointer;font:10px ui-monospace,monospace;display:flex;flex-direction:column;align-items:center;gap:9px}.layer-button:hover{color:#ffffff;background:#1c1c1c}.layer-button[aria-pressed="true"]{color:#ffffff;background:#292929;box-shadow:inset 0 -2px #dddddd}.controls{display:flex;gap:25px;align-items:center;margin-top:20px}label{font-size:12px;color:var(--muted);white-space:nowrap}button:focus-visible,input:focus-visible{outline:2px solid #dbdbdb;outline-offset:4px}.arrow-button{border:1px solid #3a3a3a;border-radius:5px;background:transparent;color:#c8c8c8;padding:7px 12px;cursor:pointer}.hint{display:flex;justify-content:space-between;gap:24px;margin-top:22px;font-size:11px;color:#777777;line-height:1.6}.dense-legend{white-space:nowrap}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(max-width:760px){main{padding:24px 18px}.view svg{min-height:300px;max-height:none}.view-head{align-items:flex-start}.legend{font-size:10px;gap:5px}.controls{gap:12px}.hint{display:block}.status{font-size:10px;padding:6px 9px}h1{font-size:20px}.meta{font-size:11px}.eyebrow{font-size:10px}.scene-label{font-size:22px}}@media(prefers-reduced-motion:no-preference){.layer-button{transition:color .15s,border-color .15s}}
+.matrix-tabs{display:flex;gap:6px}.matrix-tabs button{font-family:inherit;font-size:13px;background:transparent;color:#868686;border:1px solid transparent;border-radius:5px;padding:8px 15px;cursor:pointer}.matrix-tabs button[aria-pressed="true"]{background:#282828;color:#f0f0f0;border-color:#434343}#matrix-caption{font-size:12px;color:#8d8d8d}@media(max-width:760px){.view-head{flex-wrap:wrap}}
+.layer-scroll{overflow-x:auto;padding:30px 2px 4px}.bar-track{height:76px;width:100%;display:flex;align-items:flex-end;border-bottom:1px solid #444444}.layer-bar{position:relative;display:block;width:100%;background:#999999;min-height:0}.bar-heading{display:flex;justify-content:space-between;font:10px ui-monospace,monospace;color:#777777;margin:0 0 8px}.layer-number{font-size:10px}.bottom{padding-top:16px}.view svg{max-height:69vh}.layer-top{margin-bottom:18px}@media(max-width:760px){.view svg{max-height:none}.layer-scroll{margin-right:-6px}}
+.bar-value{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font:11px ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#eeeeee;background:#111111;padding:2px 4px;pointer-events:none;z-index:2}.layer-button[aria-pressed="true"] .bar-value{display:block}.layer-button:first-child .bar-value{left:0;transform:none}.layer-button:last-child .bar-value{left:auto;right:0;transform:none}
+
+.tensor-detail{border-top:1px solid #333;margin-top:30px;padding-top:28px}.detail-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.detail-top h2{font-size:20px;font-weight:500;margin:0 0 10px}.detail-top p{font-size:13px;color:#aaa;margin:0;line-height:1.7}.shape{font:18px ui-monospace,monospace;color:#eee}.detail-layout{display:grid;grid-template-columns:minmax(280px,560px) minmax(230px,1fr);gap:36px;margin-top:24px}.matrix-axis{font-size:12px;color:#aaa;margin-bottom:12px}.detail-grid{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}.detail-cell{border:0;aspect-ratio:1;padding:0;cursor:pointer;position:relative}.detail-cell[aria-pressed="true"]:after{content:"";position:absolute;inset:-2px;border:2px solid #fff;box-shadow:0 0 0 1px #111}.detail-grid .detail-cell:nth-child(4n){margin-right:2px}.inspect{font-size:13px;line-height:1.7}.inspect h3{font-weight:500;font-size:16px;margin:0 0 18px}.inspect dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}.inspect dt{color:#aaa}.inspect dd{margin:0;text-align:right;font-family:ui-monospace,monospace}.detail-foot{font-size:12px;color:#aaa;line-height:1.8;margin-top:18px}.detail-foot a{color:#ccc}.detail-readout{font-size:12px;color:#aaa;margin:18px 0}.detail-state{font-size:12px;color:#aaa}.matrix-tabs button{color:#aaa}@media(max-width:700px){.detail-layout{grid-template-columns:1fr}.detail-top{gap:10px}}
+
+/* Desktop: model canvas and selected tensor inspector share the same row. */
+main{max-width:2000px;padding:28px 32px 24px}
+.workspace-split{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:28px;margin-top:24px;align-items:start}
+.atlas-pane{min-width:0;display:flex;flex-direction:column;min-height:calc(100dvh - 140px)}
+.atlas-pane .view-head{margin-top:0;flex-wrap:wrap}
+.atlas-pane .view{flex:1;display:flex;align-items:center;margin-top:12px}
+.atlas-pane .view svg{min-height:0;max-height:none;width:100%;height:auto}
+.atlas-pane .layer-top{gap:12px;flex-wrap:wrap;line-height:1.6}
+.tensor-detail{border-top:0;border-left:1px solid #333;margin-top:0;padding:4px 0 12px 24px;position:sticky;top:20px;max-height:calc(100dvh - 40px);overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#555 #111;min-width:0}
+.tensor-detail .detail-top{display:block}
+.tensor-detail .shape{margin-top:18px;font-size:17px}
+.tensor-detail .detail-state{margin-top:6px}
+.tensor-detail .detail-layout{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:22px}
+.tensor-detail .matrix-axis{line-height:1.8}
+.tensor-detail .detail-readout{line-height:1.7}
+.tensor-detail .inspect{border-top:1px solid #333;padding-top:18px}
+.tensor-detail .inspect dl{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}
+.tensor-detail .inspect dd{overflow-wrap:anywhere}
+.tensor-detail .detail-foot{padding-right:8px}
+@media(min-width:1700px){.workspace-split{grid-template-columns:minmax(0,1fr) 460px;gap:36px}}
+@media(max-width:1000px){main{padding:24px 18px}.workspace-split{grid-template-columns:minmax(0,1fr);gap:28px}.atlas-pane{min-height:0}.tensor-detail{position:static;max-height:none;overflow:visible;border-left:0;border-top:1px solid #333;padding:24px 0 0}.tensor-detail .detail-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}.tensor-detail .inspect{border-top:0;padding-top:0}}
+@media(max-width:600px){header{flex-wrap:wrap;gap:14px}.tensor-detail .detail-layout{grid-template-columns:minmax(0,1fr)}.tensor-detail .inspect{border-top:1px solid #333;padding-top:18px}}
+
+.help{position:relative;display:inline-block;border:0;padding:2px 4px;background:transparent;color:#bbb;font:13px inherit;cursor:help;vertical-align:middle;text-align:left}.tip{display:none;position:absolute;top:100%;right:0;width:290px;max-width:78vw;padding:13px;background:#222;border:1px solid #555;border-radius:4px;color:#ddd;font:12px/1.8 sans-serif;white-space:normal;z-index:20;box-shadow:0 8px 20px #0008}.help:hover .tip,.help:focus .tip,.help.open .tip{display:block}.bar-heading .tip{right:auto;left:0;top:auto;bottom:100%}.block-controls{display:flex;gap:18px;margin:16px 0}.block-controls select{background:#222;color:#ddd;border:1px solid #555;padding:5px 8px;border-radius:3px}.sample-legend{font-size:12px;color:#aaa;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}.numeric-grid{display:grid;grid-template-columns:48px repeat(4,minmax(0,1fr));gap:6px;align-items:center}.numeric-head{font:11px ui-monospace,monospace;color:#aaa;text-align:center;padding:4px 0}.numeric-cell{aspect-ratio:1;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:5px;min-width:0}.numeric-cell span{font:11px ui-monospace,monospace;color:#eee;background:#111;padding:3px 2px}.numeric-cell small{font:10px ui-monospace,monospace;color:#ccc;background:#111;padding:2px}.tensor-detail .detail-foot{margin-top:15px}
+
+.plane .matrix-cell{pointer-events:auto;cursor:pointer}.block-match{display:flex;align-items:center;gap:10px;margin:16px 0;color:#ddd;font:12px ui-monospace,monospace;line-height:1.6}#block-swatch{display:inline-block;flex:none;width:24px;height:24px;border:1.5px solid #fff}
+
+.whole-scroll{width:100%;overflow:auto;max-height:65vh;scrollbar-width:thin;scrollbar-color:#555 #111}.whole-scroll svg{display:block;width:100%;height:auto;max-width:none}.sample-legend select{background:#222;color:#eee;border:1px solid #555;border-radius:3px;padding:5px;font:12px inherit}.sample-legend{gap:10px;flex-wrap:wrap}#sample-readout{min-height:42px;overflow-wrap:anywhere;font-family:monospace}
+</style>
+</head>
+<body>
+<main>
+<header><div><div class="eyebrow">PANGU / MODEL OBSERVABILITY</div><h1>Layer Atlas <span> / 92B Omni MoE</span></h1></div></header>
+<div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view-head"><div class="matrix-tabs" role="group" aria-label="矩阵类型"><button type="button" data-mode="weight" aria-pressed="true">权重</button><button type="button" data-mode="gradient" aria-pressed="false">参数梯度</button><button type="button" data-mode="activation" aria-pressed="false">激活</button></div><div class="legend"><span>低</span><span class="ramp"></span><span>高</span><span id="legend-metric"> · 权重幅度 RMS</span><button type="button" class="help" id="matrix-help" aria-label="矩阵图例说明">ⓘ<span class="tip" role="tooltip" id="matrix-tip"></span></button></div></div>
+<div class="view"><svg id="scene" viewBox="0 0 1400 850" role="img" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation" pointer-events="none"></g></svg></div>
+<div class="bottom"><div class="layer-top"><div id="selected-summary" aria-live="polite">Layer 18 · 权重矩阵</div><span>全部 49 层 / L0–L48</span></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="各层 RMS 柱状图，点击选择模型层"></nav></div>
+<div class="controls"><button id="previous" class="arrow-button" aria-label="上一层">←</button><button id="next" class="arrow-button" aria-label="下一层">→</button></div>
+
+
+</div>
+</section><section class="tensor-detail" aria-label="选中层张量详情">
+<div class="detail-top"><div><h2 id="detail-title"></h2><p id="detail-purpose"></p></div><div><div class="shape" id="detail-shape"></div><div class="detail-state">Query 降维投影 · 全局逻辑形状</div></div></div>
+<div class="detail-layout"><div><div class="matrix-axis" id="detail-axis"></div><div class="sample-legend">完整采样矩阵 · 64 × 64 · 与左侧同图 <label>放大 <select id="matrix-zoom" aria-label="矩阵放大倍数"><option value="1">适应宽度</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label></div><div class="whole-scroll"><svg id="whole-matrix" viewBox="0 0 2110 2110" role="img" aria-label="选中层的全部4096个模拟采样值，放大查看数字"></svg></div><div class="detail-readout" id="sample-readout" aria-live="polite">悬停或点击格子查看精确数值</div></div><aside class="inspect"><h3>整张采样矩阵统计</h3><dl id="whole-stats" aria-live="polite"></dl></aside></div>
+<div class="detail-foot">尺寸由 hidden_size=2560、q_lora_rank=1024 推导；激活设定单样本 T=32768。右图一次呈现覆盖整个张量范围的 4096 个模拟采样值，不是数百万元素的全量实测。柱高为同一组采样值的 RMS。<a href="https://huggingface.co/openpangu/openPangu-2.0-Flash/blob/main/config.json" target="_blank" rel="noopener">公开配置参考</a> · 49 层沿用训练文档设定，未将公开模型视为相同版本。</div>
+</section></div></main>
+<script>
+(()=>{
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+// Foreshorten the horizontal basis for perceptually narrower matrix cells.
+const projectionX=.72,projectionY=.46*projectionX;
+const planes=document.getElementById('planes'),annotation=document.getElementById('annotation'),nav=document.getElementById('layer-list');
+let selected=18,mode='weight';const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
+const modes={weight:{name:'权重',code:'W',axes:'输出维度 × 输入维度'},gradient:{name:'参数梯度',code:'dL/dW',axes:''},activation:{name:'激活',code:'H',axes:'Token × 特征维度 · 单样本示意'}};
+function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n}
+function value(l,r,c,type){
+ const z=Math.sin((r+1)*12.9898+(c+1)*78.233+l*4.193);
+ if(type==='weight')return .024*z+.012*Math.sin(r*.3+c*.15+l*.09);
+ if(type==='gradient')return .0005*z+.006*Math.exp(-Math.pow((r-8)/3,2)-Math.pow((c-16)/3,2))*Math.exp(-Math.pow((l-18)/6,2));
+ return .4*z+1.1*Math.sin(c*.7+l*.04)*Math.exp(-Math.pow((r-12)/3,2))+.15*Math.sin(r*.5);
+}
+function shade(v){v=Math.max(0,Math.min(1,v));const n=Math.round(22+Math.pow(v,.8)*218);return `rgb(${n},${n},${n})`}
+function position(l,raised){return {x:170+l*20,y:Math.max(45,365-l*6-(raised?155:0))}}
+for(let l=0;l<49;l++){
+ const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · 代表性张量矩阵（模拟）`));g.append(el('rect',{x:0,y:0,width:300,height:300,fill:'#131313',stroke:'#393939','class':'outline'}));
+ const label=el('text',{x:18,y:27,fill:'#8c8c8c','font-size':12,'font-family':'monospace'},'');g.append(label);labels.push(label);
+ const matrix=el('g',{'data-matrix':l});cells[l]=[];
+ const texture=el('image',{x:31,y:43,width:240,height:240,'preserveAspectRatio':'none','pointer-events':'none'});matrix.append(texture);textures.push(texture);
+ g.append(matrix);g.addEventListener('click',()=>choose(l));groups.push(g);layers.push(l);
+ const b=document.createElement('button');b.type='button';b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';const numberLabel=document.createElement('span');numberLabel.className='bar-value';bar.append(numberLabel);track.append(bar);bars.push(bar);const number=document.createElement('span');number.className='layer-number';number.textContent=l;b.append(track,number);b.setAttribute('aria-label',`Layer ${l}`);b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(l));nav.append(b);buttons.push(b);
+}
+// Fixed painter order preserves real front-to-back occlusion, including the selected plane.
+for(let l=48;l>=0;l--)planes.append(groups[l]);
+const guide=document.getElementById('guides');for(const[x,y]of [[100,280],[1290,280],[100,660],[1290,660]])guide.append(el('path',{d:`M${x-6},${y}h12 M${x},${y-6}v12`,stroke:'#2f2f2f','stroke-width':1}));
+// Equal-size tensor blocks: sqrt(mean(element^2)), then tensor RMS from
+// sqrt(mean(blockRMS^2)). This is not an average of colors or block RMS values.
+function makeData(type){return Array.from({length:49},(_,l)=>{
+ const center=type==='weight'?34:type==='gradient'?18:29;
+ const gain=1+(type==='gradient'?2.8:1.25)*Math.exp(-Math.pow((l-center)/2.2,2));
+ const stats=Array.from({length:256},(_,i)=>{const values=[];for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+ const rr=(Math.floor(i/16)*4+r)*24/64,cc=(i%16*4+c)*24/64;values.push(value(l,rr,cc,type)*gain)}
+ return {values,rms:Math.sqrt(values.reduce((t,v)=>t+v*v,0)/16),mean:values.reduce((t,v)=>t+v,0)/16,min:Math.min(...values),max:Math.max(...values),negative:values.filter(v=>v<0).length/16};});
+ return {stats,blocks:stats.map(v=>v.rms),rms:Math.sqrt(stats.reduce((t,v)=>t+v.rms*v.rms,0)/stats.length)};
+})}
+const cache={weight:makeData('weight'),gradient:makeData('gradient'),activation:makeData('activation')};
+const modeHelp={weight:'权重 RMS 表示参数的整体幅度。开发者关注其分布是否偏移、是否有少数极端参数，以及实际更新量相对权重是否过大。高值本身不是异常。',gradient:'参数梯度 RMS 表示损失对参数的整体敏感程度。开发者关注梯度相对权重是否过大、是否接近零，以及是否出现非有限值；需结合历史变化和损失判断，实际更新还取决于优化器。',activation:'激活 RMS 较大表示这些中间特征的数值幅度较大，可能是整体放大，也可能被少数极端值抬高。开发者关注幅度是否沿层放大或衰减、是否集中在少数 token 或通道，以及是否影响后续计算的数值稳定性和低精度表示。应结合分布、历史基线、梯度与损失判断；它不是 token 重要性。'};
+let rawLimit=1;
+function format(v){return Math.abs(v)<.001&&v!==0?v.toExponential(2):v.toFixed(4)}
+const whole=document.getElementById('whole-matrix');
+let selectedSample=null;
+function sampleAtLayer(layer,row,col){return currentData[layer].stats[Math.floor(row/4)*16+Math.floor(col/4)].values[(row%4)*4+col%4]}
+function sampleAt(row,col){return sampleAtLayer(selected,row,col)}
+function sampleColor(layer,row,col){return shade(Math.abs(sampleAtLayer(layer,row,col))/blockLimit)}
+const textureCache={};
+function layerTexture(layer){const key=mode+':'+layer;if(textureCache[key])return textureCache[key];const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#111111';ctx.fillRect(0,0,512,512);for(let r=0;r<64;r++)for(let c=0;c<64;c++){ctx.fillStyle=sampleColor(layer,r,c);ctx.fillRect(c*8,r*8,7.75,7.75)}return textureCache[key]=canvas.toDataURL('image/png')}
+function inspectSample(row,col){
+ const active=mode==='activation',v=sampleAt(row,col),r=row*(active?512:16),c=col*(active?16:40);
+ let text=`${active?'Token':'输出'} ${r} · ${active?'输出':'输入'} ${c} · ${modes[mode].code} = ${v.toPrecision(6)}`;
+ if(mode==='gradient')text+=' · W = '+cache.weight[selected].stats[Math.floor(row/4)*16+Math.floor(col/4)].values[(row%4)*4+col%4].toPrecision(6);
+ document.getElementById('sample-readout').textContent=text;
+}
+function drawWhole(){
+ whole.replaceChildren();const data=currentData[selected],active=mode==='activation',all=[];
+ whole.append(el('title',{},`Layer ${selected}，${modes[mode].name}，64×64 采样值`));
+ for(let k=0;k<64;k+=8){whole.append(el('text',{x:62+k*32+16,y:42,fill:'#aaa','font-size':22,'text-anchor':'middle'},String(k*(active?16:40))));whole.append(el('text',{x:52,y:62+k*32+20,fill:'#aaa','font-size':22,'text-anchor':'end'},String(k*(active?512:16))))}
+ for(let r=0;r<64;r++)for(let c=0;c<64;c++){
+ const v=sampleAt(r,c);all.push(v);const g=el('g',{'data-row':r,'data-col':c}),tone=Math.abs(v)/blockLimit;
+ const rect=el('rect',{x:62+c*32,y:62+r*32,width:31,height:31,fill:sampleColor(selected,r,c)});g.append(rect);
+ const label=(v>=0?'+':'')+(mode==='gradient'?v.toExponential(1):v.toFixed(3));
+ g.append(el('text',{x:62+c*32+15.5,y:62+r*32+17.5,'text-anchor':'middle','font-family':'monospace','font-size':6.3,fill:tone>.35?'#111':'#eee','pointer-events':'none'},label));
+ g.append(el('title',{},`行 ${r*(active?512:16)}，列 ${c*(active?16:40)}：${v}`));
+ g.addEventListener('pointerenter',()=>inspectSample(r,c));g.addEventListener('click',()=>{selectedSample=[r,c];inspectSample(r,c)});whole.append(g);
+ }
+ const fields=[['采样数','4096'],['RMS',format(data.rms)],['带符号均值',format(all.reduce((a,v)=>a+v,0)/4096)],['最小 / 最大',format(Math.min(...all))+' / '+format(Math.max(...all))],['负值比例',(100*all.filter(v=>v<0).length/4096).toFixed(1)+'%']];
+ if(mode==='gradient')fields.push(['梯度 RMS / 权重 RMS',(data.rms/cache.weight[selected].rms).toFixed(4)]);
+ const dl=document.getElementById('whole-stats');dl.replaceChildren();for(const[k,v]of fields){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd)}
+ if(selectedSample)inspectSample(...selectedSample);else document.getElementById('sample-readout').textContent='悬停或点击格子查看精确数值';
+}
+document.getElementById('matrix-zoom').addEventListener('change',e=>{whole.style.width=(Number(e.target.value)*100)+'%'});
+function drawDetail(){
+ const active=mode==='activation';
+ document.getElementById('detail-title').textContent=`Layer ${selected} / ${modes[mode].name}`;
+ document.getElementById('detail-purpose').textContent={weight:'输入特征怎样参与输出计算',gradient:'对应参数怎样影响损失',activation:'这次输入计算出了什么'}[mode];
+ document.getElementById('detail-shape').textContent=active?'32768 × 1024':'1024 × 2560';
+ document.getElementById('detail-axis').textContent=active?'行 ↓ Token 位置 0–32767　列 → 输出特征 0–1023':'行 ↓ 输出特征 0–1023　列 → 输入特征 0–2559';
+ rawLimit=blockLimit;drawWhole();
+ document.getElementById('matrix-tip').textContent='左右使用同一组采样数据和同一数值→灰度映射，范围 0–'+format(blockLimit)+'。左右均呈现同一张 64×64 采样矩阵，每格以数值绝对值着色，位置、范围和灰度逐一对应。左侧经过透视缩小并受前层遮挡，右侧额外显示数字。边框与底部柱状图概括该层张量的 RMS。'+modeHelp[mode];
+ document.getElementById('bar-tip').textContent='每根柱表示该层 Query 降维投影所选张量的采样 RMS，柱顶为原数值，不是百分比、最大元素值或异常分数。最高柱表示当前 49 层中该统计量最大，不代表整层所有张量，也不自动代表异常。'+modeHelp[mode];
+ document.getElementById('bar-metric').textContent=modes[mode].name+'幅度 RMS';document.getElementById('legend-metric').textContent=' · '+modes[mode].name+'绝对值';
+}
+function edgeShade(rms){return shade(rms/blockLimit)}
+function drawMatrices(){const data=cache[mode];currentData=data;summaries=data.map(d=>d.rms);blocks=data.map(d=>d.blocks);maximum=Math.max(...summaries);const blockMax=Math.max(...data.flatMap(d=>d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));blockLimit=blockMax;rawLimit=blockMax;
+ for(const l of layers){labels[l].textContent=`L${String(l).padStart(2,'0')}  /  ${modes[mode].code}`;textures[l].setAttribute('href',layerTexture(l));
+ bars[l].querySelector('.bar-value').textContent=format(summaries[l]);bars[l].style.height=(summaries[l]/maximum*76)+'px';bars[l].style.background=edgeShade(summaries[l]);buttons[l].setAttribute('aria-label',`Layer ${l}，${modes[mode].name} RMS ${summaries[l].toFixed(4)}`);buttons[l].title=`Layer ${l} · ${modes[mode].name}采样 RMS ${format(summaries[l])}；表示整体幅度，不是最大元素值或异常分数`;
+ }document.getElementById('rms-range').textContent=`最高 L${summaries.indexOf(maximum)} · RMS ${format(maximum)}`;
+}
+function redraw(){
+ for(const l of layers){const on=l===selected,p=position(l,on),g=groups[l];g.setAttribute('transform',`matrix(${projectionX} ${projectionY} 0 1 ${p.x} ${p.y})`);g.classList.toggle('chosen',on);g.querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');g.querySelector('.outline').setAttribute('stroke',on?'#ffffff':edgeShade(summaries[l]));buttons[l].setAttribute('aria-pressed',String(on));}
+ const anchor=position(selected,true);
+ annotation.replaceChildren();
+ annotation.append(el('path',{d:`M${anchor.x-32},${anchor.y+18}H${anchor.x}`,fill:'none',stroke:'#bdbdbd','stroke-width':1}));
+ annotation.append(el('text',{x:anchor.x-43,y:anchor.y+9,'text-anchor':'end','class':'scene-label'},`Layer ${selected}`));
+ annotation.append(el('text',{x:anchor.x-43,y:anchor.y+34,'text-anchor':'end','class':'scene-small'},modes[mode].name+'矩阵'));
+ document.getElementById('selected-summary').textContent=`Layer ${selected} / ${modes[mode].name}矩阵 · RMS ${format(summaries[selected])}`;
+ drawDetail();
+ document.getElementById('previous').disabled=selected===0;document.getElementById('next').disabled=selected===48;
+}
+function choose(l){selected=Math.max(0,Math.min(48,l));redraw()}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));drawMatrices();redraw()}));
+document.getElementById('previous').addEventListener('click',()=>choose(selected-1));document.getElementById('next').addEventListener('click',()=>choose(selected+1));
+nav.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();choose(selected+(e.key==='ArrowRight'?1:-1));buttons[selected].focus()}});
+document.querySelectorAll('.help').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('open')));
+drawMatrices();redraw();
+})();
+</script>
+</body></html>
