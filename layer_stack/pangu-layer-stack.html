@@ -113,6 +113,18 @@ function position(l,focus=focusPosition){
  const lift=hovered!==null?180*Math.exp(-.5*Math.pow(d/.55,2)):(l===selected?180:0);
  return {x:170+l*20-220*fraction,y:365-l*6+66*fraction-lift};
 }
+// Test the label footprint / top-left corner against foreground parallelograms.
+// Painter order is L48 ... L0, so only lower-index planes can occlude this layer.
+function labelIsOccluded(l){
+ const p=displayedPositions[l]??position(l);
+ const samples=[[p.x-14,p.y-14],[p.x-23,p.y-14],[p.x+4,p.y+8]];
+ for(let front=0;front<l;front++){
+ const q=displayedPositions[front]??position(front);
+ for(const [x,y] of samples){const localX=(x-q.x)/projectionX,localY=y-q.y-projectionY*localX;
+ if(localX>=0&&localX<=300&&localY>=0&&localY<=300)return true;}
+ }
+ return false;
+}
 function paintGeometry(){
  for(const l of layers){const p=displayedPositions[l]??position(l),g=groups[l],label=labels[l];displayedPositions[l]=p;
  g.setAttribute('transform',`matrix(${projectionX} ${projectionY} 0 1 ${p.x} ${p.y})`);
@@ -120,6 +132,7 @@ function paintGeometry(){
  label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
  label.setAttribute('font-size',l===selected||preview?18:13);
  label.setAttribute('fill',l===selected?'#ffffff':preview?'#dddddd':showAnomaly&&buttons[l].classList.contains('has-alert')?'#fa84b7':'#a0a0a0');
+ const occluded=labelIsOccluded(l);label.setAttribute('opacity',occluded?'.28':'1');label.classList.toggle('occluded',occluded);
  }
 }
 function animateGeometry(time){
