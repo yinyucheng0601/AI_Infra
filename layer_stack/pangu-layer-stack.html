@@ -5,7 +5,7 @@
 <title>PanGu · Layer Atlas</title>
 <style>
 :root{color-scheme:dark;--bg:#111111;--fg:#e8e8e8;--muted:#a0a0a0;--border:#2e2e2e}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}main{max-width:1600px;margin:auto;padding:34px 42px 24px}header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px}h1{font-size:25px;letter-spacing:-.7px;font-weight:500;margin:0}h1 span{color:#7a7a7a;font-weight:400}.meta{margin-top:10px;color:var(--muted);font-size:12px}.status{font-size:11px;border:1px solid #363636;border-radius:20px;padding:8px 13px;white-space:nowrap;color:#adadad}.status:before{content:"";display:inline-block;width:5px;height:5px;background:#bababa;border-radius:50%;margin-right:8px}.view{position:relative;margin-top:16px}.view svg{display:block;width:100%;height:auto;max-height:76vh;min-height:350px}.view-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;color:var(--muted);font-size:12px}.view-head strong{font-weight:400;color:#cfcfcf}.legend{display:flex;align-items:center;gap:10px}.ramp{width:105px;height:7px;background:linear-gradient(90deg,#242424,#505050,#888888,#bcbcbc,#eeeeee)}.plane{cursor:pointer}.plane .outline{stroke-width:1.5;vector-effect:non-scaling-stroke}.plane:hover .outline{stroke-width:1.5}.plane.chosen .outline{stroke-width:1.5}.plane .matrix-cell{pointer-events:none}.scene-label{fill:#e0e0e0;font-size:19px;font-weight:500}.scene-small{fill:#a0a0a0;font-size:12px}.bottom{border-top:1px solid var(--border);padding-top:19px}.layer-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:14px}.layer-top span{color:var(--muted)}.layer-list{display:grid;grid-template-columns:repeat(49,minmax(0,1fr));gap:4px;min-width:980px}.layer-button{min-width:0;border:0;background:transparent;padding:0 3px 9px;color:#888888;cursor:pointer;font:10px ui-monospace,monospace;display:flex;flex-direction:column;align-items:center;gap:9px}.layer-button:hover{color:#ffffff;background:#1c1c1c}.layer-button[aria-pressed="true"]{color:#ffffff;background:#292929;box-shadow:inset 0 -2px #dddddd}.controls{display:flex;gap:25px;align-items:center;margin-top:20px}label{font-size:12px;color:var(--muted);white-space:nowrap}button:focus-visible,input:focus-visible{outline:2px solid #dbdbdb;outline-offset:4px}.arrow-button{border:1px solid #3a3a3a;border-radius:5px;background:transparent;color:#c8c8c8;padding:7px 12px;cursor:pointer}.hint{display:flex;justify-content:space-between;gap:24px;margin-top:22px;font-size:11px;color:#777777;line-height:1.6}.dense-legend{white-space:nowrap}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(max-width:760px){main{padding:24px 18px}.view svg{min-height:300px;max-height:none}.view-head{align-items:flex-start}.legend{font-size:10px;gap:5px}.controls{gap:12px}.hint{display:block}.status{font-size:10px;padding:6px 9px}h1{font-size:20px}.meta{font-size:11px}.eyebrow{font-size:10px}.scene-label{font-size:22px}}@media(prefers-reduced-motion:no-preference){.layer-button{transition:color .15s,border-color .15s}}
-.matrix-tabs{display:flex;gap:6px}.matrix-tabs button{font-family:inherit;font-size:13px;background:transparent;color:#868686;border:1px solid transparent;border-radius:5px;padding:8px 15px;cursor:pointer}.matrix-tabs button[aria-pressed="true"]{background:#282828;color:#f0f0f0;border-color:#434343}#matrix-caption{font-size:12px;color:#8d8d8d}@media(max-width:760px){.view-head{flex-wrap:wrap}}
+.matrix-tabs{display:flex;gap:6px}.matrix-tabs button{font-family:inherit;font-size:13px;background:transparent;color:#868686;border:1px solid transparent;border-radius:5px;padding:8px 15px;cursor:pointer}.matrix-tabs button[aria-pressed="true"]{background:#ffffff;color:#111111;border-color:#ffffff}#matrix-caption{font-size:12px;color:#8d8d8d}@media(max-width:760px){.view-head{flex-wrap:wrap}}
 .layer-scroll{overflow-x:auto;padding:30px 2px 4px}.bar-track{height:76px;width:100%;display:flex;align-items:flex-end;border-bottom:1px solid #444444}.layer-bar{position:relative;display:block;width:100%;background:#999999;min-height:0}.bar-heading{display:flex;justify-content:space-between;font:10px ui-monospace,monospace;color:#777777;margin:0 0 8px}.layer-number{font-size:10px}.bottom{padding-top:16px}.view svg{max-height:69vh}.layer-top{margin-bottom:18px}@media(max-width:760px){.view svg{max-height:none}.layer-scroll{margin-right:-6px}}
 .bar-value{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font:11px ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#eeeeee;background:#111111;padding:2px 4px;pointer-events:none;z-index:2}.layer-button[aria-pressed="true"] .bar-value{display:block}.layer-button:first-child .bar-value{left:0;transform:none}.layer-button:last-child .bar-value{left:auto;right:0;transform:none}
 
@@ -57,18 +57,22 @@ main{padding:18px 24px 20px}.compact-header{align-items:center;justify-content:s
  html,body{height:100%;overflow:hidden}main{height:100dvh;display:flex;flex-direction:column;padding-bottom:0}.compact-header,.atlas-toolbar{flex-shrink:0}.workspace-split{flex:1;min-height:0;align-items:stretch;margin-top:14px}.atlas-pane{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto}.atlas-pane .view{display:flex;min-height:0;overflow:hidden}.atlas-pane .view svg{height:100%;width:100%;min-height:0;max-height:none}.bottom{position:sticky;bottom:0;z-index:6;background:#111111;padding:12px 0 10px;flex-shrink:0}.tensor-detail{position:relative;top:auto;min-height:0;height:100%;max-height:none;overflow-y:auto;padding-bottom:24px}.layer-top{margin-bottom:8px}.layer-scroll{padding-top:22px}.bar-heading{margin-bottom:4px}
 }
 @media(max-width:1000px){main{padding-bottom:240px}.bottom{position:fixed;left:18px;right:18px;bottom:0;z-index:15;background:#111111;padding:10px 0 max(8px,env(safe-area-inset-bottom))}.bottom .layer-top{margin-bottom:6px}.bottom .layer-scroll{padding-top:20px}.bottom .bar-heading{margin-bottom:4px}.atlas-pane .view svg{min-height:0;max-height:none}.layer-top{font-size:11px}}
+
+.plane.preview:not(.chosen) .outline{stroke:#bcbcbc;stroke-width:1.5}.external-layer-number{user-select:none;paint-order:stroke;stroke:#111111;stroke-width:3px;stroke-linejoin:round}.external-layer-number:hover{fill:#fff}.plane,.external-layer-number{touch-action:manipulation}
+
+.propagation-controls{display:flex;align-items:center;gap:10px;flex-shrink:0;padding:8px 0 0;color:#aaa;font:11px sans-serif}.propagation-controls[hidden],.prop-layer-state[hidden]{display:none}.propagation-controls button:not(.help){border:1px solid #444;background:#191919;color:#ddd;border-radius:4px;padding:5px 9px;font:11px sans-serif;cursor:pointer}.propagation-controls input{width:180px;accent-color:#ddd}.propagation-controls .tip{left:0;right:auto}.tensor-detail .detail-top p.prop-layer-state{font-size:11px;color:#aaa;margin-top:7px}.propagation-controls label{font-size:11px}.propagation-controls #prop-progress{font-family:monospace;min-width:80px}@media(max-width:600px){.propagation-controls{flex-wrap:wrap}.propagation-controls input{width:120px}}
 </style>
 </head>
 <body>
 <main>
 <header class="compact-header"><h1>Layer Atlas <span>/ 92B Omni MoE</span></h1><span class="run-context">Step 1280 · Query 降维投影</span></header>
 <div class="atlas-toolbar">
-<div class="matrix-tabs" role="group" aria-label="训练阶段与观测张量"><button type="button" data-mode="activation" aria-pressed="false" title="前向计算的投影输出，单样本 Microbatch 03">前向 · 激活</button><button type="button" data-mode="gradient" aria-pressed="false" title="累积、归约并解除 loss scaling 后，裁剪前的参数梯度">反向 · 参数梯度</button><button type="button" data-mode="weight" aria-pressed="true" title="优化器更新后的权重快照；权重也参与前向与反向计算">更新后 · 权重</button></div>
+<div class="matrix-tabs" role="group" aria-label="训练阶段与观测张量"><button type="button" data-mode="activation" aria-pressed="true" title="前向计算的投影输出，单样本 Microbatch 03">前向 · 激活</button><button type="button" data-mode="gradient" aria-pressed="false" title="累积、归约并解除 loss scaling 后，裁剪前的参数梯度">反向 · 参数梯度</button><button type="button" data-mode="weight" aria-pressed="false" title="优化器更新后的权重快照；权重也参与前向与反向计算">更新后 · 权重</button></div>
 <div class="legend"><span>低</span><span class="ramp"></span><span>高</span><button type="button" class="help" id="matrix-help" aria-label="幅度与异常图例说明">ⓘ<span class="tip" role="tooltip" id="matrix-tip"></span></button><span id="legend-metric" class="sr"></span></div>
 <button id="jump-alert" class="alert-jump" title="定位异常层；玫红表示采样值超出规则阈值"><span id="alert-summary" aria-live="polite"></span><span aria-hidden="true"> ↗</span></button>
-<details class="display-settings"><summary>显示设置</summary><div class="settings-popover"><label>数据场景 <select id="scenario" class="scenario-select" aria-label="示例场景"><option value="anomaly">异常示例</option><option value="normal">参考快照</option></select></label><label><input type="checkbox" id="anomaly-overlay" checked> 显示玫红异常标记</label><div id="phase-note" class="training-note"></div><span class="settings-note">数值及异常阈值均为模拟示例</span></div></details>
+<details class="display-settings"><summary>显示设置</summary><div class="settings-popover"><label>数据场景 <select id="scenario" class="scenario-select" aria-label="示例场景"><option value="propagation" selected>前向传播示例</option><option value="anomaly">单层异常示例</option><option value="normal">参考快照</option></select></label><label><input type="checkbox" id="anomaly-overlay" checked> 显示玫红异常标记</label><div id="phase-note" class="training-note"></div><span class="settings-note">数值及异常阈值均为模拟示例</span></div></details>
 </div>
-<div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><svg id="scene" viewBox="-120 0 1600 850" role="img" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation" pointer-events="none"></g></svg></div>
+<div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><svg id="scene" viewBox="-120 -120 1600 970" role="img" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g></svg></div>
 <div class="bottom"><div class="layer-top"><div id="selected-summary" aria-live="polite">Layer 18 · 权重矩阵</div><span>全部 49 层 / L0–L48</span></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="各层 RMS 柱状图，点击选择模型层"></nav></div>
 
 
@@ -76,9 +80,9 @@ main{padding:18px 24px 20px}.compact-header{align-items:center;justify-content:s
 </div>
 </section><section class="tensor-detail" aria-label="选中层张量详情">
 
-<div class="detail-top"><div><h2 id="detail-title"></h2><p id="detail-purpose"></p></div></div>
+<div class="detail-top"><div><h2 id="detail-title"></h2><p id="detail-purpose"></p><p id="prop-layer-state" class="prop-layer-state" hidden></p></div></div>
 <div class="detail-layout"><div><div class="sample-legend"><button type="button" class="help tensor-info" aria-label="张量形状、坐标和采样说明">ⓘ<span class="tip" role="tooltip"><span class="info-line">Query 降维投影 · 全局逻辑形状</span><span class="info-line" id="detail-shape"></span><span class="info-line" id="detail-axis"></span><span class="info-line">完整采样矩阵 · 64 × 64 · 与左侧同图</span><span class="info-line">4096 个模拟采样值覆盖张量范围，不是全量张量元素。</span></span></button> <label>放大 <select id="matrix-zoom" aria-label="矩阵放大倍数"><option value="1">适应宽度</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select></label></div><div class="whole-scroll"><svg id="whole-matrix" viewBox="0 0 2110 2110" role="img" aria-label="选中层的全部4096个模拟采样值，放大查看数字"></svg></div><div class="detail-readout" id="sample-readout" aria-live="polite">悬停或点击格子查看精确数值</div></div><aside class="inspect"><section class="diagnosis" id="diagnosis" aria-live="polite"></section><h3>整张采样矩阵统计</h3><dl id="whole-stats" aria-live="polite"></dl></aside></div>
-<div class="detail-foot">异常数据与参考快照均为模拟，阈值仅用于交互演示，不是通用训练标准。只检查展示的采样点，不能排除未采样位置异常。<br>尺寸由 hidden_size=2560、q_lora_rank=1024 推导；激活设定单样本 T=32768。右图一次呈现覆盖整个张量范围的 4096 个模拟采样值，不是数百万元素的全量实测。柱高为同一组采样值的 RMS。<a href="https://huggingface.co/openpangu/openPangu-2.0-Flash/blob/main/config.json" target="_blank" rel="noopener">公开配置参考</a> · 49 层沿用训练文档设定，未将公开模型视为相同版本。</div>
+<div class="detail-foot">异常数据与参考快照均为模拟，阈值仅用于交互演示，不是通用训练标准。“前向传播示例”使用扰动递推演示影响扩大与衰减；“单层异常示例”不模拟传播。所有计算均为教学近似，不是盘古整网实测。只检查展示的采样点，不能排除未采样位置异常。<br>尺寸由 hidden_size=2560、q_lora_rank=1024 推导；激活设定单样本 T=32768。右图一次呈现覆盖整个张量范围的 4096 个模拟采样值，不是数百万元素的全量实测。柱高为同一组采样值的 RMS。<a href="https://huggingface.co/openpangu/openPangu-2.0-Flash/blob/main/config.json" target="_blank" rel="noopener">公开配置参考</a> · 49 层沿用训练文档设定，未将公开模型视为相同版本。</div>
 </section></div></main>
 <script>
 (()=>{
@@ -87,7 +91,7 @@ const NS='http://www.w3.org/2000/svg';
 // Foreshorten the horizontal basis for perceptually narrower matrix cells.
 const projectionX=.72,projectionY=.46*projectionX;
 const planes=document.getElementById('planes'),annotation=document.getElementById('annotation'),nav=document.getElementById('layer-list');
-let selected=34,mode='weight',scenario='anomaly',showAnomaly=true;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
+let selected=18,mode='activation',scenario='propagation',showAnomaly=true;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
 const modes={weight:{name:'权重',code:'W',axes:'输出维度 × 输入维度'},gradient:{name:'参数梯度',code:'dL/dW',axes:''},activation:{name:'激活',code:'H',axes:'Token × 特征维度 · 单样本示意'}};
 function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n}
 function value(l,r,c,type){
@@ -100,19 +104,64 @@ function value(l,r,c,type){
 const heatStops=[[0,[36,36,36]],[.25,[80,80,80]],[.5,[136,136,136]],[.75,[188,188,188]],[1,[238,238,238]]];
 function shade(v){const t=Math.pow(Math.max(0,Math.min(1,v)),.8);let i=0;while(i<heatStops.length-2&&t>heatStops[i+1][0])i++;const [a,ca]=heatStops[i],[b,cb]=heatStops[i+1],f=(t-a)/(b-a);return 'rgb('+ca.map((x,j)=>Math.round(x+(cb[j]-x)*f)).join(',')+')'}
 
-// The foreground is l < selected in the existing painter order.
-// Move it as one group along the frontward stacking direction (-x,+y).
-// 220px opens a horizontal gap: nearest foreground right edge = selected.x - 24.
-function position(l,raised){const forward=l<selected;return {x:170+l*20-(forward?220:0),y:Math.max(45,365-l*6-(raised?155:0))+(forward?66:0)}}
+// Hover changes geometry only; selection owns the tensor inspector.
+let hovered=null,focusPosition=selected,animationFrame=0,lastFrameTime=0;
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+const displayedPositions=[];
+function position(l,focus=focusPosition){
+ const d=l-focus,fraction=hovered!==null?(1-Math.tanh(d/.9))/2:(l<selected?1:l===selected?.5:0);
+ const lift=hovered!==null?180*Math.exp(-.5*Math.pow(d/.55,2)):(l===selected?180:0);
+ return {x:170+l*20-220*fraction,y:365-l*6+66*fraction-lift};
+}
+function paintGeometry(){
+ for(const l of layers){const p=displayedPositions[l]??position(l),g=groups[l],label=labels[l];displayedPositions[l]=p;
+ g.setAttribute('transform',`matrix(${projectionX} ${projectionY} 0 1 ${p.x} ${p.y})`);
+ const preview=l===hovered;g.classList.toggle('preview',preview);
+ label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
+ label.setAttribute('font-size',l===selected||preview?18:13);
+ label.setAttribute('fill',l===selected?'#ffffff':preview?'#dddddd':showAnomaly&&buttons[l].classList.contains('has-alert')?'#fa84b7':'#a0a0a0');
+ }
+}
+function animateGeometry(time){
+ const target=hovered??selected,dt=lastFrameTime?Math.min(40,time-lastFrameTime):16.7;lastFrameTime=time;
+ const blend=1-Math.exp(-dt/55);let moving=false;focusPosition=target;
+ // Interpolate each plane toward its own destination. Do not sweep a focus
+ // index through unrelated layers when switching between distant targets.
+ for(const l of layers){const dest=position(l,target),from=displayedPositions[l]??dest;
+ if(reducedMotion.matches||Math.hypot(dest.x-from.x,dest.y-from.y)<.15)displayedPositions[l]=dest;
+ else{displayedPositions[l]={x:from.x+(dest.x-from.x)*blend,y:from.y+(dest.y-from.y)*blend};moving=true;}}
+ paintGeometry();
+ if(moving)animationFrame=requestAnimationFrame(animateGeometry);
+ else{animationFrame=0;lastFrameTime=0;}
+}
+function requestGeometry(){
+ if(reducedMotion.matches){if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;focusPosition=hovered??selected;for(const l of layers)displayedPositions[l]=position(l,focusPosition);paintGeometry();return;}
+ if(!animationFrame)animationFrame=requestAnimationFrame(animateGeometry);
+}
+function previewLayer(l){const preview=l===selected?null:l;if(hovered===preview)return;hovered=preview;requestGeometry()}
+// Only physical pointer movement selects a new hover target, so geometry moving
+// underneath a stationary cursor cannot trigger a pointerenter feedback loop.
+function bindDockSurface(surface){
+ let lastX=null,lastY=null;
+ surface.addEventListener('pointermove',e=>{
+ if(e.pointerType==='touch'||(e.clientX===lastX&&e.clientY===lastY))return;
+ lastX=e.clientX;lastY=e.clientY;
+ const target=e.target.closest('.plane[data-layer]');
+ previewLayer(target&&surface.contains(target)?Number(target.dataset.layer):null);
+ });
+ surface.addEventListener('pointerleave',()=>{lastX=lastY=null;previewLayer(null)});
+ surface.addEventListener('pointercancel',()=>previewLayer(null));
+}
+
 for(let l=0;l<49;l++){
  const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · 代表性张量矩阵（模拟）`));g.append(el('rect',{x:0,y:0,width:300,height:300,fill:'#131313',stroke:'#393939','class':'outline'}));
- const label=el('text',{x:18,y:27,fill:'#8c8c8c','font-size':12,'font-family':'monospace'},'');g.append(label);labels.push(label);
+ const label=el('text',{fill:'#a0a0a0','font-size':13,'font-family':'monospace','text-anchor':'end','class':'external-layer-number'},String(l));label.dataset.layer=String(l);label.style.cursor='pointer';label.addEventListener('click',()=>choose(l));labels.push(label);
  const matrix=el('g',{'data-matrix':l});cells[l]=[];
  const texture=el('image',{x:31,y:43,width:240,height:240,'preserveAspectRatio':'none','pointer-events':'none'});matrix.append(texture);textures.push(texture);
  g.append(matrix);g.addEventListener('click',()=>choose(l));groups.push(g);layers.push(l);
- const b=document.createElement('button');b.type='button';b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';const numberLabel=document.createElement('span');numberLabel.className='bar-value';bar.append(numberLabel);track.append(bar);bars.push(bar);const number=document.createElement('span');number.className='layer-number';number.textContent=l;b.append(track,number);b.setAttribute('aria-label',`Layer ${l}`);b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(l));nav.append(b);buttons.push(b);
+ const b=document.createElement('button');b.type='button';b.dataset.layer=String(l);b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';const numberLabel=document.createElement('span');numberLabel.className='bar-value';bar.append(numberLabel);track.append(bar);bars.push(bar);const number=document.createElement('span');number.className='layer-number';number.textContent=l;b.append(track,number);b.setAttribute('aria-label',`Layer ${l}`);b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(l));nav.append(b);buttons.push(b);
 }
-// Preserve painter order; foreground translation clears the selected plane.
+// Fixed painter order preserves the layer sequence while the dock wave moves.
 for(let l=48;l>=0;l--)planes.append(groups[l]);
 const guide=document.getElementById('guides');for(const[x,y]of [[100,280],[1290,280],[100,660],[1290,660]])guide.append(el('path',{d:`M${x-6},${y}h12 M${x},${y-6}v12`,stroke:'#2f2f2f','stroke-width':1}));
 // Equal-size tensor blocks: sqrt(mean(element^2)), then tensor RMS from
@@ -135,7 +184,29 @@ for(const type of Object.keys(baseline))observed[type]=baseline[type].map((d,l)=
  });return {values,rms:Math.sqrt(values.reduce((a,v)=>a+v*v,0)/16),mean:values.reduce((a,v)=>a+v,0)/16,min:Math.min(...values),max:Math.max(...values),negative:values.filter(v=>v<0).length/16}});
  return {stats,blocks:stats.map(x=>x.rms),rms:Math.sqrt(stats.reduce((a,x)=>a+x.rms*x.rms,0)/256)};
 });
-let cache=observed;
+// A deterministic perturbation recurrence. Baseline activations remain the
+// reference; only the delta is passed onward, rather than independently
+// injecting a different fault into every layer.
+const propagationSource=18;
+let propagationEnd=18,propagationTimer=null;
+function packValues(values){const stats=Array.from({length:256},(_,i)=>{const v=[];for(let r=0;r<4;r++)for(let c=0;c<4;c++)v.push(values[(Math.floor(i/16)*4+r)*64+i%16*4+c]);return {values:v,rms:Math.sqrt(v.reduce((a,x)=>a+x*x,0)/16),mean:v.reduce((a,x)=>a+x,0)/16,min:Math.min(...v),max:Math.max(...v),negative:v.filter(x=>x<0).length/16}});return {stats,blocks:stats.map(x=>x.rms),rms:Math.sqrt(values.reduce((a,x)=>a+x*x,0)/4096)}}
+function flatValues(d){return Array.from({length:4096},(_,i)=>{const r=Math.floor(i/64),c=i%64;return d.stats[Math.floor(r/4)*16+Math.floor(c/4)].values[r%4*4+c%4]})}
+const propagationData=[],propagationMeta=[];let delta=new Array(4096).fill(0);
+const injectionScale=3.6*Math.max(...flatValues(baseline.activation[propagationSource]).map(Math.abs));
+for(let l=0;l<49;l++){
+ let gain=1;
+ if(l===propagationSource){delta=delta.map((_,i)=>{const r=Math.floor(i/64),c=i%64;return r>=24&&r<32&&c>=32&&c<40?injectionScale*(.85+.15*Math.cos(c)):0})}
+ else if(l>propagationSource){gain=l<=22?1.25:l<=25?.9:.58;const previous=delta;delta=previous.map((v,i)=>gain*(.85*v+.15*previous[Math.floor(i/64)*64+(i%64+63)%64]))}
+ const values=flatValues(baseline.activation[l]).map((v,i)=>v+delta[i]);
+ propagationData.push(packValues(values));propagationMeta.push({gain,deltaRms:Math.sqrt(delta.reduce((a,x)=>a+x*x,0)/4096),affected:delta.filter(x=>Math.abs(x)>1e-9).length});
+}
+let cache;
+function syncScenarioData(){cache=scenario==='propagation'?{weight:observed.weight,gradient:observed.gradient,activation:propagationData}:scenario==='anomaly'?observed:baseline}
+function stopPropagation(){if(propagationTimer!==null)clearInterval(propagationTimer);propagationTimer=null;document.getElementById('prop-play').textContent='播放路径'}
+function propagationStatus(l){if(l<propagationSource)return '注入点之前 · 参考状态';if(l===propagationSource)return '扰动注入点';return alertCount(l)>0?'传播后触发阈值':'受到影响 · 当前未超阈值'}
+function updatePropagationUI(){const active=scenario==='propagation'&&mode==='activation';document.getElementById('propagation-controls').hidden=!active;document.getElementById('prop-step').value=propagationEnd;document.getElementById('prop-progress').textContent=`L18 → L${propagationEnd}`;const state=document.getElementById('prop-layer-state');state.hidden=scenario!=='propagation';state.textContent=active?propagationStatus(selected):'保留原有单层异常示例 · 与激活传播独立';if(active&&selected>=18){const meta=propagationMeta[selected];state.textContent+=` · 扰动 RMS ${format(meta.deltaRms)}`}}
+function advancePropagation(end,follow=true){propagationEnd=Math.max(18,Math.min(48,end));if(follow){selected=propagationEnd;hovered=null}redraw()}
+syncScenarioData();
 function referenceAt(layer,row,col){return baseline[mode][layer].stats[Math.floor(row/4)*16+Math.floor(col/4)].values[(row%4)*4+col%4]}
 function referenceMax(layer){return Math.max(...baseline[mode][layer].stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max))))}
 const limits={};for(const t of Object.keys(baseline))limits[t]=baseline[t].map(d=>3*Math.max(...d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));
@@ -143,15 +214,16 @@ function isAbnormal(layer,row,col){const v=sampleAtLayer(layer,row,col);return !
 function alertCount(layer){let n=0;for(let r=0;r<64;r++)for(let c=0;c<64;c++)if(isAbnormal(layer,r,c))n++;return n}
 function drawDiagnosis(){
  const count=alertCount(selected),total=layers.filter(l=>alertCount(l)>0),limit=limits[mode][selected],ref=baseline[mode][selected];
- document.getElementById('alert-summary').textContent=total.length?`! ${total.length} 个异常层 · ${total.map(l=>'L'+l).join(' / ')}`:'无采样告警';
+ document.getElementById('alert-summary').textContent=total.length?`! ${total.length} 个异常层 · 定位 ↗`:'无采样告警';
  document.getElementById('jump-alert').disabled=!total.length;document.getElementById('jump-alert').hidden=!total.length;
  document.getElementById('phase-note').textContent={activation:'前向 FWD · Microbatch 03',gradient:'反向 BWD · 累积 / 归约后，裁剪前',weight:'优化器更新后 · W 快照'}[mode];
  document.getElementById('phase-note').title={activation:'前向 L0 → L48 · 查看投影输出激活 H · 单样本 / Microbatch 03；固定计算位置，不含重计算。',gradient:'反向 L48 → L0 · 查看参数梯度 ∂L/∂W；示例为完成累积与归约、解除 loss scaling 后、裁剪前的快照，不是层间激活梯度。',weight:'优化器更新后 · 查看 W 快照。前向与反向也使用权重；此处仅比较更新后的参数，未采集实际 ΔW，不能据此判断更新比例。'}[mode];
  const diag=document.getElementById('diagnosis');diag.replaceChildren();diag.hidden=count===0;diag.classList.toggle('has-alert',count>0);
- const h=document.createElement('h3');h.className=count?'flag':'';h.textContent=count?`! L${selected} · ${ {weight:'权重局部偏移',gradient:'参数梯度局部突增',activation:'激活局部突增'}[mode]}`:`L${selected} · 未触发采样规则`;diag.append(h);
+ const h=document.createElement('h3');h.className=count?'flag':'';h.textContent=count?`! L${selected} · ${scenario==='propagation'&&mode==='activation'?(selected===18?'注入点 · 激活异常':'传播后 · 激活异常'): {weight:'权重局部偏移',gradient:'参数梯度局部突增',activation:'激活局部突增'}[mode]}`:`L${selected} · 未触发采样规则`;diag.append(h);
  const dl=document.createElement('dl');for(const [k,v] of [['超阈值采样点',`${count} / 4096`],['当前 / 参考 RMS',format(currentData[selected].rms)+' / '+format(ref.rms)],['RMS 相对参考',(currentData[selected].rms/ref.rms).toFixed(2)+'×'],['单点绝对值阈值',format(limit)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd)}
+ if(scenario==='propagation'&&mode==='activation'){for(const [k,v] of [['扰动 RMS',format(propagationMeta[selected].deltaRms)],['本层扰动增益',propagationMeta[selected].gain.toFixed(2)+'×'],['影响的采样点',String(propagationMeta[selected].affected)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd)}}
  const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='数值、规则与排查建议';details.append(summary,dl);const brief=document.createElement('div');brief.className='diagnosis-brief';brief.textContent=count?`${count} 个采样点超阈值 · RMS 为参考的 ${(currentData[selected].rms/ref.rms).toFixed(2)}×`:'当前采样未超出参考阈值';diag.append(brief,details);
- for(const t of ['规则：|当前值| > 3 × 参考快照的最大绝对值，或出现 NaN / Inf。参考为同层、同张量、同统计口径的 Step 1279 模拟快照；3× 为演示阈值。',count?'已定位到玫红采样位置；悬停可对照当前值与参考值。该信号提示进一步排查，不能单独确认为梯度爆炸或损失异常。':'未触发规则只说明当前 4096 个采样点未超阈值，不等同于训练健康。',{weight:'下一步：核对实际 ΔW/W、学习率与优化器状态；此页尚未采集这些数据。',gradient:'下一步：关联 loss、裁剪前后梯度范数与溢出记录，确认是局部尖峰还是持续放大。',activation:'下一步：检查对应 token / 特征、输入分布及相邻计算的激活，核对是否持续偏移。'}[mode]]){const p=document.createElement('p');p.textContent=t;details.append(p)}
+ for(const t of ['规则：|当前值| > 3 × 参考快照的最大绝对值，或出现 NaN / Inf。前向传播的参考为同一输入、同层且未注入扰动的对照；权重、参数梯度及单层激活示例的参考为 Step 1279 模拟快照。3× 为演示阈值。',count?'已定位到玫红采样位置；悬停可对照当前值与参考值。该信号提示进一步排查，不能单独确认为梯度爆炸或损失异常。':'未触发规则只说明当前 4096 个采样点未超阈值，不等同于训练健康。',{weight:'下一步：核对实际 ΔW/W、学习率与优化器状态；此页尚未采集这些数据。',gradient:'下一步：关联 loss、裁剪前后梯度范数与溢出记录，确认是局部尖峰还是持续放大。',activation:'下一步：检查对应 token / 特征、输入分布及相邻计算的激活，核对是否持续偏移。'}[mode]]){const p=document.createElement('p');p.textContent=t;details.append(p)}
 }
 
 const modeHelp={weight:'权重 RMS 表示参数的整体幅度。开发者关注其分布是否偏移、是否有少数极端参数，以及实际更新量相对权重是否过大。高值本身不是异常。',gradient:'参数梯度 RMS 表示损失对参数的整体敏感程度。开发者关注梯度相对权重是否过大、是否接近零，以及是否出现非有限值；需结合历史变化和损失判断，实际更新还取决于优化器。',activation:'激活 RMS 较大表示这些中间特征的数值幅度较大，可能是整体放大，也可能被少数极端值抬高。开发者关注幅度是否沿层放大或衰减、是否集中在少数 token 或通道，以及是否影响后续计算的数值稳定性和低精度表示。应结合分布、历史基线、梯度与损失判断；它不是 token 重要性。'};
@@ -201,29 +273,34 @@ function drawDetail(){
 }
 function edgeShade(rms){return shade(rms/blockLimit)}
 function drawMatrices(){const data=cache[mode];currentData=data;summaries=data.map(d=>d.rms);blocks=data.map(d=>d.blocks);maximum=Math.max(...summaries);const blockMax=3*Math.max(...baseline[mode].flatMap(d=>d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));blockLimit=blockMax;rawLimit=blockMax;
- for(const l of layers){labels[l].textContent=`L${String(l).padStart(2,'0')}  /  ${modes[mode].code}`;textures[l].setAttribute('href',layerTexture(l));
+ for(const l of layers){labels[l].textContent=String(l);textures[l].setAttribute('href',layerTexture(l));
  bars[l].querySelector('.bar-value').textContent=format(summaries[l]);bars[l].style.height=(summaries[l]/maximum*76)+'px';bars[l].style.background=edgeShade(summaries[l]);buttons[l].setAttribute('aria-label',`Layer ${l}，${modes[mode].name} RMS ${summaries[l].toFixed(4)}`);buttons[l].title=`Layer ${l} · ${modes[mode].name}采样 RMS ${format(summaries[l])}；表示整体幅度，不是最大元素值或异常分数`;
  }document.getElementById('rms-range').textContent=`最高 L${summaries.indexOf(maximum)} · RMS ${format(maximum)}`;
 }
 function redraw(){
- for(const l of layers){const on=l===selected,p=position(l,on),g=groups[l];g.setAttribute('transform',`matrix(${projectionX} ${projectionY} 0 1 ${p.x} ${p.y})`);g.classList.toggle('chosen',on);g.querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');g.querySelector('.outline').setAttribute('stroke',on?'#ffffff':edgeShade(summaries[l]));buttons[l].setAttribute('aria-pressed',String(on));buttons[l].classList.toggle('has-alert',showAnomaly&&alertCount(l)>0);labels[l].setAttribute('fill',showAnomaly&&alertCount(l)>0?'#fa84b7':'#8c8c8c');}
- const anchor=position(selected,true);
- annotation.replaceChildren();
- annotation.append(el('path',{d:`M${anchor.x-32},${anchor.y+18}H${anchor.x}`,fill:'none',stroke:'#bdbdbd','stroke-width':1}));
- annotation.append(el('text',{x:anchor.x-43,y:anchor.y+9,'text-anchor':'end','class':'scene-label'},`Layer ${selected}`));
- annotation.append(el('text',{x:anchor.x-43,y:anchor.y+34,'text-anchor':'end','class':'scene-small'},modes[mode].name+'矩阵'));
+ for(const l of layers){const on=l===selected,g=groups[l];g.classList.toggle('chosen',on);g.querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');g.querySelector('.outline').setAttribute('stroke',on?'#ffffff':edgeShade(summaries[l]));buttons[l].setAttribute('aria-pressed',String(on));buttons[l].classList.toggle('has-alert',showAnomaly&&alertCount(l)>0);}
+ if(!annotation.childElementCount)for(const l of layers){labels[l].setAttribute('aria-label',`Layer ${l}`);annotation.append(labels[l])}
+ requestGeometry();
  document.getElementById('selected-summary').textContent=`Layer ${selected} / ${modes[mode].name}矩阵 · RMS ${format(summaries[selected])}`;
- drawDetail();drawDiagnosis();
+ drawDetail();drawDiagnosis();updatePropagationUI();
 }
-function choose(l){selected=Math.max(0,Math.min(48,l));redraw()}
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));drawMatrices();redraw()}));
-document.getElementById('scenario').addEventListener('change',e=>{scenario=e.target.value;cache=scenario==='anomaly'?observed:baseline;drawMatrices();redraw()});
+function choose(l){selected=Math.max(0,Math.min(48,l));hovered=null;redraw()}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{stopPropagation();mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));drawMatrices();redraw()}));
+document.getElementById('scenario').addEventListener('change',e=>{stopPropagation();scenario=e.target.value;syncScenarioData();if(scenario==='propagation')document.querySelector('[data-mode=activation]').click();else{drawMatrices();redraw()}});
 document.getElementById('anomaly-overlay').addEventListener('change',e=>{showAnomaly=e.target.checked;drawMatrices();redraw()});
 document.getElementById('jump-alert').addEventListener('click',()=>{const next=layers.find(l=>l>selected&&alertCount(l)>0)??layers.find(l=>alertCount(l)>0);if(next!==undefined)choose(next)});
 nav.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();choose(selected+(e.key==='ArrowRight'?1:-1));buttons[selected].focus()}});
+document.getElementById('prop-step').addEventListener('input',e=>{stopPropagation();advancePropagation(Number(e.target.value))});
+document.getElementById('prop-reset').addEventListener('click',()=>{stopPropagation();advancePropagation(18)});
+document.getElementById('prop-play').addEventListener('click',()=>{if(propagationTimer!==null){stopPropagation();return}if(propagationEnd>=48)advancePropagation(18);document.getElementById('prop-play').textContent='暂停';propagationTimer=setInterval(()=>{advancePropagation(propagationEnd+1);if(propagationEnd>=48)stopPropagation()},800)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopPropagation()});
+bindDockSurface(document.getElementById('scene'));
+window.addEventListener('blur',()=>previewLayer(null));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')previewLayer(null)});
+reducedMotion.addEventListener('change',requestGeometry);
 document.querySelectorAll('.help').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('open')));
 document.querySelector('.ramp').style.background='linear-gradient(90deg,'+Array.from({length:33},(_,i)=>shade(i/32)+' '+(100*i/32)+'%').join(',')+')';
-drawMatrices();redraw();
+drawMatrices();paintGeometry();redraw();
 })();
 </script>
 </body></html>
