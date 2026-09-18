@@ -1,0 +1,9 @@
+{
+  "repositories": {
+    "pangu-research": "/absolute/path/to/cann-user-research-index",
+    "pto": "/absolute/path/to/pto",
+    "pypto": "/absolute/path/to/PyPTO3-main",
+    "devkit": "/absolute/path/to/DevKit/kunpeng-devkit-ai-tui"
+  },
+  "designSystem": "/absolute/path/to/pto/vendor/pto-design-system"
+}

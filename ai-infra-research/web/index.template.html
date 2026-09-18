@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI Infra 设计知识库：跨项目的领域知识、研究洞察与设计说明。">
+  <title>AI Infra 设计知识库</title>
+  <!-- Generated from web/index.template.html. Edit sources, not generated HTML. -->
+  <!-- DESIGN_SYSTEM -->
+  <style>/* GALLERY_CSS */</style>
+</head>
+<body>
+  <a class="btn skip-link" href="#mainContent">跳到内容</a>
+  <header class="gallery-topbar">
+    <div class="gallery-toolbar">
+      <a class="gallery-brand" href="?" aria-label="AI Infra 知识库首页">
+        <span class="gallery-brand-copy">
+          <span class="gallery-brand-title">AI INFRA</span>
+          <span class="gallery-brand-subtitle">KNOWLEDGE GALLERY</span>
+        </span>
+      </a>
+      <div class="gallery-actions">
+        <button class="btn btn-ghost btn-icon btn-sm" id="themeToggle" type="button" aria-pressed="false" aria-label="切换深色" title="切换深色">◐</button>
+        <a class="btn btn-sm" id="launchLink" href="#" hidden>启动台</a>
+      </div>
+    </div>
+  </header>
+  <main class="gallery-shell" id="mainContent">
+    <section class="gallery-hero" id="galleryHero" aria-labelledby="pageTitle">
+      <div>
+        <h1 id="pageTitle">AI Infra Knowledge</h1>
+        <p class="hero-description">从模型、编译、硬件到工具体验，浏览可复用的技术洞察与设计成果。</p>
+      </div>
+    </section>
+    <div class="gallery-controls" id="galleryControls">
+      <nav class="category-scroll" aria-label="按设计课题筛选">
+        <div class="tab-control" id="categoryTabs"></div>
+      </nav>
+      <label class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" aria-label="搜索标题、摘要或来源" placeholder="搜索知识、摘要、来源…" autocomplete="off">
+      </label>
+    </div>
+    <section id="collection" aria-label="知识内容">
+      <p class="sr-only" id="resultCount" role="status" aria-live="polite"></p>
+      <div class="report-grid" id="reportGrid"></div>
+      <div class="empty-state panel-shell panel-shell-quiet" id="emptyState" hidden>
+        <div><h2>没有匹配的内容</h2><p>试试其他关键词，或清空当前筛选。</p><button class="btn btn-sm" id="resetFilters" type="button">清空筛选</button></div>
+      </div>
+    </section>
+    <section id="detailView" hidden aria-labelledby="detailTitle" tabindex="-1"></section>
+    <footer class="gallery-footer">
+      <p id="connectionStatus" role="status">正在检查跨仓阅读服务…</p>
+    </footer>
+    <noscript><p>此目录需要启用 JavaScript；也可直接查看仓库 catalog/assets.json 与 knowledge 目录。</p></noscript>
+  </main>
+  <script id="catalogData" type="application/json">/* CATALOG_JSON */</script>
+  <script id="runtimeConfig" type="application/json">/* CONFIG_JSON */</script>
+  <script>/* CORE_JS */</script>
+  <script>/* APP_JS */</script>
+</body>
+</html>
