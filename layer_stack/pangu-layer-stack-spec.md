@@ -144,11 +144,10 @@ relative_gradient = RMS(gradient) / RMS(weight)
 
 ```text
 t = clamp(abs(value) / M, 0, 1)
-gray = round(22 + 218 × t^0.8)
-color = rgb(gray, gray, gray)
+color = interpolate(#333333 → #505050 → #888888 → #BCBCBC → #EEEEEE, t^0.8)
 ```
 
-色标范围从 #161616 到 #F0F0F0，数值绝对值越大越亮；正负号通过右侧数字表达。`t^0.8` 是当前的非线性显示映射，不是线性灰度。
+色标范围从 #333333 到 #EEEEEE，数值绝对值越大越亮；正负号通过右侧数字表达。`t^0.8` 是当前的非线性显示映射，不是线性灰度。
 
 未选中层边框和柱体颜色使用 `RMS/M` 代入同一灰度函数。选中层的外边框固定为 #FFFFFF，优先表达选中状态，不再承载该层的 RMS 大小。
 
