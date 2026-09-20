@@ -2,6 +2,8 @@
 
 AI Infra 设计研究与资产库。
 
+[在线浏览知识库 · GitHub Pages](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/index.html)
+
 面向设计成果盘点、内部汇报和团队资产积累，连接领域知识、设计案例、视觉模式及可执行的设计方法。不是技术项目大全，也不是源码镜像。
 
 ## 内容入口
