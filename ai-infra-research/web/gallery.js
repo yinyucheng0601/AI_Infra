@@ -1,13 +1,18 @@
 (function () {
   'use strict';
   const C=window.CatalogCore, esc=C.escapeHtml;
-  const assets=JSON.parse(document.getElementById('catalogData').textContent).assets;
+  const allAssets=JSON.parse(document.getElementById('catalogData').textContent).assets;
   const config=JSON.parse(document.getElementById('runtimeConfig').textContent);
+  const isSkills=config.collection==='skills';
+  const assets=allAssets.filter(a=>isSkills?a.type==='method':a.type==='knowledge');
   config.fileMode=location.protocol==='file:';
   if(config.mode==='pto' && typeof window.PTO_BASE_PREFIX==='string')config.ptoBase=window.PTO_BASE_PREFIX.replace(/\/?$/,'/');
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'observability-design-style':{src:'__OBSERVABILITY_COVER__',alt:'数据观测工作台：灰度模型层叠、选中层与橙红异常标记'},
+    'llm-compute-diagrams':{src:'__LLM_SKILL_COVER__',alt:'大模型计算图解 Skill 示例：从 Dense FFN 到 MoE'},
+    'dense-ffn-to-moe':{src:'__DENSE_MOE_COVER__',alt:'从 Dense FFN 到 MoE：输入经 Router 选择专家，再加权合并的浅色封面图解'},
     'inference-knowledge-map':{src:'__DS32_RESIDUAL_THUMBNAIL__',alt:'DeepSeek V3.2 残差主干：Token Embedding 经 61 层 Transformer 到 LM Head'},
     'pangu-training-user-research':{src:'__PANGU_RESEARCH_P7_THUMBNAIL__',alt:'盘古训练用户研究第 7 页：资深 ASC 算子开发工程师画像'},
     'hardware-native-systems':{src:'__HW_NATIVE_LINGQU_THUMBNAIL__',alt:'L7 到 L0 的 8 级递归层级图'}
@@ -48,9 +53,10 @@
   }
   function renderCard(a) {
     const source=`${a.author} · ${C.projects[a.sources[0].repository]}`;
+    const href=a.type==='method'?detailHref(a):C.sourceHref(a,config);
     return `<article class="card-demo report-card">
-      <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(C.sourceHref(a,config))}">${esc(a.title)}</a></h3><span class="card-kind">${esc(a.form)}</span></div>
-      <a class="card-visual-link" href="${esc(C.sourceHref(a,config))}" tabindex="-1" aria-hidden="true"><div class="card-visual">${coverArt(a)}</div></a>
+      <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(href)}">${esc(a.title)}</a></h3><span class="card-kind">${esc(a.form)}</span></div>
+      <a class="card-visual-link" href="${esc(href)}" tabindex="-1" aria-hidden="true"><div class="card-visual">${coverArt(a)}</div></a>
       <div class="card-demo-footer card-footer"><span class="card-source">${esc(source)}</span></div></article>`;
   }
   function syncUrl(push=false) {
@@ -59,6 +65,13 @@
   }
   function renderDetail() {
     const a=assets.find(a=>a.id===state.asset);
+    if(a?.type==='method'){
+      const isGuide=a.form==='设计规范';
+      const actions=isGuide?`<a class="btn btn-sm" href="${esc(a.content)}" download>下载 Markdown ↓</a>`:`<a class="btn btn-sm" href="methods/llm-compute-diagrams.zip" download>下载 Skill ZIP ↓</a><a class="btn btn-sm" href="methods/llm-compute-diagrams/assets/reference-guide.html">查看示例 ↗</a>`;
+      document.title=a.title+' · AI Infra Skill';
+      $('detailView').innerHTML=`<a class="btn btn-sm" href="skills.html">← 返回 Skill 库</a><div class="detail-heading"><p class="hero-kicker">${esc(a.form)} · ${esc(a.author)}</p><h1 id="detailTitle">${esc(a.title)}</h1><p class="hero-description">${esc(a.summary)}</p></div><div class="detail-layout"><div><img class="skill-preview" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}"><section class="detail-section"><h2>适用场景</h2><p>${esc(a.designValue)}</p><ul>${a.outline.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section><details class="detail-section"><summary>${isGuide?'查看完整设计规范':'查看完整 Skill 指令'}</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></div><aside class="panel-shell panel-shell-quiet source-panel"><h2>${isGuide?'使用这份规范':'使用这个 Skill'}</h2><p>${isGuide?'将这份 Markdown 规范作为设计和界面生成的参考，结合具体场景使用。':'下载完整技能包，解压后保留目录结构，添加到你的技能目录。'}</p><div class="skill-actions">${actions}</div><p class="card-note">${isGuide?'v0.1 · 设计规范草案，尚未完成跨场景验证。':'包含 SKILL.md、主题参考、图元规范和离线 HTML 示例。'}</p></aside></div>`;
+      return;
+    }
     const back=`<a class="btn btn-sm" href="${esc(C.stateQuery({...state,asset:''}))}">← 返回知识库</a>`;
     if(!a){$('detailView').innerHTML=back+'<h1 id="detailTitle">未找到这篇内容</h1><p>条目可能已调整，请返回目录查找。</p>';return;}
     const source=a.sources[0], related=a.related.map(id=>assets.find(x=>x.id===id)).filter(Boolean);
@@ -78,14 +91,14 @@
     for(const id of ['galleryHero','galleryControls','collection'])$(id).hidden=detail;
     $('detailView').hidden=!detail;
     if(detail){renderDetail();return;}
-    document.title='AI Infra 设计知识库';
+    document.title=isSkills?'AI Infra Skill 库':'AI Infra 设计知识库';
     $('searchInput').value=state.query;
-    const visible=C.filterAssets(assets,{...state,domain:'all',form:'all'});
+    const visible=C.filterAssets(assets,{...state,topic:isSkills?'all':state.topic,domain:'all',form:'all'});
     $('resultCount').textContent=`显示 ${visible.length} / ${assets.length} 篇`;
     $('reportGrid').innerHTML=visible.map(renderCard).join('');
     $('reportGrid').hidden=!visible.length;$('emptyState').hidden=Boolean(visible.length);
     $('emptyState').classList.toggle('is-visible',!visible.length);
-    $('categoryTabs').innerHTML=C.topics.map(t=>`<button class="tab-control-item${t.id===state.topic?' is-selected':''}" type="button" aria-pressed="${t.id===state.topic}" data-topic="${t.id}">${t.label}</button>`).join('');
+    $('categoryTabs').innerHTML=isSkills?'':C.topics.map(t=>`<button class="tab-control-item${t.id===state.topic?' is-selected':''}" type="button" aria-pressed="${t.id===state.topic}" data-topic="${t.id}">${t.label}</button>`).join('');
   }
   $('categoryTabs').addEventListener('click',e=>{const b=e.target.closest('[data-topic]');if(!b)return;state.topic=b.dataset.topic;syncUrl(true);render();$('categoryTabs').querySelector(`[data-topic="${state.topic}"]`).focus();});
   $('searchInput').addEventListener('input',()=>{state.query=$('searchInput').value;syncUrl();render();});
@@ -97,11 +110,16 @@
   let theme='light';try{theme=localStorage.getItem('ai-infra-theme')==='dark'?'dark':'light';}catch{}
   setTheme(theme);$('themeToggle').addEventListener('click',()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';setTheme(t);try{localStorage.setItem('ai-infra-theme',t);}catch{}});
   if(config.mode==='pto'){$('launchLink').href=config.ptoBase+'launch-v2.html';$('launchLink').hidden=false;}
+  const activeLibrary=$(isSkills?'skillsTab':'knowledgeTab');
+  if(isSkills){document.querySelector('.category-scroll').hidden=true;$('galleryControls').classList.add('skills-controls');}
+  activeLibrary.classList.add('is-selected');activeLibrary.setAttribute('aria-current','page');
+  if(isSkills){$('pageTitle').textContent='AI Infra Skills';document.querySelector('#galleryHero .hero-description').textContent='将实践沉淀为可复用的技能，让技术理解与设计表达持续积累。';$('searchInput').placeholder='搜索 Skill、用途、关键词…';$('collection').setAttribute('aria-label','Skill 内容');}
   render();
+  if(isSkills){$('connectionStatus').textContent=`共 ${assets.length} 个 Skill`;return;}
   if(config.fileMode){$('connectionStatus').textContent=`共 ${assets.length} 篇知识内容 · 本地静态版`;return;}
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),3500);
   fetch(config.serviceBase+'api/health',{signal:controller.signal,cache:'no-store'}).then(r=>{if(!r.ok)throw Error('unavailable');return r.json();}).then(data=>{
-    health=data;const connected=Object.values(data.assets).filter(x=>x.available).length;
+    health=data;const connected=assets.filter(a=>data.assets[a.id]?.available).length;
     $('connectionStatus').textContent=`跨仓阅读服务已连接 · ${connected} / ${assets.length} 篇来源可用${Object.values(data.assets).some(x=>x.changed)?' · 部分来源有更新，详见条目':''}`;
     render();
   }).catch(()=>{$('connectionStatus').textContent=config.mode==='pto'?'跨仓阅读服务未连接；PTO 原文仍可打开。运行 ai-infra-research/scripts/serve.py 后刷新可阅读其他来源。':'来源服务未连接：请通过 scripts/serve.py 预览；摘要与检索仍可使用。';}).finally(()=>clearTimeout(timeout));

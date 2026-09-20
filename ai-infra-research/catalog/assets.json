@@ -2,6 +2,146 @@
   "version": 1,
   "assets": [
     {
+      "id": "observability-design-style",
+      "title": "数据观测工作台设计系统",
+      "form": "设计规范",
+      "domains": [
+        "Observability",
+        "AI Infra"
+      ],
+      "summary": "从模型训练观测原型提炼视觉语言、组件与交互模式，覆盖灰度数据表达、异常定位和总览详情联动。",
+      "designValue": "支持模型观测、算子分析、性能诊断和时间线工作台的设计与界面生成，统一视觉秩序、交互语义及数据表达。",
+      "outline": [
+        "中性灰基础样式与异常色语义",
+        "总览与详情联动、悬停和选中",
+        "局部展开、异常定位与渐进披露",
+        "数据表达约定、状态叠加与验收清单"
+      ],
+      "type": "method",
+      "media": [
+        "document"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "methods/observability-design-style/observability-design-system.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "ai-infra-research/methods/observability-design-style/observability-design-system.md",
+          "revision": null,
+          "sha256": "023585b7fffcde132db460ac89d65ffa2091df1ce0d8bc2bfa45a18fb15fa448"
+        }
+      ],
+      "validation": [
+        "2026-09-20：用户指定将 Markdown 规范收录到 Skill 库，使用提供的截图；文档为 v0.1 草案，尚未完成跨场景验证。"
+      ],
+      "related": [],
+      "reviewedAt": "2026-09-20",
+      "topics": [
+        "experience",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
+      "id": "llm-compute-diagrams",
+      "title": "大模型计算图解",
+      "form": "Skill",
+      "domains": [
+        "LLM",
+        "Transformer",
+        "MoE"
+      ],
+      "summary": "制作渐进式交互图解，将 Transformer、Dense / MoE、并行通信、推理与 Traceview 组织为可离线阅读的 HTML。",
+      "designValue": "适用于需要把大模型计算机制讲清楚的设计与教学工作，复用统一的矩阵图元、渐进讲解和交互规范。",
+      "outline": [
+        "Transformer 子层与 Dense / MoE",
+        "分布式并行与通信",
+        "推理、KV cache 与 Traceview",
+        "统一图元、渐进讲解与离线网页交付"
+      ],
+      "type": "method",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "methods/llm-compute-diagrams/SKILL.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "ai-infra-research/methods/llm-compute-diagrams/SKILL.md",
+          "revision": null,
+          "sha256": "c20bf7b9c8fcd287033ca68c8b463e7c46b0531e88df6703f5911bd0ee93e6af"
+        }
+      ],
+      "validation": [
+        "2026-09-20：按用户指定收录 Skill 文件夹与截图，核对说明和配套资源；未执行技能生成任务。"
+      ],
+      "related": [
+        "dense-ffn-to-moe",
+        "transformer-layer-guide"
+      ],
+      "reviewedAt": "2026-09-20",
+      "topics": [
+        "training",
+        "inference",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
+      "id": "dense-ffn-to-moe",
+      "title": "从 Dense FFN 到 MoE",
+      "form": "交互图解",
+      "domains": [
+        "Transformer",
+        "LLM",
+        "MoE"
+      ],
+      "summary": "从共享前馈参数到按输入选择专家，逐步讲解 Dense FFN、SwiGLU、路由分发与加权合并。",
+      "designValue": "沿用统一图元，以渐进交互呈现 FFN 与 MoE 的内部关系及其在完整模型中的位置。",
+      "outline": [
+        "FFN 子层边界与逐 token 计算",
+        "两层 FFN 与 SwiGLU",
+        "专家集合、路由与分发",
+        "加权合并、残差与容量开销",
+        "MoE 和模型总览"
+      ],
+      "type": "knowledge",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "knowledge/dense-ffn-to-moe.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "dense-ffn-to-moe-v1.html",
+          "revision": null,
+          "sha256": "29576aa066fa265f699353e729b935d6e903f9ba33f5386dc847cde282c4b9db"
+        }
+      ],
+      "validation": [
+        "2026-09-20：用户指定收录；核对题名和章节，并将源页面封面 SVG 转为白底浅色缩略图。未独立复审技术结论。"
+      ],
+      "related": [
+        "transformer-layer-guide",
+        "inference-knowledge-map"
+      ],
+      "reviewedAt": "2026-09-20",
+      "topics": [
+        "training",
+        "inference",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "transformer-layer-guide",
       "title": "Transformer 层内图解：从 Token 到残差",
       "form": "交互图解",

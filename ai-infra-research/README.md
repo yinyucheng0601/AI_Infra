@@ -8,13 +8,14 @@ AI Infra 设计研究与资产库。
 
 ## 内容入口
 
+- [Skill 库](skills.html)：可复用技能、示例与完整技能包；与知识库共用顶部导航，Pattern 暂未开放。
 - [知识库](knowledge/README.md)：整理后的领域知识与研究洞察。
 - [设计案例](cases/README.md)：问题、设计推演、方案与结果。
 - [视觉与交互模式](patterns/README.md)：Web、TUI、3D 等表达与交互资产。
 - [方法与 Skills](methods/README.md)：验证过的方法；第三阶段再封装 Skills。
 - [资产目录](catalog/README.md)：统一索引、来源和关联关系。
 
-当前完成第一阶段框架与第二阶段首批知识库实现：16 篇内容，来自 PTO、PyPTO Insight、DevKit 和盘古用户研究。分类支持多选，并区分模型训练、模型推理和竞争分析；A5 PMU 中间稿及三篇不纳入汇报范围的过程文档已排除。仅代表人工筛选和来源核对，不代表来源项目整体收录或视觉效果已验收。
+当前完成第一阶段框架与第二阶段首批知识库实现：18 篇内容，来自 AI Infra、PTO、PyPTO Insight、DevKit 和盘古用户研究。分类支持多选，并区分模型训练、模型推理和竞争分析；A5 PMU 中间稿及三篇不纳入汇报范围的过程文档已排除。仅代表人工筛选和来源核对，不代表来源项目整体收录或视觉效果已验收。
 
 [完整项目计划](docs/project-plan.md) · [运行与维护](docs/running.md) · [验证记录](docs/validation.md)
 

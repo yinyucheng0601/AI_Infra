@@ -3,6 +3,7 @@ import argparse
 import base64
 import json
 import os
+from zipfile import ZipFile, ZIP_DEFLATED
 from pathlib import Path
 from validate_catalog import validate
 
@@ -26,11 +27,16 @@ def design_system_markup(mode):
     return '<style>\n' + '\n'.join(css) + '\n</style>'
 
 
-def build(mode='standalone', service='http://127.0.0.1:8766/'):
+def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowledge'):
     data = json.loads((ROOT / 'catalog/assets.json').read_text())
     validate(data)
     template = (ROOT / 'web/index.template.html').read_text()
+    if collection == 'skills':
+        template = template.replace('<title>AI Infra 设计知识库</title>', '<title>AI Infra Skill 库</title>')
     config = {'mode': mode, 'serviceBase': service if mode == 'pto' else './', 'ptoBase': './' if mode == 'pto' else None}
+    config['collection'] = collection
+    if collection == 'skills':
+        config['skillTexts'] = {a['id']: (ROOT / a['content']).read_text() for a in data['assets'] if a['type'] == 'method'}
     if mode == 'standalone':
         repositories = json.loads((ROOT / '.local/sources.json').read_text())['repositories']
         config['fileRoots'] = {key: Path(os.path.relpath(value, ROOT)).as_posix() + '/' for key, value in repositories.items()}
@@ -42,9 +48,12 @@ def build(mode='standalone', service='http://127.0.0.1:8766/'):
         '<!-- DESIGN_SYSTEM -->': design_system_markup(mode),
         '/* GALLERY_CSS */': (ROOT / 'web/gallery.css').read_text(),
         '/* CATALOG_JSON */': json.dumps(data, ensure_ascii=False).replace('<', '\\u003c'),
-        '/* CONFIG_JSON */': json.dumps(config),
+        '/* CONFIG_JSON */': json.dumps(config).replace('<', '\\u003c'),
         '/* CORE_JS */': (ROOT / 'web/catalog-core.js').read_text(),
         '/* APP_JS */': (ROOT / 'web/gallery.js').read_text(),
+        '__OBSERVABILITY_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/observability-design-style.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
+        '__LLM_SKILL_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/llm-compute-diagrams.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
+        '__DENSE_MOE_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/dense-ffn-to-moe-cover.svg').read_bytes()).decode('ascii'),
         '__DS32_RESIDUAL_THUMBNAIL__': f'data:image/svg+xml;base64,{residual_svg}',
         '__PANGU_RESEARCH_P7_THUMBNAIL__': f'data:image/png;base64,{pangu_research_p7}',
         '__HW_NATIVE_LINGQU_THUMBNAIL__': f'data:image/svg+xml;base64,{hw_native_lingqu}',
@@ -61,7 +70,13 @@ if __name__ == '__main__':
     parser.add_argument('--pto-output', type=Path, help='explicit generated compatibility page output')
     parser.add_argument('--service-url', default='http://127.0.0.1:8766/')
     args = parser.parse_args()
+    skill_root = ROOT / 'methods/llm-compute-diagrams'
+    with ZipFile(ROOT / 'methods/llm-compute-diagrams.zip', 'w', ZIP_DEFLATED) as archive:
+        for file in sorted(skill_root.rglob('*')):
+            if file.is_file() and not any(part.startswith('.') for part in file.relative_to(skill_root).parts):
+                archive.write(file, file.relative_to(skill_root.parent))
     (ROOT / 'index.html').write_text(build(), encoding='utf-8')
+    (ROOT / 'skills.html').write_text(build(collection='skills'), encoding='utf-8')
     if args.pto_output:
         args.pto_output.write_text(build('pto', args.service_url.rstrip('/') + '/'), encoding='utf-8')
-    print('Built index.html' + (' and PTO compatibility page' if args.pto_output else ''))
+    print('Built index.html, skills.html and Skill ZIP' + (' and PTO compatibility page' if args.pto_output else ''))

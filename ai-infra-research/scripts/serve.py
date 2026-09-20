@@ -156,6 +156,9 @@ class Preview:
         self.config = config
         self.assets = json.loads((ROOT / 'catalog/assets.json').read_text())['assets']
         self.files, self.diagnostics, self.asset_checks = {}, {}, {}
+        skill_files = ['skills.html', 'methods/llm-compute-diagrams.zip', 'methods/llm-compute-diagrams/assets/reference-guide.html']
+        skill_files.append('methods/observability-design-style/observability-design-system.md')
+        self.files.update({'/' + p: ROOT / p for p in skill_files if (ROOT / p).is_file()})
         for repo, root in config.get('repositories', {}).items():
             entries = [s['path'] for a in self.assets for s in a['sources'] if s['repository'] == repo]
             allowed, missing, external = collect_files(root, entries)
