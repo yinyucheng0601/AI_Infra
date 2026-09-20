@@ -6,9 +6,9 @@ const C=require('../web/catalog-core.js');
 const root=path.join(__dirname,'..');
 const assets=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets;
 const initial=()=>C.parseState('',assets);
-test('16 manually curated entries after explicit exclusions',()=>{
- assert.equal(assets.length,16);assert.equal(assets.filter(a=>a.sources[0].repository==='pto').length,10);
- assert.equal(new Set(assets.map(a=>a.id)).size,16);
+test('17 manually curated entries after explicit exclusions',()=>{
+ assert.equal(assets.length,17);assert.equal(assets.filter(a=>a.sources[0].repository==='pto').length,10);
+ assert.equal(new Set(assets.map(a=>a.id)).size,17);
  assert.ok(!assets.some(a=>a.id==='a5-pmu-design'));
  assert.ok(!assets.some(a=>['pypto-trusted-iteration','devkit-agent-journey','devkit-tui-visual'].includes(a.id)));
  assert.ok(assets.every(a=>!a.sources.some(s=>s.path.includes('model_skill-dss3.2new'))));
@@ -48,6 +48,8 @@ test('source path encoding preserves special characters, not URL syntax',()=>{
  assert.ok(C.sourceHref(assets.find(a=>a.id==='pangu-training-user-research'),config).includes('/sources/pangu-research/index.html?v='));
  assert.ok(C.sourceHref(assets.find(a=>a.id==='deepseek-migration'),config).includes('/sources/pypto/'));
  assert.match(C.sourceHref(assets.find(a=>a.id==='pangu-communication'),config),/communication-operator-visual-whitepaper\.html\?v=[a-f0-9]{12}$/);
+ const standalone={mode:'standalone',serviceBase:'./',ptoBase:null};
+ assert.match(C.sourceHref(assets.find(a=>a.id==='transformer-layer-guide'),standalone),/^\.\.\/transformer-layer-guide-v3\.html\?v=/);
 });
 test('HTML metadata escaping covers all attribute delimiters',()=>{
  assert.equal(C.escapeHtml('<a "x" \'y\' &>'),'&lt;a &quot;x&quot; &#39;y&#39; &amp;&gt;');
@@ -62,4 +64,6 @@ test('generated page has every required DOM target once and valid inline JS',()=
  for(const m of doc.matchAll(/<script>([\s\S]*?)<\/script>/g))new Function(m[1]);
  assert.ok(!doc.includes('/Users/'));
  assert.ok(!doc.includes('/* CATALOG_JSON */'));
+ assert.ok(!doc.includes('<link rel="stylesheet"'));
+ assert.ok(doc.includes('/* PTO design system · tokens/foundation.css */'));
 });

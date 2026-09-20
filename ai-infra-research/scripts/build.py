@@ -2,23 +2,44 @@
 import argparse
 import base64
 import json
+import os
 from pathlib import Path
 from validate_catalog import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def design_system_markup(mode):
+    if mode == 'pto':
+        base = 'vendor/pto-design-system/'
+        return '\n'.join(f'<link rel="stylesheet" href="{base}{path}">' for path in ['tokens/foundation.css', 'tokens/semantic.css', 'tokens/components.css', 'css/style.css'])
+    local_config = ROOT / '.local/sources.json'
+    assert local_config.is_file(), 'standalone build requires .local/sources.json'
+    design_system = Path(json.loads(local_config.read_text())['designSystem'])
+    paths = ['tokens/foundation.css', 'tokens/semantic.css', 'tokens/components.css', 'css/style.css']
+    css = []
+    for path in paths:
+        source = (design_system / path).read_text()
+        if path == 'css/style.css':
+            source = '\n'.join(line for line in source.splitlines() if not line.lstrip().startswith('@import'))
+        css.append(f'/* PTO design system · {path} */\n{source}')
+    return '<style>\n' + '\n'.join(css) + '\n</style>'
+
+
 def build(mode='standalone', service='http://127.0.0.1:8766/'):
     data = json.loads((ROOT / 'catalog/assets.json').read_text())
     validate(data)
     template = (ROOT / 'web/index.template.html').read_text()
-    styles = 'vendor/pto-design-system/' if mode == 'pto' else 'design-system/'
     config = {'mode': mode, 'serviceBase': service if mode == 'pto' else './', 'ptoBase': './' if mode == 'pto' else None}
+    if mode == 'standalone':
+        repositories = json.loads((ROOT / '.local/sources.json').read_text())['repositories']
+        config['fileRoots'] = {key: Path(os.path.relpath(value, ROOT)).as_posix() + '/' for key, value in repositories.items()}
     residual_svg = base64.b64encode((ROOT / 'web/media/ds32_residual_architecture_main.svg').read_bytes()).decode('ascii')
     pangu_research_p7 = base64.b64encode((ROOT / 'web/media/pangu-research-p7.png').read_bytes()).decode('ascii')
     hw_native_lingqu = base64.b64encode((ROOT / 'web/media/hw-native-lingqu-l7-l0.svg').read_bytes()).decode('ascii')
+    transformer_layer_cover = base64.b64encode((ROOT / 'web/media/transformer-layer-cover.svg').read_bytes()).decode('ascii')
     replacements = {
-        '<!-- DESIGN_SYSTEM -->': '\n'.join(f'<link rel="stylesheet" href="{styles}{p}">' for p in ['tokens/foundation.css', 'tokens/semantic.css', 'tokens/components.css', 'css/style.css']),
+        '<!-- DESIGN_SYSTEM -->': design_system_markup(mode),
         '/* GALLERY_CSS */': (ROOT / 'web/gallery.css').read_text(),
         '/* CATALOG_JSON */': json.dumps(data, ensure_ascii=False).replace('<', '\\u003c'),
         '/* CONFIG_JSON */': json.dumps(config),
@@ -27,6 +48,7 @@ def build(mode='standalone', service='http://127.0.0.1:8766/'):
         '__DS32_RESIDUAL_THUMBNAIL__': f'data:image/svg+xml;base64,{residual_svg}',
         '__PANGU_RESEARCH_P7_THUMBNAIL__': f'data:image/png;base64,{pangu_research_p7}',
         '__HW_NATIVE_LINGQU_THUMBNAIL__': f'data:image/svg+xml;base64,{hw_native_lingqu}',
+        '__TRANSFORMER_LAYER_COVER__': f'data:image/svg+xml;base64,{transformer_layer_cover}',
     }
     for marker, value in replacements.items():
         assert template.count(marker) == 1, f'missing or duplicate marker: {marker}'

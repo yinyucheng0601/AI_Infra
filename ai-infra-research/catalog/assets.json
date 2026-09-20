@@ -2,6 +2,55 @@
   "version": 1,
   "assets": [
     {
+      "id": "transformer-layer-guide",
+      "title": "Transformer 层内图解：从 Token 到残差",
+      "form": "交互图解",
+      "domains": [
+        "Transformer",
+        "LLM"
+      ],
+      "summary": "从 token 的数值表示出发，用 11 节渐进图解串起 Attention、FFN、残差、mHC、输出与训练梯度。",
+      "designValue": "以渐进式交互和统一视觉编码解释 Transformer Layer 内的数据、参数和计算关系，适合作为复杂模型结构的教学表达案例。",
+      "outline": [
+        "Token、激活、参数与计算节点",
+        "Attention 与 FFN 两个计算子层",
+        "残差连接与 mHC",
+        "输出 token 与训练梯度",
+        "完整 Transformer Layer"
+      ],
+      "type": "knowledge",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "knowledge/transformer-layer-guide.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "transformer-layer-guide-v3.html",
+          "revision": null,
+          "sha256": "245fd9f11f1e18e7a90ca06d7bcfd04e073659cc4e545927f9719fff3ed179b7"
+        }
+      ],
+      "validation": [
+        "2026-09-20：用户指定收录；已核对页面题名、11 节导航与封面双子层图解，并将该图解用于卡片封面。未进行技术事实复审。"
+      ],
+      "related": [
+        "inference-knowledge-map",
+        "pangu-communication",
+        "training-placement"
+      ],
+      "reviewedAt": "2026-09-20",
+      "topics": [
+        "training",
+        "inference",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "pangu-training-user-research",
       "title": "盘古训练场景用户研究报告",
       "form": "研究汇报",

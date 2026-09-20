@@ -1,5 +1,6 @@
 {
   "repositories": {
+    "ai-infra": "/absolute/path/to/AI_Infra",
     "pangu-research": "/absolute/path/to/cann-user-research-index",
     "pto": "/absolute/path/to/pto",
     "pypto": "/absolute/path/to/PyPTO3-main",

@@ -10,7 +10,7 @@
     {id:'experience',label:'产品体验',description:'从用户旅程、研究证据到工具体验与设计汇报。'},
     {id:'visual',label:'信息与交互表达',description:'学习如何表达复杂计算过程，以及跨 Web / TUI 的视觉语义。'}
   ];
-  const projects = {pto:'PTO',pypto:'PyPTO · Insight',devkit:'DevKit · TUI','pangu-research':'盘古 · 用户研究'};
+  const projects = {pto:'PTO',pypto:'PyPTO · Insight',devkit:'DevKit · TUI','pangu-research':'盘古 · 用户研究','ai-infra':'AI Infra'};
   const escapeHtml = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const encodePath = value => value.split('/').map(encodeURIComponent).join('/');
   function parseState(search, assets) {
@@ -38,7 +38,9 @@
   }
   function sourceHref(asset,config) {
     const source=asset.sources[0];
+    if(config.fileMode && config.fileRoots?.[source.repository])return encodePath(config.fileRoots[source.repository]+source.path);
     if(source.path.endsWith('.md'))return config.serviceBase+'read/'+encodeURIComponent(asset.id);
+    if(config.mode==='standalone'&&source.repository==='ai-infra')return '../'+encodePath(source.path)+(source.sha256?'?v='+encodeURIComponent(source.sha256.slice(0,12)):'');
     const href=(source.repository==='pto'&&config.ptoBase ? config.ptoBase : config.serviceBase+'sources/'+source.repository+'/')+encodePath(source.path);
     return source.sha256 ? href+'?v='+encodeURIComponent(source.sha256.slice(0,12)) : href;
   }

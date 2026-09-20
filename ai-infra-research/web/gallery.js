@@ -3,6 +3,7 @@
   const C=window.CatalogCore, esc=C.escapeHtml;
   const assets=JSON.parse(document.getElementById('catalogData').textContent).assets;
   const config=JSON.parse(document.getElementById('runtimeConfig').textContent);
+  config.fileMode=location.protocol==='file:';
   if(config.mode==='pto' && typeof window.PTO_BASE_PREFIX==='string')config.ptoBase=window.PTO_BASE_PREFIX.replace(/\/?$/,'/');
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
@@ -10,9 +11,11 @@
     'inference-knowledge-map':{src:'__DS32_RESIDUAL_THUMBNAIL__',alt:'DeepSeek V3.2 残差主干：Token Embedding 经 61 层 Transformer 到 LM Head'},
     'pangu-training-user-research':{src:'__PANGU_RESEARCH_P7_THUMBNAIL__',alt:'盘古训练用户研究第 7 页：资深 ASC 算子开发工程师画像'},
     'hardware-native-systems':{src:'__HW_NATIVE_LINGQU_THUMBNAIL__',alt:'L7 到 L0 的 8 级递归层级图'}
+    ,'transformer-layer-guide':{src:'__TRANSFORMER_LAYER_COVER__',alt:'Transformer Layer 中 Attention、FFN 与两次残差相加的双子层结构图'}
   };
   const topicName=id=>C.topics.find(t=>t.id===id)?.label||id;
   function sourceAvailable(a) {
+    if(config.fileMode)return Boolean(config.fileRoots?.[a.sources[0].repository]);
     if(config.mode==='pto'&&a.sources[0].repository==='pto')return true;
     return Boolean(health?.assets?.[a.id]?.available);
   }
@@ -45,9 +48,8 @@
   }
   function renderCard(a) {
     const source=`${a.author} · ${C.projects[a.sources[0].repository]}`;
-    const taxonomy=a.topics.map(id=>`<span class="card-topic">${esc(topicName(id))}</span>`).join('');
     return `<article class="card-demo report-card">
-      <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(C.sourceHref(a,config))}">${esc(a.title)}</a></h3><span class="card-kind">${esc(a.form)}</span><div class="card-taxonomy">${taxonomy}</div></div>
+      <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(C.sourceHref(a,config))}">${esc(a.title)}</a></h3><span class="card-kind">${esc(a.form)}</span></div>
       <a class="card-visual-link" href="${esc(C.sourceHref(a,config))}" tabindex="-1" aria-hidden="true"><div class="card-visual">${coverArt(a)}</div></a>
       <div class="card-demo-footer card-footer"><span class="card-source">${esc(source)}</span></div></article>`;
   }
@@ -96,6 +98,7 @@
   setTheme(theme);$('themeToggle').addEventListener('click',()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';setTheme(t);try{localStorage.setItem('ai-infra-theme',t);}catch{}});
   if(config.mode==='pto'){$('launchLink').href=config.ptoBase+'launch-v2.html';$('launchLink').hidden=false;}
   render();
+  if(config.fileMode){$('connectionStatus').textContent=`共 ${assets.length} 篇知识内容 · 本地静态版`;return;}
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),3500);
   fetch(config.serviceBase+'api/health',{signal:controller.signal,cache:'no-store'}).then(r=>{if(!r.ok)throw Error('unavailable');return r.json();}).then(data=>{
     health=data;const connected=Object.values(data.assets).filter(x=>x.available).length;
