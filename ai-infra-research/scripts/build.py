@@ -51,6 +51,7 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '/* CONFIG_JSON */': json.dumps(config).replace('<', '\\u003c'),
         '/* CORE_JS */': (ROOT / 'web/catalog-core.js').read_text(),
         '/* APP_JS */': (ROOT / 'web/gallery.js').read_text(),
+        '__TRAINING_PARALLEL_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/training-parallel-communication-cover.svg').read_bytes()).decode('ascii'),
         '__OBSERVABILITY_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/observability-design-style.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
         '__LLM_SKILL_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/llm-compute-diagrams.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
         '__DENSE_MOE_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/dense-ffn-to-moe-cover.svg').read_bytes()).decode('ascii'),

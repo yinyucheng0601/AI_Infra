@@ -2,6 +2,54 @@
   "version": 1,
   "assets": [
     {
+      "id": "training-parallel-communication",
+      "title": "多卡并行配置与通信图解",
+      "form": "交互图解",
+      "domains": [
+        "LLM",
+        "Distributed Training"
+      ],
+      "summary": "从训练任务拆分出发，串起多卡并行策略、通信语义、Ring 算法与 ZeRO 状态分片。",
+      "designValue": "以交互图解区分并行策略、通信操作和实现算法，支持理解每张卡的数据职责、并行组与跨卡依赖。",
+      "outline": [
+        "DP、TP、PP、CP、SP 与 EP",
+        "Gather、Reduce、ReduceScatter、All-to-All 与 P2P",
+        "Ring 逐轮演示",
+        "ZeRO 状态分片",
+        "并行组配置与 Rank 追踪"
+      ],
+      "type": "knowledge",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "knowledge/training-parallel-communication.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "training-parallel-communication-v1.html",
+          "revision": null,
+          "sha256": "2180cf69ac75747d99be1ad521340bae48d78778685b99961ad92e289126d9e3"
+        }
+      ],
+      "validation": [
+        "2026-09-21：用户指定收录并发布；核对页面题名与章节，直接提取原封面图解并转换为浅色缩略图。未独立复审技术结论。"
+      ],
+      "related": [
+        "dense-ffn-to-moe",
+        "transformer-layer-guide",
+        "pangu-communication"
+      ],
+      "reviewedAt": "2026-09-21",
+      "topics": [
+        "training",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "observability-design-style",
       "title": "数据观测工作台设计系统",
       "form": "设计规范",
