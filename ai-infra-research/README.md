@@ -15,7 +15,7 @@ AI Infra 设计研究与资产库。
 - [方法与 Skills](methods/README.md)：验证过的方法；第三阶段再封装 Skills。
 - [资产目录](catalog/README.md)：统一索引、来源和关联关系。
 
-当前完成第一阶段框架与第二阶段首批知识库实现：19 篇内容，来自 AI Infra、PTO、PyPTO Insight、DevKit 和盘古用户研究。分类支持多选，并区分模型训练、模型推理和竞争分析；A5 PMU 中间稿及三篇不纳入汇报范围的过程文档已排除。仅代表人工筛选和来源核对，不代表来源项目整体收录或视觉效果已验收。
+当前完成第一阶段框架与第二阶段首批知识库实现：20 篇内容，来自 AI Infra、PTO、PyPTO Insight、DevKit 和盘古用户研究。分类支持多选，并区分模型训练、模型推理和竞争分析；A5 PMU 中间稿及三篇不纳入汇报范围的过程文档已排除。仅代表人工筛选和来源核对，不代表来源项目整体收录或视觉效果已验收。
 
 [完整项目计划](docs/project-plan.md) · [运行与维护](docs/running.md) · [验证记录](docs/validation.md)
 

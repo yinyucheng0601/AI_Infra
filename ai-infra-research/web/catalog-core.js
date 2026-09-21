@@ -38,6 +38,7 @@
   }
   function sourceHref(asset,config) {
     const source=asset.sources[0];
+    if(config.mode==='standalone'&&source.repository==='ai-infra'&&source.path.startsWith('ai-infra-research/reports/'))return encodePath(source.path.slice('ai-infra-research/'.length))+(source.sha256?'?v='+encodeURIComponent(source.sha256.slice(0,12)):'');
     if(config.fileMode && config.fileRoots?.[source.repository])return encodePath(config.fileRoots[source.repository]+source.path);
     if(source.path.endsWith('.md'))return config.serviceBase+'read/'+encodeURIComponent(asset.id);
     if(config.mode==='standalone'&&source.repository==='ai-infra')return '../'+encodePath(source.path)+(source.sha256?'?v='+encodeURIComponent(source.sha256.slice(0,12)):'');

@@ -12,5 +12,5 @@
 
 ## 来源与验证
 
-来源为工作区根目录 `training-parallel-communication-v1.html`。
+来源为知识库图解目录 `reports/llm-compute/training-parallel-communication-v1.html`。
 2026-09-21：按用户要求收录并发布，提取源页面封面 SVG 并转换为浅色；未独立复审技术结论。

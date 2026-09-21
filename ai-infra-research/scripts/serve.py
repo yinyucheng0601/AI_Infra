@@ -156,6 +156,9 @@ class Preview:
         self.config = config
         self.assets = json.loads((ROOT / 'catalog/assets.json').read_text())['assets']
         self.files, self.diagnostics, self.asset_checks = {}, {}, {}
+        report_entries = [a['sources'][0]['path'].removeprefix('ai-infra-research/') for a in self.assets if a['sources'][0]['repository'] == 'ai-infra' and a['sources'][0]['path'].startswith('ai-infra-research/reports/')]
+        report_files, _, _ = collect_files(ROOT, report_entries)
+        self.files.update({'/' + p: file for p, file in report_files.items()})
         skill_files = ['skills.html', 'methods/llm-compute-diagrams.zip', 'methods/llm-compute-diagrams/assets/reference-guide.html']
         skill_files.append('methods/observability-design-style/observability-design-system.md')
         self.files.update({'/' + p: ROOT / p for p in skill_files if (ROOT / p).is_file()})

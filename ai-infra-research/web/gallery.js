@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'llm-inference-dense-to-clusters':{src:'__LLM_INFERENCE_COVER__',alt:'LLM 推理封面：Prefill 建立缓存，Decode 循环生成 Token'},
     'training-parallel-communication':{src:'__TRAINING_PARALLEL_COVER__',alt:'多卡训练的四个层级：任务拆分、状态存储、通信语义、实现与链路'},
     'observability-design-style':{src:'__OBSERVABILITY_COVER__',alt:'数据观测工作台：灰度模型层叠、选中层与橙红异常标记'},
     'llm-compute-diagrams':{src:'__LLM_SKILL_COVER__',alt:'大模型计算图解 Skill 示例：从 Dense FFN 到 MoE'},

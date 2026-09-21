@@ -12,6 +12,6 @@
 
 ## 来源与验证
 
-来源：AI Infra 根目录 `dense-ffn-to-moe-v1.html`。
+来源：AI Infra 根目录 `reports/llm-compute/dense-ffn-to-moe-v1.html`。
 
 2026-09-20：按用户要求收录，直接提取源页面 coverDiagram 的封面 SVG，转换为白底浅色缩略图；未独立复审技术结论。

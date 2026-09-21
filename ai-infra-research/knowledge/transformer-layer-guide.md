@@ -14,4 +14,4 @@
 
 ## 来源与边界
 
-原文位于 AI Infra 工作区根目录的 `transformer-layer-guide-v3.html`。本次按用户指定收录，并将原页面封面的双子层结构图用于知识卡片封面；未对文中技术结论进行独立事实复审。
+原文位于 AI Infra 知识库图解目录的 `reports/llm-compute/transformer-layer-guide-v3.html`。本次按用户指定收录，并将原页面封面的双子层结构图用于知识卡片封面；未对文中技术结论进行独立事实复审。

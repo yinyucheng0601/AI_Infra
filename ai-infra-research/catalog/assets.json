@@ -2,6 +2,55 @@
   "version": 1,
   "assets": [
     {
+      "id": "llm-inference-dense-to-clusters",
+      "title": "LLM 推理全流程：从单卡到集群",
+      "form": "交互图解",
+      "domains": [
+        "LLM",
+        "Inference",
+        "MoE"
+      ],
+      "summary": "从单卡 Dense 的逐 Token 生成出发，理解 KV cache、多卡协作与 MoE，逐步读懂生产推理服务。",
+      "designValue": "通过渐进式图解衔接模型计算、缓存状态、设备部署和生产服务，支持推理系统的概念理解与设计表达。",
+      "outline": [
+        "Prefill 与连续 Decode",
+        "Dense 层内计算与 KV cache",
+        "多卡 Dense 与副本",
+        "MoE 路由与多卡执行",
+        "生产集群与资源池"
+      ],
+      "type": "knowledge",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "knowledge/llm-inference-dense-to-clusters.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "ai-infra-research/reports/llm-compute/llm-inference-dense-to-clusters-v1.html",
+          "revision": null,
+          "sha256": "d6d574d67f2eb6a97b0e03b27b0c9081f08d2e97189247908af78da974ada629"
+        }
+      ],
+      "validation": [
+        "2026-09-21：用户指定收录并发布，核对题名与章节并提取浅色封面；未独立复审技术结论。"
+      ],
+      "related": [
+        "transformer-layer-guide",
+        "dense-ffn-to-moe",
+        "training-parallel-communication"
+      ],
+      "reviewedAt": "2026-09-21",
+      "topics": [
+        "inference",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "training-parallel-communication",
       "title": "多卡并行配置与通信图解",
       "form": "交互图解",
@@ -29,9 +78,9 @@
         {
           "repository": "ai-infra",
           "url": null,
-          "path": "training-parallel-communication-v1.html",
+          "path": "ai-infra-research/reports/llm-compute/training-parallel-communication-v1.html",
           "revision": null,
-          "sha256": "2180cf69ac75747d99be1ad521340bae48d78778685b99961ad92e289126d9e3"
+          "sha256": "1fac5579be507b8c231548fd283e731cb30ac30e5cc11ade35bc7384a229cf68"
         }
       ],
       "validation": [
@@ -169,9 +218,9 @@
         {
           "repository": "ai-infra",
           "url": null,
-          "path": "dense-ffn-to-moe-v1.html",
+          "path": "ai-infra-research/reports/llm-compute/dense-ffn-to-moe-v1.html",
           "revision": null,
-          "sha256": "29576aa066fa265f699353e729b935d6e903f9ba33f5386dc847cde282c4b9db"
+          "sha256": "743d50d4cbb6dd35378f36a1c17e684c3201b178d835c42c69f142d979d261ba"
         }
       ],
       "validation": [
@@ -217,9 +266,9 @@
         {
           "repository": "ai-infra",
           "url": null,
-          "path": "transformer-layer-guide-v3.html",
+          "path": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html",
           "revision": null,
-          "sha256": "245fd9f11f1e18e7a90ca06d7bcfd04e073659cc4e545927f9719fff3ed179b7"
+          "sha256": "969a400c25c1b545ff44ebf1de979546c5a6a898e8b654517ac9887ffe338dee"
         }
       ],
       "validation": [
