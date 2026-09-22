@@ -137,11 +137,12 @@ const NS='http://www.w3.org/2000/svg';
 // Foreshorten the horizontal basis for perceptually narrower matrix cells.
 const projectionX=.72,projectionY=.46*projectionX;
 const planeWidth=340,planeHeight=380;
+const layerStepX=40,layerStepY=12,layerSpan=48*layerStepX;
 // Calibrate to the unlifted matrix geometry, not the SVG element or side panels.
 // Freeze this frame across hover, selection and inspector transitions.
-const modelBounds={left:170,right:170+48*20+planeWidth*projectionX,top:365-48*6,bottom:365+planeWidth*projectionY+planeHeight};
+const modelBounds={left:170,right:170+layerSpan+planeWidth*projectionX,top:365-48*layerStepY,bottom:365+planeWidth*projectionY+planeHeight};
 const modelCenter={x:(modelBounds.left+modelBounds.right)/2,y:(modelBounds.top+modelBounds.bottom)/2};
-document.getElementById('scene').setAttribute('viewBox',`${modelCenter.x-1110} ${modelCenter.y-630} 2220 1260`);
+document.getElementById('scene').setAttribute('viewBox',`${modelCenter.x-1590} ${modelCenter.y-774} 3180 1548`);
 const planes=document.getElementById('planes'),annotation=document.getElementById('annotation'),nav=document.getElementById('layer-list');
 let observation='query';
 let mbCompleted=3,weightUpdated=false,mbRow=2;
@@ -161,7 +162,7 @@ const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const displayedPositions=[];
 function position(l,focus=focusPosition){
  // Keep horizontal coordinates invariant; selection only raises its layer.
- return {x:170+l*20,y:365-l*6-(l===selected?150:0)};
+ return {x:170+l*layerStepX,y:365-l*layerStepY-(l===selected?150:0)};
 }
 // Test the label footprint / top-left corner against foreground parallelograms.
 // Painter order is L48 ... L0, so only lower-index planes can occlude this layer.
@@ -335,8 +336,8 @@ function redraw(){
 // Structural boundaries are separate from the sampled Query projection tensors.
 const flowPorts=document.getElementById('flow-ports'),flowGuides=document.getElementById('guides');
 // Anchor the depth axis to each plane's bottom-right corner, with a fixed gap.
-// Layer l is at x=20*l; boundary h_k lies halfway between layers k-1 and k.
-const ground={x:170+planeWidth*projectionX,y:365+planeWidth*projectionY+planeHeight+50,xx:1,xy:-6/20,yx:0,yy:1};
+// Layer l is at x=layerStepX*l; boundary h_k lies halfway between layers k-1 and k.
+const ground={x:170+planeWidth*projectionX,y:365+planeWidth*projectionY+planeHeight+50,xx:1,xy:-layerStepY/layerStepX,yx:0,yy:1};
 function groundPoint(x,y){return {x:ground.x+x+ground.yx*y,y:ground.y+ground.xy*x+ground.yy*y}}
 function groundTransform(x=0,y=0){const p=groundPoint(x,y);return `matrix(1 -.3 0 1 ${p.x} ${p.y})`}
 const rails=el('g',{'class':'ground-rail',transform:groundTransform()});document.getElementById('scene').append(rails);
@@ -345,9 +346,9 @@ const layerAxisMarks=[];
 function groundRail(reverse){
  const y=0,g=el('g');
  g.append(el('title',{},'计算依赖方向，非执行时间轴；反向传递激活梯度，不是参数梯度'));
- g.append(el('path',{d:`M-10,${y} H970`,fill:'none',stroke:'currentColor','stroke-width':1,opacity:.22}));
+ g.append(el('path',{d:`M${-layerStepX/2},${y} H${layerSpan+layerStepX/2}`,fill:'none',stroke:'currentColor','stroke-width':1,opacity:.22}));
  for(let l=0;l<49;l++){
- const tick=el('path',{d:`M${l*20},-5 v10`,stroke:'#666','stroke-width':1,'pointer-events':'none'});
+ const tick=el('path',{d:`M${l*layerStepX},-5 v10`,stroke:'#666','stroke-width':1,'pointer-events':'none'});
  const link=el('path',{fill:'none',stroke:'#999','stroke-width':1,'stroke-dasharray':'3 5','pointer-events':'none'});
  g.append(tick,link);layerAxisMarks.push({layer:l,tick,link});
  }
@@ -358,7 +359,7 @@ function groundRail(reverse){
  const open=()=>{stopPropagation();selected=boundary-1;hovered=null;observation=reverse?'backward':'out';redraw()};
  arrow.addEventListener('click',open);arrow.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
  }
- g.append(el('text',{x:480,y:35,fill:'currentColor','font-size':17,'font-weight':400,'text-anchor':'middle'},reverse?'B · 反向':'F · 前向'));
+ g.append(el('text',{x:layerSpan/2,y:35,fill:'currentColor','font-size':17,'font-weight':400,'text-anchor':'middle'},reverse?'B · 反向':'F · 前向'));
  rails.append(g);return g;
 }
 const forwardRail=groundRail(false),backwardRail=groundRail(true);
@@ -380,19 +381,23 @@ function drawWeightRail(){
  weightRail.replaceChildren();
  const names=['MB 01','MB 02','MB 03','MB 04','累计梯度','权重更新'];
  for(let row=0;row<6;row++){
- const y=row*20,ready=row<4?row<mbCompleted:row===4?true:weightUpdated;
+ const y=row*20;
  weightRail.append(el('text',{x:-24,y:y+5,'text-anchor':'end','class':'mb-axis-label'},names[row]));
- weightRail.append(el('path',{d:`M0,${y} H960`,stroke:'#333',fill:'none','stroke-width':.7}));
+ weightRail.append(el('path',{d:`M0,${y} H${layerSpan}`,stroke:'#333',fill:'none','stroke-width':.7}));
  for(let l=0;l<49;l++){
- const active=row===mbRow&&l===selected,g=el('g',{'class':'mb-mark',role:'button',tabindex:0,'aria-label':`${names[row]} · L${l} · ${ready?'查看模拟统计':'尚未完成'}`,'aria-pressed':String(active)});
- const cellReady=row<4?(row<mbCompleted||row===Math.floor(mbCursor/49)&&l<=mbCursor%49):row===4?(mbCompleted>0||l<=mbCursor%49):weightUpdated;
- const color=active?'#fff':!cellReady?'#444':row===mbRow?'#ddd':'#888';
- g.append(el('rect',{x:l*20-9,y:y-10,width:18,height:20,fill:'transparent'}),el('path',{d:`M${l*20-5},${y} h10`,stroke:color,'stroke-width':active?3:2,'stroke-dasharray':cellReady?'none':'2 3','pointer-events':'none'}));
+ const inProgress=mbCursor>=0&&mbCursor<mbTotalTicks;
+ const contributions=mbCompleted+(inProgress&&l<=mbCursor%49?1:0);
+ const accumulating=row===4&&mbPlaying&&inProgress&&l===mbCursor%49;
+ const active=row===mbRow&&l===selected,g=el('g',{'class':'mb-mark',role:'button',tabindex:0,'aria-label':`${names[row]} · L${l} · ${row===4?'已累积 '+contributions+'/4':'查看模拟统计'}`,'aria-pressed':String(active)});
+ const cellReady=row<4?(row<mbCompleted||inProgress&&row===Math.floor(mbCursor/49)&&l<=mbCursor%49):row===4?contributions>0:weightUpdated;
+ const color=active||accumulating?'#fff':!cellReady?'#444':row===4?(contributions===4?'#aaa':'#606060'):row===mbRow?'#ddd':'#888';
+ g.append(el('rect',{x:l*layerStepX-9,y:y-10,width:18,height:20,fill:'transparent'}),el('path',{d:`M${l*layerStepX-5},${y} h10`,stroke:color,'stroke-width':active?3:2,'stroke-dasharray':cellReady?'none':'2 3','pointer-events':'none'}));
  const open=()=>{pauseMB();mbRow=row;observation='query';choose(l);openInspector.click()};g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});weightRail.append(g);
  }
  }
- const sum=mbFactors.slice(0,mbCompleted).reduce((a,b)=>a+b,0),grad=cache.gradient[selected].rms;
- const value=mbRow<4?(mbRow<mbCompleted?`贡献 RMS ${format(grad*mbFactors[mbRow])}`:'尚未完成 · 无贡献数据'):mbRow===4?`累计 RMS ${format(grad*sum)} · 已累积 ${mbCompleted}/4`:weightUpdated?`ΔW RMS ${format(demoLearningRate*grad)} · ΔW / W ${format(demoLearningRate*grad/baseline.weight[selected].rms)}`:'等待全部 MB 完成后更新';
+ const layerCompleted=mbCompleted+(mbCursor>=0&&mbCursor<mbTotalTicks&&selected<=mbCursor%49?1:0);
+ const sum=mbFactors.slice(0,layerCompleted).reduce((a,b)=>a+b,0),grad=cache.gradient[selected].rms;
+ const value=mbRow<4?(mbRow<layerCompleted?`贡献 RMS ${format(grad*mbFactors[mbRow])}`:'尚未完成 · 无贡献数据'):mbRow===4?`累计 RMS ${format(grad*sum)} · 已累积 ${layerCompleted}/4`:weightUpdated?`ΔW RMS ${format(demoLearningRate*grad)} · ΔW / W ${format(demoLearningRate*grad/baseline.weight[selected].rms)}`:'等待全部 MB 完成后更新';
  info.textContent=`L${selected} / ${names[mbRow]}：${value}。主图为${weightUpdated?'更新后':'更新前'} W。教学模拟：4 个 MB 贡献采用固定梯度模板 × 0.7 / 0.9 / 1.1 / 1.3，先求和，再除以 4；SGD 学习率 0.01，无裁剪。未模拟分布式归约，不是实测优化器数据。`;
 }
 function pauseMB(){if(mbPlaying)mbElapsed=performance.now()-mbStarted;mbPlaying=false;cancelAnimationFrame(mbFrame);mbFrame=0;}
@@ -421,7 +426,7 @@ document.getElementById('mb-reset').addEventListener('click',()=>startMB(true));
 
 
 
-for(const cfg of [{key:'root-in',x:-205,y:-30,label:'Hidden In · h₀',sub:'主干输入 / L0 之前'},{key:'root-out',x:980,y:-30,label:'Hidden Out · h₄₉',sub:'主干输出 / L48 之后'}]){
+for(const cfg of [{key:'root-in',x:-205,y:-30,label:'Hidden In · h₀',sub:'主干输入 / L0 之前'},{key:'root-out',x:layerSpan+layerStepX,y:-30,label:'Hidden Out · h₄₉',sub:'主干输出 / L48 之后'}]){
 
  const g=el('g',{'class':'flow-port',transform:groundTransform(cfg.x,cfg.y),role:'button',tabindex:0,'aria-label':cfg.label+'，查看 hidden states','aria-pressed':'false','data-port':cfg.key});
  g.append(el('rect',{width:185,height:61,rx:4}),el('text',{x:12,y:25},cfg.label),el('text',{x:12,y:45,'class':'port-sub'},cfg.sub));
@@ -491,7 +496,7 @@ function drawHiddenMock(body,boundary,source,target){
 function updateBoundaryArrows(){
  const active=observation==='out'||observation==='backward'?selected+1:observation==='in'?selected:-1;
  for(const {layer,tick,link} of layerAxisMarks){
- const p=displayedPositions[layer]??position(layer),x=layer*20;
+ const p=displayedPositions[layer]??position(layer),x=layer*layerStepX;
  const bottom=p.y+planeWidth*projectionY+planeHeight,axisY=groundPoint(x,0).y;
  tick.setAttribute('stroke',layer===selected?'#eee':'#555');
  link.setAttribute('d',`M${x},${bottom-axisY} V-8`);
@@ -499,7 +504,7 @@ function updateBoundaryArrows(){
  link.setAttribute('opacity',layer===selected?'.7':'.25');
  }
  for(const {boundary,reverse,g,title,ink} of boundaryArrows){
- const x=(boundary-.5)*20;
+ const x=(boundary-.5)*layerStepX;
  g.setAttribute('transform',`translate(${x} 0)${reverse?' scale(-1 1)':''}`);
  const count=reverse?0:hiddenSnapshot(boundary).alerts;
  const label=reverse?`B · h${boundary} 的激活梯度 · L${boundary} → L${boundary-1} · 尚未采集`:`F · h${boundary} · L${boundary-1} 输出 → L${boundary} 输入 · ${count?count+' 个异常采样点':'无超阈值采样点'}`;
