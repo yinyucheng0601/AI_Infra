@@ -102,6 +102,8 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 @media(max-width:1000px){.identity{top:105px;left:24px}.identity h2{font-size:48px}.identity h3{font-size:16px}.atlas-toolbar{left:24px;right:24px;gap:14px}.matrix-tabs{gap:16px}.tensor-detail{width:310px;right:18px}.bottom{width:50%}.compact-header{left:24px}.atlas-toolbar .legend,.sampling-note{left:24px}.tensor-detail.expanded .detail-layout{grid-template-columns:1fr}}
 @media(max-width:600px){.atlas-toolbar{flex-wrap:wrap}.matrix-tabs{width:100%;gap:18px}.alert-jump{margin-left:0}.identity{top:145px}.identity h2{font-size:40px;margin-bottom:10px}.identity h3{margin-bottom:14px}.identity p{font-size:11px}.path-demo{top:115px;right:24px}.tensor-detail{inset:130px 12px 75px;width:auto}.bottom{width:82%;bottom:22px}.compact-header{display:none}.sampling-note{bottom:91px;font-size:10px}.atlas-toolbar .legend{bottom:142px}.tensor-detail.expanded{inset:100px 8px 70px}}
 
+
+.mb-process{position:fixed;right:38px;top:85px;z-index:12;color:#aaa;font-size:12px}.mb-process[hidden],.mb-inspection[hidden]{display:none}.mb-process p{margin:0 0 8px}.mb-process button{margin-left:16px}.mb-inspection{border-top:1px solid #444;border-bottom:1px solid #444;margin:14px 0;padding:14px 0;color:#bbb;font-size:12px;line-height:1.8}.mb-mark{cursor:pointer;outline:none}.mb-mark:focus-visible rect,.mb-mark:hover rect{stroke:#fff;stroke-width:1}.mb-axis-label{font:14px ui-monospace,monospace;fill:#aaa}
 </style>
 </head>
 <body>
@@ -109,12 +111,12 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 <header class="compact-header"><h1>Layer Atlas <span>/ 92B Omni MoE</span></h1><span class="run-context">Step 1280</span></header>
 <div id="data-state" class="data-state" data-state="loading" role="status" aria-live="polite">正在加载采样数据…</div>
 <div class="atlas-toolbar">
-<div class="matrix-tabs" role="group" aria-label="训练阶段与观测张量"><button type="button" data-mode="activation" aria-pressed="true" title="前向计算的投影输出，单样本 Microbatch 03">前向 · 激活</button><button type="button" data-mode="gradient" aria-pressed="false" title="累积、归约并解除 loss scaling 后，裁剪前的参数梯度">反向 · 参数梯度</button><button type="button" data-mode="weight" aria-pressed="false" title="优化器更新后的权重快照；权重也参与前向与反向计算">更新后 · 权重</button></div>
+<div class="matrix-tabs" role="group" aria-label="训练阶段与观测张量"><button type="button" data-mode="activation" aria-pressed="true" title="前向计算的投影输出，单样本 Microbatch 03">前向 · 激活</button><button type="button" data-mode="gradient" aria-pressed="false" title="累积、归约并解除 loss scaling 后，裁剪前的参数梯度">反向 · 参数梯度</button><button type="button" data-mode="weight" aria-pressed="false" title="优化器更新后的权重快照；权重也参与前向与反向计算">优化器 · 权重</button></div>
 <div class="legend"><span>低</span><span class="ramp"></span><span>高</span><button type="button" class="help" id="matrix-help" aria-label="幅度与异常图例说明">ⓘ<span class="tip" role="tooltip" id="matrix-tip"></span></button><span id="legend-metric" class="sr"></span></div>
 <button id="jump-alert" class="alert-jump" title="定位异常层；橙红表示采样值超出规则阈值"><span id="alert-summary" aria-live="polite"></span><span aria-hidden="true"> ↗</span></button>
 <details class="display-settings"><summary>显示设置</summary><div class="settings-popover"><label>数据场景 <select id="scenario" class="scenario-select" aria-label="示例场景"><option value="propagation" selected>前向传播示例</option><option value="anomaly">单层异常示例</option><option value="normal">参考快照</option></select></label><label><input type="checkbox" id="anomaly-overlay" checked> 显示橙红异常标记</label><div id="phase-note" class="training-note"></div><span class="settings-note">数值及异常阈值均为模拟示例</span></div></details>
 </div>
-<section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p>STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点<br>教学模拟 · 非全量实测</div><div id="hover-preview" class="hover-preview" hidden></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="flow-ports"></g></svg></div>
+<section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p id="identity-context">STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点<br>教学模拟 · 非全量实测</div><div id="hover-preview" class="hover-preview" hidden></div><div class="mb-process" id="mb-process" hidden><p>OPTIMIZER STEP 1280 · 4 MB 教学模拟</p><span id="mb-progress"></span><button class="text-action" id="mb-next">完成 MB 04</button><button class="text-action" id="mb-reset">重置</button></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="flow-ports"></g></svg></div>
 <div class="bottom"><div id="selected-summary" class="sr" aria-live="polite"></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="层导航 L0 至 L48，点击或拖动选择模型层"></nav></div>
 
 
@@ -122,7 +124,7 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 </div>
 </section><section class="tensor-detail" id="tensor-inspector" aria-label="选中层张量详情" hidden><div class="panel-actions"><button id="expand-inspector" class="text-action">放大查看 ↗</button><button id="close-inspector" class="text-action">关闭 ×</button></div><label class="matrix-zoom">矩阵缩放 <input id="matrix-zoom" type="range" min="1" max="6" step="0.25" value="1"><output id="zoom-value">1×</output></label>
 
-<div class="detail-top"><div><div class="detail-title-row"><h2 id="detail-title"></h2><button type="button" class="help tensor-info" aria-label="张量形状、坐标和采样说明">ⓘ<span class="tip" role="tooltip"><span class="info-line"><span id="info-location">Query 降维投影 · 全局逻辑形状</span></span><span class="info-line" id="detail-shape"></span><span class="info-line" id="detail-axis"></span><span class="info-line">采样矩阵 · 64 × 64</span><span class="info-line">4096 个模拟采样值覆盖张量范围，不是全量张量元素。</span></span></button></div><p id="detail-purpose"></p><p id="prop-layer-state" class="prop-layer-state" hidden></p></div></div>
+<div id="mb-inspection" class="mb-inspection" hidden></div><div class="detail-top"><div><div class="detail-title-row"><h2 id="detail-title"></h2><button type="button" class="help tensor-info" aria-label="张量形状、坐标和采样说明">ⓘ<span class="tip" role="tooltip"><span class="info-line"><span id="info-location">Query 降维投影 · 全局逻辑形状</span></span><span class="info-line" id="detail-shape"></span><span class="info-line" id="detail-axis"></span><span class="info-line">采样矩阵 · 64 × 64</span><span class="info-line">4096 个模拟采样值覆盖张量范围，不是全量张量元素。</span></span></button></div><p id="detail-purpose"></p><p id="prop-layer-state" class="prop-layer-state" hidden></p></div></div>
 <div class="observation-tabs" role="group" aria-label="选中层观测位置"><button data-observation="query" aria-pressed="true">Query 投影</button><button data-observation="in" aria-pressed="false">层输入 · hᵢ</button><button data-observation="out" aria-pressed="false">层输出 · hᵢ₊₁</button></div><section id="hidden-observation" class="hidden-observation" hidden aria-live="polite"></section>
 <div class="detail-layout"><div><div class="whole-scroll"><svg id="whole-matrix" viewBox="0 0 2110 2110" role="img" aria-label="选中层的全部4096个模拟采样值，放大查看数字"></svg></div><div class="detail-readout" id="sample-readout" aria-live="polite">悬停或点击格子查看精确数值</div></div><aside class="inspect"><section class="diagnosis" id="diagnosis" aria-live="polite"></section><h3>采样统计</h3><dl id="whole-stats" aria-live="polite"></dl></aside></div>
 <details class="detail-foot"><summary>数据与模型说明</summary><div>异常数据与参考快照均为模拟，阈值仅用于交互演示，不是通用训练标准。“前向传播示例”使用扰动递推演示影响扩大与衰减；“单层异常示例”不模拟传播。所有计算均为教学近似，不是盘古整网实测。只检查展示的采样点，不能排除未采样位置异常。<br>尺寸由 hidden_size=2560、q_lora_rank=1024 推导；激活设定单样本 T=32768。右图一次呈现覆盖整个张量范围的 4096 个模拟采样值，不是数百万元素的全量实测。统计值来自同一组采样值。<a href="https://huggingface.co/openpangu/openPangu-2.0-Flash/blob/main/config.json" target="_blank" rel="noopener">公开配置参考</a> · 49 层沿用训练文档设定，未将公开模型视为相同版本。</div></details>
@@ -134,13 +136,18 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 const NS='http://www.w3.org/2000/svg';
 // Foreshorten the horizontal basis for perceptually narrower matrix cells.
 const projectionX=.72,projectionY=.46*projectionX;
+const planeWidth=340,planeHeight=380;
 // Calibrate to the unlifted matrix geometry, not the SVG element or side panels.
 // Freeze this frame across hover, selection and inspector transitions.
-const modelBounds={left:170,right:170+48*20+300*projectionX,top:365-48*6,bottom:365+300*projectionY+300};
+const modelBounds={left:170,right:170+48*20+planeWidth*projectionX,top:365-48*6,bottom:365+planeWidth*projectionY+planeHeight};
 const modelCenter={x:(modelBounds.left+modelBounds.right)/2,y:(modelBounds.top+modelBounds.bottom)/2};
 document.getElementById('scene').setAttribute('viewBox',`${modelCenter.x-1110} ${modelCenter.y-630} 2220 1260`);
 const planes=document.getElementById('planes'),annotation=document.getElementById('annotation'),nav=document.getElementById('layer-list');
 let observation='query';
+let mbCompleted=3,weightUpdated=false,mbRow=2;
+let mbPlaying=false,mbFrame=0,mbElapsed=0,mbStarted=0,mbCursor=-1;
+const mbTickMs=60,mbTotalTicks=4*49,mbFinishMs=12400;
+const mbFactors=[.7,.9,1.1,1.3],demoLearningRate=.01;
 let selected=18,mode='activation',scenario='propagation',showAnomaly=true;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
 const modes={weight:{name:'权重',code:'W',axes:'输出维度 × 输入维度'},gradient:{name:'参数梯度',code:'dL/dW',axes:''},activation:{name:'激活',code:'H',axes:'Token × 特征维度 · 单样本示意'}};
 function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n}
@@ -164,7 +171,7 @@ function labelIsOccluded(l){
  for(let front=0;front<l;front++){
  const q=displayedPositions[front]??position(front);
  for(const [x,y] of samples){const localX=(x-q.x)/projectionX,localY=y-q.y-projectionY*localX;
- if(localX>=0&&localX<=300&&localY>=0&&localY<=300)return true;}
+ if(localX>=0&&localX<=planeWidth&&localY>=0&&localY<=planeHeight)return true;}
  }
  return false;
 }
@@ -173,7 +180,9 @@ function paintGeometry(){
  g.setAttribute('transform',`matrix(${projectionX} ${projectionY} 0 1 ${p.x} ${p.y})`);
  const preview=l===hovered;g.classList.toggle('preview',preview);
  label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
- label.setAttribute('font-size',l===selected||preview?18:13);
+ const numberSize=l===selected||preview?18:13;
+ label.setAttribute('font-size',numberSize);
+ g.querySelector('.layer-rms-value').setAttribute('font-size',numberSize*2);
  label.setAttribute('fill',l===selected?'#ffffff':preview?'#dddddd':showAnomaly&&buttons[l].classList.contains('has-alert')?'#FD5644':'#a0a0a0');
  const occluded=labelIsOccluded(l);label.setAttribute('opacity',occluded?'.28':'1');label.classList.toggle('occluded',occluded);
  }
@@ -211,10 +220,11 @@ function bindDockSurface(surface){
 }
 
 for(let l=0;l<49;l++){
- const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · 代表性张量矩阵（模拟）`));g.append(el('rect',{x:0,y:0,width:300,height:300,fill:'#131313',stroke:'#393939','class':'outline'}));
+ const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · 代表性张量矩阵（模拟）`));g.append(el('rect',{x:0,y:0,width:planeWidth,height:planeHeight,fill:'#131313',stroke:'#393939','class':'outline'}));
  const label=el('text',{fill:'#a0a0a0','font-size':13,'font-family':'monospace','text-anchor':'end','class':'external-layer-number'},String(l));label.dataset.layer=String(l);label.style.cursor='pointer';label.addEventListener('click',()=>choose(l));labels.push(label);
  const matrix=el('g',{'data-matrix':l});cells[l]=[];
- const texture=el('image',{x:31,y:43,width:240,height:240,'preserveAspectRatio':'none','pointer-events':'none'});matrix.append(texture);textures.push(texture);
+ const texture=el('image',{x:40,y:92,width:260,height:260,'preserveAspectRatio':'none','pointer-events':'none'});matrix.append(texture);textures.push(texture);
+ g.append(el('text',{x:24,y:25,fill:'#aaa','font-size':12,'font-family':'monospace','pointer-events':'none'},'RMS'),el('text',{x:24,y:65,fill:'#eee','font-size':26,'font-family':'monospace','class':'layer-rms-value','pointer-events':'none'},'—'));
  g.append(matrix);g.addEventListener('click',()=>choose(l));groups.push(g);layers.push(l);
  const b=document.createElement('button');b.type='button';b.dataset.layer=String(l);b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';const numberLabel=document.createElement('span');numberLabel.className='bar-value';bar.append(numberLabel);track.append(bar);bars.push(bar);const number=document.createElement('span');number.className='layer-number';number.textContent="L"+l;b.append(track,number);b.setAttribute('aria-label',`Layer ${l}`);b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(l));nav.append(b);buttons.push(b);
 }
@@ -253,13 +263,13 @@ function drawDiagnosis(){
  document.getElementById('alert-summary').textContent=total.length?`! ${total.length} 个异常层`:'无采样告警';
  document.getElementById('jump-alert').disabled=!total.length;document.getElementById('jump-alert').hidden=!total.length;
  document.getElementById('phase-note').textContent={activation:'前向 FWD · Microbatch 03',gradient:'反向 BWD · 累积 / 归约后，裁剪前',weight:'优化器更新后 · W 快照'}[mode];
- document.getElementById('phase-note').title={activation:'前向 L0 → L48 · 查看投影输出激活 H · 单样本 / Microbatch 03；固定计算位置，不含重计算。',gradient:'反向 L48 → L0 · 查看参数梯度 ∂L/∂W；示例为完成累积与归约、解除 loss scaling 后、裁剪前的快照，不是层间激活梯度。',weight:'优化器更新后 · 查看 W 快照。前向与反向也使用权重；此处仅比较更新后的参数，未采集实际 ΔW，不能据此判断更新比例。'}[mode];
+ document.getElementById('phase-note').title={activation:'前向 L0 → L48 · 查看投影输出激活 H · 单样本 / Microbatch 03；固定计算位置，不含重计算。',gradient:'反向 L48 → L0 · 查看参数梯度 ∂L/∂W；示例为完成累积与归约、解除 loss scaling 后、裁剪前的快照，不是层间激活梯度。',weight:'4 个 microbatch 梯度贡献先累积再取平均，最后执行一次模拟 SGD 更新。轴上的 MB 行不是权重更新次数。'}[mode];
  const diag=document.getElementById('diagnosis');diag.replaceChildren();diag.hidden=count===0;diag.classList.toggle('has-alert',count>0);
  const h=document.createElement('h3');h.className=count?'flag':'';h.textContent=count?`! L${selected} · ${scenario==='propagation'&&mode==='activation'?(selected===18?'注入点 · 激活异常':'传播后 · 激活异常'): {weight:'权重局部偏移',gradient:'参数梯度局部突增',activation:'激活局部突增'}[mode]}`:`L${selected} · 未触发采样规则`;diag.append(h);
  const dl=document.createElement('dl');for(const [k,v] of [['超阈值采样点',`${count} / 4096`],['当前 / 参考 RMS',format(currentData[selected].rms)+' / '+format(ref.rms)],['RMS 相对参考',(currentData[selected].rms/ref.rms).toFixed(2)+'×'],['单点绝对值阈值',format(limit)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd)}
  if(scenario==='propagation'&&mode==='activation'){for(const [k,v] of [['扰动 RMS',format(propagationMeta[selected].deltaRms)],['本层扰动增益',propagationMeta[selected].gain.toFixed(2)+'×'],['影响的采样点',String(propagationMeta[selected].affected)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd)}}
  const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='数值、规则与排查建议';details.append(summary,dl);const brief=document.createElement('div');brief.className='diagnosis-brief';brief.textContent=count?`${count} 个采样点超阈值 · RMS 为参考的 ${(currentData[selected].rms/ref.rms).toFixed(2)}×`:'当前采样未超出参考阈值';diag.append(brief,details);
- for(const t of ['规则：|当前值| > 3 × 参考快照的最大绝对值，或出现 NaN / Inf。前向传播的参考为同一输入、同层且未注入扰动的对照；权重、参数梯度及单层激活示例的参考为 Step 1279 模拟快照。3× 为演示阈值。',count?'已定位到橙红采样位置；悬停可对照当前值与参考值。该信号提示进一步排查，不能单独确认为梯度爆炸或损失异常。':'未触发规则只说明当前 4096 个采样点未超阈值，不等同于训练健康。',{weight:'下一步：核对实际 ΔW/W、学习率与优化器状态；此页尚未采集这些数据。',gradient:'下一步：关联 loss、裁剪前后梯度范数与溢出记录，确认是局部尖峰还是持续放大。',activation:'下一步：检查对应 token / 特征、输入分布及相邻计算的激活，核对是否持续偏移。'}[mode]]){const p=document.createElement('p');p.textContent=t;details.append(p)}
+ for(const t of ['规则：|当前值| > 3 × 参考快照的最大绝对值，或出现 NaN / Inf。前向传播的参考为同一输入、同层且未注入扰动的对照；权重、参数梯度及单层激活示例的参考为 Step 1279 模拟快照。3× 为演示阈值。',count?'已定位到橙红采样位置；悬停可对照当前值与参考值。该信号提示进一步排查，不能单独确认为梯度爆炸或损失异常。':'未触发规则只说明当前 4096 个采样点未超阈值，不等同于训练健康。',{weight:'此页 ΔW 为独立 SGD 教学模拟；真实训练需核对实际优化器状态与更新量。',gradient:'下一步：关联 loss、裁剪前后梯度范数与溢出记录，确认是局部尖峰还是持续放大。',activation:'下一步：检查对应 token / 特征、输入分布及相邻计算的激活，核对是否持续偏移。'}[mode]]){const p=document.createElement('p');p.textContent=t;details.append(p)}
 }
 
 const modeHelp={weight:'权重 RMS 表示参数的整体幅度。开发者关注其分布是否偏移、是否有少数极端参数，以及实际更新量相对权重是否过大。高值本身不是异常。',gradient:'参数梯度 RMS 表示损失对参数的整体敏感程度。开发者关注梯度相对权重是否过大、是否接近零，以及是否出现非有限值；需结合历史变化和损失判断，实际更新还取决于优化器。',activation:'激活 RMS 较大表示这些中间特征的数值幅度较大，可能是整体放大，也可能被少数极端值抬高。开发者关注幅度是否沿层放大或衰减、是否集中在少数 token 或通道，以及是否影响后续计算的数值稳定性和低精度表示。应结合分布、历史基线、梯度与损失判断；它不是 token 重要性。'};
@@ -271,7 +281,7 @@ function sampleAtLayer(layer,row,col){return currentData[layer].stats[Math.floor
 function sampleAt(row,col){return sampleAtLayer(selected,row,col)}
 function sampleColor(layer,row,col){if(showAnomaly&&isAbnormal(layer,row,col))return '#FD5644';return shade(Math.abs(sampleAtLayer(layer,row,col))/blockLimit)}
 const textureCache={};
-function layerTexture(layer){const key=mode+':'+scenario+':'+showAnomaly+':'+layer;if(textureCache[key])return textureCache[key];const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#111111';ctx.fillRect(0,0,512,512);for(let r=0;r<64;r++)for(let c=0;c<64;c++){ctx.fillStyle=sampleColor(layer,r,c);ctx.fillRect(c*8,r*8,7.75,7.75)}return textureCache[key]=canvas.toDataURL('image/png')}
+function layerTexture(layer){const key=mode+':'+weightUpdated+':'+scenario+':'+showAnomaly+':'+layer;if(textureCache[key])return textureCache[key];const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#111111';ctx.fillRect(0,0,512,512);for(let r=0;r<64;r++)for(let c=0;c<64;c++){ctx.fillStyle=sampleColor(layer,r,c);ctx.fillRect(c*8,r*8,7.75,7.75)}return textureCache[key]=canvas.toDataURL('image/png')}
 function inspectSample(row,col){
  const active=mode==='activation',v=sampleAt(row,col),r=row*(active?512:16),c=col*(active?16:40);
  let text=`${active?'Token':'输出'} ${r} · ${active?'输出':'输入'} ${c} · ${modes[mode].code} = ${v.toPrecision(6)}`;
@@ -309,8 +319,8 @@ function drawDetail(){
  document.getElementById('bar-metric').textContent='Query 投影 · '+modes[mode].name+' RMS';document.getElementById('legend-metric').textContent=' · '+modes[mode].name+'绝对值';
 }
 function edgeShade(rms){return shade(rms/maximum)}
-function drawMatrices(){const data=cache[mode];currentData=data;summaries=data.map(d=>d.rms);blocks=data.map(d=>d.blocks);maximum=Math.max(...summaries);const blockMax=3*Math.max(...baseline[mode].flatMap(d=>d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));blockLimit=blockMax;rawLimit=blockMax;
- for(const l of layers){labels[l].textContent=String(l);textures[l].setAttribute('href',layerTexture(l));
+function drawMatrices(){const data=mode==='weight'?weightSnapshot():cache[mode];currentData=data;summaries=data.map(d=>d.rms);blocks=data.map(d=>d.blocks);maximum=Math.max(...summaries);const blockMax=3*Math.max(...baseline[mode].flatMap(d=>d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));blockLimit=blockMax;rawLimit=blockMax;
+ for(const l of layers){labels[l].textContent=String(l);groups[l].querySelector('.layer-rms-value').textContent=format(summaries[l]);textures[l].setAttribute('href',layerTexture(l));
  bars[l].querySelector('.bar-value').textContent=format(summaries[l]);bars[l].style.height=(summaries[l]/maximum*76)+'px';bars[l].style.background='var(--bar-normal)';buttons[l].setAttribute('aria-label',`Layer ${l}，${modes[mode].name} RMS ${summaries[l].toFixed(4)}`);buttons[l].title=`Layer ${l} · ${modes[mode].name}采样 RMS ${format(summaries[l])}；表示整体幅度，不是最大元素值或异常分数`;
  }document.getElementById('rms-range').textContent=`最高 L${summaries.indexOf(maximum)} · RMS ${format(maximum)}`;
 }
@@ -326,7 +336,7 @@ function redraw(){
 const flowPorts=document.getElementById('flow-ports'),flowGuides=document.getElementById('guides');
 // Anchor the depth axis to each plane's bottom-right corner, with a fixed gap.
 // Layer l is at x=20*l; boundary h_k lies halfway between layers k-1 and k.
-const ground={x:170+300*projectionX,y:365+300*projectionY+300+50,xx:1,xy:-6/20,yx:0,yy:1};
+const ground={x:170+planeWidth*projectionX,y:365+planeWidth*projectionY+planeHeight+50,xx:1,xy:-6/20,yx:0,yy:1};
 function groundPoint(x,y){return {x:ground.x+x+ground.yx*y,y:ground.y+ground.xy*x+ground.yy*y}}
 function groundTransform(x=0,y=0){const p=groundPoint(x,y);return `matrix(1 -.3 0 1 ${p.x} ${p.y})`}
 const rails=el('g',{'class':'ground-rail',transform:groundTransform()});document.getElementById('scene').append(rails);
@@ -352,6 +362,64 @@ function groundRail(reverse){
  rails.append(g);return g;
 }
 const forwardRail=groundRail(false),backwardRail=groundRail(true);
+const weightRail=el('g',{'aria-label':'Microbatch 梯度累积与权重更新示例'});rails.append(weightRail);
+function weightSnapshot(){
+ if(!weightUpdated)return baseline.weight;
+ return baseline.weight.map((d,l)=>{
+ const stats=d.stats.map((b,k)=>{const values=b.values.map((v,i)=>v-demoLearningRate*cache.gradient[l].stats[k].values[i]);return {...b,values,min:Math.min(...values),max:Math.max(...values),rms:Math.sqrt(values.reduce((sum,v)=>sum+v*v,0)/values.length)}});
+ return {stats,blocks:stats.map(b=>b.rms),rms:Math.sqrt(stats.reduce((sum,b)=>sum+b.rms*b.rms,0)/stats.length)};
+ });
+}
+function drawWeightRail(){
+ weightRail.style.display=mode==='weight'?'':'none';flowPorts.style.display=mode==='weight'?'none':'';
+ document.getElementById('mb-process').hidden=mode!=='weight';
+ const info=document.getElementById('mb-inspection');info.hidden=mode!=='weight';
+ if(mode!=='weight')return;
+ document.getElementById('mb-progress').textContent=weightUpdated?'已更新 1 次':mbCursor>=0&&mbCursor<mbTotalTicks?`MB ${String(Math.floor(mbCursor/49)+1).padStart(2,'0')} / L${mbCursor%49} · 累积中`:`已累积 ${mbCompleted}/4 · 权重未更新`;
+ const next=document.getElementById('mb-next');next.textContent=mbPlaying?'暂停':weightUpdated?'播放完成':'继续播放';next.disabled=weightUpdated;document.getElementById('mb-reset').textContent='重新播放';
+ weightRail.replaceChildren();
+ const names=['MB 01','MB 02','MB 03','MB 04','累计梯度','权重更新'];
+ for(let row=0;row<6;row++){
+ const y=row*20,ready=row<4?row<mbCompleted:row===4?true:weightUpdated;
+ weightRail.append(el('text',{x:-24,y:y+5,'text-anchor':'end','class':'mb-axis-label'},names[row]));
+ weightRail.append(el('path',{d:`M0,${y} H960`,stroke:'#333',fill:'none','stroke-width':.7}));
+ for(let l=0;l<49;l++){
+ const active=row===mbRow&&l===selected,g=el('g',{'class':'mb-mark',role:'button',tabindex:0,'aria-label':`${names[row]} · L${l} · ${ready?'查看模拟统计':'尚未完成'}`,'aria-pressed':String(active)});
+ const cellReady=row<4?(row<mbCompleted||row===Math.floor(mbCursor/49)&&l<=mbCursor%49):row===4?(mbCompleted>0||l<=mbCursor%49):weightUpdated;
+ const color=active?'#fff':!cellReady?'#444':row===mbRow?'#ddd':'#888';
+ g.append(el('rect',{x:l*20-9,y:y-10,width:18,height:20,fill:'transparent'}),el('path',{d:`M${l*20-5},${y} h10`,stroke:color,'stroke-width':active?3:2,'stroke-dasharray':cellReady?'none':'2 3','pointer-events':'none'}));
+ const open=()=>{pauseMB();mbRow=row;observation='query';choose(l);openInspector.click()};g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});weightRail.append(g);
+ }
+ }
+ const sum=mbFactors.slice(0,mbCompleted).reduce((a,b)=>a+b,0),grad=cache.gradient[selected].rms;
+ const value=mbRow<4?(mbRow<mbCompleted?`贡献 RMS ${format(grad*mbFactors[mbRow])}`:'尚未完成 · 无贡献数据'):mbRow===4?`累计 RMS ${format(grad*sum)} · 已累积 ${mbCompleted}/4`:weightUpdated?`ΔW RMS ${format(demoLearningRate*grad)} · ΔW / W ${format(demoLearningRate*grad/baseline.weight[selected].rms)}`:'等待全部 MB 完成后更新';
+ info.textContent=`L${selected} / ${names[mbRow]}：${value}。主图为${weightUpdated?'更新后':'更新前'} W。教学模拟：4 个 MB 贡献采用固定梯度模板 × 0.7 / 0.9 / 1.1 / 1.3，先求和，再除以 4；SGD 学习率 0.01，无裁剪。未模拟分布式归约，不是实测优化器数据。`;
+}
+function pauseMB(){if(mbPlaying)mbElapsed=performance.now()-mbStarted;mbPlaying=false;cancelAnimationFrame(mbFrame);mbFrame=0;}
+function followMBLayer(l){
+ selected=l;hovered=null;
+ for(const k of layers){const on=k===l;groups[k].classList.toggle('chosen',on);groups[k].querySelector('.outline').setAttribute('stroke',on?'#fff':edgeShade(summaries[k]));groups[k].querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');buttons[k].setAttribute('aria-pressed',String(on));}
+ // Keep animation light: do not rebuild 4096 inspector cells on every layer tick.
+ requestGeometry();drawWeightRail();syncIdentity();
+}
+function playMBFrame(now){
+ if(!mbPlaying||mode!=='weight')return;
+ const elapsed=now-mbStarted,cursor=Math.min(mbTotalTicks,Math.floor(elapsed/mbTickMs));
+ if(cursor!==mbCursor){mbCursor=cursor;mbCompleted=Math.floor(cursor/49);mbRow=cursor<mbTotalTicks?Math.floor(cursor/49):4;followMBLayer(cursor<mbTotalTicks?cursor%49:48);}
+ if(elapsed>=mbFinishMs){mbPlaying=false;mbElapsed=mbFinishMs;weightUpdated=true;mbRow=5;drawMatrices();redraw();return;}
+ mbFrame=requestAnimationFrame(playMBFrame);
+}
+function startMB(restart=false){
+ pauseMB();
+ if(restart){mbElapsed=0;mbCursor=-1;mbCompleted=0;weightUpdated=false;mbRow=0;observation='query';selected=0;drawMatrices();redraw();}
+ // The pinned inspector keeps its data on pause; auto playback uses the main canvas.
+ inspector.hidden=true;openInspector.setAttribute('aria-expanded','false');hideMagnifier();
+ mbPlaying=true;mbStarted=performance.now()-mbElapsed;playMBFrame(performance.now());
+}
+document.getElementById('mb-next').addEventListener('click',()=>{if(mbPlaying){pauseMB();redraw()}else startMB()});
+document.getElementById('mb-reset').addEventListener('click',()=>startMB(true));
+
+
 
 for(const cfg of [{key:'root-in',x:-205,y:-30,label:'Hidden In · h₀',sub:'主干输入 / L0 之前'},{key:'root-out',x:980,y:-30,label:'Hidden Out · h₄₉',sub:'主干输出 / L48 之后'}]){
 
@@ -424,7 +492,7 @@ function updateBoundaryArrows(){
  const active=observation==='out'||observation==='backward'?selected+1:observation==='in'?selected:-1;
  for(const {layer,tick,link} of layerAxisMarks){
  const p=displayedPositions[layer]??position(layer),x=layer*20;
- const bottom=p.y+300*projectionY+300,axisY=groundPoint(x,0).y;
+ const bottom=p.y+planeWidth*projectionY+planeHeight,axisY=groundPoint(x,0).y;
  tick.setAttribute('stroke',layer===selected?'#eee':'#555');
  link.setAttribute('d',`M${x},${bottom-axisY} V-8`);
  link.setAttribute('visibility',layer===selected||layer===0||layer===48?'visible':'hidden');
@@ -443,6 +511,7 @@ function updateBoundaryArrows(){
 function renderObservation(){
  hideMagnifier();
  updateBoundaryArrows();
+ drawWeightRail();
  forwardRail.style.display=mode==='activation'?'':'none';backwardRail.style.display=mode==='gradient'?'':'none';forwardRail.style.color='#a0a0a0';backwardRail.style.color='#a0a0a0';
  const hidden=observation!=='query',panel=document.querySelector('.tensor-detail'),body=document.getElementById('hidden-observation');panel.classList.toggle('hidden-mode',hidden);body.hidden=!hidden;
  document.querySelectorAll('[data-observation]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.observation===observation)));
@@ -465,9 +534,9 @@ function renderObservation(){
 }
 document.querySelectorAll('[data-observation]').forEach(b=>b.addEventListener('click',()=>{observation=b.dataset.observation;drawDetail();renderObservation()}));
 
-function choose(l){selected=Math.max(0,Math.min(48,l));hovered=null;if(observation.startsWith('root'))observation='query';redraw()}
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{stopPropagation();mode=b.dataset.mode;observation='query';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));if(await syncScenarioData()){drawMatrices();redraw()}}));
-document.getElementById('scenario').addEventListener('change',async e=>{stopPropagation();scenario=e.target.value;if(scenario==='propagation'){mode='activation';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other.dataset.mode===mode)))}if(await syncScenarioData()){drawMatrices();redraw()}});
+function choose(l){if(mbPlaying)pauseMB();selected=Math.max(0,Math.min(48,l));hovered=null;if(observation.startsWith('root'))observation='query';redraw()}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{pauseMB();stopPropagation();mode=b.dataset.mode;observation='query';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));if(await syncScenarioData()){drawMatrices();redraw();if(mode==='weight')startMB(true)}}));
+document.getElementById('scenario').addEventListener('change',async e=>{pauseMB();stopPropagation();scenario=e.target.value;if(scenario==='propagation'){mode='activation';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other.dataset.mode===mode)))}if(await syncScenarioData()){drawMatrices();redraw()}});
 document.getElementById('anomaly-overlay').addEventListener('change',e=>{showAnomaly=e.target.checked;drawMatrices();redraw()});
 document.getElementById('jump-alert').addEventListener('click',()=>{const next=layers.find(l=>l>selected&&alertCount(l)>0)??layers.find(l=>alertCount(l)>0);if(next!==undefined)choose(next)});
 nav.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();choose(selected+(e.key==='ArrowRight'?1:-1));buttons[selected].focus()}});
@@ -475,7 +544,7 @@ document.getElementById('path-demo').addEventListener('toggle',e=>{if(!e.target.
 document.getElementById('prop-step').addEventListener('input',e=>{stopPropagation();advancePropagation(Number(e.target.value))});
 document.getElementById('prop-reset').addEventListener('click',()=>{stopPropagation();advancePropagation(18)});
 document.getElementById('prop-play').addEventListener('click',()=>{if(propagationTimer!==null){stopPropagation();return}if(propagationEnd>=48)advancePropagation(18);document.getElementById('prop-play').textContent='暂停';propagationTimer=setInterval(()=>{advancePropagation(propagationEnd+1);if(propagationEnd>=48)stopPropagation()},800)});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopPropagation()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopPropagation();if(mbPlaying){pauseMB();redraw()}}});
 bindDockSurface(document.getElementById('scene'));
 window.addEventListener('blur',()=>previewLayer(null));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')previewLayer(null)});
@@ -487,10 +556,11 @@ bindMagnifier(whole);
 const inspector=document.getElementById('tensor-inspector'),openInspector=document.getElementById('open-inspector');
 function syncIdentity(){
  document.getElementById('identity-layer').textContent='L'+selected;
+ document.getElementById('identity-context').textContent=mode==='weight'?`OPTIMIZER STEP 1280 · ${weightUpdated?'更新后':'累积 '+mbCompleted+'/4 · 更新前'}`:'STEP 1280 · MICROBATCH 03';
  document.getElementById('identity-name').textContent=observation==='query'?'Query / '+(mode==='activation'?'输出激活':modes[mode].name):document.getElementById('detail-title').textContent;
  document.getElementById('identity-shape').textContent=document.getElementById('detail-shape').textContent;
 }
-openInspector.addEventListener('click',()=>{inspector.hidden=false;openInspector.setAttribute('aria-expanded','true');document.getElementById('close-inspector').focus()});
+openInspector.addEventListener('click',()=>{if(mbPlaying){pauseMB();redraw()}inspector.hidden=false;openInspector.setAttribute('aria-expanded','true');document.getElementById('close-inspector').focus()});
 function closeInspector(){hideMagnifier();if(inspector.classList.contains('expanded')){inspector.classList.remove('expanded');document.getElementById('expand-inspector').textContent='放大查看 ↗';return}inspector.hidden=true;openInspector.setAttribute('aria-expanded','false');openInspector.focus()}
 document.getElementById('close-inspector').addEventListener('click',closeInspector);
 document.getElementById('expand-inspector').addEventListener('click',e=>{const expanded=inspector.classList.toggle('expanded');e.target.textContent=expanded?'返回浮窗 ↙':'放大查看 ↗';hideMagnifier()});

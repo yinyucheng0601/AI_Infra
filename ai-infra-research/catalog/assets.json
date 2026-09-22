@@ -139,7 +139,8 @@
         "experience",
         "visual"
       ],
-      "author": "Yucheng"
+      "author": "Yucheng",
+      "demoUrl": "https://yinyucheng0601.github.io/AI_Infra/layer_stack/pangu-layer-stack.html"
     },
     {
       "id": "llm-compute-diagrams",
