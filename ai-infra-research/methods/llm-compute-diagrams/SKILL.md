@@ -18,7 +18,7 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 - 视觉、网页交互或图元实现：读取 [visual-system.md](references/visual-system.md)。
 - 标题、正文、知识递进：读取 [teaching-and-copy.md](references/teaching-and-copy.md)。
 - Attention、FFN、Dense、MoE、普通残差或 mHC：读取 [sublayers.md](references/sublayers.md)。
-- 多卡训练、并行组和通信：读取 [parallelism.md](references/parallelism.md)。
+- 多卡训练、并行组和通信：读取 [parallelism.md](references/parallelism.md)。切分图例使用 [visual-system.md 的确认色板](references/visual-system.md#并行切分与-moe-图例用户确认)，区分张量填色与切分维度色；EP／MoE 标识沿用橙色。
 - 生成、prefill、decode、KV cache：读取 [inference.md](references/inference.md)。
 - 模型结构与 trace、泳道层级、异常联动：读取 [traceview.md](references/traceview.md)。
 
