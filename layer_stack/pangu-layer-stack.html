@@ -115,7 +115,12 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 .ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:18px}
 #scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:18px}
 #scene .ground-rail text.loss-emphasis{font-size:30px}
-#scene[data-view="side"] .mb-flow-arrow,#scene[data-view="side"] .boundary-ink,#scene[data-view="side"] .boundary-halo{transform-box:fill-box;transform-origin:center;transform:scale(1.6);stroke-linecap:round;stroke-linejoin:round}
+/* Reduce arrow height by two scene units in each projection; preserve hit targets. */
+#scene .mb-flow-arrow,#scene .boundary-ink,#scene .boundary-halo{transform-box:fill-box;transform-origin:center;stroke-linecap:round;stroke-linejoin:round}
+#scene .mb-flow-arrow{transform:scale(.75)}
+#scene .boundary-ink,#scene .boundary-halo{transform:scale(.8)}
+#scene[data-view="side"] .mb-flow-arrow{transform:scale(1.35)}
+#scene[data-view="side"] .boundary-ink,#scene[data-view="side"] .boundary-halo{transform:scale(1.4)}
 
 
 /* Center Side geometry without the previous downward screen offset. */
