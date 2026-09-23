@@ -1,0 +1,41 @@
+/* Import explicitly; map to existing tokens rather than overriding global elements.
+   These are defaults, not evidence of accessibility compliance on every surface. */
+:root {
+  --ss-bg: #111111;
+  --ss-surface: #181818;
+  --ss-inspector: #202020;
+  --ss-text: #e8e8e8;
+  --ss-text-secondary: #b0b0b0;
+  --ss-text-muted: #a0a0a0;
+  --ss-divider: #383838; /* Decorative only. */
+  --ss-boundary: #858585; /* Necessary interactive boundaries. */
+  --ss-selection: #f0f0f0;
+  --ss-anomaly: #fd5644;
+  --ss-font: Arial, "Noto Sans CJK SC", sans-serif;
+  --ss-font-data: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --ss-type-focus: clamp(2.75rem, 4vw, 4.5rem);
+  --ss-type-title: clamp(1.375rem, 2vw, 2rem);
+  --ss-type-value: 0.9375rem;
+  --ss-type-label: 0.8125rem;
+  --ss-type-body: 0.875rem;
+  --ss-space-1: 4px;
+  --ss-space-2: 8px;
+  --ss-space-3: 12px;
+  --ss-space-4: 20px;
+  --ss-space-5: 32px;
+  --ss-space-6: 48px;
+  --ss-page-inset: clamp(16px, 3vw, 48px);
+  --ss-line: 1px;
+  --ss-line-focus: 2px;
+  --ss-radius-control: 2px;
+  --ss-radius-panel: 4px;
+  --ss-motion-feedback: 160ms;
+  --ss-motion-structure: 320ms;
+  --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ss-motion-feedback: 0ms;
+    --ss-motion-structure: 0ms;
+  }
+}

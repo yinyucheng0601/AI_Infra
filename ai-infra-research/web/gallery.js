@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'spatial-systems-ui-style-guide':{src:'__SPATIAL_SYSTEMS_COVER__',alt:'Layer Atlas 空间系统界面：模型层叠、选中层与异常定位'},
     'llm-inference-dense-to-clusters':{src:'__LLM_INFERENCE_COVER__',alt:'LLM 推理封面：Prefill 建立缓存，Decode 循环生成 Token'},
     'training-parallel-communication':{src:'__TRAINING_PARALLEL_COVER__',alt:'多卡训练的四个层级：任务拆分、状态存储、通信语义、实现与链路'},
     'observability-design-style':{src:'__OBSERVABILITY_COVER__',alt:'数据观测工作台：灰度模型层叠、选中层与橙红异常标记'},
@@ -69,10 +70,11 @@
     const a=assets.find(a=>a.id===state.asset);
     if(a?.type==='method'){
       const isGuide=a.form==='设计规范';
+      const guideNote=a.id==='observability-design-style'?'v0.1 · 设计规范草案，尚未完成跨场景验证。':'设计规范参考，结合具体场景使用。';
       const demoAction=a.demoUrl?`<a class="btn btn-sm" href="${esc(a.demoUrl)}" target="_blank" rel="noopener noreferrer">查看完整demo</a>`:'';
-      const actions=isGuide?`<a class="btn btn-sm" href="${esc(a.content)}" download>下载 Markdown ↓</a>${demoAction}`:`<a class="btn btn-sm" href="methods/llm-compute-diagrams.zip" download>下载 Skill ZIP ↓</a><a class="btn btn-sm" href="methods/llm-compute-diagrams/assets/reference-guide.html">查看示例 ↗</a>`;
+      const actions=isGuide?`<a class="btn btn-sm" href="${esc(a.content)}" download>下载 Markdown ↓</a>${demoAction}`:`<a class="btn btn-sm" href="${esc(a.downloadUrl||'methods/llm-compute-diagrams.zip')}" download>下载 Skill ZIP ↓</a>${a.id==='llm-compute-diagrams'?'<a class="btn btn-sm" href="methods/llm-compute-diagrams/assets/reference-guide.html">查看示例 ↗</a>':''}`;
       document.title=a.title+' · AI Infra Skill';
-      $('detailView').innerHTML=`<a class="btn btn-sm" href="skills.html">← 返回 Skill 库</a><div class="detail-heading"><p class="hero-kicker">${esc(a.form)} · ${esc(a.author)}</p><h1 id="detailTitle">${esc(a.title)}</h1><p class="hero-description">${esc(a.summary)}</p></div><div class="detail-layout"><div><img class="skill-preview" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}"><section class="detail-section"><h2>适用场景</h2><p>${esc(a.designValue)}</p><ul>${a.outline.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section><details class="detail-section"><summary>${isGuide?'查看完整设计规范':'查看完整 Skill 指令'}</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></div><aside class="panel-shell panel-shell-quiet source-panel"><h2>${isGuide?'使用这份规范':'使用这个 Skill'}</h2><p>${isGuide?'将这份 Markdown 规范作为设计和界面生成的参考，结合具体场景使用。':'下载完整技能包，解压后保留目录结构，添加到你的技能目录。'}</p><div class="skill-actions">${actions}</div><p class="card-note">${isGuide?'v0.1 · 设计规范草案，尚未完成跨场景验证。':'包含 SKILL.md、主题参考、图元规范和离线 HTML 示例。'}</p></aside></div>`;
+      $('detailView').innerHTML=`<a class="btn btn-sm" href="skills.html">← 返回 Skill 库</a><div class="detail-heading"><p class="hero-kicker">${esc(a.form)} · ${esc(a.author)}</p><h1 id="detailTitle">${esc(a.title)}</h1><p class="hero-description">${esc(a.summary)}</p></div><div class="detail-layout"><div><img class="skill-preview" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}"><section class="detail-section"><h2>适用场景</h2><p>${esc(a.designValue)}</p><ul>${a.outline.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section><details class="detail-section"><summary>${isGuide?'查看完整设计规范':'查看完整 Skill 指令'}</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></div><aside class="panel-shell panel-shell-quiet source-panel"><h2>${isGuide?'使用这份规范':'使用这个 Skill'}</h2><p>${isGuide?'将这份 Markdown 规范作为设计和界面生成的参考，结合具体场景使用。':'下载完整技能包，解压后保留目录结构，添加到你的技能目录。'}</p><div class="skill-actions">${actions}</div><p class="card-note">${isGuide?esc(guideNote):'完整目录结构随包保留；下载的是当前构建版本，不会自动更新。'}</p></aside></div>`;
       return;
     }
     const back=`<a class="btn btn-sm" href="${esc(C.stateQuery({...state,asset:''}))}">← 返回知识库</a>`;

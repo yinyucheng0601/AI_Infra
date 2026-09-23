@@ -54,6 +54,7 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '__LLM_INFERENCE_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/llm-inference-cover.svg').read_bytes()).decode('ascii'),
         '__TRAINING_PARALLEL_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/training-parallel-communication-cover.svg').read_bytes()).decode('ascii'),
         '__OBSERVABILITY_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/observability-design-style.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
+        '__SPATIAL_SYSTEMS_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/spatial-systems-ui-style-guide.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
         '__LLM_SKILL_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/llm-compute-diagrams.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
         '__DENSE_MOE_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/dense-ffn-to-moe-cover.svg').read_bytes()).decode('ascii'),
         '__DS32_RESIDUAL_THUMBNAIL__': f'data:image/svg+xml;base64,{residual_svg}',
@@ -72,11 +73,16 @@ if __name__ == '__main__':
     parser.add_argument('--pto-output', type=Path, help='explicit generated compatibility page output')
     parser.add_argument('--service-url', default='http://127.0.0.1:8766/')
     args = parser.parse_args()
-    skill_root = ROOT / 'methods/llm-compute-diagrams'
-    with ZipFile(ROOT / 'methods/llm-compute-diagrams.zip', 'w', ZIP_DEFLATED) as archive:
-        for file in sorted(skill_root.rglob('*')):
-            if file.is_file() and not any(part.startswith('.') for part in file.relative_to(skill_root).parts):
-                archive.write(file, file.relative_to(skill_root.parent))
+    packages = [('methods/llm-compute-diagrams', 'methods/llm-compute-diagrams.zip')]
+    data = json.loads((ROOT / 'catalog/assets.json').read_text())
+    validate(data)
+    packages.extend((a['packagePath'], a['downloadUrl']) for a in data['assets'] if a.get('packagePath'))
+    for package_path, download_url in packages:
+        skill_root = ROOT / package_path
+        with ZipFile(ROOT / download_url, 'w', ZIP_DEFLATED) as archive:
+            for file in sorted(skill_root.rglob('*')):
+                if file.is_file() and not any(part.startswith('.') for part in file.relative_to(skill_root).parts):
+                    archive.write(file, file.relative_to(skill_root.parent))
     (ROOT / 'index.html').write_text(build(), encoding='utf-8')
     (ROOT / 'skills.html').write_text(build(collection='skills'), encoding='utf-8')
     if args.pto_output:

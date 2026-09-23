@@ -161,6 +161,7 @@ class Preview:
         self.files.update({'/' + p: file for p, file in report_files.items()})
         skill_files = ['skills.html', 'methods/llm-compute-diagrams.zip', 'methods/llm-compute-diagrams/assets/reference-guide.html']
         skill_files.append('methods/observability-design-style/observability-design-system.md')
+        skill_files.extend(a['downloadUrl'] for a in self.assets if a.get('packagePath'))
         self.files.update({'/' + p: ROOT / p for p in skill_files if (ROOT / p).is_file()})
         for repo, root in config.get('repositories', {}).items():
             entries = [s['path'] for a in self.assets for s in a['sources'] if s['repository'] == repo]

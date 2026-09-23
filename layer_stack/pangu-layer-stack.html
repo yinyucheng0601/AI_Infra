@@ -93,7 +93,7 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 .atlas-toolbar{position:fixed;inset:22px 38px auto;margin:0;padding:0;border:0;min-height:32px;z-index:20;gap:24px}
 .matrix-tabs{gap:25px}.matrix-tabs button,.matrix-tabs button[aria-pressed="true"]{border:0;border-radius:0;background:none;color:#888;padding:9px 0;font-size:12px}.matrix-tabs button[aria-pressed="true"]{color:#eee;box-shadow:0 -2px #eee}
 .atlas-toolbar .legend{position:fixed;left:38px;bottom:137px;margin:0;font-size:12px}.legend .tip{top:auto;bottom:100%;left:0;right:auto}.ramp{width:104px}.alert-jump{margin-left:auto;border:0;font-size:12px}
-.workspace-split{display:block;margin:0;height:100%}.atlas-pane{display:block;height:100%;min-height:0}.atlas-pane .view{position:absolute;inset:0;margin:0;display:block;overflow:hidden}.atlas-pane .view #scene{width:100%;height:100%;max-height:none;min-height:0}
+.workspace-split{display:block;margin:0;height:100%}.atlas-pane{display:block;height:100%;min-height:0}.atlas-pane .view{position:absolute;inset:0;margin:0;display:block;overflow:hidden}.atlas-pane .view #scene{width:100%;height:100%;max-height:none;min-height:0;transform:translateY(-60px) scale(1.05);transform-origin:50% 50%}
 #guides{display:none}.path-demo>summary{background:none;border:0;border-radius:0;padding:7px 0}.path-demo{position:fixed;top:82px;right:38px;left:auto;z-index:12}.propagation-controls{background:#191919;padding:14px;border:1px solid #333}
 .identity{position:fixed;left:38px;top:120px;z-index:9;pointer-events:none}.identity h2{font:500 66px/1 ui-monospace,monospace;letter-spacing:-3px;margin:0 0 20px}.identity h3{font-size:19px;font-weight:400;margin:0 0 28px}.identity p{font:12px/1.9 ui-monospace,monospace;color:#aaa;margin:0}.identity button{pointer-events:auto;margin-top:26px}
 .text-action{background:none;border:0;border-bottom:1px solid #666;color:#ddd;padding:7px 0;cursor:pointer;font-size:12px}.sampling-note{position:fixed;left:38px;bottom:83px;color:#999;font:12px/1.8 ui-monospace,monospace;z-index:8}
@@ -104,20 +104,48 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 
 
 .mb-process{position:fixed;right:38px;top:85px;z-index:12;color:#aaa;font-size:12px}.mb-process[hidden],.mb-inspection[hidden]{display:none}.mb-process p{margin:0 0 8px}.mb-process button{margin-left:16px}.mb-inspection{border-top:1px solid #444;border-bottom:1px solid #444;margin:14px 0;padding:14px 0;color:#bbb;font-size:12px;line-height:1.8}.mb-mark{cursor:pointer;outline:none}.mb-mark:focus-visible rect,.mb-mark:hover rect{stroke:#fff;stroke-width:1}.mb-axis-label{font:14px ui-monospace,monospace;fill:#aaa}
+
+/* Playback belongs to the layer navigation, independent of canvas transforms. */
+.bottom .mb-process{position:absolute;top:22px;right:calc(100% + 20px);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.bottom .mb-process button{margin:0;border:0;padding:5px;background:none;width:28px;height:28px;display:grid;place-items:center;color:#ccc}
+.playback-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.playback-icon:hover{color:#fff!important}.playback-icon:disabled{opacity:.35;cursor:default}
+@media(max-width:600px){.bottom{width:64%;left:58%}.bottom .mb-process{right:calc(100% + 12px);gap:3px}}
+.layer-button.has-alert[aria-pressed="true"] .bar-track{background:#FD5644}.layer-button.has-alert[aria-pressed="true"] .layer-number{color:#FD5644}
+.ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:30px}
+#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:18px}
+
+/* Side labels need headroom above the raised, selected layer. */
+.atlas-pane .view #scene[data-view="side"]{transform:translateY(clamp(40px,7vh,90px)) scale(1.05)}
+
+/* Orientation dial: independent of the model canvas and playback. */
+.view-dial{position:fixed;top:76px;right:30px;width:148px;z-index:13;text-align:center;color:#aaa;font:10px ui-monospace,monospace}
+.view-dial button{position:relative;width:148px;height:148px;display:block;border:0;background:transparent;color:inherit;padding:0;cursor:pointer;border-radius:50%}
+.view-dial svg{display:block;width:148px;height:148px;overflow:visible}
+.dial-ring{fill:none;stroke:#666;stroke-width:1}.dial-label{fill:#888;font:9px ui-monospace,monospace;text-anchor:middle}.dial-marker{fill:#ddd}.cube-face{stroke:#ddd;stroke-width:1.2;stroke-linejoin:round}.view-dial button:hover .dial-ring{stroke:#bbb}.view-dial button:hover .cube-face{stroke:#fff}.dial-name{display:block;color:#ddd;font-size:11px;letter-spacing:1.5px;margin-top:2px}.dial-hint{display:block;color:#777;margin-top:7px;font-size:9px}.path-demo{top:278px}
+@media(max-width:600px){.view-dial{top:105px;right:12px;width:108px}.view-dial button,.view-dial svg{width:108px;height:108px}.path-demo{top:265px;right:18px}.dial-hint{font-size:8px}}
 </style>
 </head>
 <body>
 <main>
 <header class="compact-header"><h1>Layer Atlas <span>/ 92B Omni MoE</span></h1><span class="run-context">Step 1280</span></header>
+<div class="view-dial" aria-label="模型视角">
+<button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Side" title="点击轮切：2.5D ↔ Side">
+<svg viewBox="0 0 148 148" aria-hidden="true">
+<path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
+<text class="dial-label" x="74" y="21">0°</text><text class="dial-label" x="135" y="77">90°</text><text class="dial-label" x="74" y="134">180°</text><text class="dial-label" x="13" y="77">-90°</text>
+<g id="dial-marker" transform="rotate(-35 74 74)"><rect class="dial-marker" x="70" y="14" width="8" height="8"/></g>
+<g id="dial-cube"><path class="cube-face" fill="#353535" d="M74 45 99 59 74 74 49 59Z"/><path class="cube-face" fill="#202020" d="M49 59 74 74 74 103 49 88Z"/><path class="cube-face" fill="#515151" d="M74 74 99 59 99 88 74 103Z"/></g>
+</svg></button><span class="dial-name" id="view-name" aria-live="polite">2.5D</span><span class="dial-hint">点击 Cube 切换视角</span></div>
 <div id="data-state" class="data-state" data-state="loading" role="status" aria-live="polite">正在加载采样数据…</div>
 <div class="atlas-toolbar">
 <div class="matrix-tabs" role="group" aria-label="训练阶段与观测张量"><button type="button" data-mode="activation" aria-pressed="true" title="前向计算的投影输出，单样本 Microbatch 03">前向 · 激活</button><button type="button" data-mode="gradient" aria-pressed="false" title="累积、归约并解除 loss scaling 后，裁剪前的参数梯度">反向 · 参数梯度</button><button type="button" data-mode="weight" aria-pressed="false" title="优化器更新后的权重快照；权重也参与前向与反向计算">优化器 · 权重</button></div>
 <div class="legend"><span>低</span><span class="ramp"></span><span>高</span><button type="button" class="help" id="matrix-help" aria-label="幅度与异常图例说明">ⓘ<span class="tip" role="tooltip" id="matrix-tip"></span></button><span id="legend-metric" class="sr"></span></div>
 <button id="jump-alert" class="alert-jump" title="定位异常层；橙红表示采样值超出规则阈值"><span id="alert-summary" aria-live="polite"></span><span aria-hidden="true"> ↗</span></button>
-<details class="display-settings"><summary>显示设置</summary><div class="settings-popover"><label>数据场景 <select id="scenario" class="scenario-select" aria-label="示例场景"><option value="propagation" selected>前向传播示例</option><option value="anomaly">单层异常示例</option><option value="normal">参考快照</option></select></label><label><input type="checkbox" id="anomaly-overlay" checked> 显示橙红异常标记</label><div id="phase-note" class="training-note"></div><span class="settings-note">数值及异常阈值均为模拟示例</span></div></details>
+
 </div>
-<section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p id="identity-context">STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点<br>教学模拟 · 非全量实测</div><div id="hover-preview" class="hover-preview" hidden></div><div class="mb-process" id="mb-process" hidden><p>OPTIMIZER STEP 1280 · 4 MB 教学模拟</p><span id="mb-progress"></span><button class="text-action" id="mb-next">完成 MB 04</button><button class="text-action" id="mb-reset">重置</button></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="flow-ports"></g></svg></div>
-<div class="bottom"><div id="selected-summary" class="sr" aria-live="polite"></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="层导航 L0 至 L48，点击或拖动选择模型层"></nav></div>
+<section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p id="identity-context">STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点</div><div id="hover-preview" class="hover-preview" hidden></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="side-rms" aria-hidden="true" pointer-events="none"></g><g id="flow-ports"></g></svg></div>
+<div class="bottom"><div class="mb-process" id="mb-process"><span id="mb-progress" class="sr"></span><button class="text-action playback-icon" id="mb-next" aria-label="暂停" title="暂停"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="playback-symbol" d="M8 5v14M16 5v14"/></svg></button><button class="text-action playback-icon" id="mb-reset" aria-label="重新播放" title="重新播放"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1 0 7M5 3v6h6"/></svg></button></div><div id="selected-summary" class="sr" aria-live="polite"></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="层导航 L0 至 L48，点击或拖动选择模型层"></nav></div>
 
 
 
@@ -135,9 +163,10 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 'use strict';
 const NS='http://www.w3.org/2000/svg';
 // Foreshorten the horizontal basis for perceptually narrower matrix cells.
-const projectionX=.72,projectionY=.46*projectionX;
+let projectionX=.72,projectionY=.46*projectionX;
 const planeWidth=340,planeHeight=380;
-const layerStepX=40,layerStepY=12,layerSpan=48*layerStepX;
+const layerStepX=40,layerSpan=48*layerStepX;
+let layerStepY=12;
 // Calibrate to the unlifted matrix geometry, not the SVG element or side panels.
 // Freeze this frame across hover, selection and inspector transitions.
 const modelBounds={left:170,right:170+layerSpan+planeWidth*projectionX,top:365-48*layerStepY,bottom:365+planeWidth*projectionY+planeHeight};
@@ -145,11 +174,15 @@ const modelCenter={x:(modelBounds.left+modelBounds.right)/2,y:(modelBounds.top+m
 document.getElementById('scene').setAttribute('viewBox',`${modelCenter.x-1590} ${modelCenter.y-774} 3180 1548`);
 const planes=document.getElementById('planes'),annotation=document.getElementById('annotation'),nav=document.getElementById('layer-list');
 let observation='query';
-let mbCompleted=3,weightUpdated=false,mbRow=2;
+let mbCompleted=0,weightUpdated=false,mbRow=0;
 let mbPlaying=false,mbFrame=0,mbElapsed=0,mbStarted=0,mbCursor=-1;
-const mbTickMs=60,mbTotalTicks=4*49,mbFinishMs=12400;
+let lossHolding=false;
+const demoLosses=[2.438,2.391,2.417,2.362],lossHoldMs=300;
+const mbTickMs=32,mbTotalTicks=4*2*49,mbFinishMs=14244;
+let stepDemo=true;
+const stepTensorCache=new Map();
 const mbFactors=[.7,.9,1.1,1.3],demoLearningRate=.01;
-let selected=18,mode='activation',scenario='propagation',showAnomaly=true;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
+let selected=0,mode='activation',scenario='propagation',showAnomaly=true;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
 const modes={weight:{name:'权重',code:'W',axes:'输出维度 × 输入维度'},gradient:{name:'参数梯度',code:'dL/dW',axes:''},activation:{name:'激活',code:'H',axes:'Token × 特征维度 · 单样本示意'}};
 function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n}
 // Neutral grayscale shared by both matrices and RMS charts; orange-red is reserved for alerts.
@@ -159,7 +192,8 @@ function shade(v){const t=Math.pow(Math.max(0,Math.min(1,v)),.8);let i=0;while(i
 // Hover changes geometry only; selection owns the tensor inspector.
 let hovered=null,focusPosition=selected,animationFrame=0,lastFrameTime=0;
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-const displayedPositions=[];
+const displayedPositions=[],sideRmsLabels=[];
+const sideRmsGroup=document.getElementById('side-rms');
 function position(l,focus=focusPosition){
  // Keep horizontal coordinates invariant; selection only raises its layer.
  return {x:170+l*layerStepX,y:365-l*layerStepY-(l===selected?150:0)};
@@ -184,6 +218,15 @@ function paintGeometry(){
  const numberSize=l===selected||preview?18:13;
  label.setAttribute('font-size',numberSize);
  g.querySelector('.layer-rms-value').setAttribute('font-size',numberSize*2);
+ const side=projectionX===.035,rms=sideRmsLabels[l],ready=layerContentReady(l);
+ // Screen-space labels stay readable instead of inheriting the thin side projection.
+ rms.setAttribute('transform',`translate(${p.x+planeWidth*projectionX/2} ${p.y-34}) rotate(-90)`);
+ rms.setAttribute('font-size',18);
+ rms.setAttribute('fill',l===selected?'#fff':'#aaa');
+ rms.textContent=ready?'RMS '+g.querySelector('.layer-rms-value').textContent:'RMS —';
+ rms.style.display=side?'':'none';
+ g.querySelector('.layer-rms-label').style.display=side?'none':'';
+ g.querySelector('.layer-rms-value').style.display=side?'none':'';
  label.setAttribute('fill',l===selected?'#ffffff':preview?'#dddddd':showAnomaly&&buttons[l].classList.contains('has-alert')?'#FD5644':'#a0a0a0');
  const occluded=labelIsOccluded(l);label.setAttribute('opacity',occluded?'.28':'1');label.classList.toggle('occluded',occluded);
  }
@@ -191,7 +234,7 @@ function paintGeometry(){
 }
 function animateGeometry(time){
  const target=hovered??selected,dt=lastFrameTime?Math.min(40,time-lastFrameTime):16.7;lastFrameTime=time;
- const blend=1-Math.exp(-dt/55);let moving=false;focusPosition=target;
+ const blend=1-Math.exp(-dt/(mbPlaying?12:55));let moving=false;focusPosition=target;
  // Interpolate each plane toward its own destination. Do not sweep a focus
  // index through unrelated layers when switching between distant targets.
  for(const l of layers){const dest=position(l,target),from=displayedPositions[l]??dest;
@@ -222,10 +265,11 @@ function bindDockSurface(surface){
 
 for(let l=0;l<49;l++){
  const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · 代表性张量矩阵（模拟）`));g.append(el('rect',{x:0,y:0,width:planeWidth,height:planeHeight,fill:'#131313',stroke:'#393939','class':'outline'}));
+ const rmsLabel=el('text',{'font-family':'monospace','font-size':30,fill:'#ddd','dominant-baseline':'middle','class':'side-rms-value'});sideRmsLabels.push(rmsLabel);sideRmsGroup.append(rmsLabel);
  const label=el('text',{fill:'#a0a0a0','font-size':13,'font-family':'monospace','text-anchor':'end','class':'external-layer-number'},String(l));label.dataset.layer=String(l);label.style.cursor='pointer';label.addEventListener('click',()=>choose(l));labels.push(label);
  const matrix=el('g',{'data-matrix':l});cells[l]=[];
  const texture=el('image',{x:40,y:92,width:260,height:260,'preserveAspectRatio':'none','pointer-events':'none'});matrix.append(texture);textures.push(texture);
- g.append(el('text',{x:24,y:25,fill:'#aaa','font-size':12,'font-family':'monospace','pointer-events':'none'},'RMS'),el('text',{x:24,y:65,fill:'#eee','font-size':26,'font-family':'monospace','class':'layer-rms-value','pointer-events':'none'},'—'));
+ g.append(el('text',{x:24,y:25,fill:'#aaa','font-size':12,'font-family':'monospace','pointer-events':'none','class':'layer-rms-label'},'RMS'),el('text',{x:24,y:65,fill:'#eee','font-size':26,'font-family':'monospace','class':'layer-rms-value','pointer-events':'none'},'—'));
  g.append(matrix);g.addEventListener('click',()=>choose(l));groups.push(g);layers.push(l);
  const b=document.createElement('button');b.type='button';b.dataset.layer=String(l);b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';const numberLabel=document.createElement('span');numberLabel.className='bar-value';bar.append(numberLabel);track.append(bar);bars.push(bar);const number=document.createElement('span');number.className='layer-number';number.textContent="L"+l;b.append(track,number);b.setAttribute('aria-label',`Layer ${l}`);b.setAttribute('aria-pressed','false');b.addEventListener('click',()=>choose(l));nav.append(b);buttons.push(b);
 }
@@ -248,23 +292,23 @@ async function syncScenarioData(){
   const missing=results.find(result=>result.status==='missing');
   if(missing){currentData=[];setDataState('empty',missing.message);return false}
   for(const result of results){cache[result.context.mode]=result.layers;baseline[result.context.mode]=result.references;limits[result.context.mode]=result.limits;if(result.propagation)propagationMeta=result.propagation}
-  setDataState('ready','');return true;
+  stepTensorCache.clear();setDataState('ready','');return true;
  }catch(error){currentData=[];setDataState('error','数据加载失败，请重试');console.error(error);return false}
 }
 function stopPropagation(){if(propagationTimer!==null)clearInterval(propagationTimer);propagationTimer=null;document.getElementById('prop-play').textContent='播放路径'}
 function propagationStatus(l){if(l<propagationSource)return '注入点之前 · 参考状态';if(l===propagationSource)return '扰动注入点';return alertCount(l)>0?'传播后触发阈值':'受到影响 · 当前未超阈值'}
-function updatePropagationUI(){const active=scenario==='propagation'&&mode==='activation';document.getElementById('propagation-controls').hidden=!active;document.getElementById('path-demo').hidden=!active;document.getElementById('prop-step').value=propagationEnd;document.getElementById('prop-progress').textContent=`L18 → L${propagationEnd}`;const state=document.getElementById('prop-layer-state');state.hidden=scenario!=='propagation';state.textContent=active?propagationStatus(selected):'保留原有单层异常示例 · 与激活传播独立';if(active&&selected>=18){const meta=propagationMeta[selected];state.textContent+=` · 扰动 RMS ${format(meta.deltaRms)}`}}
+function updatePropagationUI(){const active=scenario==='propagation'&&mode==='activation';document.getElementById('propagation-controls').hidden=!active;document.getElementById('path-demo').hidden=!active||stepDemo;document.getElementById('prop-step').value=propagationEnd;document.getElementById('prop-progress').textContent=`L18 → L${propagationEnd}`;const state=document.getElementById('prop-layer-state');state.hidden=scenario!=='propagation';state.textContent=active?propagationStatus(selected):'保留原有单层异常示例 · 与激活传播独立';if(active&&selected>=18){const meta=propagationMeta[selected];state.textContent+=` · 扰动 RMS ${format(meta.deltaRms)}`}}
 function advancePropagation(end,follow=true){propagationEnd=Math.max(18,Math.min(48,end));if(follow){selected=propagationEnd;hovered=null}redraw()}
 function referenceAt(layer,row,col){return baseline[mode][layer].stats[Math.floor(row/4)*16+Math.floor(col/4)].values[(row%4)*4+col%4]}
 function referenceMax(layer){return Math.max(...baseline[mode][layer].stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max))))}
 function isAbnormal(layer,row,col){const v=sampleAtLayer(layer,row,col);return !Number.isFinite(v)||Math.abs(v)>limits[mode][layer]}
-function alertCount(layer){let n=0;for(let r=0;r<64;r++)for(let c=0;c<64;c++)if(isAbnormal(layer,r,c))n++;return n}
+function rawAlertCount(layer){let n=0;for(let r=0;r<64;r++)for(let c=0;c<64;c++)if(isAbnormal(layer,r,c))n++;return n}
+let layerAlertCounts=[];
+function alertCount(layer){return layerContentReady(layer)?(layerAlertCounts[layer]??0):0}
 function drawDiagnosis(){
  const count=alertCount(selected),total=layers.filter(l=>alertCount(l)>0),limit=limits[mode][selected],ref=baseline[mode][selected];
  document.getElementById('alert-summary').textContent=total.length?`! ${total.length} 个异常层`:'无采样告警';
  document.getElementById('jump-alert').disabled=!total.length;document.getElementById('jump-alert').hidden=!total.length;
- document.getElementById('phase-note').textContent={activation:'前向 FWD · Microbatch 03',gradient:'反向 BWD · 累积 / 归约后，裁剪前',weight:'优化器更新后 · W 快照'}[mode];
- document.getElementById('phase-note').title={activation:'前向 L0 → L48 · 查看投影输出激活 H · 单样本 / Microbatch 03；固定计算位置，不含重计算。',gradient:'反向 L48 → L0 · 查看参数梯度 ∂L/∂W；示例为完成累积与归约、解除 loss scaling 后、裁剪前的快照，不是层间激活梯度。',weight:'4 个 microbatch 梯度贡献先累积再取平均，最后执行一次模拟 SGD 更新。轴上的 MB 行不是权重更新次数。'}[mode];
  const diag=document.getElementById('diagnosis');diag.replaceChildren();diag.hidden=count===0;diag.classList.toggle('has-alert',count>0);
  const h=document.createElement('h3');h.className=count?'flag':'';h.textContent=count?`! L${selected} · ${scenario==='propagation'&&mode==='activation'?(selected===18?'注入点 · 激活异常':'传播后 · 激活异常'): {weight:'权重局部偏移',gradient:'参数梯度局部突增',activation:'激活局部突增'}[mode]}`:`L${selected} · 未触发采样规则`;diag.append(h);
  const dl=document.createElement('dl');for(const [k,v] of [['超阈值采样点',`${count} / 4096`],['当前 / 参考 RMS',format(currentData[selected].rms)+' / '+format(ref.rms)],['RMS 相对参考',(currentData[selected].rms/ref.rms).toFixed(2)+'×'],['单点绝对值阈值',format(limit)]]){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd)}
@@ -282,7 +326,7 @@ function sampleAtLayer(layer,row,col){return currentData[layer].stats[Math.floor
 function sampleAt(row,col){return sampleAtLayer(selected,row,col)}
 function sampleColor(layer,row,col){if(showAnomaly&&isAbnormal(layer,row,col))return '#FD5644';return shade(Math.abs(sampleAtLayer(layer,row,col))/blockLimit)}
 const textureCache={};
-function layerTexture(layer){const key=mode+':'+weightUpdated+':'+scenario+':'+showAnomaly+':'+layer;if(textureCache[key])return textureCache[key];const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#111111';ctx.fillRect(0,0,512,512);for(let r=0;r<64;r++)for(let c=0;c<64;c++){ctx.fillStyle=sampleColor(layer,r,c);ctx.fillRect(c*8,r*8,7.75,7.75)}return textureCache[key]=canvas.toDataURL('image/png')}
+function layerTexture(layer){const key=mode+':'+(stepDemo?observedMB():'static')+':'+weightUpdated+':'+scenario+':'+showAnomaly+':'+layer;if(textureCache[key])return textureCache[key];const canvas=document.createElement('canvas');canvas.width=canvas.height=512;const ctx=canvas.getContext('2d');ctx.fillStyle='#111111';ctx.fillRect(0,0,512,512);for(let r=0;r<64;r++)for(let c=0;c<64;c++){ctx.fillStyle=sampleColor(layer,r,c);ctx.fillRect(c*8,r*8,7.75,7.75)}return textureCache[key]=canvas.toDataURL('image/png')}
 function inspectSample(row,col){
  const active=mode==='activation',v=sampleAt(row,col),r=row*(active?512:16),c=col*(active?16:40);
  let text=`${active?'Token':'输出'} ${r} · ${active?'输出':'输入'} ${c} · ${modes[mode].code} = ${v.toPrecision(6)}`;
@@ -320,7 +364,29 @@ function drawDetail(){
  document.getElementById('bar-metric').textContent='Query 投影 · '+modes[mode].name+' RMS';document.getElementById('legend-metric').textContent=' · '+modes[mode].name+'绝对值';
 }
 function edgeShade(rms){return shade(rms/maximum)}
-function drawMatrices(){const data=mode==='weight'?weightSnapshot():cache[mode];currentData=data;summaries=data.map(d=>d.rms);blocks=data.map(d=>d.blocks);maximum=Math.max(...summaries);const blockMax=3*Math.max(...baseline[mode].flatMap(d=>d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));blockLimit=blockMax;rawLimit=blockMax;
+// Activations and gradients become available independently for each microbatch.
+// Weights already exist before the step and remain visible until the shared update.
+function layerContentReady(layer){
+ if(!stepDemo||mode==='weight')return true;
+ if(mbCursor<0)return false;
+ const state=stepState(mbCursor),phase=observedMB()*2+(mode==='gradient'?1:0);
+ return phase<state.phase||phase===state.phase&&(state.backward?layer>=state.layer:layer<=state.layer);
+}
+function syncLayerContent(){
+ for(const l of layers){
+ const ready=layerContentReady(l),g=groups[l];
+ g.querySelector('[data-matrix]').style.visibility=ready?'':'hidden';
+ g.querySelector('.layer-rms-label').style.visibility=ready?'':'hidden';
+ g.querySelector('.layer-rms-value').style.visibility=ready?'':'hidden';
+ if(!ready)g.querySelector('.outline').setAttribute('stroke',l===selected?'#fff':'#393939');
+ g.dataset.computed=String(ready);
+ buttons[l].classList.toggle('has-alert',showAnomaly&&ready&&alertCount(l)>0);
+ }
+ const total=layers.filter(l=>alertCount(l)>0).length;
+ document.getElementById('alert-summary').textContent=total?`! ${total} 个异常层`:'无采样告警';
+ document.getElementById('jump-alert').hidden=!total;document.getElementById('jump-alert').disabled=!total;
+}
+function drawMatrices(){const data=mode==='weight'?weightSnapshot():stepDemo&&mode==='gradient'?mbGradientSnapshot():cache[mode];currentData=data;summaries=data.map(d=>d.rms);blocks=data.map(d=>d.blocks);maximum=Math.max(...summaries);const blockMax=3*Math.max(...baseline[mode].flatMap(d=>d.stats.map(s=>Math.max(Math.abs(s.min),Math.abs(s.max)))));blockLimit=blockMax;rawLimit=blockMax;layerAlertCounts=layers.map(rawAlertCount);
  for(const l of layers){labels[l].textContent=String(l);groups[l].querySelector('.layer-rms-value').textContent=format(summaries[l]);textures[l].setAttribute('href',layerTexture(l));
  bars[l].querySelector('.bar-value').textContent=format(summaries[l]);bars[l].style.height=(summaries[l]/maximum*76)+'px';bars[l].style.background='var(--bar-normal)';buttons[l].setAttribute('aria-label',`Layer ${l}，${modes[mode].name} RMS ${summaries[l].toFixed(4)}`);buttons[l].title=`Layer ${l} · ${modes[mode].name}采样 RMS ${format(summaries[l])}；表示整体幅度，不是最大元素值或异常分数`;
  }document.getElementById('rms-range').textContent=`最高 L${summaries.indexOf(maximum)} · RMS ${format(maximum)}`;
@@ -328,7 +394,7 @@ function drawMatrices(){const data=mode==='weight'?weightSnapshot():cache[mode];
 function redraw(){
  for(const l of layers){const on=l===selected,g=groups[l];g.classList.toggle('chosen',on);g.querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');g.querySelector('.outline').setAttribute('stroke',on?'#ffffff':edgeShade(summaries[l]));buttons[l].setAttribute('aria-pressed',String(on));buttons[l].classList.toggle('has-alert',showAnomaly&&alertCount(l)>0);}
  if(!annotation.childElementCount)for(const l of layers){labels[l].setAttribute('aria-label',`Layer ${l}`);annotation.append(labels[l])}
- requestGeometry();
+ syncLayerContent();requestGeometry();
  document.getElementById('selected-summary').textContent=`Layer ${selected} / ${modes[mode].name}矩阵 · RMS ${format(summaries[selected])}`;
  drawDetail();drawDiagnosis();updatePropagationUI();renderObservation();syncIdentity();
 }
@@ -339,7 +405,7 @@ const flowPorts=document.getElementById('flow-ports'),flowGuides=document.getEle
 // Layer l is at x=layerStepX*l; boundary h_k lies halfway between layers k-1 and k.
 const ground={x:170+planeWidth*projectionX,y:365+planeWidth*projectionY+planeHeight+50,xx:1,xy:-layerStepY/layerStepX,yx:0,yy:1};
 function groundPoint(x,y){return {x:ground.x+x+ground.yx*y,y:ground.y+ground.xy*x+ground.yy*y}}
-function groundTransform(x=0,y=0){const p=groundPoint(x,y);return `matrix(1 -.3 0 1 ${p.x} ${p.y})`}
+function groundTransform(x=0,y=0){const p=groundPoint(x,y);return `matrix(1 ${ground.xy} 0 1 ${p.x} ${p.y})`}
 const rails=el('g',{'class':'ground-rail',transform:groundTransform()});document.getElementById('scene').append(rails);
 const boundaryArrows=[];
 const layerAxisMarks=[];
@@ -371,55 +437,121 @@ function weightSnapshot(){
  return {stats,blocks:stats.map(b=>b.rms),rms:Math.sqrt(stats.reduce((sum,b)=>sum+b.rms*b.rms,0)/stats.length)};
  });
 }
-function drawWeightRail(){
- weightRail.style.display=mode==='weight'?'':'none';flowPorts.style.display=mode==='weight'?'none':'';
- document.getElementById('mb-process').hidden=mode!=='weight';
- const info=document.getElementById('mb-inspection');info.hidden=mode!=='weight';
- if(mode!=='weight')return;
- document.getElementById('mb-progress').textContent=weightUpdated?'已更新 1 次':mbCursor>=0&&mbCursor<mbTotalTicks?`MB ${String(Math.floor(mbCursor/49)+1).padStart(2,'0')} / L${mbCursor%49} · 累积中`:`已累积 ${mbCompleted}/4 · 权重未更新`;
- const next=document.getElementById('mb-next');next.textContent=mbPlaying?'暂停':weightUpdated?'播放完成':'继续播放';next.disabled=weightUpdated;document.getElementById('mb-reset').textContent='重新播放';
- weightRail.replaceChildren();
- const names=['MB 01','MB 02','MB 03','MB 04','累计梯度','权重更新'];
- for(let row=0;row<6;row++){
- const y=row*20;
- weightRail.append(el('text',{x:-24,y:y+5,'text-anchor':'end','class':'mb-axis-label'},names[row]));
- weightRail.append(el('path',{d:`M0,${y} H${layerSpan}`,stroke:'#333',fill:'none','stroke-width':.7}));
- for(let l=0;l<49;l++){
- const inProgress=mbCursor>=0&&mbCursor<mbTotalTicks;
- const contributions=mbCompleted+(inProgress&&l<=mbCursor%49?1:0);
- const accumulating=row===4&&mbPlaying&&inProgress&&l===mbCursor%49;
- const active=row===mbRow&&l===selected,g=el('g',{'class':'mb-mark',role:'button',tabindex:0,'aria-label':`${names[row]} · L${l} · ${row===4?'已累积 '+contributions+'/4':'查看模拟统计'}`,'aria-pressed':String(active)});
- const cellReady=row<4?(row<mbCompleted||inProgress&&row===Math.floor(mbCursor/49)&&l<=mbCursor%49):row===4?contributions>0:weightUpdated;
- const color=active||accumulating?'#fff':!cellReady?'#444':row===4?(contributions===4?'#aaa':'#606060'):row===mbRow?'#ddd':'#888';
- g.append(el('rect',{x:l*layerStepX-9,y:y-10,width:18,height:20,fill:'transparent'}),el('path',{d:`M${l*layerStepX-5},${y} h10`,stroke:color,'stroke-width':active?3:2,'stroke-dasharray':cellReady?'none':'2 3','pointer-events':'none'}));
- const open=()=>{pauseMB();mbRow=row;observation='query';choose(l);openInspector.click()};g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});weightRail.append(g);
- }
- }
- const layerCompleted=mbCompleted+(mbCursor>=0&&mbCursor<mbTotalTicks&&selected<=mbCursor%49?1:0);
- const sum=mbFactors.slice(0,layerCompleted).reduce((a,b)=>a+b,0),grad=cache.gradient[selected].rms;
- const value=mbRow<4?(mbRow<layerCompleted?`贡献 RMS ${format(grad*mbFactors[mbRow])}`:'尚未完成 · 无贡献数据'):mbRow===4?`累计 RMS ${format(grad*sum)} · 已累积 ${layerCompleted}/4`:weightUpdated?`ΔW RMS ${format(demoLearningRate*grad)} · ΔW / W ${format(demoLearningRate*grad/baseline.weight[selected].rms)}`:'等待全部 MB 完成后更新';
- info.textContent=`L${selected} / ${names[mbRow]}：${value}。主图为${weightUpdated?'更新后':'更新前'} W。教学模拟：4 个 MB 贡献采用固定梯度模板 × 0.7 / 0.9 / 1.1 / 1.3，先求和，再除以 4；SGD 学习率 0.01，无裁剪。未模拟分布式归约，不是实测优化器数据。`;
+// Timeline positions are pure data: F runs 0→48; B runs 48→0.
+function stepState(cursor){
+ const t=Math.max(0,Math.min(mbTotalTicks,cursor));
+ if(t===mbTotalTicks)return {mb:3,phase:8,backward:false,layer:0,completed:4};
+ const phase=Math.floor(t/49),backward=phase%2===1;
+ return {mb:Math.floor(phase/2),phase,backward,layer:backward?48-t%49:t%49,completed:Math.floor(t/98)};
 }
+// Each microbatch has a brief loss evaluation between forward and backward.
+function playbackPosition(elapsed){
+ const forwardMs=49*mbTickMs,cycleMs=forwardMs*2+lossHoldMs;
+ const mb=Math.floor(elapsed/cycleMs),local=elapsed-mb*cycleMs;
+ if(mb>=4)return {cursor:mbTotalTicks,loss:false};
+ if(local<forwardMs)return {cursor:mb*98+Math.floor(local/mbTickMs),loss:false};
+ if(local<forwardMs+lossHoldMs)return {cursor:mb*98+48,loss:true};
+ return {cursor:mb*98+49+Math.floor((local-forwardMs-lossHoldMs)/mbTickMs),loss:false};
+}
+function contributionsAt(layer){const state=stepState(mbCursor);return state.completed+(mbCursor>=0&&mbCursor<mbTotalTicks&&state.backward&&layer>=state.layer?1:0)}
+function observedMB(){return !mbPlaying&&mbRow<8?Math.floor(mbRow/2):stepState(mbCursor).mb}
+function mbGradientSnapshot(){
+ const mb=observedMB();
+ if(!stepTensorCache.has(mb)){const factor=mbFactors[mb];stepTensorCache.set(mb,cache.gradient.map(d=>({rms:d.rms*factor,blocks:d.blocks.map(v=>v*factor),stats:d.stats.map(b=>({...b,values:b.values.map(v=>v*factor),rms:b.rms*factor,min:b.min*factor,max:b.max*factor,mean:b.mean*factor}))})));}
+ return stepTensorCache.get(mb);
+}
+const lossNode=el('g',{'pointer-events':'none',transform:`translate(${layerSpan+22} 420)`});
+const lossCaption=el('text',{x:0,y:5,fill:'#aaa','font-size':13,'font-family':'monospace'},'STEP LOSS');
+const lossValue=el('text',{x:195,y:5,fill:'#eee','font-size':13,'font-family':'monospace'});
+const lossContext=el('text',{x:0,y:45,fill:'#999','font-size':12},'');
+lossNode.append(lossCaption,lossValue,lossContext);weightRail.append(lossNode);
+const mbLossNode=el('g',{'pointer-events':'none',transform:`translate(${layerSpan+55} -125)`});
+const mbLossCaption=el('text',{fill:'#aaa','font-size':13,'font-family':'monospace'});
+const mbLossValue=el('text',{y:34,fill:'#eee','font-size':30,'font-family':'monospace'});
+mbLossNode.append(mbLossCaption,mbLossValue,el('text',{y:76,fill:'#999','font-size':12},'示例值 · 反向传播起点'));weightRail.append(mbLossNode);
+function lossReached(mb){const state=stepState(mbCursor);return mbCursor>=0&&(state.phase>mb*2||state.phase===mb*2&&lossHolding)}
+const lossRecords=[];
+const stepMarks=[],stepRows=[];
+const stepNames=['MB 01 · F','MB 01 · B','MB 02 · F','MB 02 · B','MB 03 · F','MB 03 · B','MB 04 · F','MB 04 · B','累计梯度','权重更新'];
+function drawWeightRail(){
+ const visible=stepDemo||mode==='weight';
+ weightRail.style.display=visible?'':'none';flowPorts.style.display=visible?'none':'';
+ document.getElementById('mb-process').hidden=false;
+ const info=document.getElementById('mb-inspection');info.hidden=!visible;
+ const state=stepState(mbCursor);
+ document.getElementById('mb-progress').textContent=!stepDemo?'顺序执行 · 前向 / 反向 / 更新':weightUpdated?'4 MB 完成 · 权重更新 1 次':mbCursor<mbTotalTicks?`MB ${String(state.mb+1).padStart(2,'0')} · ${state.backward?'反向':'前向'} · L${state.layer}`:'累计完毕 · 等待统一更新';
+ const next=document.getElementById('mb-next'),controlLabel=mbPlaying?'暂停':weightUpdated?'播放完成':stepDemo?'继续播放':'播放完整 Step';next.setAttribute('aria-label',controlLabel);next.title=controlLabel;next.disabled=weightUpdated;document.getElementById('playback-symbol').setAttribute('d',mbPlaying?'M8 5v14M16 5v14':'M7 4l14 8-14 8z');
+ if(!visible)return;
+ lossNode.style.display=weightUpdated?'':'none';
+ lossNode.setAttribute('transform',`translate(${layerSpan+22} ${projectionX===.035?292:420})`);
+ lossValue.textContent=(demoLosses.reduce((a,b)=>a+b,0)/4).toFixed(3);
+ lossContext.textContent='STEP 1280 · 4 MB 均值 · 示例';
+ mbLossNode.style.display=state.phase<8&&lossReached(state.mb)?'':'none';
+ mbLossCaption.textContent=`MB ${String(state.mb+1).padStart(2,'0')} LOSS`;
+ mbLossValue.textContent=demoLosses[state.mb].toFixed(3);
+ mbLossValue.setAttribute('fill',lossHolding?'#fff':'#bbb');
+ if(!stepMarks.length)for(let row=0;row<10;row++){
+ const y=row<8?Math.floor(row/2)*84+(row%2)*36:row===8?342:384;
+ const rowGroup=el('g',{'data-step-row':row});weightRail.append(rowGroup);stepRows.push(rowGroup);
+ if(row<8&&row%2===0){const record=el('text',{x:layerSpan+22,y:y+10,fill:'#aaa','font-size':30,'font-family':'monospace'},`LOSS ${demoLosses[row/2].toFixed(3)}`);rowGroup.append(record);lossRecords.push(record);}
+
+ rowGroup.append(el('text',{x:-24,y:y+10,'text-anchor':'end','class':'mb-axis-label'},stepNames[row]));
+ rowGroup.append(el('path',{d:`M0,${y} H${layerSpan}`,stroke:'#333',fill:'none','stroke-width':.7}));
+ for(let l=0;l<49;l++){
+ const x=l*layerStepX,g=el('g',{'class':'mb-mark',role:'button',tabindex:0});
+ const mark=el('path',{d:row<8?(row%2?`M${x+4},${y-4} l-6,4 l6,4`:`M${x-4},${y-4} l6,4 l-6,4`):`M${x-5},${y} h10`,fill:'none','pointer-events':'none'});
+ g.append(el('rect',{x:x-9,y:y-6,width:18,height:12,fill:'transparent'}),mark);
+ const open=()=>{pauseMB();mbRow=row;observation='query';mode=row<8?(row%2?'gradient':'activation'):'weight';syncModeTabs();drawMatrices();choose(l);openInspector.click()};
+ g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});rowGroup.append(g);stepMarks.push({row,l,g,mark});
+ }
+ }
+ lossRecords.forEach((record,mb)=>record.style.display=lossReached(mb)?'':'none');
+ stepRows.forEach((group,row)=>{const reached=mbCursor>=0&&(row<8?row<=state.phase:row===8?state.phase>=1:weightUpdated);group.style.display=reached?'':'none';
+ // Reserve the F/B pair of each reached MB, then place accumulation directly below it.
+ const revealedMBs=Math.min(4,Math.floor(state.phase/2)+1);
+ const side=projectionX===.035;
+ const originalY=row<8?Math.floor(row/2)*84+(row%2)*36:row===8?342:384;
+ const targetY=side?(row<8?Math.floor(row/2)*56+(row%2)*24:row===8?revealedMBs*56+6:revealedMBs*56+36):(row<8?originalY:originalY+(revealedMBs-4)*84);
+ group.setAttribute('transform',`translate(0 ${targetY-originalY})`);
+ });
+ for(const {row,l,g,mark} of stepMarks){
+ const contributions=contributionsAt(l),passed=row<state.phase||row===state.phase&&(state.backward?l>=state.layer:l<=state.layer);
+ const ready=row<8?mbCursor>=0&&passed:row===8?contributions>0:weightUpdated;
+ const active=row===mbRow&&l===selected,accumulating=row===8&&mbPlaying&&state.backward&&l===state.layer;
+ mark.setAttribute('stroke',active||accumulating?'#fff':!ready?'#444':row===8?(contributions===4?'#aaa':'#606060'):'#888');mark.setAttribute('stroke-width',active||accumulating?3:2);mark.setAttribute('stroke-dasharray',ready?'none':'2 3');
+ g.setAttribute('aria-pressed',String(active));g.setAttribute('aria-label',`${stepNames[row]} · L${l} · ${row===8?'已累积 '+contributions+'/4':ready?'已完成':'等待'}`);
+ }
+ const count=contributionsAt(selected),sum=mbFactors.slice(0,count).reduce((a,b)=>a+b,0),grad=cache.gradient[selected].rms;
+ info.textContent=`L${selected} · 已累积 ${count}/4 · 累计梯度 RMS ${format(grad*sum)}。${weightUpdated?'更新完成，ΔW RMS '+format(demoLearningRate*grad):'所有 MB 使用同一份更新前权重。'} 顺序教学模拟：F 箭头表示前向依赖，B 箭头表示反向依赖；反向 tab 展示各层参数梯度，不是层间激活梯度。各 MB 使用同一激活模板，梯度模板乘 0.7 / 0.9 / 1.1 / 1.3；累积求和后除以 4，执行一次学习率 0.01 的 SGD。未模拟真实微批输入、归约或裁剪。`;
+}
+function syncModeTabs(){document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)))}
 function pauseMB(){if(mbPlaying)mbElapsed=performance.now()-mbStarted;mbPlaying=false;cancelAnimationFrame(mbFrame);mbFrame=0;}
 function followMBLayer(l){
  selected=l;hovered=null;
  for(const k of layers){const on=k===l;groups[k].classList.toggle('chosen',on);groups[k].querySelector('.outline').setAttribute('stroke',on?'#fff':edgeShade(summaries[k]));groups[k].querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');buttons[k].setAttribute('aria-pressed',String(on));}
  // Keep animation light: do not rebuild 4096 inspector cells on every layer tick.
- requestGeometry();drawWeightRail();syncIdentity();
+ syncLayerContent();requestGeometry();drawWeightRail();syncIdentity();
 }
 function playMBFrame(now){
- if(!mbPlaying||mode!=='weight')return;
- const elapsed=now-mbStarted,cursor=Math.min(mbTotalTicks,Math.floor(elapsed/mbTickMs));
- if(cursor!==mbCursor){mbCursor=cursor;mbCompleted=Math.floor(cursor/49);mbRow=cursor<mbTotalTicks?Math.floor(cursor/49):4;followMBLayer(cursor<mbTotalTicks?cursor%49:48);}
- if(elapsed>=mbFinishMs){mbPlaying=false;mbElapsed=mbFinishMs;weightUpdated=true;mbRow=5;drawMatrices();redraw();return;}
+ if(!mbPlaying)return;
+ const elapsed=now-mbStarted,playback=playbackPosition(elapsed),cursor=playback.cursor;
+ const lossChanged=lossHolding!==playback.loss;lossHolding=playback.loss;
+ if(cursor!==mbCursor){
+ const previous=stepState(mbCursor).phase;mbCursor=cursor;
+ const state=stepState(cursor);mbCompleted=state.completed;mbRow=state.phase;
+ const nextMode=cursor===mbTotalTicks?'weight':state.backward?'gradient':'activation';
+ if(mode!==nextMode||previous!==state.phase){mode=nextMode;observation='query';syncModeTabs();drawMatrices();redraw();}
+ followMBLayer(state.layer);
+ }
+ if(lossChanged)drawWeightRail();
+ if(elapsed>=mbFinishMs){mbPlaying=false;mbElapsed=mbFinishMs;weightUpdated=true;mbRow=9;mode='weight';syncModeTabs();drawMatrices();redraw();return;}
  mbFrame=requestAnimationFrame(playMBFrame);
 }
 function startMB(restart=false){
- pauseMB();
- if(restart){mbElapsed=0;mbCursor=-1;mbCompleted=0;weightUpdated=false;mbRow=0;observation='query';selected=0;drawMatrices();redraw();}
- // The pinned inspector keeps its data on pause; auto playback uses the main canvas.
+ pauseMB();stopPropagation();
+ if(restart||!stepDemo){stepDemo=true;lossHolding=false;mbElapsed=0;mbCursor=-1;mbCompleted=0;weightUpdated=false;mbRow=0;observation='query';selected=0;mode='activation';syncModeTabs();drawMatrices();redraw();}
  inspector.hidden=true;openInspector.setAttribute('aria-expanded','false');hideMagnifier();
- mbPlaying=true;mbStarted=performance.now()-mbElapsed;playMBFrame(performance.now());
+ mbPlaying=true;mbCursor=-1;mbStarted=performance.now()-mbElapsed;playMBFrame(performance.now());
 }
 document.getElementById('mb-next').addEventListener('click',()=>{if(mbPlaying){pauseMB();redraw()}else startMB()});
 document.getElementById('mb-reset').addEventListener('click',()=>startMB(true));
@@ -517,7 +649,7 @@ function renderObservation(){
  hideMagnifier();
  updateBoundaryArrows();
  drawWeightRail();
- forwardRail.style.display=mode==='activation'?'':'none';backwardRail.style.display=mode==='gradient'?'':'none';forwardRail.style.color='#a0a0a0';backwardRail.style.color='#a0a0a0';
+ forwardRail.style.display=mode==='activation'&&!stepDemo?'':'none';backwardRail.style.display=mode==='gradient'&&!stepDemo?'':'none';forwardRail.style.color='#a0a0a0';backwardRail.style.color='#a0a0a0';
  const hidden=observation!=='query',panel=document.querySelector('.tensor-detail'),body=document.getElementById('hidden-observation');panel.classList.toggle('hidden-mode',hidden);body.hidden=!hidden;
  document.querySelectorAll('[data-observation]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.observation===observation)));
  document.querySelectorAll('[data-port]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.port===observation)));
@@ -540,9 +672,7 @@ function renderObservation(){
 document.querySelectorAll('[data-observation]').forEach(b=>b.addEventListener('click',()=>{observation=b.dataset.observation;drawDetail();renderObservation()}));
 
 function choose(l){if(mbPlaying)pauseMB();selected=Math.max(0,Math.min(48,l));hovered=null;if(observation.startsWith('root'))observation='query';redraw()}
-document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{pauseMB();stopPropagation();mode=b.dataset.mode;observation='query';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));if(await syncScenarioData()){drawMatrices();redraw();if(mode==='weight')startMB(true)}}));
-document.getElementById('scenario').addEventListener('change',async e=>{pauseMB();stopPropagation();scenario=e.target.value;if(scenario==='propagation'){mode='activation';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other.dataset.mode===mode)))}if(await syncScenarioData()){drawMatrices();redraw()}});
-document.getElementById('anomaly-overlay').addEventListener('change',e=>{showAnomaly=e.target.checked;drawMatrices();redraw()});
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',async()=>{pauseMB();stopPropagation();mode=b.dataset.mode;observation='query';document.querySelectorAll('[data-mode]').forEach(other=>other.setAttribute('aria-pressed',String(other===b)));if(await syncScenarioData()){drawMatrices();redraw()}}));
 document.getElementById('jump-alert').addEventListener('click',()=>{const next=layers.find(l=>l>selected&&alertCount(l)>0)??layers.find(l=>alertCount(l)>0);if(next!==undefined)choose(next)});
 nav.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();choose(selected+(e.key==='ArrowRight'?1:-1));buttons[selected].focus()}});
 document.getElementById('path-demo').addEventListener('toggle',e=>{if(!e.target.open)stopPropagation()});
@@ -561,7 +691,7 @@ bindMagnifier(whole);
 const inspector=document.getElementById('tensor-inspector'),openInspector=document.getElementById('open-inspector');
 function syncIdentity(){
  document.getElementById('identity-layer').textContent='L'+selected;
- document.getElementById('identity-context').textContent=mode==='weight'?`OPTIMIZER STEP 1280 · ${weightUpdated?'更新后':'累积 '+mbCompleted+'/4 · 更新前'}`:'STEP 1280 · MICROBATCH 03';
+ document.getElementById('identity-context').textContent=mode==='weight'?`OPTIMIZER STEP 1280 · ${weightUpdated?'更新后':'累积 '+mbCompleted+'/4 · 更新前'}`:stepDemo?`STEP 1280 · MICROBATCH ${String(observedMB()+1).padStart(2,'0')} · 教学模拟`:'STEP 1280 · MICROBATCH 03';
  document.getElementById('identity-name').textContent=observation==='query'?'Query / '+(mode==='activation'?'输出激活':modes[mode].name):document.getElementById('detail-title').textContent;
  document.getElementById('identity-shape').textContent=document.getElementById('detail-shape').textContent;
 }
@@ -585,10 +715,35 @@ inspector.addEventListener('pointermove',e=>{if(pan){if(Math.hypot(pan.x-e.clien
 function endPan(){if(pan)pan.scroll.classList.remove('dragging');pan=null}inspector.addEventListener('pointerup',endPan);inspector.addEventListener('pointercancel',endPan);
 new MutationObserver(syncIdentity).observe(document.getElementById('detail-title'),{childList:true});
 
+// Orthographic presets retain the exploded layer spacing for navigation.
+const viewPresets=[
+ {name:'2.5D',px:.72,py:.3312,stepY:12,angle:-35,cube:['M74 45 99 59 74 74 49 59Z','M49 59 74 74 74 103 49 88Z','M74 74 99 59 99 88 74 103Z']},
+ {name:'Side',px:.035,py:0,stepY:0,angle:90,cube:['M49 49H99V99H49Z','M49 49H99V99H49Z','M49 49H99V99H49Z']}
+];
+let viewIndex=0;
+document.getElementById('cycle-view').addEventListener('click',()=>{
+ viewIndex=(viewIndex+1)%viewPresets.length;const v=viewPresets[viewIndex];
+ projectionX=v.px;projectionY=v.py;layerStepY=v.stepY;
+ document.getElementById('scene').dataset.view=v.name.toLowerCase();
+ ground.x=170+planeWidth*projectionX;ground.y=365+planeWidth*projectionY+planeHeight+50;ground.xy=-layerStepY/layerStepX;
+ rails.setAttribute('transform',groundTransform());
+ for(const port of flowPorts.children){const input=port.dataset.port==='root-in';port.setAttribute('transform',groundTransform(input?-205:layerSpan+layerStepX,-30))}
+ if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;
+ for(const l of layers)displayedPositions[l]=position(l);
+ paintGeometry();drawWeightRail();hideMagnifier();
+ const centerX=(170+170+layerSpan+planeWidth*projectionX)/2,centerY=(365-48*layerStepY+365+planeWidth*projectionY+planeHeight)/2;
+ document.getElementById('scene').setAttribute('viewBox',`${centerX-1590} ${centerY-774} 3180 1548`);
+ document.getElementById('scene').setAttribute('aria-label',`盘古 LLM 全部 49 层的 ${v.name} 视角展开图；通过下方层编号可选择任意层`);
+ document.getElementById('view-name').textContent=v.name;
+ document.getElementById('cycle-view').setAttribute('aria-label',`当前视角 ${v.name}，点击切换 ${viewPresets[(viewIndex+1)%viewPresets.length].name}`);
+ document.getElementById('dial-marker').setAttribute('transform',`rotate(${v.angle} 74 74)`);
+ document.querySelectorAll('#dial-cube path').forEach((p,i)=>{p.setAttribute('d',v.cube[i]);p.setAttribute('fill',v.name==='Side'?'#515151':['#353535','#202020','#515151'][i])});
+});
+
 async function boot(){
  const hiddenResults=await Promise.all(Array.from({length:50},(_,boundary)=>dataSource.queryHidden(queryContext(),boundary)));
  hiddenResults.forEach((result,boundary)=>{if(result.status!=='missing')hiddenSnapshots.set(boundary,result)});
- if(await syncScenarioData()){drawMatrices();paintGeometry();redraw()}
+ if(await syncScenarioData()){startMB(true);paintGeometry()}
 }
 boot();
 })();

@@ -2,6 +2,34 @@
   "version": 1,
   "assets": [
     {
+      "id": "spatial-systems-ui-style-guide",
+      "title": "Spatial Systems UI",
+      "form": "Skill",
+      "packagePath": "methods/design-spatial-systems-ui",
+      "downloadUrl": "methods/design-spatial-systems-ui.zip",
+      "domains": ["Visualization", "AI Infra"],
+      "summary": "面向复杂系统与科学数据的空间界面风格指南，以真实数据对象为视觉主体，建立克制、精确的布局与交互秩序。",
+      "designValue": "为矩阵、拓扑、时间轴及 2.5D / 3D 可视化提供统一的视觉和交互参考，覆盖从总览到细节的探索流程。",
+      "outline": ["主体舞台、留白与布局状态", "排版、灰度与强调色", "图表、矩阵、拓扑及空间对象", "选择、Inspector、平移缩放与动效", "响应式、可访问性与设计检查清单"],
+      "type": "method",
+      "media": ["document"],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "methods/design-spatial-systems-ui/SKILL.md",
+      "sources": [{
+        "repository": "ai-infra",
+        "url": null,
+        "path": "ai-infra-research/methods/design-spatial-systems-ui/SKILL.md",
+        "revision": null,
+        "sha256": "e1f27301c707896b1c6265b431b9b951a8d4af9990a23a85f0193113ee9e8d88"
+      }],
+      "validation": ["2026-09-23：替换为用户提供的完整 Skill 包，保留截图；核对入口与打包内容，未进行跨场景设计验证。"],
+      "related": ["observability-design-style"],
+      "reviewedAt": "2026-09-23",
+      "topics": ["experience", "visual"],
+      "author": "Yucheng"
+    },
+    {
       "id": "llm-inference-dense-to-clusters",
       "title": "LLM 推理全流程：从单卡到集群",
       "form": "交互图解",
