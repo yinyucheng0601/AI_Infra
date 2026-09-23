@@ -6,9 +6,9 @@ const C=require('../web/catalog-core.js');
 const root=path.join(__dirname,'..');
 const assets=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.filter(a=>a.type==='knowledge');
 const initial=()=>C.parseState('',assets);
-test('20 manually curated entries after explicit exclusions',()=>{
- assert.equal(assets.length,20);assert.equal(assets.filter(a=>a.sources[0].repository==='pto').length,10);
- assert.equal(new Set(assets.map(a=>a.id)).size,20);
+test('21 manually curated entries after explicit exclusions',()=>{
+ assert.equal(assets.length,21);assert.equal(assets.filter(a=>a.sources[0].repository==='pto').length,10);
+ assert.equal(new Set(assets.map(a=>a.id)).size,21);
  assert.ok(!assets.some(a=>a.id==='a5-pmu-design'));
  assert.ok(!assets.some(a=>['pypto-trusted-iteration','devkit-agent-journey','devkit-tui-visual'].includes(a.id)));
  assert.ok(assets.every(a=>!a.sources.some(s=>s.path.includes('model_skill-dss3.2new'))));

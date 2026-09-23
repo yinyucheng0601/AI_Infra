@@ -21,7 +21,7 @@ class CatalogTests(unittest.TestCase):
         self.data = json.loads((ROOT / 'catalog/assets.json').read_text())
 
     def test_valid(self):
-        self.assertEqual(validate(self.data), 23)
+        self.assertEqual(validate(self.data), 24)
 
     def test_duplicate_rejected(self):
         self.data['assets'].append(copy.deepcopy(self.data['assets'][0]))

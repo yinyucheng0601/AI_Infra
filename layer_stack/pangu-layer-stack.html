@@ -113,7 +113,8 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 @media(max-width:600px){.bottom{width:64%;left:58%}.bottom .mb-process{right:calc(100% + 12px);gap:3px}}
 .layer-button.has-alert[aria-pressed="true"] .bar-track{background:#FD5644}.layer-button.has-alert[aria-pressed="true"] .layer-number{color:#FD5644}
 .ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:30px}
-#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:18px}
+#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:14px}
+#scene[data-view="side"] .mb-flow-arrow,#scene[data-view="side"] .boundary-ink,#scene[data-view="side"] .boundary-halo{transform-box:fill-box;transform-origin:center;transform:scale(1.6);stroke-linecap:round;stroke-linejoin:round}
 
 /* Side labels need headroom above the raised, selected layer. */
 .atlas-pane .view #scene[data-view="side"]{transform:translateY(clamp(40px,7vh,90px)) scale(1.05)}
@@ -221,7 +222,7 @@ function paintGeometry(){
  const side=projectionX===.035,rms=sideRmsLabels[l],ready=layerContentReady(l);
  // Screen-space labels stay readable instead of inheriting the thin side projection.
  rms.setAttribute('transform',`translate(${p.x+planeWidth*projectionX/2} ${p.y-34}) rotate(-90)`);
- rms.setAttribute('font-size',18);
+ rms.setAttribute('font-size',14);
  rms.setAttribute('fill',l===selected?'#fff':'#aaa');
  rms.textContent=ready?'RMS '+g.querySelector('.layer-rms-value').textContent:'RMS —';
  rms.style.display=side?'':'none';
@@ -499,8 +500,8 @@ function drawWeightRail(){
  rowGroup.append(el('path',{d:`M0,${y} H${layerSpan}`,stroke:'#333',fill:'none','stroke-width':.7}));
  for(let l=0;l<49;l++){
  const x=l*layerStepX,g=el('g',{'class':'mb-mark',role:'button',tabindex:0});
- const mark=el('path',{d:row<8?(row%2?`M${x+4},${y-4} l-6,4 l6,4`:`M${x-4},${y-4} l6,4 l-6,4`):`M${x-5},${y} h10`,fill:'none','pointer-events':'none'});
- g.append(el('rect',{x:x-9,y:y-6,width:18,height:12,fill:'transparent'}),mark);
+ const mark=el('path',{'class':row<8?'mb-flow-arrow':'mb-accumulation-mark',d:row<8?(row%2?`M${x+4},${y-4} l-6,4 l6,4`:`M${x-4},${y-4} l6,4 l-6,4`):`M${x-5},${y} h10`,fill:'none','pointer-events':'none'});
+ g.append(el('rect',{x:x-10,y:y-10,width:20,height:20,fill:'transparent'}),mark);
  const open=()=>{pauseMB();mbRow=row;observation='query';mode=row<8?(row%2?'gradient':'activation'):'weight';syncModeTabs();drawMatrices();choose(l);openInspector.click()};
  g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});rowGroup.append(g);stepMarks.push({row,l,g,mark});
  }

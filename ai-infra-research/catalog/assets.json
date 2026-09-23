@@ -2,6 +2,26 @@
   "version": 1,
   "assets": [
     {
+      "id": "devkit-tui-competitive-analysis",
+      "title": "Kunpeng DevKit AI · TUI 竞品分析",
+      "form": "竞品分析",
+      "domains": ["Kunpeng", "DevKit", "TUI"],
+      "summary": "横跨终端工作台、AI Coding TUI、工程观测与 Hybrid TUI，比较 8 个产品的框架、交互和布局。",
+      "designValue": "为 DevKit 的工作台布局、Agent 交互、权限审查及数据呈现提供参考，定位行业分歧与体验机会。",
+      "outline": ["TUI 分辨率与两层画布模型", "四类竞品与六阶段用户旅程", "22 项触点对比与模式识别", "SWOT、差距矩阵与行业分歧", "机会点、截图观察与研究资料"],
+      "type": "knowledge",
+      "media": ["web"],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "knowledge/devkit-tui-competitive-analysis.md",
+      "sources": [{"repository": "devkit", "url": null, "path": "web/competitive-analysis.html", "revision": null, "sha256": "370f01e98fbb6b90486690944d4ed2ce41df812d373bd45aafa17c38d6740066"}],
+      "validation": ["2026-09-23：按用户要求收录，核对标题、章节与静态依赖并保存页面快照；未独立复核竞品事实或进行浏览器视觉验收。"],
+      "related": ["dynamo-product-analysis"],
+      "reviewedAt": "2026-09-23",
+      "topics": ["competitive", "experience", "visual"],
+      "author": "Yucheng"
+    },
+    {
       "id": "spatial-systems-ui-style-guide",
       "title": "Spatial Systems UI",
       "form": "Skill",
