@@ -34,7 +34,9 @@ test('competitive analysis and authors are explicit',()=>{
  const dynamo=assets.find(a=>a.id==='dynamo-product-analysis');
  assert.ok(dynamo.topics.includes('competitive'));
  assert.equal(dynamo.author,'Yuanfeng');
- assert.ok(assets.filter(a=>a.id!==dynamo.id).every(a=>a.author==='Yucheng'));
+ const devkit=assets.find(a=>a.id==='devkit-tui-competitive-analysis');
+ assert.equal(devkit.author,'Xindi');
+ assert.ok(assets.filter(a=>a.id!==dynamo.id&&a.id!==devkit.id).every(a=>a.author==='Yucheng'));
 });
 test('URL state round-trips unicode and preserves empty results',()=>{
  const s={topic:'training',domain:'Pangu',form:'研究汇报',query:'算子 & 训练',asset:'pangu-training-user-research'};

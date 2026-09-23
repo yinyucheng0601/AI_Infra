@@ -58,7 +58,7 @@ main{padding:18px 24px 20px}.compact-header{align-items:center;justify-content:s
 }
 @media(max-width:1000px){main{padding-bottom:240px}.bottom{position:fixed;left:18px;right:18px;bottom:0;z-index:15;background:#111111;padding:10px 0 max(8px,env(safe-area-inset-bottom))}.bottom .layer-top{margin-bottom:6px}.bottom .layer-scroll{padding-top:20px}.bottom .bar-heading{margin-bottom:4px}.atlas-pane .view svg{min-height:0;max-height:none}.layer-top{font-size:11px}}
 
-.plane.preview:not(.chosen) .outline{stroke:#bcbcbc;stroke-width:1.5}.external-layer-number{user-select:none;paint-order:stroke;stroke:#111111;stroke-width:3px;stroke-linejoin:round}.external-layer-number:hover{fill:#fff}.plane,.external-layer-number{touch-action:manipulation}
+.plane.preview:not(.chosen):not(.has-anomaly) .outline{stroke:#bcbcbc;stroke-width:1.5}.external-layer-number{user-select:none;paint-order:stroke;stroke:#111111;stroke-width:3px;stroke-linejoin:round}.external-layer-number:hover{fill:#fff}.plane,.external-layer-number{touch-action:manipulation}
 
 .propagation-controls{display:flex;align-items:center;gap:10px;flex-shrink:0;padding:8px 0 0;color:#aaa;font:11px sans-serif}.propagation-controls[hidden],.prop-layer-state[hidden]{display:none}.propagation-controls button:not(.help){border:1px solid #444;background:#191919;color:#ddd;border-radius:4px;padding:5px 9px;font:11px sans-serif;cursor:pointer}.propagation-controls input{width:180px;accent-color:#ddd}.propagation-controls .tip{left:0;right:auto}.tensor-detail .detail-top p.prop-layer-state{font-size:11px;color:#aaa;margin-top:7px}.propagation-controls label{font-size:11px}.propagation-controls #prop-progress{font-family:monospace;min-width:80px}@media(max-width:600px){.propagation-controls{flex-wrap:wrap}.propagation-controls input{width:120px}}
 
@@ -112,9 +112,11 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 .playback-icon:hover{color:#fff!important}.playback-icon:disabled{opacity:.35;cursor:default}
 @media(max-width:600px){.bottom{width:64%;left:58%}.bottom .mb-process{right:calc(100% + 12px);gap:3px}}
 .layer-button.has-alert[aria-pressed="true"] .bar-track{background:#FD5644}.layer-button.has-alert[aria-pressed="true"] .layer-number{color:#FD5644}
-.ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:30px}
-#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:14px}
+.ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:16px}
+#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:16px}
+#scene .ground-rail text.loss-emphasis{font-size:30px}
 #scene[data-view="side"] .mb-flow-arrow,#scene[data-view="side"] .boundary-ink,#scene[data-view="side"] .boundary-halo{transform-box:fill-box;transform-origin:center;transform:scale(1.6);stroke-linecap:round;stroke-linejoin:round}
+
 
 /* Side labels need headroom above the raised, selected layer. */
 .atlas-pane .view #scene[data-view="side"]{transform:translateY(clamp(40px,7vh,90px)) scale(1.05)}
@@ -123,8 +125,8 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 .view-dial{position:fixed;top:76px;right:30px;width:148px;z-index:13;text-align:center;color:#aaa;font:10px ui-monospace,monospace}
 .view-dial button{position:relative;width:148px;height:148px;display:block;border:0;background:transparent;color:inherit;padding:0;cursor:pointer;border-radius:50%}
 .view-dial svg{display:block;width:148px;height:148px;overflow:visible}
-.dial-ring{fill:none;stroke:#666;stroke-width:1}.dial-label{fill:#888;font:9px ui-monospace,monospace;text-anchor:middle}.dial-marker{fill:#ddd}.cube-face{stroke:#ddd;stroke-width:1.2;stroke-linejoin:round}.view-dial button:hover .dial-ring{stroke:#bbb}.view-dial button:hover .cube-face{stroke:#fff}.dial-name{display:block;color:#ddd;font-size:11px;letter-spacing:1.5px;margin-top:2px}.dial-hint{display:block;color:#777;margin-top:7px;font-size:9px}.path-demo{top:278px}
-@media(max-width:600px){.view-dial{top:105px;right:12px;width:108px}.view-dial button,.view-dial svg{width:108px;height:108px}.path-demo{top:265px;right:18px}.dial-hint{font-size:8px}}
+.dial-ring{fill:none;stroke:#666;stroke-width:1}.dial-label{fill:#888;font:9px ui-monospace,monospace;text-anchor:middle}.dial-marker{fill:#ddd}.cube-face{stroke:#ddd;stroke-width:1.2;stroke-linejoin:round}.view-dial button:hover .dial-ring{stroke:#bbb}.view-dial button:hover .cube-face{stroke:#fff}.dial-name{display:block;color:#ddd;font-size:11px;letter-spacing:1.5px;margin-top:2px}.path-demo{top:278px}
+@media(max-width:600px){.view-dial{top:105px;right:12px;width:108px}.view-dial button,.view-dial svg{width:108px;height:108px}.path-demo{top:265px;right:18px}}
 </style>
 </head>
 <body>
@@ -137,7 +139,7 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 <text class="dial-label" x="74" y="21">0°</text><text class="dial-label" x="135" y="77">90°</text><text class="dial-label" x="74" y="134">180°</text><text class="dial-label" x="13" y="77">-90°</text>
 <g id="dial-marker" transform="rotate(-35 74 74)"><rect class="dial-marker" x="70" y="14" width="8" height="8"/></g>
 <g id="dial-cube"><path class="cube-face" fill="#353535" d="M74 45 99 59 74 74 49 59Z"/><path class="cube-face" fill="#202020" d="M49 59 74 74 74 103 49 88Z"/><path class="cube-face" fill="#515151" d="M74 74 99 59 99 88 74 103Z"/></g>
-</svg></button><span class="dial-name" id="view-name" aria-live="polite">2.5D</span><span class="dial-hint">点击 Cube 切换视角</span></div>
+</svg></button><span class="dial-name" id="view-name" aria-live="polite">2.5D</span></div>
 <div id="data-state" class="data-state" data-state="loading" role="status" aria-live="polite">正在加载采样数据…</div>
 <div class="atlas-toolbar">
 <div class="matrix-tabs" role="group" aria-label="训练阶段与观测张量"><button type="button" data-mode="activation" aria-pressed="true" title="前向计算的投影输出，单样本 Microbatch 03">前向 · 激活</button><button type="button" data-mode="gradient" aria-pressed="false" title="累积、归约并解除 loss scaling 后，裁剪前的参数梯度">反向 · 参数梯度</button><button type="button" data-mode="weight" aria-pressed="false" title="优化器更新后的权重快照；权重也参与前向与反向计算">优化器 · 权重</button></div>
@@ -146,7 +148,7 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 
 </div>
 <section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p id="identity-context">STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点</div><div id="hover-preview" class="hover-preview" hidden></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="side-rms" aria-hidden="true" pointer-events="none"></g><g id="flow-ports"></g></svg></div>
-<div class="bottom"><div class="mb-process" id="mb-process"><span id="mb-progress" class="sr"></span><button class="text-action playback-icon" id="mb-next" aria-label="暂停" title="暂停"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="playback-symbol" d="M8 5v14M16 5v14"/></svg></button><button class="text-action playback-icon" id="mb-reset" aria-label="重新播放" title="重新播放"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1 0 7M5 3v6h6"/></svg></button></div><div id="selected-summary" class="sr" aria-live="polite"></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="层导航 L0 至 L48，点击或拖动选择模型层"></nav></div>
+<div class="bottom"><div class="mb-process" id="mb-process"><span id="mb-progress" class="sr"></span><button class="text-action playback-icon" id="mb-next" aria-label="暂停" title="暂停"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="playback-symbol" d="M8 5v14M16 5v14"/></svg></button><button class="text-action playback-icon" id="mb-reset" aria-label="重置视图并重新播放" title="重置视图并重新播放"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1 0 7M5 3v6h6"/></svg></button></div><div id="selected-summary" class="sr" aria-live="polite"></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="层导航 L0 至 L48，点击或拖动选择模型层"></nav></div>
 
 
 
@@ -218,11 +220,12 @@ function paintGeometry(){
  label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
  const numberSize=l===selected||preview?18:13;
  label.setAttribute('font-size',numberSize);
- g.querySelector('.layer-rms-value').setAttribute('font-size',numberSize*2);
+ g.querySelector('.layer-rms-value').setAttribute('font-size',16);
+ g.querySelector('.layer-rms-label').setAttribute('font-size',16);
  const side=projectionX===.035,rms=sideRmsLabels[l],ready=layerContentReady(l);
  // Screen-space labels stay readable instead of inheriting the thin side projection.
  rms.setAttribute('transform',`translate(${p.x+planeWidth*projectionX/2} ${p.y-34}) rotate(-90)`);
- rms.setAttribute('font-size',14);
+ rms.setAttribute('font-size',16);
  rms.setAttribute('fill',l===selected?'#fff':'#aaa');
  rms.textContent=ready?'RMS '+g.querySelector('.layer-rms-value').textContent:'RMS —';
  rms.style.display=side?'':'none';
@@ -364,7 +367,16 @@ function drawDetail(){
  document.getElementById('bar-tip').textContent='每根柱表示该层 Query 降维投影所选张量的采样 RMS，柱顶为原数值，不是百分比、最大元素值或异常分数。最高柱表示当前 49 层中该统计量最大，不代表整层所有张量，也不自动代表异常。'+modeHelp[mode];
  document.getElementById('bar-metric').textContent='Query 投影 · '+modes[mode].name+' RMS';document.getElementById('legend-metric').textContent=' · '+modes[mode].name+'绝对值';
 }
-function edgeShade(rms){return shade(rms/maximum)}
+// Border severity uses threshold-exceeding sample counts, never raw RMS.
+function updateLayerBorder(layer){
+ const g=groups[layer],outline=g.querySelector('.outline');
+ const count=showAnomaly?alertCount(layer):0;
+ g.classList.toggle('has-anomaly',count>0);
+ outline.setAttribute('stroke',count?'#FD5644':layer===selected?'#fff':'#393939');
+ const counts=layerAlertCounts.filter(n=>n>0),low=Math.min(...counts),high=Math.max(...counts);
+ const severity=high>low?(count-low)/(high-low):1;
+ outline.setAttribute('stroke-opacity',count?String(.16+.84*severity):'1');
+}
 // Activations and gradients become available independently for each microbatch.
 // Weights already exist before the step and remain visible until the shared update.
 function layerContentReady(layer){
@@ -379,7 +391,7 @@ function syncLayerContent(){
  g.querySelector('[data-matrix]').style.visibility=ready?'':'hidden';
  g.querySelector('.layer-rms-label').style.visibility=ready?'':'hidden';
  g.querySelector('.layer-rms-value').style.visibility=ready?'':'hidden';
- if(!ready)g.querySelector('.outline').setAttribute('stroke',l===selected?'#fff':'#393939');
+ updateLayerBorder(l);
  g.dataset.computed=String(ready);
  buttons[l].classList.toggle('has-alert',showAnomaly&&ready&&alertCount(l)>0);
  }
@@ -393,7 +405,7 @@ function drawMatrices(){const data=mode==='weight'?weightSnapshot():stepDemo&&mo
  }document.getElementById('rms-range').textContent=`最高 L${summaries.indexOf(maximum)} · RMS ${format(maximum)}`;
 }
 function redraw(){
- for(const l of layers){const on=l===selected,g=groups[l];g.classList.toggle('chosen',on);g.querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');g.querySelector('.outline').setAttribute('stroke',on?'#ffffff':edgeShade(summaries[l]));buttons[l].setAttribute('aria-pressed',String(on));buttons[l].classList.toggle('has-alert',showAnomaly&&alertCount(l)>0);}
+ for(const l of layers){const on=l===selected,g=groups[l];g.classList.toggle('chosen',on);g.querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');updateLayerBorder(l);buttons[l].setAttribute('aria-pressed',String(on));buttons[l].classList.toggle('has-alert',showAnomaly&&alertCount(l)>0);}
  if(!annotation.childElementCount)for(const l of layers){labels[l].setAttribute('aria-label',`Layer ${l}`);annotation.append(labels[l])}
  syncLayerContent();requestGeometry();
  document.getElementById('selected-summary').textContent=`Layer ${selected} / ${modes[mode].name}矩阵 · RMS ${format(summaries[selected])}`;
@@ -463,12 +475,12 @@ function mbGradientSnapshot(){
 }
 const lossNode=el('g',{'pointer-events':'none',transform:`translate(${layerSpan+22} 420)`});
 const lossCaption=el('text',{x:0,y:5,fill:'#aaa','font-size':13,'font-family':'monospace'},'STEP LOSS');
-const lossValue=el('text',{x:195,y:5,fill:'#eee','font-size':13,'font-family':'monospace'});
+const lossValue=el('text',{'class':'loss-emphasis',x:195,y:5,fill:'#eee','font-size':13,'font-family':'monospace'});
 const lossContext=el('text',{x:0,y:45,fill:'#999','font-size':12},'');
 lossNode.append(lossCaption,lossValue,lossContext);weightRail.append(lossNode);
 const mbLossNode=el('g',{'pointer-events':'none',transform:`translate(${layerSpan+55} -125)`});
 const mbLossCaption=el('text',{fill:'#aaa','font-size':13,'font-family':'monospace'});
-const mbLossValue=el('text',{y:34,fill:'#eee','font-size':30,'font-family':'monospace'});
+const mbLossValue=el('text',{'class':'loss-emphasis',y:34,fill:'#eee','font-size':30,'font-family':'monospace'});
 mbLossNode.append(mbLossCaption,mbLossValue,el('text',{y:76,fill:'#999','font-size':12},'示例值 · 反向传播起点'));weightRail.append(mbLossNode);
 function lossReached(mb){const state=stepState(mbCursor);return mbCursor>=0&&(state.phase>mb*2||state.phase===mb*2&&lossHolding)}
 const lossRecords=[];
@@ -529,7 +541,7 @@ function syncModeTabs(){document.querySelectorAll('[data-mode]').forEach(b=>b.se
 function pauseMB(){if(mbPlaying)mbElapsed=performance.now()-mbStarted;mbPlaying=false;cancelAnimationFrame(mbFrame);mbFrame=0;}
 function followMBLayer(l){
  selected=l;hovered=null;
- for(const k of layers){const on=k===l;groups[k].classList.toggle('chosen',on);groups[k].querySelector('.outline').setAttribute('stroke',on?'#fff':edgeShade(summaries[k]));groups[k].querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');buttons[k].setAttribute('aria-pressed',String(on));}
+ for(const k of layers){const on=k===l;groups[k].classList.toggle('chosen',on);updateLayerBorder(k);groups[k].querySelector('.outline').setAttribute('fill',on?'#1b1b1b':'#131313');buttons[k].setAttribute('aria-pressed',String(on));}
  // Keep animation light: do not rebuild 4096 inspector cells on every layer tick.
  syncLayerContent();requestGeometry();drawWeightRail();syncIdentity();
 }
@@ -555,7 +567,7 @@ function startMB(restart=false){
  mbPlaying=true;mbCursor=-1;mbStarted=performance.now()-mbElapsed;playMBFrame(performance.now());
 }
 document.getElementById('mb-next').addEventListener('click',()=>{if(mbPlaying){pauseMB();redraw()}else startMB()});
-document.getElementById('mb-reset').addEventListener('click',()=>startMB(true));
+document.getElementById('mb-reset').addEventListener('click',()=>{resetSceneView();startMB(true)});
 
 
 
@@ -703,7 +715,7 @@ document.getElementById('expand-inspector').addEventListener('click',e=>{const e
 document.getElementById('matrix-zoom').addEventListener('input',e=>{inspector.style.setProperty('--matrix-zoom',e.target.value);document.getElementById('zoom-value').textContent=e.target.value+'×';hideMagnifier()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!inspector.hidden)closeInspector()});
 const hoverPreview=document.getElementById('hover-preview');
-function showPreview(e,l){if(l===null||!summaries.length){hoverPreview.hidden=true;return}hoverPreview.textContent=`L${l} · RMS ${format(summaries[l])} · ${alertCount(l)} 异常采样点`;hoverPreview.hidden=false;hoverPreview.style.left=Math.max(10,Math.min(e.clientX+16,innerWidth-hoverPreview.offsetWidth-16))+'px';hoverPreview.style.top=Math.min(e.clientY+20,innerHeight-60)+'px'}
+function showPreview(e,l){if(l===null||!summaries.length){hoverPreview.hidden=true;return}hoverPreview.textContent=`L${l} · RMS ${format(summaries[l])} · ${alertCount(l)} 异常采样点 · 红框越实，异常采样点越多`;hoverPreview.hidden=false;hoverPreview.style.left=Math.max(10,Math.min(e.clientX+16,innerWidth-hoverPreview.offsetWidth-16))+'px';hoverPreview.style.top=Math.min(e.clientY+20,innerHeight-60)+'px'}
 for(const surface of [document.getElementById('scene'),nav]){surface.addEventListener('pointermove',e=>{const target=e.target.closest('[data-layer]');showPreview(e,target?Number(target.dataset.layer):null)});surface.addEventListener('pointerleave',()=>hoverPreview.hidden=true)}
 let navDragging=false;
 function selectFromPointer(e){const rect=nav.getBoundingClientRect(),l=Math.max(0,Math.min(48,Math.floor((e.clientX-rect.left)/rect.width*49)));if(l!==selected)choose(l)}
@@ -733,13 +745,35 @@ document.getElementById('cycle-view').addEventListener('click',()=>{
  for(const l of layers)displayedPositions[l]=position(l);
  paintGeometry();drawWeightRail();hideMagnifier();
  const centerX=(170+170+layerSpan+planeWidth*projectionX)/2,centerY=(365-48*layerStepY+365+planeWidth*projectionY+planeHeight)/2;
- document.getElementById('scene').setAttribute('viewBox',`${centerX-1590} ${centerY-774} 3180 1548`);
+ resetSceneView();
  document.getElementById('scene').setAttribute('aria-label',`盘古 LLM 全部 49 层的 ${v.name} 视角展开图；通过下方层编号可选择任意层`);
  document.getElementById('view-name').textContent=v.name;
  document.getElementById('cycle-view').setAttribute('aria-label',`当前视角 ${v.name}，点击切换 ${viewPresets[(viewIndex+1)%viewPresets.length].name}`);
  document.getElementById('dial-marker').setAttribute('transform',`rotate(${v.angle} 74 74)`);
  document.querySelectorAll('#dial-cube path').forEach((p,i)=>{p.setAttribute('d',v.cube[i]);p.setAttribute('fill',v.name==='Side'?'#515151':['#353535','#202020','#515151'][i])});
 });
+
+// Zoom the SVG camera only; page controls and inspector retain their size.
+const zoomScene=document.getElementById('scene');
+let sceneZoom=1;
+function resetSceneView(){
+ const cx=(170+170+layerSpan+planeWidth*projectionX)/2;
+ const cy=(365-48*layerStepY+365+planeWidth*projectionY+planeHeight)/2;
+ sceneZoom=1;zoomScene.setAttribute('viewBox',`${cx-1590} ${cy-774} 3180 1548`);
+ hideMagnifier();
+}
+zoomScene.addEventListener('wheel',event=>{
+ event.preventDefault();
+ const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
+ const next=Math.max(.5,Math.min(4,sceneZoom*Math.exp(-Math.max(-160,Math.min(160,delta))*.0015)));
+ if(next===sceneZoom)return;
+ const matrix=zoomScene.getScreenCTM();if(!matrix)return;
+ const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+ const box=zoomScene.viewBox.baseVal,ratio=sceneZoom/next;
+ zoomScene.setAttribute('viewBox',`${point.x+(box.x-point.x)*ratio} ${point.y+(box.y-point.y)*ratio} ${box.width*ratio} ${box.height*ratio}`);
+ sceneZoom=next;
+ hideMagnifier();previewLayer(null);document.getElementById('hover-preview').hidden=true;
+},{passive:false});
 
 async function boot(){
  const hiddenResults=await Promise.all(Array.from({length:50},(_,boundary)=>dataSource.queryHidden(queryContext(),boundary)));
