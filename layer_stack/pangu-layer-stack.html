@@ -112,14 +112,14 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 .playback-icon:hover{color:#fff!important}.playback-icon:disabled{opacity:.35;cursor:default}
 @media(max-width:600px){.bottom{width:64%;left:58%}.bottom .mb-process{right:calc(100% + 12px);gap:3px}}
 .layer-button.has-alert[aria-pressed="true"] .bar-track{background:#FD5644}.layer-button.has-alert[aria-pressed="true"] .layer-number{color:#FD5644}
-.ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:16px}
-#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:16px}
+.ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:18px}
+#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:18px}
 #scene .ground-rail text.loss-emphasis{font-size:30px}
 #scene[data-view="side"] .mb-flow-arrow,#scene[data-view="side"] .boundary-ink,#scene[data-view="side"] .boundary-halo{transform-box:fill-box;transform-origin:center;transform:scale(1.6);stroke-linecap:round;stroke-linejoin:round}
 
 
-/* Side labels need headroom above the raised, selected layer. */
-.atlas-pane .view #scene[data-view="side"]{transform:translateY(clamp(40px,7vh,90px)) scale(1.05)}
+/* Center Side geometry without the previous downward screen offset. */
+.atlas-pane .view #scene[data-view="side"]{transform:scale(1.05)}
 
 /* Orientation dial: independent of the model canvas and playback. */
 .view-dial{position:fixed;top:76px;right:30px;width:148px;z-index:13;text-align:center;color:#aaa;font:10px ui-monospace,monospace}
@@ -220,12 +220,12 @@ function paintGeometry(){
  label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
  const numberSize=l===selected||preview?18:13;
  label.setAttribute('font-size',numberSize);
- g.querySelector('.layer-rms-value').setAttribute('font-size',16);
- g.querySelector('.layer-rms-label').setAttribute('font-size',16);
+ g.querySelector('.layer-rms-value').setAttribute('font-size',18);
+ g.querySelector('.layer-rms-label').setAttribute('font-size',18);
  const side=projectionX===.035,rms=sideRmsLabels[l],ready=layerContentReady(l);
  // Screen-space labels stay readable instead of inheriting the thin side projection.
  rms.setAttribute('transform',`translate(${p.x+planeWidth*projectionX/2} ${p.y-34}) rotate(-90)`);
- rms.setAttribute('font-size',16);
+ rms.setAttribute('font-size',18);
  rms.setAttribute('fill',l===selected?'#fff':'#aaa');
  rms.textContent=ready?'RMS '+g.querySelector('.layer-rms-value').textContent:'RMS —';
  rms.style.display=side?'':'none';
@@ -704,7 +704,7 @@ bindMagnifier(whole);
 const inspector=document.getElementById('tensor-inspector'),openInspector=document.getElementById('open-inspector');
 function syncIdentity(){
  document.getElementById('identity-layer').textContent='L'+selected;
- document.getElementById('identity-context').textContent=mode==='weight'?`OPTIMIZER STEP 1280 · ${weightUpdated?'更新后':'累积 '+mbCompleted+'/4 · 更新前'}`:stepDemo?`STEP 1280 · MICROBATCH ${String(observedMB()+1).padStart(2,'0')} · 教学模拟`:'STEP 1280 · MICROBATCH 03';
+ document.getElementById('identity-context').textContent=mode==='weight'?`OPTIMIZER STEP 1280 · ${weightUpdated?'更新后':'累积 '+mbCompleted+'/4 · 更新前'}`:stepDemo?`STEP 1280 · MICROBATCH ${String(observedMB()+1).padStart(2,'0')}`:'STEP 1280 · MICROBATCH 03';
  document.getElementById('identity-name').textContent=observation==='query'?'Query / '+(mode==='activation'?'输出激活':modes[mode].name):document.getElementById('detail-title').textContent;
  document.getElementById('identity-shape').textContent=document.getElementById('detail-shape').textContent;
 }
