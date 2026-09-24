@@ -1,0 +1,196 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>16 Rank · 内存轴测</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#e8e8e8;font:14px/1.5 Arial,"PingFang SC",sans-serif}svg{display:block;width:100%;height:100%;touch-action:none}svg text{font-variant-numeric:tabular-nums}svg text{font-family:Arial,"PingFang SC",sans-serif}.bar{position:fixed;bottom:28px;left:28px;max-width:calc(100vw - 56px);display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:7px;background:#202020;border:1px solid #505050;border-radius:4px}button,select{font:inherit;color:#b0b0b0;background:transparent;border:0;border-radius:2px;padding:9px 12px;cursor:pointer;min-height:38px}button:hover{background:#333;color:#fff}button[aria-pressed=true]{background:#e8e8e8;color:#111}button:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}select{max-width:200px;background:#202020;color:#e8e8e8}.sep{height:22px;width:1px;background:#505050;margin:0 6px}.readout{padding:0 12px;color:#e8e8e8;font-family:ui-monospace,monospace;font-size:13px}.hidden{display:none}#scene{cursor:grab}#scene:active{cursor:grabbing}@media(max-width:600px){.bar{bottom:14px;left:14px;max-width:calc(100vw - 28px);gap:0;padding:4px}button,select{padding:7px 9px;font-size:13px}.readout{font-size:12px;padding:0 8px}.sep{margin:0 3px}}
+.transport{flex-basis:100%;display:flex;align-items:center;gap:8px;border-top:1px solid #383838;padding-top:6px;margin-top:3px;flex-wrap:wrap}.transport input{width:210px;accent-color:#e8e8e8;cursor:pointer}.status{min-width:260px;color:#e8e8e8;font-size:13px;font-family:ui-monospace,monospace}.simtag{font-size:12px;color:#ababab;padding:0 8px}.bar{max-width:min(1100px,calc(100vw - 56px))}.transport button{min-width:48px}.transport select{max-width:80px}.transport input:focus-visible{outline:2px solid white}@media(max-width:600px){.transport input{width:140px}.status{min-width:220px}.bar{max-width:calc(100vw - 28px)}}
+.bar.scope-switch{top:28px;bottom:auto;left:50%;transform:translateX(-50%);flex-wrap:nowrap;max-width:calc(100vw - 28px)}@media(max-width:600px){.bar.scope-switch{top:14px}}
+#tensor.hidden{display:inline-block;visibility:hidden}
+nav[aria-label="视图操作"]{max-width:calc(100vw - 56px);flex-wrap:nowrap;gap:2px;overflow-x:auto}
+nav[aria-label="视图操作"] button,nav[aria-label="视图操作"] select{padding:7px 8px;flex-shrink:0}
+nav[aria-label="视图操作"] .readout{padding:0 6px;white-space:nowrap}
+nav[aria-label="视图操作"] .sep{flex-shrink:0;margin:0 3px}
+.transport{flex-basis:auto;flex-wrap:nowrap;flex-shrink:0;border-top:0;border-left:1px solid #505050;padding:0 0 0 8px;margin:0 0 0 4px;gap:4px}
+.transport input{width:120px}.transport .status{min-width:0;white-space:nowrap}
+#tensor{width:145px;max-width:145px}
+@media(max-width:600px){nav[aria-label="视图操作"]{max-width:calc(100vw - 28px)}.transport input{width:100px}}
+</style></head><body><svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，深灰分区表示空余；正交轴测视角"><g id="world"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><span class="readout" id="config" title="教学 mock：TP2 × PP2 × DP4 = 16；ETP2、EP2、专家副本2；EP折入DP。沿用8B尺寸，FFN改为两个半宽专家，top-1。非真实模型配置。">TP2 · PP2 · DP4 · EP2</span><span class="sep"></span><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重切片</button><select id="tensor" class="hidden" disabled aria-label="权重类型"><option value="0">attn.q · 列切 ×4</option><option value="1">attn.kv · 头切 ×4</option><option value="2">attn.out · 行切 ×4</option><option value="3">mlp.gate/up · 列切 ×4</option><option value="4">mlp.down · 行切 ×4</option><option value="5">embed · 词表切分 ×4</option><option value="6">lm_head · 词表切分 ×4</option><option value="7">norm · 复制</option></select><span class="sep"></span><button id="labels" aria-pressed="true">标注</button><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">100%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button><div class="transport"><button id="play" aria-label="暂停模拟">暂停</button><button id="restart" aria-label="重播当前训练步">重播</button><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><select id="speed" aria-label="播放速度"><option value="0.1">0.1×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select><span id="phase" class="status"></span></div></nav><script>
+const $=s=>document.getElementById(s);// Reference configuration: Llama 3 8B, 32 layers, hidden=4096, FFN=14336,
+// 32 query heads, 8 KV heads, head_dim=128, vocab=128256, untied embeddings.
+// Reference configuration reproduced by AWS:
+// https://aws.amazon.com/blogs/machine-learning/import-a-fine-tuned-meta-llama-3-model-for-sql-query-generation-on-amazon-bedrock/
+// Mixed precision Adam memory accounting:
+// https://huggingface.co/docs/transformers/v4.35.1/en/model_memory_anatomy
+// This is a capacity illustration, not measured NPU performance or memory.
+const H=4096,L=32,I=14336,V=128256,TP=2,MEMORY_BASE_TP=4;
+const baseGroups=[['attn.q','列切',L*H*H/MEMORY_BASE_TP,'col'],['attn.kv','头切',L*2*H*1024/MEMORY_BASE_TP,'col'],['attn.out','行切',L*H*H/MEMORY_BASE_TP,'row'],['mlp.gate/up','列切',L*2*H*I/MEMORY_BASE_TP,'col'],['mlp.down','行切',L*H*I/MEMORY_BASE_TP,'row'],['embed','词表切分',V*H/MEMORY_BASE_TP,'row'],['lm_head','词表切分',V*H/MEMORY_BASE_TP,'row'],['norm','复制',(L*2+1)*H,'copy']];
+let groups=baseGroups.map(t=>[...t]);
+let localParams=groups.reduce((sum,t)=>sum+t[2],0);
+const cats=[{name:'权重',value:localParams*2/1e9,color:'#BCA0F3',sub:'bf16 · 规格估算'},{name:'梯度',value:localParams*4/1e9,color:'#79D4F2',sub:'fp32 · 按需分配'},{name:'优化器态',value:localParams*12/1e9,color:'#B0B0B0',sub:'含主权重 · fp32 ×3'},{name:'激活',value:3.8,color:'#B1EF6B',sub:'演示假设'},{name:'临时工作区',value:0,color:'#D0D0D0',sub:'算子临时内存'},{name:'通信缓冲',value:0,color:'#606060',sub:'独立申请 / 释放'},{name:'分配器可复用空间',value:2.3,color:'#858585',sub:'未被张量使用 · 非KV cache'}];
+const occupied=cats.reduce((sum,a)=>sum+a.value,0);
+cats.push({name:'空余',value:64-occupied,color:'#282828',sub:'估算余量'});
+let tensors=groups.map(t=>[t[0],t[1],t[2]*2/1e9<.01?'<0.01':(t[2]*2/1e9).toFixed(2),t[3]]);
+let scope='all',selectedRank=2,renderRank=2;
+let mode='explode',labels=true,zoom=1,pan=[0,0];
+// Aggregated module playback: illustrative order across a pass, not a layer trace.
+const moduleOrder=[5,7,0,1,2,7,3,4,7,6];
+function currentModule(st){if(st.active==='update'||st.active==='zero'||st.active==='idle')return null;const order=st.active==='backward'?[...moduleOrder].reverse():moduleOrder;return order[Math.min(order.length-1,Math.floor(st.q*order.length))];}
+const PEAK_ACT=3.8,BASE_RESERVE=2.3,CYCLE_MS=31000;
+let simTime=0,step=1,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,lastFrame=null,lastPaint=0;
+// Sources: https://pytorch.org/blog/activation-checkpointing-techniques/
+// https://docs.pytorch.org/docs/stable/notes/cuda.html#memory-management
+// https://docs.pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html
+// Logical allocation model, not physical addresses. All runtime sizes and pulse
+// timing are mock. Communication uses a separate transient allocator in this scenario.
+let FULL_GRAD=localParams*4/1e9;
+function baseSimulationState(t){
+ t=Math.max(0,Math.min(CYCLE_MS,t));let st;
+ if(t<28000){const mb=Math.floor(t/7000)+1,local=t%7000;
+  if(local<3000){const q=local/3000;st={activation:PEAK_ACT*q,gradient:mb===1?0:FULL_GRAD,mb,phase:'前向',layer:Math.min(31,Math.floor(q*32)),detail:'保存激活；算子工作区和TP通信缓冲短时分配',active:'forward',q};}
+  else{const q=(local-3000)/4000;st={activation:PEAK_ACT*(1-q),gradient:mb===1?FULL_GRAD*q:FULL_GRAD,mb,phase:'反向',layer:Math.max(0,31-Math.floor(q*32)),detail:mb===1?'逐步生成并分配梯度；释放已用激活':'复用已有梯度空间累积数值；不再叠加一整份梯度',active:'backward',q};}
+  // Four visible aggregate bursts per pass, not a literal communication trace.
+  const pulse=Math.pow(Math.sin(Math.PI*st.q*4),2);
+  st.workspace=(st.active==='forward'?.3:.5)+pulse*.65;
+  st.communication=pulse*(st.active==='forward'?.8:1.6);
+ }else if(t<30000){const q=(t-28000)/2000;st={activation:0,gradient:FULL_GRAD,workspace:3*Math.sin(Math.PI*q),communication:0,mb:4,phase:'参数更新',layer:null,detail:'权重与Adam状态改变数值；更新临时工作区先申请后释放',active:'update'};}
+ else st={activation:0,gradient:0,workspace:0,communication:0,mb:4,phase:'释放梯度',layer:null,detail:'set_to_none：梯度存储释放到分配器，可由下一步复用',active:'zero'};
+ st.poolActive=st.activation+st.gradient+st.workspace;return st;
+}
+// Matrix convention from rank-topology-lite: rank = (pp * DP + dp) * TP + tp.
+// ETP=TP=2: ep=dp%2, expert replica=floor(dp/2). Two half-width experts,
+// top-1 routing, preserve the original aggregate FFN parameter budget.
+const ranks=Array.from({length:16},(_,id)=>({id,tp:id%2,dp:Math.floor(id/2)%4,pp:Math.floor(id/8),ep:Math.floor(id/2)%2,edp:Math.floor(id/4)%2}));
+// All ranks reuse the approved TP4 memory baseline, independently of topology.
+function rankGroups(id){return baseGroups.map(g=>[...g]);}
+const BASELINE_PARAMS=baseGroups.reduce((sum,g)=>sum+g[2],0);
+const BASELINE_OCCUPIED=BASELINE_PARAMS*18/1e9+PEAK_ACT+BASE_RESERVE;
+
+const params=ranks.map(r=>rankGroups(r.id).reduce((n,g)=>n+g[2],0));
+function simulationState(t,id=renderRank){
+ const r=ranks[id],grad=params[id]*4/1e9,mb=Math.min(4,Math.floor(t/7000)+1),u=t%7000;
+ let st;
+ if(t>=28000){st=baseSimulationState(t);st.gradient=t<30000?grad:0;}
+ else {
+  const f=r.pp*1200,b=r.pp===1?2400:4300;
+  const forward=u>=f&&u<f+1200,backward=u>=b&&u<b+1900;
+  const q=forward?(u-f)/1200:backward?(u-b)/1900:0;
+  const load=r.ep===0?1.15:.85,peak=PEAK_ACT*load;
+  const activation=u<f?0:u<f+1200?peak*q:u<b?peak:u<b+1900?peak*(1-q):0;
+  st={mb,q,active:forward?'forward':backward?'backward':'idle',phase:forward?'前向':backward?'反向':'流水等待',layer:forward?r.pp*16+Math.min(15,Math.floor(q*16)):backward?r.pp*16+Math.max(0,15-Math.floor(q*16)):null,activation,gradient:mb>1?grad:u<b?0:u<b+1900?grad*q:grad,workspace:forward||backward?.3+.65*Math.sin(Math.PI*q)**2:0,communication:0,detail:'PP顺序前向、逆序反向；4个microbatch；教学调度，非真实trace'};
+  const pulse=forward||backward?Math.sin(Math.PI*q*4)**2:0;
+  st.tp=pulse*.4;st.ep=pulse*(q>.45&&q<.85?.6:0);
+  st.pp=(u>=1200&&u<1400)||(u>=4100&&u<4300)?.35:0;
+  st.dp=u>=6200&&u<6900&&mb===4?.6:0;
+  st.communication=st.tp+st.ep+st.pp+st.dp;
+ }
+ // Transient categories share the approved 3.8 GB demo budget.
+ // Freed gradient/activation bytes remain reserved and reusable on the device.
+ const transient=st.activation+st.workspace+st.communication;
+ const factor=transient>PEAK_ACT?PEAK_ACT/transient:1;
+ st.activation*=factor;st.workspace*=factor;st.communication*=factor;
+ st.poolActive=st.activation+st.gradient+st.workspace;return st;
+}
+const histories=ranks.map(r=>{let high=0;const values=[];for(let t=0;t<=CYCLE_MS;t+=10){high=Math.max(high,simulationState(t,r.id).poolActive);values.push(high);}return {values,high};});
+function setRankData(id){renderRank=id;groups=rankGroups(id);localParams=params[id];FULL_GRAD=localParams*4/1e9;cats[0].value=localParams*2/1e9;cats[2].value=localParams*12/1e9;tensors=groups.map(g=>[g[0],g[1],(g[2]*2/1e9).toFixed(2),g[3]]);}
+function applySimulation(){const st=simulationState(simTime);
+ cats[0].sub=st.active==='update'?'bf16 · 更新数值':'bf16 · 常驻';
+ cats[1].value=st.gradient;cats[1].sub=st.active==='zero'?'已释放 · set_to_none':st.active==='backward'?(st.mb===1?'首次分配 · fp32':'原位累积 '+st.mb+'/4 · fp32'):st.gradient>0?'保留累积结果 · fp32':'尚未分配';
+ cats[2].sub=st.active==='update'?'fp32 ×3 · 更新数值':'含主权重 · fp32 ×3';
+ cats[3].value=st.activation;cats[3].sub=st.active==='forward'?'保存中 · μb '+st.mb:st.active==='backward'?'释放中 · μb '+st.mb:'已释放';
+ cats[4].value=st.workspace;cats[4].sub=st.active==='update'?'参数更新工作区 · 模拟':'算子工作区 · 模拟';
+ cats[5].value=st.communication;cats[5].sub=st.communication>.01?'TP / PP / EP / DP通信 · 模拟':'独立缓冲已释放';
+ const live=cats.slice(0,6).reduce((sum,c)=>sum+c.value,0);
+ cats[6].value=BASELINE_OCCUPIED-live;cats[6].sub='基准预留池 · 释放后复用';
+ const total=BASELINE_OCCUPIED;cats.at(-1).value=64-total;
+ $('phase').textContent='Step '+step+' · '+st.phase+(st.layer===null?'':' · μb '+st.mb+'/4'+(mode==='shard'?'':' · L'+st.layer));
+ if(mode==='shard'){const module=currentModule(st);if(module!==null)$('tensor').value=String(module);}
+ $('phase').title=st.detail;$('timeline').value=Math.round(simTime);$('timeline').setAttribute('aria-valuetext',st.phase+'，'+(simTime/1000).toFixed(1)+'秒');
+ $('play').textContent=playing?'暂停':'播放';$('play').setAttribute('aria-label',playing?'暂停模拟':'播放模拟');
+}
+
+function P(x,y,z){return[575+(x-y)*Math.sqrt(3)/2,510+(x+y)*.5-z]};function pts(a){return a.map(p=>P(...p).join(',')).join(' ')}function polygon(a,c,stroke='#FFFFFF',width=.8){return `<polygon points="${pts(a)}" fill="${c}" stroke="${stroke}" stroke-width="${width*(scope==='all'?2:1)}" stroke-linejoin="round"/>`};function shade(color,factor){const n=parseInt(color.slice(1),16);return '#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.min(255,Math.round(v*factor)).toString(16).padStart(2,'0')).join('');}
+function block(x,y,z,w,d,h,c,top=true){let a='';const stroke='none';
+ a+=polygon([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],shade(c,.82),stroke);
+ a+=polygon([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],shade(c,1.04),stroke);
+ if(top)a+=polygon([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]],shade(c,.94),stroke);return a;}
+
+function text(x,y,s,size=16,c='#e8e8e8',extra=''){return `<text x="${x}" y="${y}" fill="${c}" font-size="${size}" ${extra}>${s}</text>`}function label(p,y,title,sub,c='#e8e8e8'){const x=p[0]+18;return `<circle cx="${p[0]}" cy="${p[1]}" r="2" fill="#FFFFFF"/>`+text(x,y,title,17,c)+text(x,y+24,sub,14,'#ababab')}
+
+function outline(z,h){return `<path d="M${P(0,155,z+h)} L${P(0,0,z+h)} L${P(245,0,z+h)} L${P(245,155,z+h)} Z M${P(0,155,z+h)} L${P(0,155,z)} L${P(245,155,z)} L${P(245,0,z)} L${P(245,0,z+h)} M${P(245,155,z+h)} L${P(245,155,z)}" fill="none" stroke="#FFFFFF" stroke-width="${scope==='all'?4.8:2.4}"/>`}
+function drawRank(){applySimulation();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=64*6.7,inset=6;let z=inset;
+// Fixed separation uses part of free capacity; the remainder stays above the stack.
+const gap=exploded?8:0;
+let drawn=0,anchors=[];
+s+=`<path d="M${P(0,0,0)} L${P(0,0,frameHeight)}" fill="none" stroke="#505050" stroke-width="${scope==='all'?4.8:2.4}"/>`;
+cats.forEach((a,i)=>{const free=i===cats.length-1,h=a.value*6.7;
+ if(exploded&&free){anchors.push(P(245,0,z+(frameHeight-z)/2));return;}
+ if(exploded&&h>.01&&drawn>0)z+=gap;
+ anchors.push(P(245,0,z+h/2));
+ if(h>.01&&!free)s+=block(inset,inset,z,245-inset*2,155-inset*2,h,a.color,true);
+ z+=h;if(!free&&h>.01)drawn++;
+});
+s+=outline(0,frameHeight);
+if(labels){const notes=['bf16 · 常驻参数','fp32 · 首次分配，随后累积','主权重 + Adam 两状态 · fp32','前向保存 · 反向释放','算子 / 参数更新临时内存','并行通信临时缓冲 · 模拟','已预留、未使用 · 非 KV cache','尚未被设备占用'];
+const names=['权重','梯度','优化器态','激活','临时工作区','通信缓冲','分配器可复用','空余'];
+cats.forEach((a,i)=>{const y=225+(7-i)*49, color=i===7?'#e8e8e8':i===5?'#aaaaaa':a.color;
+s+=`<circle cx="${anchors[i][0]}" cy="${anchors[i][1]}" r="2" fill="#fff"/>`;
+s+=text(825,y,names[i],14,color)+text(1070,y,a.value.toFixed(2),15,'#e8e8e8','text-anchor="end" font-family="monospace"')+text(1078,y,'GB',10,'#929292');
+s+=text(825,y+18,notes[i],11,'#999999');});
+const p=P(0,155,frameHeight);s+=text(p[0]-18,p[1]-38,'Rank '+renderRank,24,'#e8e8e8','text-anchor="end"')+text(p[0]-18,p[1]-14,'64 GB · TP2 · PP'+ranks[renderRank].pp+' · EP'+ranks[renderRank].ep,14,'#ababab','text-anchor="end"');}}
+return s;}
+// Two PP floors; each floor is a 2 (TP) × 4 (DP) isometric array.
+const RANK_SCALE=.36;
+function rankPosition(r){
+ // Shared isometric axes: X=DP (4), Y=TP (2), Z=PP (2).
+ const x=r.dp*480,y=r.tp*700,z=r.pp*900;
+ return [537+(x-y)*Math.sqrt(3)/2*RANK_SCALE,325+((x+y)*.5-z)*RANK_SCALE];
+}
+// Paint back to front, lower floor first, so foreground ranks occlude correctly.
+const rankPaintOrder=[...ranks].sort((a,b)=>a.pp-b.pp||(a.dp*480+a.tp*700)-(b.dp*480+b.tp*700));
+function drawRelations(){
+ const dim=$('relations').value;if(dim==='none')return '';
+ const point=r=>{const [x,y]=rankPosition(r);return [x+RANK_SCALE*202,y+RANK_SCALE*665];};
+ let out='';for(const a of ranks)for(const b of ranks){if(b.id<=a.id)continue;
+  const same=dim==='tp'?a.pp===b.pp&&a.dp===b.dp:dim==='pp'?a.tp===b.tp&&a.dp===b.dp:dim==='ep'?a.pp===b.pp&&a.tp===b.tp&&a.edp===b.edp:dim==='edp'?a.pp===b.pp&&a.tp===b.tp&&a.ep===b.ep:a.pp===b.pp&&a.tp===b.tp&&b.dp===a.dp+1;
+  if(!same)continue;const st=simulationState(simTime,a.id),active=st[dim==='edp'?'dp':dim]>.01;
+  const [x,y]=point(a),[xx,yy]=point(b);
+  out+=`<path data-relation="${dim}" d="${x===xx?`M${x} ${y} H${x+70} V${yy} H${xx}`:`M${x} ${y} L${xx} ${yy}`}" fill="none" stroke="${active?'#e8e8e8':'#505050'}" stroke-width="${active?1.2:.8}" stroke-dasharray="${dim==='pp'?'6 4':dim==='ep'?'2 4':'none'}"><title>${dim.toUpperCase()} · Rank ${a.id} ↔ ${b.id}</title></path>`;
+ }return out;
+}
+function render(){setRankData(selectedRank);let s='';const savedLabels=labels,savedTensor=$("tensor").value;if(scope==='all'){labels=false;for(const r of rankPaintOrder){setRankData(r.id);const [x,y]=rankPosition(r);const geom=drawRank();s+=`<g data-rank="${r.id}" role="button" tabindex="0" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)">${geom}</g>`;}labels=savedLabels;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=drawRank();}
+$('world').innerHTML=s;transform();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));$('tensor').classList.toggle('hidden',mode!=='shard');$('labels').setAttribute('aria-pressed',scope==='single'&&labels);$('labels').disabled=scope==='all';$('relations').classList.toggle('hidden',true);$('single').setAttribute('aria-pressed',scope==='single');$('all').setAttribute('aria-pressed',scope==='all');$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('scene').setAttribute('aria-label',scope==='all'?'16 rank 内存总览，无文字标注':'Rank '+selectedRank+' 内存细节')}
+function drawShards(){let t=tensors[+$('tensor').value],s='';const st=simulationState(simTime),active=currentModule(st),selected=+$('tensor').value;const state=st.active==='idle'?'流水等待':st.active==='update'?'所有模块 · 参数更新':st.active==='zero'?'所有模块 · 释放梯度':'跟随计算'+' · '+(selected===active?st.phase+'使用中':'当前计算 '+tensors[active][0]);// A complete tensor is illustrated as four adjacent partitions. Only tp2 is resident on this NPU.
+// Same footprint, base inset and total weight height as the layered view.
+const w=233,d=143,h=cats[0].value*6.7,z=6;for(let j=0;j<TP;j++){let x=0,y=0,ww=w,dd=d;if(t[3]==='row'){y=j*d/TP;dd=d/TP}else{x=j*w/TP;ww=w/TP}let c=(j===ranks[renderRank].tp||t[3]==='copy')?'#BCA0F3':'#282828';s+=block(x,y,z,ww,dd,h,c,true);}
+// Shared edges form a continuous square lattice on visible surfaces only.
+if(groups[selected][2]===0)return block(0,0,z,w,d,h,"#282828",true);
+const pitch=14,copy=t[3]==='copy',row=t[3]==='row';
+const x0=copy||row?0:ranks[renderRank].tp*w/TP,x1=copy||row?w:(ranks[renderRank].tp+1)*w/TP;
+const y0=copy||!row?0:ranks[renderRank].tp*d/TP,y1=copy||!row?d:(ranks[renderRank].tp+1)*d/TP;
+function gridLine(a,b){return `<path d="M${P(...a)} L${P(...b)}" fill="none" stroke="#685b80" stroke-width="${scope==='all'?1.4:.7}"/>`;}
+for(let x=x0+pitch;x<x1-.01;x+=pitch)s+=gridLine([x,y0,z+h],[x,y1,z+h]);
+for(let y=y0+pitch;y<y1-.01;y+=pitch)s+=gridLine([x0,y,z+h],[x1,y,z+h]);
+if(y1===d){for(let x=x0+pitch;x<x1-.01;x+=pitch)s+=gridLine([x,d,z],[x,d,z+h]);for(let zz=z+pitch;zz<z+h;zz+=pitch)s+=gridLine([x0,d,zz],[x1,d,zz]);}
+if(x1===w){for(let y=y0+pitch;y<y1-.01;y+=pitch)s+=gridLine([w,y,z],[w,y,z+h]);for(let zz=z+pitch;zz<z+h;zz+=pitch)s+=gridLine([w,y0,zz],[w,y1,zz]);}
+s=`<path d="M${P(0,0,0)} L${P(0,0,64*6.7)}" fill="none" stroke="#505050" stroke-width="${scope==='all'?4.8:2.4}"/><g transform="translate(0 6)">${s}</g>`+outline(0,64*6.7);
+if(labels){s+=text(885,230,t[0],28)+text(885,200,state,14,'#ababab')+text(885,261,t[1]+(t[3]==='copy'?'':' ×2')+' · 本卡 tp'+ranks[renderRank].tp+' · '+t[2]+' GB'+(selected<5?' · 本阶段16层合计':selected===7?' · 本阶段合计':''),16,'#BCA0F3');for(let j=0;j<TP;j++){let x=t[3]==='row'?w:((j+.5)*w/TP),y=t[3]==='row'?((j+.5)*d/TP):d,p=P(x,y,z);s+=text(p[0]+(t[3]==='row'?25:0),p[1]+32,'tp'+j,14,j===ranks[renderRank].tp?'#e8e8e8':'#ababab','text-anchor="middle"')}const lx=885;
+s+=text(lx,365,copy?'本卡副本':'本卡分片',14,'#BCA0F3')+text(1130,365,t[2],15,'#e8e8e8','text-anchor="end"')+text(1138,365,'GB',10,'#929292')+text(lx,383,copy?'本卡 · 持有完整副本':'本卡 · 持有阶段 / 专家权重的 1/2',11,'#999999');
+s+=text(lx,414,copy?'其他 TP 副本':'其他 TP 分片',14,'#aaaaaa')+text(lx,432,copy?'另一 TP rank · 持有相同副本':'另一 TP rank · 驻留互补分片',11,'#999999');
+;}return s}
+function transform(){let fit=1,cy=425;if(scope==='all'){const r=$('scene').getBoundingClientRect(),unit=Math.min(r.width/1400,r.height/900),offset=(r.height-900*unit)/2;const bottom=Math.min(880,(document.querySelector('nav[aria-label="视图操作"]').getBoundingClientRect().top-r.top-offset)/unit-24);fit=Math.min(1,(bottom-24)/969);cy=(bottom+24)/2;}$('world').setAttribute('transform',`translate(${700+pan[0]} ${cy+pan[1]}) scale(${zoom*fit}) translate(-700 -${scope==='all'?497:425})`);$('zoom').textContent=Math.round(zoom*100)+'%'}document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render()});$('labels').onclick=()=>{labels=!labels;render()};$('plus').onclick=()=>{zoom=Math.min(2.5,zoom+.15);transform()};$('minus').onclick=()=>{zoom=Math.max(.5,zoom-.15);transform()};$('fit').onclick=()=>{zoom=1;pan=[0,0];render()};let drag=null;$('scene').onpointerdown=e=>{drag=[e.clientX,e.clientY,...pan];$('scene').setPointerCapture(e.pointerId)};$('scene').onpointermove=e=>{if(!drag)return;let r=$('scene').getBoundingClientRect(),scale=Math.min(r.width/1400,r.height/900);pan=[drag[2]+(e.clientX-drag[0])/scale,drag[3]+(e.clientY-drag[1])/scale];transform()};$('scene').onpointerup=$('scene').onpointercancel=()=>drag=null;
+const cameras={single:{zoom:1,pan:[0,0]},all:{zoom:1,pan:[0,0]}};
+function switchScope(next){cameras[scope]={zoom,pan:[...pan]};scope=next;({zoom,pan}=cameras[scope]);render();}
+$('relations').onchange=()=>render();
+$('single').onclick=()=>switchScope('single');$('all').onclick=()=>switchScope('all');
+$('rank').innerHTML=ranks.map(r=>`<option value="${r.id}">Rank ${r.id} · tp${r.tp} pp${r.pp} ep${r.ep}</option>`).join('');
+$('rank').onchange=()=>{selectedRank=+$('rank').value;render();};
+$('scene').addEventListener('dblclick',e=>{const g=e.target.closest('[data-rank]');if(g){selectedRank=+g.dataset.rank;switchScope('single');}});
+$('scene').addEventListener('keydown',e=>{const g=e.target.closest('[data-rank]');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectedRank=+g.dataset.rank;switchScope('single');}});
+$('config').title='拓扑：TP2 × PP2 × DP4 = 16，EP2、专家副本2；内存：每卡独立复用Llama 3 8B TP4基准，固定占用约66%。两者为教学mock组合。';
+for(const o of $('tensor').options)o.textContent=o.textContent.replace('×4','×2');
+$('play').onclick=()=>{playing=!playing;lastFrame=null;render()};
+$('restart').onclick=()=>{simTime=0;step=1;lastFrame=null;render()};
+$('timeline').oninput=()=>{simTime=+$('timeline').value;playing=false;lastFrame=null;render()};
+$('speed').onchange=()=>{lastFrame=null};
+window.addEventListener('resize',()=>transform());
+document.addEventListener('visibilitychange',()=>{lastFrame=null});
+function tick(now){if(lastFrame!==null&&playing&&!document.hidden){simTime+=(now-lastFrame)*Number($('speed').value);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
+render();requestAnimationFrame(tick);
+</script></body></html>
