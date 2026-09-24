@@ -33,6 +33,8 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
     template = (ROOT / 'web/index.template.html').read_text()
     if collection == 'skills':
         template = template.replace('<title>AI Infra 设计知识库</title>', '<title>AI Infra Skill 库</title>')
+    if collection == 'patterns':
+        template = template.replace('<title>AI Infra 设计知识库</title>', '<title>AI Infra Pattern 库</title>')
     config = {'mode': mode, 'serviceBase': service if mode == 'pto' else './', 'ptoBase': './' if mode == 'pto' else None}
     config['collection'] = collection
     if collection == 'skills':
@@ -51,6 +53,7 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '/* CONFIG_JSON */': json.dumps(config).replace('<', '\\u003c'),
         '/* CORE_JS */': (ROOT / 'web/catalog-core.js').read_text(),
         '/* APP_JS */': (ROOT / 'web/gallery.js').read_text(),
+        '__NPU_MEMORY_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/npu-memory-atlas-training-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__LLM_INFERENCE_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/llm-inference-cover.svg').read_bytes()).decode('ascii'),
         '__TRAINING_PARALLEL_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/training-parallel-communication-cover.svg').read_bytes()).decode('ascii'),
         '__OBSERVABILITY_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/observability-design-style.png').read_bytes()).decode('ascii')) if collection == 'skills' else '',
@@ -85,6 +88,7 @@ if __name__ == '__main__':
                     archive.write(file, file.relative_to(skill_root.parent))
     (ROOT / 'index.html').write_text(build(), encoding='utf-8')
     (ROOT / 'skills.html').write_text(build(collection='skills'), encoding='utf-8')
+    (ROOT / 'patterns.html').write_text(build(collection='patterns'), encoding='utf-8')
     if args.pto_output:
         args.pto_output.write_text(build('pto', args.service_url.rstrip('/') + '/'), encoding='utf-8')
-    print('Built index.html, skills.html and Skill ZIP' + (' and PTO compatibility page' if args.pto_output else ''))
+    print('Built index.html, skills.html, patterns.html and Skill ZIP' + (' and PTO compatibility page' if args.pto_output else ''))

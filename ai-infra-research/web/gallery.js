@@ -3,13 +3,14 @@
   const C=window.CatalogCore, esc=C.escapeHtml;
   const allAssets=JSON.parse(document.getElementById('catalogData').textContent).assets;
   const config=JSON.parse(document.getElementById('runtimeConfig').textContent);
-  const isSkills=config.collection==='skills';
-  const assets=allAssets.filter(a=>isSkills?a.type==='method':a.type==='knowledge');
+  const isSkills=config.collection==='skills', isPatterns=config.collection==='patterns';
+  const assets=allAssets.filter(a=>isSkills?a.type==='method':isPatterns?a.type==='pattern':a.type==='knowledge');
   config.fileMode=location.protocol==='file:';
   if(config.mode==='pto' && typeof window.PTO_BASE_PREFIX==='string')config.ptoBase=window.PTO_BASE_PREFIX.replace(/\/?$/,'/');
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'npu-memory-atlas-training':{src:'__NPU_MEMORY_COVER__',alt:'Rank 2 训练内存轴测分层：权重、梯度、优化器态、激活与空余容量'},
     'spatial-systems-ui-style-guide':{src:'__SPATIAL_SYSTEMS_COVER__',alt:'Layer Atlas 空间系统界面：模型层叠、选中层与异常定位'},
     'llm-inference-dense-to-clusters':{src:'__LLM_INFERENCE_COVER__',alt:'LLM 推理封面：Prefill 建立缓存，Decode 循环生成 Token'},
     'training-parallel-communication':{src:'__TRAINING_PARALLEL_COVER__',alt:'多卡训练的四个层级：任务拆分、状态存储、通信语义、实现与链路'},
@@ -97,7 +98,7 @@
     for(const id of ['galleryHero','galleryControls','collection'])$(id).hidden=detail;
     $('detailView').hidden=!detail;
     if(detail){renderDetail();return;}
-    document.title=isSkills?'AI Infra Skill 库':'AI Infra 设计知识库';
+    document.title=isSkills?'AI Infra Skill 库':isPatterns?'AI Infra Pattern 库':'AI Infra 设计知识库';
     $('searchInput').value=state.query;
     const visible=C.filterAssets(assets,{...state,topic:isSkills?'all':state.topic,domain:'all',form:'all'});
     $('resultCount').textContent=`显示 ${visible.length} / ${assets.length} 篇`;
@@ -116,11 +117,13 @@
   let theme='light';try{theme=localStorage.getItem('ai-infra-theme')==='dark'?'dark':'light';}catch{}
   setTheme(theme);$('themeToggle').addEventListener('click',()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';setTheme(t);try{localStorage.setItem('ai-infra-theme',t);}catch{}});
   if(config.mode==='pto'){$('launchLink').href=config.ptoBase+'launch-v2.html';$('launchLink').hidden=false;}
-  const activeLibrary=$(isSkills?'skillsTab':'knowledgeTab');
+  const activeLibrary=$(isSkills?'skillsTab':isPatterns?'patternsTab':'knowledgeTab');
   if(isSkills){document.querySelector('.category-scroll').hidden=true;$('galleryControls').classList.add('skills-controls');}
   activeLibrary.classList.add('is-selected');activeLibrary.setAttribute('aria-current','page');
   if(isSkills){$('pageTitle').textContent='AI Infra Skills';document.querySelector('#galleryHero .hero-description').textContent='将实践沉淀为可复用的技能，让技术理解与设计表达持续积累。';$('searchInput').placeholder='搜索 Skill、用途、关键词…';$('collection').setAttribute('aria-label','Skill 内容');}
+  if(isPatterns){$('pageTitle').textContent='AI Infra Patterns';document.querySelector('#galleryHero .hero-description').textContent='积累可复用的可视化与交互模式，从具体场景探索设计表达。';$('searchInput').placeholder='搜索 Pattern、摘要、关键词…';$('collection').setAttribute('aria-label','Pattern 内容');}
   render();
+  if(isPatterns){$('connectionStatus').textContent=`共 ${assets.length} 个 Pattern`;return;}
   if(isSkills){$('connectionStatus').textContent=`共 ${assets.length} 个 Skill`;return;}
   if(config.fileMode){$('connectionStatus').textContent=`共 ${assets.length} 篇知识内容 · 本地静态版`;return;}
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),3500);
