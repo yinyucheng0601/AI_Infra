@@ -1,7 +1,6 @@
 #layer-front{position:fixed;inset:85px 190px 85px 290px;z-index:7;display:flex;flex-direction:column;min-width:0;background:#111}
 #layer-front[hidden],#layer-front [hidden]{display:none!important}
 .front-view #scene,.front-view .path-demo{visibility:hidden;pointer-events:none}
-.front-view .rank-memory{display:none}
 .front-heading{display:flex;align-items:flex-start;justify-content:flex-end;gap:12px;flex:none}
 .front-tools{display:flex;gap:5px;align-items:center}
 .front-tools button,#front-node-info button{font:12px inherit;color:#ccc;background:#191919;border:1px solid #444;padding:6px 8px;cursor:pointer;white-space:nowrap}
