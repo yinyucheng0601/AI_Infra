@@ -2,6 +2,26 @@
   "version": 1,
   "assets": [
     {
+      "id": "pangu-layer-atlas",
+      "title": "PanGu · Layer Atlas",
+      "form": "交互 Pattern",
+      "domains": ["Pangu", "Distributed Training", "Observability"],
+      "summary": "以 49 层空间堆叠联动张量采样、训练阶段与 Rank 内存，从模型总览逐层探索异常与细节。",
+      "designValue": "提供空间层级导航、矩阵详情、异常定位与内存总览联动的交互表达参考。",
+      "outline": ["2.5D 与侧视图切换", "激活、参数梯度与权重观测", "层导航、异常定位与矩阵采样详情", "传播路径教学模拟", "单 Rank 与全部 Rank 内存联动"],
+      "type": "pattern",
+      "media": ["web"],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/pangu-layer-atlas.md",
+      "sources": [{"repository": "ai-infra", "url": null, "path": "layer_stack/pangu-layer-stack_副本.html", "revision": null, "sha256": "24f6e149fef5736772e4874e5da3103fc98d1febc93b096a306010b0ed0991cf"}],
+      "validation": ["2026-09-28：按用户指定入口收录，核对页面与本地资源引用。数据为教学模拟，未独立复核技术事实或进行浏览器视觉验收。"],
+      "related": ["npu-memory-atlas-training", "spatial-systems-ui-style-guide"],
+      "reviewedAt": "2026-09-28",
+      "topics": ["training", "visual"],
+      "author": "Yucheng"
+    },
+    {
       "id": "npu-memory-atlas-training",
       "title": "NPU 训练内存轴测 · 16 Rank",
       "form": "交互 Pattern",

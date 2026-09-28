@@ -292,5 +292,5 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
 
-.card-visual:has(.document-figure-npu-memory-atlas-training) { height: 100%; }
-.card-visual .document-figure-npu-memory-atlas-training { object-fit: contain; transform: none; filter: none; background: #111; border-radius: var(--radius-md); }
+.card-visual:has(.document-figure-npu-memory-atlas-training, .document-figure-pangu-layer-atlas) { height: 100%; }
+.card-visual .document-figure-npu-memory-atlas-training, .card-visual .document-figure-pangu-layer-atlas { object-fit: contain; transform: none; filter: none; background: #111; border-radius: var(--radius-md); }

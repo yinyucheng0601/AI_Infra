@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'pangu-layer-atlas':{src:'__PANGU_LAYER_ATLAS_COVER__',alt:'Layer Atlas：49 层空间堆叠、异常层高亮、选中 L32 与 Rank 内存联动'},
     'npu-memory-atlas-training':{src:'__NPU_MEMORY_COVER__',alt:'Rank 2 训练内存轴测分层：权重、梯度、优化器态、激活与空余容量'},
     'spatial-systems-ui-style-guide':{src:'__SPATIAL_SYSTEMS_COVER__',alt:'Layer Atlas 空间系统界面：模型层叠、选中层与异常定位'},
     'llm-inference-dense-to-clusters':{src:'__LLM_INFERENCE_COVER__',alt:'LLM 推理封面：Prefill 建立缓存，Decode 循环生成 Token'},
@@ -36,6 +37,7 @@
     if(documentFigures[a.id])return `<img class="document-figure document-figure-${esc(a.id)}" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}">`;
     const frame=content=>`<svg viewBox="0 0 240 150" role="img" aria-label="${esc(a.title)} 主题插画">${content}</svg>`;
     const arts={
+      'pangu-layer-atlas':`<g class="line"><path d="m108 26 73 35v67l-73-35zM92 29l73 35v67M76 32l73 35v67M60 35l73 35v67M44 38l73 35v67"/></g><path class="soft" d="m76 32 73 35v67L76 99z"/><path class="line" d="m76 32 73 35v67L76 99z"/><path class="accent" d="m97 65 15 7v18l-15-7z"/>`,
       'devkit-tui-competitive-analysis':`<rect class="soft" x="28" y="24" width="184" height="102" rx="10"/><path class="line" d="M28 45h184M89 45v81M89 86h123"/><circle class="solid" cx="41" cy="35" r="3"/><circle class="mid" cx="52" cy="35" r="3"/><path class="line" d="m41 61 8 6-8 6m17 0h17M103 59h87M103 72h54M103 99h48M103 112h78"/><rect class="accent" x="41" y="90" width="33" height="6" rx="3"/>`,
       'aicpu-aicore':`<rect class="soft" x="34" y="26" width="172" height="98" rx="18"/><circle class="solid" cx="87" cy="75" r="25"/><circle class="mid" cx="153" cy="75" r="25"/><path class="line" d="M112 75h16M87 50V38M153 50V38M87 112v-12M153 112v-12"/><text x="76" y="79" style="fill:var(--background)">CPU</text><text x="140" y="79">CORE</text>`,
       'hnsw-explainer':`<path class="line thin" d="M34 112h172M56 88h128M78 62h84M104 36h32"/><g class="line"><path d="M52 112 82 88 112 62 120 36M92 112l28-24 28-26M132 112l28-24"/></g><g class="solid"><circle cx="52" cy="112" r="6"/><circle cx="92" cy="112" r="6"/><circle cx="132" cy="112" r="6"/><circle cx="172" cy="112" r="6"/><circle cx="82" cy="88" r="6"/><circle cx="120" cy="88" r="6"/><circle cx="160" cy="88" r="6"/><circle cx="112" cy="62" r="6"/><circle cx="148" cy="62" r="6"/></g><circle class="accent" cx="120" cy="36" r="7"/>`,

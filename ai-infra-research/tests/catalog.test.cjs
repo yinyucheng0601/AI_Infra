@@ -6,6 +6,14 @@ const C=require('../web/catalog-core.js');
 const root=path.join(__dirname,'..');
 const assets=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.filter(a=>a.type==='knowledge');
 const initial=()=>C.parseState('',assets);
+test('Layer Atlas Pattern uses the specified entry in both static modes',()=>{
+ const a=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.find(a=>a.id==='pangu-layer-atlas');
+ assert.equal(a.type,'pattern');
+ const expected='../layer_stack/pangu-layer-stack_%E5%89%AF%E6%9C%AC.html';
+ assert.equal(C.sourceHref(a,{mode:'standalone',fileMode:true,fileRoots:{'ai-infra':'../'}}),expected);
+ assert.ok(C.sourceHref(a,{mode:'standalone'}).startsWith(expected+'?v='));
+ assert.ok(fs.existsSync(path.join(root,'..',a.sources[0].path)));
+});
 test('21 manually curated entries after explicit exclusions',()=>{
  assert.equal(assets.length,21);assert.equal(assets.filter(a=>a.sources[0].repository==='pto').length,10);
  assert.equal(new Set(assets.map(a=>a.id)).size,21);
