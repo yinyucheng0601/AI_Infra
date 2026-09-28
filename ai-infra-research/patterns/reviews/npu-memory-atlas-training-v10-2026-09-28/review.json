@@ -1,0 +1,111 @@
+{
+  "asset": "npu-memory-atlas-training",
+  "reviewedAt": "2026-09-28",
+  "status": "reviewed",
+  "uiStatus": "approved",
+  "evidence": "用户明确确认：把当前版本记录为已评审，所有UI样式approved。",
+  "approvedSnapshot": "approved.html",
+  "approvedSha256": "cf5dfe4b59bd1eff8c4852615480daabe1038097bbcdd83f32dba0e6ca4a2240",
+  "cssSha256": "26b2c723007a2f2de6acdc5e0583f1c7471e6841997578ae255e4774f5690e4a",
+  "lockedScope": [
+    "布局与Rank位置",
+    "Rank比例、轴测投影与相机",
+    "色彩、字体、字号与标注",
+    "内存图元、菜单、控件与说明面板"
+  ],
+  "nextChange": "仅引入 rank-topology-lite 的并行分组与选中关系行为，适配当前 TP2/PP2/DP4/EP2/ETP2 配置；新增关系尚未由用户评审。",
+  "reference": "http://127.0.0.1:8765/hpc-topology-viewer/public/patterns/rank-topology-lite/pattern.html",
+  "integrationValidation": {
+    "status": "logic-checked",
+    "uiReReview": "pending",
+    "referenceImplementation": "hpc-topology-viewer/public/parallel-topology/demo.html",
+    "referenceFunctions": [
+      "coordsOf",
+      "rankOf",
+      "groupMembers",
+      "epOf",
+      "epMembers"
+    ],
+    "referenceSha256": "e6f1a782b729af3ec5cae6080d3e7ca800dc8eb24d24d7ba0a2ca747683f226b",
+    "checks": [
+      "Approved HTML/CSS byte-for-byte unchanged",
+      "32 Rank SVG rendering combinations identical to approved snapshot",
+      "TP/PP/DP/EP/expert replica membership symmetry, edge uniqueness, anchor tracking",
+      "120 prior rank/time/module regression combinations"
+    ],
+    "browserVisualReview": "未执行；按仓库约定交由用户验收新增关系。"
+  },
+  "selectionStyleAmendment": {
+    "date": "2026-09-28",
+    "authorization": "用户要求：无联动 Rank 变暗；选中后内存分层去色为中性灰；Rank 按当前并行模式染色。",
+    "implementation": "仅全部 Rank 的关系选中态生效；现有并行模式菜单可切换 TP/PP/DP/EP/专家副本，外框与关系线同色，非成员 opacity 0.13。取消选择或隐藏关系恢复默认样式。",
+    "validation": "模式成员、去色、变暗、描边颜色及取消恢复逻辑通过；未进行浏览器视觉验收。"
+  },
+  "fullLinkageCorrection": {
+    "date": "2026-09-28",
+    "request": "用户要求复用全联动逻辑并恢复并行 tag。",
+    "reference": "parallel-topology/demo.html: memSibs / selTier / applyParallelGroupPick",
+    "behavior": "默认显示全部维度成员并集；焦点白色；关联按 PP/TP/EP/专家副本/DP 维度着色，折叠维度重叠时优先专家语义；无关联只保留暗淡外框；12 个 TP/PP/DP/EP/专家副本 tag 可点击或键盘切换坐标。",
+    "validation": "成员并集、全部8条关系边、12个tag、5维tag坐标切换、白色焦点与空壳、原有32组Rank图元对比通过；视觉待用户验收。"
+  },
+  "xyzAxisCorrection": {
+    "date": "2026-09-28",
+    "authorization": "用户明确要求 XYZ 轴分别代表一种并行。",
+    "mapping": {
+      "X": "DP",
+      "Y": "TP",
+      "Z": "PP"
+    },
+    "behavior": "仅沿焦点三根轴的完整Rank行列联动：X行全绿，Y行全紫，Z列全粉，交点白色。相邻Rank直线连接，不画环形闭合，不由EP/专家副本覆盖轴色。8个轴坐标tag。",
+    "validation": "遍历16个焦点检查成员仅改变一个坐标、颜色与变化轴一致；32组原有Rank图元一致性检查通过。视觉待用户验收。"
+  },
+  "worldSizeExtension": {
+    "status": "implemented-awaiting-visual-review",
+    "date": "2026-09-28",
+    "userRequest": "保持当前设计，Config 加 World Size、并行配置和机柜分组，支持扩充 Rank 数量",
+    "sourceSha256": "acdfb213d3fb6f05edd4665e1dcb11a65288e8870d8c1e291179ffb1a05a0ddd",
+    "scope": [
+      "World Size=TP×PP×DP；EP 折入 DP；当前双专家模型 EP=1/2，ETP=TP",
+      "复用原有 Config 样式；默认 16 Rank 主体绘制保持一致",
+      "每节点默认8卡、每柜默认64卡为可改布局假设，非统一硬件规格",
+      "TP→DP→PP 的矩形机柜分组；跨柜间距与中性机柜 tag；三轴整组联动保持",
+      "模型层段、参数切片、内存和镜头范围随配置更新；上限512 Rank"
+    ],
+    "hardwareReferences": [
+      "https://e.huawei.com/cn/products/computing/ascend/atlas-800t-a3",
+      "https://e.huawei.com/cn/products/computing/ascend/atlas-900-a3-superpod"
+    ],
+    "validation": [
+      "默认32组 Rank SVG 与原评审版对比（除 title 元数据）通过",
+      "32/64/128/256/512 Rank、48 Rank 非满柜、物理槽位唯一性、内存守恒、三轴组和非法配置检查通过"
+    ],
+    "browserSmoke": "未完成：8765 预览路径404；file URL被浏览器安全策略阻止，未绕过"
+  },
+  "configUsabilityAmendment": {
+    "date": "2026-09-28",
+    "status": "implemented-awaiting-visual-review",
+    "sourceSha256": "f199f85b32b4e88f62937f9eda6f88e69668a9404f1b86d5097cffc4b89edb3c",
+    "changes": [
+      "本部署规格固定64卡/柜，移除机柜输入；不是通用硬件常数",
+      "Config 480px，桌面3列、窄屏2列，白底应用按钮",
+      "缩放改为乘法步进，支持5%–3200%相对适配比例；镜头状态保持",
+      "应用成功关闭面板、切换全部Rank、清空平移和缩放并重新计算适配范围"
+    ],
+    "validation": "默认绘制回归、32–512 Rank、按钮点击与缩放保持、缩放逆操作、单Rank应用后自动fit、固定机柜常量检查通过；浏览器视觉验证仍受先前预览路径及URL策略限制"
+  },
+  "memoryEnvelopeAmendment": {
+    "date": "2026-09-28",
+    "status": "implemented-awaiting-visual-review",
+    "sourceSha256": "efcfdb3e59afa2a75d5db2a8a09a1efb01ebd963626ab42d55b5a9642bdf6fa3",
+    "request": "空余内存在10%–30%范围内变动",
+    "implementation": "演示预留池随训练周期变化，将总预留占用设为70%–90%；权重、梯度、优化器真实分片字节不变。显示标注为演示预留池，非实测。配置必须保留至少10%余量。",
+    "validation": "16和128 Rank全周期范围与64 GB守恒通过；原权重分片绘制、缩放与配置回归通过；未完成浏览器视觉验收。"
+  },
+  "derivedWorldSizeAmendment": {
+    "date": "2026-09-28",
+    "status": "implemented-awaiting-visual-review",
+    "sourceSha256": "35aa2b5e9688d621fcf17411d5f810df15134a3f6cc816c93f9ce60d64561770",
+    "change": "World Size 改为 output 只读数值；TP×PP×DP 为唯一数据来源，修改并行度即时更新。",
+    "validation": "派生数值及现有回归通过。"
+  }
+}

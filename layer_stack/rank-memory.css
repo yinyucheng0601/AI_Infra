@@ -1,0 +1,57 @@
+/* Independent of the model canvas transform and inspector visibility. */
+.atlas-toolbar{padding-right:48px}
+.global-legend{position:fixed;top:24px;right:32px;z-index:60;color:#bcbcbc}
+.global-legend-toggle{display:grid;place-items:center;width:36px;height:36px;padding:7px;border:0;background:transparent;color:inherit;cursor:pointer}
+.global-legend-toggle:hover,.global-legend-toggle[aria-expanded="true"]{color:#eee;background:#202020}
+.global-legend-toggle svg{width:22px;height:22px}
+.global-legend-panel{position:absolute;right:0;top:100%;width:440px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 90px);overflow:auto;padding:20px;background:#191919;border:1px solid #444;font-size:13px;line-height:1.6}
+.global-legend-panel[hidden]{display:none}
+.global-legend-panel h2{font-size:15px;font-weight:500;color:#eee;margin:0 0 18px}
+.global-legend-panel h3{font-size:11px;font-weight:400;color:#aaa;margin:18px 0 10px}
+.global-memory-legend,.global-state-legend{display:flex;flex-wrap:wrap;gap:12px 22px;font-size:13px}
+.global-memory-legend span,.global-state-legend span{display:flex;align-items:center;gap:8px}
+.global-memory-legend i,.global-state-legend i{display:inline-block;width:13px;height:13px;flex:none}
+.legend-free{border:1px solid #858585}
+.legend-anomaly{background:#FD5644}.legend-selection{border:1px solid #eee}
+.global-legend-panel .legend{position:static;display:flex;align-items:center;gap:10px;font-size:12px}
+.global-legend-panel .legend .tip{position:static;display:none;width:auto;margin-top:10px;white-space:normal}
+.global-legend-panel .legend .help{position:static}
+.global-legend-panel .legend .help:focus .tip,.global-legend-panel .legend .help:hover .tip,.global-legend-panel .legend .help.open .tip{display:block}
+.global-state-legend{margin-top:14px}
+@media(max-width:600px){.global-legend{top:20px;right:16px}.atlas-toolbar{padding-right:40px}}
+:root{--rank-memory-width:clamp(160px,17vw,245px);--rank-memory-right:48px}
+.rank-memory{position:fixed;right:var(--rank-memory-right);bottom:64px;width:var(--rank-memory-width);margin:0;z-index:14;pointer-events:auto}
+.rank-memory svg{display:block;width:100%;height:auto;overflow:visible;font-family:ui-monospace,"PingFang SC",monospace}
+/* Dock matrix details on the left; expanded view keeps the memory strip clear. */
+.tensor-detail{left:38px;right:auto}
+.tensor-detail.expanded{left:38px;right:calc(var(--rank-memory-right) + var(--rank-memory-width) + 24px)}
+@media(max-width:760px){
+  :root{--rank-memory-width:150px;--rank-memory-right:34px}
+  .rank-memory{bottom:60px}
+  .tensor-detail,.tensor-detail.expanded{left:14px;right:14px;top:100px;bottom:300px;width:auto;min-height:0}
+  .tensor-detail.expanded .detail-layout{grid-template-columns:minmax(0,1fr)}
+}
+
+.rank-memory-graphic{margin:0}
+.view-all-ranks{position:absolute;left:50%;bottom:-32px;transform:translateX(-50%);white-space:nowrap;padding:9px 12px;border:1px solid #666;background:#202020;color:#eee;font-size:12px;line-height:1.4;font-family:inherit;cursor:pointer;opacity:0;pointer-events:none}
+.rank-memory:hover .view-all-ranks,.rank-memory:focus-within .view-all-ranks{opacity:1;pointer-events:auto}
+.all-ranks-drawer{position:fixed;inset:auto 0 0;height:var(--all-ranks-height,64dvh);z-index:70;display:flex;flex-direction:column;background:#111;border-top:1px solid #555;box-shadow:0 -12px 32px #0005}
+.all-ranks-drawer[hidden]{display:none}
+.all-ranks-heading{position:relative;height:48px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.all-ranks-heading h2{font-size:13px;font-weight:500;margin:0;color:#ddd}
+.all-ranks-heading button{border:0;background:transparent;color:#ccc;padding:8px;cursor:pointer;font-size:13px}
+.all-ranks-drawer iframe{display:block;width:100%;flex:1;min-height:0;border:0;background:#111}
+@media(hover:none){.view-all-ranks{opacity:1;pointer-events:auto}}
+@media(max-width:600px){.all-ranks-drawer{height:var(--all-ranks-height,64dvh)}.all-ranks-heading{padding:0 16px}}
+
+/* Playback stays anchored to the viewport, above the drawer at every height. */
+.bottom{z-index:80}
+body.all-ranks-open .bottom{background:#111}
+.all-ranks-resize{position:absolute;left:50%;top:0;transform:translateX(-50%);width:80px;height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:ns-resize;touch-action:none;user-select:none}
+.all-ranks-resize i{width:34px;height:2px;background:#888;pointer-events:none}
+.all-ranks-resize:hover i,.all-ranks-resize:focus-visible i{background:#eee}
+.all-ranks-resize:focus-visible{outline:1px solid #aaa;outline-offset:-3px}
+body.resizing-ranks{cursor:ns-resize;user-select:none}
+body.resizing-ranks iframe{pointer-events:none}
+#close-all-ranks{font-size:24px;line-height:1;width:36px;height:36px}
+.rank-memory:after{content:'';position:absolute;left:0;right:0;bottom:-32px;height:32px;z-index:-1}
