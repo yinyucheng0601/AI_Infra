@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'pangu-layer-atlas-2':{src:'__PANGU_LAYER_ATLAS_2_COVER__',alt:'Pangu Layer Atlas 2：层内计算结构、空间层叠与 L18 异常高亮'},
     'pangu-layer-atlas':{src:'__PANGU_LAYER_ATLAS_COVER__',alt:'Layer Atlas：49 层空间堆叠、异常层高亮、选中 L32 与 Rank 内存联动'},
     'npu-memory-atlas-training':{src:'__NPU_MEMORY_COVER__',alt:'Rank 2 训练内存轴测分层：权重、梯度、优化器态、激活与空余容量'},
     'spatial-systems-ui-style-guide':{src:'__SPATIAL_SYSTEMS_COVER__',alt:'Layer Atlas 空间系统界面：模型层叠、选中层与异常定位'},

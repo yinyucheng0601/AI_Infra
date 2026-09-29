@@ -9,7 +9,8 @@
 #front-graph text{fill:#eee;font:18px Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;pointer-events:none}
 #front-graph .minor{fill:#ababab;font-size:14px}
 #front-graph .section-label{fill:#ababab;font-size:14px}
-#front-graph .tensor-label{font-size:18px}
+#front-graph .tensor-label{font-size:16px;font-weight:600;dominant-baseline:middle;paint-order:stroke fill;stroke:#111;stroke-width:4px;stroke-linejoin:round}
+#front-graph .weight .tensor-label,#front-graph .gradient .tensor-label{font-size:14px}
 #front-graph .activation .tensor-label{fill:#B1EF6B}
 #front-graph .weight .tensor-label{fill:#BCA0F3}
 #front-graph .gradient .tensor-label{fill:#79D4F2}
@@ -22,7 +23,7 @@
 #front-graph .sublayer{fill:#161616;stroke:#333;stroke-width:1}
 #front-graph .front-edge{fill:none;stroke:#777777;stroke-width:2}
 #front-graph .gradient.front-edge{stroke-dasharray:6 6}
-#front-graph .tensor-outline{fill:#111;stroke-width:1}
+#front-graph .tensor-outline{fill:#111;stroke-width:1.2}
 #front-graph .front-node{cursor:pointer;outline:none}
 #front-graph .front-node:hover>.op,#front-graph .front-node:focus-visible>.op,#front-graph [aria-pressed=true]>.op,#front-graph .front-node:hover>.tensor-outline,#front-graph .front-node:focus-visible>.tensor-outline,#front-graph [aria-pressed=true]>.tensor-outline,#front-graph .front-node:hover>circle,#front-graph .front-node:focus-visible>circle,#front-graph [aria-pressed=true]>circle{stroke:#fff;stroke-width:2.5}
 /* Fixed graph glyphs follow the reference guide; observation modes emphasize semantic roles. */
@@ -45,3 +46,5 @@
 #front-graph .anomaly-mark{font-size:20px;font-weight:650}
 
 #front-node-info{position:fixed;right:auto;box-sizing:border-box;max-width:calc(100vw - 24px);max-height:calc(100vh - 24px);overflow:auto}
+
+#front-graph .tensor-rms{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}

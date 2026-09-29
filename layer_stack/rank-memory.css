@@ -55,3 +55,14 @@ body.resizing-ranks{cursor:ns-resize;user-select:none}
 body.resizing-ranks iframe{pointer-events:none}
 #close-all-ranks{font-size:24px;line-height:1;width:36px;height:36px}
 .rank-memory:after{content:'';position:absolute;left:0;right:0;bottom:-32px;height:32px;z-index:-1}
+
+.shard-rank-controls[hidden]{display:none}
+.shard-rank-controls{position:absolute;top:100%;left:50%;transform:translateX(-50%);width:max-content;max-width:300px;text-align:center;color:#ccc;font-size:11px;line-height:1.6;padding-top:8px}
+.shard-rank-controls small{color:#999;font-size:10px}
+.shard-ranks{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:5px 0}
+.shard-ranks button{background:none;color:#bbb;border:0;padding:3px;font:inherit;cursor:pointer}
+.shard-ranks button[aria-pressed=true]{color:#fff;text-decoration:underline;text-underline-offset:4px}
+
+.shard-rank-controls small{display:block}
+
+.rank-memory:has(.shard-rank-controls:not([hidden])) .view-all-ranks{bottom:-82px}

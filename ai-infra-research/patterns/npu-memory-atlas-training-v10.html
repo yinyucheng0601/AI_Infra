@@ -37,7 +37,90 @@ nav[aria-label="视图操作"] .sep{flex-shrink:0;margin:0 3px}
 #apply-config:hover{background:#e8e8e8}
 @media(max-width:600px){.rank-settings-panel{width:calc(100vw - 28px)}.config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* End Config layout extension. */
-</style></head><body><svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，深灰分区表示空余；正交轴测视角"><g id="world"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><span class="readout" id="config" title="教学 mock：TP2 × PP2 × DP4 = 16；ETP2、EP2、专家副本2；EP折入DP。沿用8B尺寸，FFN改为两个半宽专家，top-1。非真实模型配置。">TP2 · PP2 · DP4 · EP2</span><span class="sep"></span><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重分片</button><button id="tensor" class="hidden" value="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="tensor-list">attn.q · 列切 ×2 ▾</button><button id="shard-info" class="hidden" aria-expanded="false" aria-controls="shard-inspector">说明</button><span class="sep"></span><button id="labels" aria-pressed="true">标注</button><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">100%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button><div class="transport"><button id="play" aria-label="暂停模拟">暂停</button><button id="restart" aria-label="重播当前训练步">重播</button><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><select id="speed" aria-label="播放速度"><option value="0.1">0.1×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select><span id="phase" class="status"></span></div></nav><div class="rank-settings"><button id="rank-settings-toggle" aria-label="Rank 显示配置" title="Rank 显示配置" aria-expanded="false" aria-controls="rank-settings-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6l.6 2.4 2.1 1.2 2.4-.6 3 5.2-1.8 1.8v2.4l1.8 1.8-3 5.2-2.4-.6-2.1 1.2L15 24H9l-.6-2.4-2.1-1.2-2.4.6-3-5.2 1.8-1.8v-2.4L.9 10.8l3-5.2 2.4.6 2.1-1.2Z" transform="translate(2 0) scale(.83)"/><circle cx="12" cy="11.2" r="3.2"/></svg></button><div id="rank-settings-panel" class="rank-settings-panel" hidden><fieldset class="rank-spacing" id="parallel-config"><legend>Config · 规模与并行</legend><div class="config-grid"><div class="rank-spacing-row"><label for="cfg-world">World Size</label><output id="cfg-world" for="cfg-tp cfg-pp cfg-dp" aria-live="polite">16</output></div><div class="rank-spacing-row"><label for="cfg-tp">TP · Y 轴</label><input id="cfg-tp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-pp">PP · Z 轴</label><input id="cfg-pp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-dp">DP · X 轴</label><input id="cfg-dp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-ep">EP · 折入 DP</label><input id="cfg-ep" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-node">每节点卡数</label><input id="cfg-node" type="number" min="1" max="512" step="1" value="8"></div></div><p>World Size = TP × PP × DP；EP 折入 DP，ETP 跟随 TP。World Size 根据并行度自动计算。</p><p>当前机柜规格固定为 64 卡。按 TP → DP → PP 排列，机柜边界增加轴间距。</p><button id="apply-config">应用配置</button><p id="config-status" role="status" aria-live="polite"></p></fieldset><label for="rank-ratio">Rank 长 : 宽 : 高</label><select id="rank-ratio"><option value="3:3:4" selected>3 : 3 : 4（默认）</option><option value="1:1:1">1 : 1 : 1（立方体）</option><option value="3:3:2">3 : 3 : 2（扁平）</option></select><p>底面长宽相等，应用于所有 rank。</p><label for="label-mode">标注模式</label><select id="label-mode"><option value="side">模式 1 · 侧边标注</option><option value="surface">模式 2 · 表面数值 + 图例</option></select><fieldset class="rank-spacing"><legend>全部 rank · 轴间距</legend><div class="rank-spacing-row"><label for="rank-spacing-x">X · DP</label><input id="rank-spacing-x" type="number" min="0" max="3000" step="10" value="480" aria-label="全部 rank X 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-y">Y · TP</label><input id="rank-spacing-y" type="number" min="0" max="3000" step="10" value="700" aria-label="全部 rank Y 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-z">Z · PP</label><input id="rank-spacing-z" type="number" min="0" max="3000" step="10" value="900" aria-label="全部 rank Z 轴间距"></div><p>相邻 rank 的原点间距，仅影响全部 rank 视图。</p></fieldset></div></div><div id="memory-legend" class="memory-legend" aria-label="内存类别图例" hidden></div><div id="tensor-list" role="listbox" aria-label="参数模块" hidden></div><aside id="shard-inspector" class="shard-inspector" aria-label="权重分片说明" hidden></aside><script>
+
+/* Shared glass chrome, distinct from the strong scene geometry. */
+:root{color-scheme:dark;--ui-fill:rgb(255 255 255 / 10%);--ui-border:rgb(255 255 255 / 10%);--ui-hover:rgb(255 255 255 / 8%);--ui-text:#dedede;--ui-muted:#b8b8b8;--ui-blur:blur(24px)}
+.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list{
+ background:var(--ui-fill);border:1px solid var(--ui-border);
+ -webkit-backdrop-filter:var(--ui-blur);backdrop-filter:var(--ui-blur);
+ box-shadow:0 8px 24px rgb(0 0 0 / 12%);
+}
+.bar{padding:7px;border-radius:22px;gap:4px}
+button,select{min-height:36px;border-radius:999px;color:var(--ui-text);font-size:13px;font-weight:500;transition:background-color 160ms ease,color 160ms ease,box-shadow 160ms ease}
+button:hover,select:hover{background-color:var(--ui-hover);color:#fff}
+button[aria-pressed=true],#tensor-list [aria-selected=true]{background:#fff;color:#161616;box-shadow:0 1px 3px rgb(0 0 0 / 12%)}
+button[aria-pressed=true]:hover{background:#f0f0f0;color:#161616}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:3px}
+select{background-color:transparent;appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23b8b8b8' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+select option{background:#282828;color:#eee}
+.bar.scope-switch{padding:6px;gap:4px;border-radius:999px}
+.scope-switch button{min-width:100px;min-height:38px;padding:8px 20px;font-size:14px;font-weight:600}
+nav[aria-label="视图操作"]{gap:4px;padding:8px;border-radius:24px;scrollbar-width:thin;scrollbar-color:#666 transparent}
+nav[aria-label="视图操作"] button{padding:7px 12px}
+nav[aria-label="视图操作"] select{padding:7px 28px 7px 12px}
+nav[aria-label="视图操作"] .readout{padding:0 8px;font-size:12px;color:var(--ui-muted)}
+nav[aria-label="视图操作"] .sep{height:18px;margin:0 5px;background:var(--ui-border)}
+#tensor.hidden{display:none}
+#tensor{width:180px;max-width:180px}
+#minus,#plus{width:36px;padding:6px;font-size:17px}
+#zoom{min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+.transport{gap:6px;border-color:var(--ui-border);padding-left:10px;margin-left:6px}
+.transport .status{padding:0 8px;color:var(--ui-muted);font-size:12px;font-variant-numeric:tabular-nums}
+.transport input[type=range]{appearance:none;-webkit-appearance:none;background:transparent;height:30px;margin:0 8px;border-radius:999px}
+.transport input[type=range]::-webkit-slider-runnable-track{height:3px;background:rgb(255 255 255 / 22%);border-radius:999px}
+.transport input[type=range]::-moz-range-track{height:3px;background:rgb(255 255 255 / 22%);border-radius:999px}
+.transport input[type=range]::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:11px;height:11px;margin-top:-4px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004}
+.transport input[type=range]::-moz-range-thumb{width:11px;height:11px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004}
+.rank-settings>button{width:44px;height:44px;border-radius:50%;color:var(--ui-text)}
+.rank-settings>button:hover,.rank-settings>button[aria-expanded=true]{background:rgb(255 255 255 / 16%)}
+.rank-settings-panel{top:56px;padding:20px;border-radius:20px;scrollbar-width:thin;scrollbar-color:#666 transparent}
+.rank-settings-panel select,.rank-spacing input{border:1px solid var(--ui-border);border-radius:10px;background-color:rgb(0 0 0 / 16%);color:var(--ui-text);min-height:36px}
+.rank-settings-panel select:hover,.rank-spacing input:hover{border-color:rgb(255 255 255 / 24%)}
+.rank-settings-panel p{color:var(--ui-muted);line-height:1.65}
+.rank-spacing{border-color:var(--ui-border)}
+#parallel-config{margin-top:0;padding-top:0;border-top:0}
+.rank-spacing legend{font-size:12px;color:var(--ui-muted)}
+#apply-config{font-weight:600;border-radius:12px}
+.shard-inspector{border-radius:20px;scrollbar-width:thin;scrollbar-color:#666 transparent}
+.shard-inspector td,.shard-inspector details{border-color:var(--ui-border)}
+.shard-inspector button{border-color:var(--ui-border)}
+#tensor-list{padding:6px;border-radius:16px}
+#tensor-list [role=option]{border-radius:10px;font-size:13px}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ .bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list{background:#292929}
+}
+/* One continuous toolbar, with a separate zoom dock on the right. */
+nav[aria-label="视图操作"]{flex-wrap:nowrap;width:max-content;max-width:calc(100vw - 284px);overflow-x:auto}
+.transport{flex-basis:auto;flex-wrap:nowrap;border-top:0;border-left:1px solid var(--ui-border);padding:0 0 0 10px;margin:0 0 0 6px}
+.transport input[type=range]{width:100px;flex:none}
+.transport .status{flex-basis:auto;min-width:210px;padding:0 8px}
+.transport .icon-button{display:grid;place-items:center;min-width:36px;width:36px;height:36px;padding:8px}
+.icon-button svg{width:18px;height:18px;pointer-events:none}
+#play .play-icon{display:none}
+#play[data-playing="false"] .pause-icon{display:none}
+#play[data-playing="false"] .play-icon{display:block}
+.bar.zoom-controls{left:auto;right:28px;bottom:28px;flex-wrap:nowrap;gap:2px;padding:8px;border-radius:999px}
+.zoom-controls #fit{padding:7px 12px}
+.zoom-controls #zoom{padding:0 4px;font-size:12px}
+@media(max-width:600px){
+ .scope-switch button{min-width:82px;padding:7px 14px;font-size:13px}
+ .rank-settings>button{width:40px;height:40px}
+ nav[aria-label="视图操作"]{max-width:calc(100vw - 230px);gap:3px;padding:6px;border-radius:20px}
+ nav[aria-label="视图操作"] button{padding:7px 10px}
+ nav[aria-label="视图操作"] .readout{padding:0 5px;font-size:11px}
+ .bar.zoom-controls{right:14px;bottom:14px;padding:6px}
+ .rank-settings-panel{right:0;width:calc(100vw - 28px);padding:16px}
+}
+/* Secondary display actions sit beside configuration, away from playback. */
+.rank-settings{display:flex;align-items:center;gap:8px}
+.rank-settings>button[aria-pressed=true],.rank-settings>button[aria-expanded=true]{background:rgb(255 255 255 / 20%);color:#fff;border-color:rgb(255 255 255 / 24%)}
+.rank-settings>button:disabled{opacity:.4;cursor:default;background:var(--ui-fill)}
+.rank-settings-panel #config{display:block;padding:0;margin:4px 0 16px;color:var(--ui-muted);font-size:12px;white-space:normal}
+.layer-atlas-embed .rank-settings{display:flex!important}
+.layer-atlas-embed #rank-settings-toggle{display:none}
+@media(max-width:600px){.rank-settings{top:76px}.rank-settings-panel{max-height:calc(100vh - 148px)}}
+@media(prefers-reduced-motion:reduce){button,select{transition:none}}
+</style></head><body><svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，深灰分区表示空余；正交轴测视角"><g id="world"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重分片</button><button id="tensor" class="hidden" value="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="tensor-list">attn.q · 列切 ×2 ▾</button><div class="transport"><button id="play" class="icon-button" data-playing="true" aria-label="暂停模拟" title="暂停模拟"><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5a1 1 0 0 1 1.5-.86l12 7.5a1 1 0 0 1 0 1.72l-12 7.5A1 1 0 0 1 7 19.5Z"/></svg></button><button id="restart" class="icon-button" aria-label="重播当前训练步" title="重播当前训练步"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.7 7M4 4v6h6"/></svg></button><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><span id="phase" class="status"></span></div></nav><nav class="bar zoom-controls embedded-zoom-controls" aria-label="缩放控制"><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">100%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button></nav><div class="rank-settings" role="group" aria-label="说明、标注与配置"><button id="shard-info" class="hidden" aria-label="权重分片说明" title="权重分片说明" aria-expanded="false" aria-controls="shard-inspector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".8" fill="currentColor" stroke="none"/></svg></button><button id="labels" aria-label="显示标注" title="显示／隐藏标注" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg></button><button id="rank-settings-toggle" aria-label="Rank 显示配置" title="Rank 显示配置" aria-expanded="false" aria-controls="rank-settings-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6l.6 2.4 2.1 1.2 2.4-.6 3 5.2-1.8 1.8v2.4l1.8 1.8-3 5.2-2.4-.6-2.1 1.2L15 24H9l-.6-2.4-2.1-1.2-2.4.6-3-5.2 1.8-1.8v-2.4L.9 10.8l3-5.2 2.4.6 2.1-1.2Z" transform="translate(2 0) scale(.83)"/><circle cx="12" cy="11.2" r="3.2"/></svg></button><div id="rank-settings-panel" class="rank-settings-panel" hidden><fieldset class="rank-spacing" id="parallel-config"><legend>Config · 规模与并行</legend><span class="readout" id="config" title="教学 mock：TP2 × PP2 × DP4 = 16；ETP2、EP2、专家副本2；EP折入DP。沿用8B尺寸，FFN改为两个半宽专家，top-1。非真实模型配置。">TP2 · PP2 · DP4 · EP2</span><div class="config-grid"><div class="rank-spacing-row"><label for="cfg-world">World Size</label><output id="cfg-world" for="cfg-tp cfg-pp cfg-dp" aria-live="polite">16</output></div><div class="rank-spacing-row"><label for="cfg-tp">TP · Y 轴</label><input id="cfg-tp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-pp">PP · Z 轴</label><input id="cfg-pp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-dp">DP · X 轴</label><input id="cfg-dp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-ep">EP · 折入 DP</label><input id="cfg-ep" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-node">每节点卡数</label><input id="cfg-node" type="number" min="1" max="512" step="1" value="8"></div></div><p>World Size = TP × PP × DP；EP 折入 DP，ETP 跟随 TP。World Size 根据并行度自动计算。</p><p>当前机柜规格固定为 64 卡。按 TP → DP → PP 排列，机柜边界增加轴间距。</p><button id="apply-config">应用配置</button><p id="config-status" role="status" aria-live="polite"></p></fieldset><label for="rank-ratio">Rank 长 : 宽 : 高</label><select id="rank-ratio"><option value="3:3:4" selected>3 : 3 : 4（默认）</option><option value="1:1:1">1 : 1 : 1（立方体）</option><option value="3:3:2">3 : 3 : 2（扁平）</option></select><p>底面长宽相等，应用于所有 rank。</p><label for="label-mode">标注模式</label><select id="label-mode"><option value="side">模式 1 · 侧边标注</option><option value="surface">模式 2 · 表面数值 + 图例</option></select><fieldset class="rank-spacing"><legend>全部 rank · 轴间距</legend><div class="rank-spacing-row"><label for="rank-spacing-x">X · DP</label><input id="rank-spacing-x" type="number" min="0" max="3000" step="10" value="480" aria-label="全部 rank X 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-y">Y · TP</label><input id="rank-spacing-y" type="number" min="0" max="3000" step="10" value="700" aria-label="全部 rank Y 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-z">Z · PP</label><input id="rank-spacing-z" type="number" min="0" max="3000" step="10" value="900" aria-label="全部 rank Z 轴间距"></div><p>相邻 rank 的原点间距，仅影响全部 rank 视图。</p></fieldset></div></div><div id="memory-legend" class="memory-legend" aria-label="内存类别图例" hidden></div><div id="tensor-list" role="listbox" aria-label="参数模块" hidden></div><aside id="shard-inspector" class="shard-inspector" aria-label="权重分片说明" hidden></aside><script>
 const ATLAS_EMBED=new URLSearchParams(location.search).get('embed')==='layer-atlas'&&window.parent!==window;
 let atlasHostState=null;
 if(ATLAS_EMBED)document.documentElement.classList.add('layer-atlas-embed');
@@ -157,7 +240,7 @@ function applySimulation(){const st=simulationState(simTime);
  $('phase').textContent='Step '+step+' · '+st.phase+(st.layer===null?'':' · μb '+st.mb+'/4'+(mode==='shard'?'':' · L'+st.layer));
 
  $('phase').title=st.detail;$('timeline').value=Math.round(simTime);$('timeline').setAttribute('aria-valuetext',st.phase+'，'+(simTime/1000).toFixed(1)+'秒');
- $('play').textContent=playing?'暂停':'播放';$('play').setAttribute('aria-label',playing?'暂停模拟':'播放模拟');
+ $('play').dataset.playing=String(playing);$('play').setAttribute('aria-label',playing?'暂停模拟':'播放模拟');$('play').title=playing?'暂停模拟':'播放模拟';
 }
 
 // Normalize the logical memory box to the selected physical aspect ratio.
@@ -275,8 +358,14 @@ function parallelFocus(){
 }
 function focusedRankGeometry(geometry,id,focus){
  if(!focus)return geometry;
- // Reference tiers: focus / all parallel siblings / unrelated shell only.
- if(!focus.members.has(id))return outline(0,64*6.7);
+ // Unrelated ranks retain their volume with three quiet, borderless faces.
+ if(!focus.members.has(id)){
+  const h=64*6.7;
+  return '<g class="rank-context-solid">'+
+   polygon([[0,155,0],[245,155,0],[245,155,h],[0,155,h]],'rgb(255 255 255 / 5%)','none')+
+   polygon([[245,0,0],[245,155,0],[245,155,h],[245,0,h]],'rgb(255 255 255 / 7%)','none')+
+   polygon([[0,0,h],[245,0,h],[245,155,h],[0,155,h]],'rgb(255 255 255 / 10%)','none')+'</g>';
+ }
  const color=id===relationRank?'#FFFFFF':parallelColors[focus.byRank[id]];
  const shell=outline(0,64*6.7).replace('stroke="#FFFFFF"',`stroke="${color}"`).replace('stroke-width="4.8"',`stroke-width="${id===relationRank?6.4:4.8}"`);
  return `<g filter="url(#rank-neutral)">${geometry}</g>`+shell;
@@ -291,17 +380,36 @@ function selectParallelTag(dim,index){
  if(target){selectedRank=relationRank=target.id;render();}
 }
 function drawParallelTags(){
- if(scope!=='all')return '';
- const ref=ranks[relationRank===null?selectedRank:relationRank];
- function tag(dim,index,x,y,sub=''){
-  const active=relationRank!==null&&ref[dim]===index,c=parallelColors[dim],name=({dp:'X · DP',tp:'Y · TP',pp:'Z · PP'}[dim])+index,w=82,h=sub?42:27;
-  return `<g data-parallel-tag="${dim}" data-index="${index}" role="button" tabindex="0" aria-pressed="${active}" aria-label="选择 ${name}${sub?' '+sub:''}" transform="translate(${x} ${y})" style="cursor:pointer"><title>${name}${sub?' · '+sub:''} · 保持其他坐标，切换焦点 Rank</title><rect width="${w}" height="${h}" rx="4" fill="#202020" stroke="${c}" stroke-width="${active?2.4:1}"/><text x="${w/2}" y="18" text-anchor="middle" fill="${c}" font-size="13" font-weight="700">${name}</text>${sub?`<text x="${w/2}" y="34" text-anchor="middle" fill="#bdbdbd" font-size="11">${sub}</text>`:''}</g>`;
- }
- let out='<g aria-label="并行坐标标签">';
- for(let t=0;t<TP;t++){const r=ranks.find(r=>r.tp===t&&r.dp===0&&r.pp===0),[x,y]=rankPosition(r),p=P(0,155,64*6.7*.5);out+=tag('tp',t,x+RANK_SCALE*(p[0]-440)-96,y+RANK_SCALE*p[1]);}
- for(let d=0;d<DP;d++){const r=ranks.find(r=>r.dp===d&&r.tp===TP-1&&r.pp===0),[x,y]=relationAnchor(r.id,'dp');out+=tag('dp',d,x-41,y+22);}
- for(let pp=0;pp<PP;pp++){const r=ranks.find(r=>r.pp===pp&&r.tp===0&&r.dp===DP-1),[x,y]=relationAnchor(r.id,'pp');out+=tag('pp',pp,x+24,y-20,'L'+pp*(L/PP)+'–'+((pp+1)*(L/PP)-1));}
- return out+'</g>';
+ const focus=parallelFocus();if(!focus)return '';
+ // Place each label beyond the outermost rank, on its connection extension.
+ return '<g aria-label="高亮并行组标签" style="pointer-events:none">'+focus.dims.map(dim=>{
+  const members=parallelMembers(dim,relationRank),edges=parallelEdges(dim,relationRank);
+  if(!edges.length)return '';
+  const [ax,ay]=relationAnchor(members[0],dim),[bx,by]=relationAnchor(members.at(-1),dim);
+  const dx=bx-ax,dy=by-ay,length=Math.hypot(dx,dy);
+  if(length<1)return '';
+  const ux=dx/length,uy=dy/length;
+  // Project all box corners onto the outgoing axis, accounting for aspect ratio.
+  let extent=0;
+  for(const id of members){
+   const [rx,ry]=rankPosition(ranks[id]);
+   for(const cx of [0,245])for(const cy of [0,155])for(const cz of [0,64*6.7]){
+    const [px,py]=P(cx,cy,cz);
+    extent=Math.max(extent,(rx+RANK_SCALE*(px-440)-bx)*ux+(ry+RANK_SCALE*py-by)*uy);
+   }
+  }
+  const distance=extent+64,x=bx+ux*distance,y=by+uy*distance;
+  let angle=Math.atan2(dy,dx);
+  if(angle>Math.PI/2)angle-=Math.PI;
+  if(angle< -Math.PI/2)angle+=Math.PI;
+  // Oblique axes use vertical sides; the vertical PP axis uses a readable rotation.
+  const projection=Math.abs(Math.cos(angle))>.15
+   ?`matrix(${Math.cos(angle)} ${Math.sin(angle)} 0 1 0 0)`
+   :`rotate(${angle*180/Math.PI}) skewX(-12)`;
+  const c=parallelColors[dim],name={dp:'X · DP',tp:'Y · TP',pp:'Z · PP'}[dim];
+  const leader=`<path d="M${bx+ux*(extent+6)} ${by+uy*(extent+6)} L${bx+ux*(distance-44)} ${by+uy*(distance-44)}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+  return leader+`<g data-parallel-group="${dim}" transform="translate(${x} ${y}) ${projection}" aria-label="${name}，Rank ${members.join('、')}"><title>${name} · Rank ${members.join('、')}</title><rect x="-41" y="-13.5" width="82" height="27" rx="4" fill="#202020" stroke="${c}" stroke-width="1"/><text x="0" y=".5" dominant-baseline="middle" text-anchor="middle" fill="${c}" font-size="13" font-weight="700">${name}</text></g>`;
+ }).join('')+'</g>';
 }
 function drawRackTags(){
  if(scope!=='all')return '';
@@ -322,14 +430,11 @@ function drawRelations(){
    const title=`${label} · Rank ${a} ↔ ${b} · 组 [${group}] · 逻辑关系示意，非实测链路`;
    out+=`<path data-relation="${dim}" data-from="${a}" data-to="${b}" d="${path}" fill="none" stroke="${parallelColors[dim]}" stroke-width="1.2" stroke-dasharray="${dash}" ${dim==='pp'?'marker-start="url(#relation-arrow)" marker-end="url(#relation-arrow)"':''}><title>${title}</title></path>`;
   }
-  // Reuse the existing annotation renderer, size and neutral color.
-  const [x,y]=relationAnchor(members.at(-1),dim);
-  out+=text(x+8,y-12-di*14,({dp:'X · DP',tp:'Y · TP',pp:'Z · PP'}[dim]),14,parallelColors[dim]);
  });
  return out+'</g>';
 }
 function pickRelationRank(id){relationRank=relationRank===id?null:id;if(relationRank!==null)selectedRank=id;render();}
-function render(){setRankData(selectedRank);if(mode==='shard'&&playing){const active=currentModule(simulationState(simTime,selectedRank));if(active!==null)$('tensor').value=String(active);}let s='';const focus=parallelFocus();const savedLabels=labels,savedTensor=$("tensor").value;if(scope==='all'){labels=savedLabels&&labelMode==='surface';for(const r of rankPaintOrder()){setRankData(r.id);const [x,y]=rankPosition(r);const geom=focusedRankGeometry(drawRank(),r.id,focus);s+=`<g opacity="${focus&&!focus.members.has(r.id)?.13:1}" data-linked="${!!focus&&focus.members.has(r.id)}" data-rank="${r.id}" data-rack="${physicalPlacement(r).rack}" data-node="${physicalPlacement(r).node}" role="button" tabindex="0" aria-pressed="${relationRank===r.id}" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}，机柜 ${physicalPlacement(r).rack}，节点 ${physicalPlacement(r).node}；单击显示并行关系，双击进入单卡" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)"><title>Rank ${r.id} · 机柜 ${physicalPlacement(r).rack} / 节点 ${physicalPlacement(r).node} / 卡 ${physicalPlacement(r).slot}</title>${geom}</g>`;}labels=savedLabels;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=drawRank();}
+function render(){setRankData(selectedRank);if(mode==='shard'&&playing){const active=currentModule(simulationState(simTime,selectedRank));if(active!==null)$('tensor').value=String(active);}let s='';const focus=parallelFocus();const savedLabels=labels,savedTensor=$("tensor").value;if(scope==='all'){labels=savedLabels&&labelMode==='surface';for(const r of rankPaintOrder()){setRankData(r.id);const [x,y]=rankPosition(r);const geom=focusedRankGeometry(drawRank(),r.id,focus);s+=`<g opacity="1" data-linked="${!!focus&&focus.members.has(r.id)}" data-rank="${r.id}" data-rack="${physicalPlacement(r).rack}" data-node="${physicalPlacement(r).node}" role="button" tabindex="0" aria-pressed="${relationRank===r.id}" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}，机柜 ${physicalPlacement(r).rack}，节点 ${physicalPlacement(r).node}；单击显示并行关系，双击进入单卡" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)"><title>Rank ${r.id} · 机柜 ${physicalPlacement(r).rack} / 节点 ${physicalPlacement(r).node} / 卡 ${physicalPlacement(r).slot}</title>${geom}</g>`;}labels=savedLabels;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=drawRank();}
 $('world').innerHTML=(focus?'<defs><filter id="rank-neutral" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/></filter></defs>':'')+s+drawRelations()+drawParallelTags()+drawRackTags();
 renderShardInspector();
 $('memory-legend').hidden=!(labels&&labelMode==='surface');
@@ -386,7 +491,7 @@ const cameras={single:{zoom:1,pan:[0,0]},all:{zoom:1,pan:[0,0]}};
 function switchScope(next){cameras[scope]={zoom,pan:[...pan]};scope=next;({zoom,pan}=cameras[scope]);render();}
 const settingsToggle=$('rank-settings-toggle'),settingsPanel=$('rank-settings-panel');
 function setSettingsOpen(open){settingsPanel.hidden=!open;settingsToggle.setAttribute('aria-expanded',String(open));}
-settingsToggle.onclick=()=>setSettingsOpen(settingsPanel.hidden);
+settingsToggle.onclick=()=>{const open=settingsPanel.hidden;if(open){shardInfoOpen=false;renderShardInspector();}setSettingsOpen(open);};
 function configValues(){const c=Object.fromEntries(['tp','pp','dp','ep','node'].map(k=>[k,Number($('cfg-'+k).value)]));return {...c,world:c.tp*c.pp*c.dp,rack:cardsPerRack};}
 function validateConfig(c){
  if(Object.values(c).some(v=>!Number.isInteger(v)||v<1||v>512))return '所有输入必须是 1–512 的整数。';
@@ -460,13 +565,13 @@ $('tensor-list').onkeydown=e=>{
  else if(['ArrowDown','ArrowUp','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?options.length-1:(index+(e.key==='ArrowDown'?1:-1)+options.length)%options.length;options[next].focus();}
 };
 document.addEventListener('click',e=>{if(!e.target.closest('#tensor')&&!e.target.closest('#tensor-list'))closeTensorMenu(false);});
-$('shard-info').onclick=()=>{shardInfoOpen=!shardInfoOpen;renderShardInspector();};
+$('shard-info').onclick=()=>{shardInfoOpen=!shardInfoOpen;if(shardInfoOpen)setSettingsOpen(false);renderShardInspector();};
 $('play').onclick=()=>{playing=!playing;lastFrame=null;render()};
 $('restart').onclick=()=>{simTime=0;step=1;lastFrame=null;render()};
 $('timeline').oninput=()=>{simTime=+$('timeline').value;playing=false;lastFrame=null;render()};
-$('speed').onchange=()=>{lastFrame=null};
+
 window.addEventListener('resize',()=>{closeTensorMenu(false);transform();});
 document.addEventListener('visibilitychange',()=>{lastFrame=null});
-function tick(now){if(lastFrame!==null&&playing&&!document.hidden){simTime+=(now-lastFrame)*Number($('speed').value);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
+function tick(now){if(lastFrame!==null&&playing&&!document.hidden){simTime+=(now-lastFrame);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 render();if(!ATLAS_EMBED)requestAnimationFrame(tick);
 </script><script src="npu-memory-atlas-embed.js"></script></body></html>

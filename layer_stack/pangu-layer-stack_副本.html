@@ -32,7 +32,7 @@
 <button id="jump-alert" class="alert-jump" title="定位异常层；橙红表示采样值超出规则阈值"><span id="alert-summary" aria-live="polite"></span><span aria-hidden="true"> ↗</span></button>
 
 </div>
-<section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p id="identity-context">STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点</div><div id="hover-preview" class="hover-preview" hidden></div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="side-rms" aria-hidden="true" pointer-events="none"></g><g id="flow-ports"></g></svg></div>
+<section class="identity" aria-label="当前观察对象"><h2 id="identity-layer">L18</h2><h3 id="identity-name">Query / 输出激活</h3><p id="identity-shape">32768 × 1024</p><p id="identity-context">STEP 1280 · MICROBATCH 03</p><button id="open-inspector" class="text-action" aria-expanded="false" aria-controls="tensor-inspector">查看矩阵 ↗</button></section><div class="sampling-note">64 × 64 采样 / 每层 4096 点</div><div class="workspace-split"><section class="atlas-pane" aria-label="全部模型层总览"><div class="view"><details class="path-demo" id="path-demo"><summary>路径演示</summary><div class="propagation-controls" id="propagation-controls"><button id="prop-play" type="button">播放路径</button><button id="prop-reset" type="button">重置</button><label for="prop-step">查看层</label><input id="prop-step" type="range" min="18" max="48" value="18" aria-label="传播路径中查看的层"><span id="prop-progress"></span><button type="button" class="help" aria-label="传播模拟说明">ⓘ<span class="tip" role="tooltip">前向教学模拟：L18 注入局部扰动，后层扰动由前层扰动递推，并在特征方向混合；先放大再衰减。所有层始终显示同一份完整传播结果，播放仅逐层定位，不改变数据。权重与参数梯度保留各自独立的单层异常示例，未声称与这次激活扰动存在因果关系。不是盘古整网的真实前向计算。</span></button></div></details><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="盘古 LLM 全部 49 层的 2.5D 堆叠图；通过下方层编号可选择任意层"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="annotation"></g><g id="side-rms" aria-hidden="true" pointer-events="none"></g><g id="flow-ports"></g></svg></div>
 <div class="bottom"><div class="mb-process" id="mb-process"><span id="mb-progress" class="sr"></span><button class="text-action playback-icon" id="mb-next" aria-label="暂停" title="暂停"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="playback-symbol" d="M8 5v14M16 5v14"/></svg></button><button class="text-action playback-icon" id="mb-reset" aria-label="重置视图并重新播放" title="重置视图并重新播放"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1 0 7M5 3v6h6"/></svg></button></div><div id="selected-summary" class="sr" aria-live="polite"></div><div class="bar-heading"><span><span id="bar-metric">权重幅度 RMS</span> <button type="button" class="help" id="bar-help" aria-label="柱状图说明">ⓘ<span class="tip" role="tooltip" id="bar-tip"></span></button></span><span id="rms-range"></span></div><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="层导航 L0 至 L48，点击或拖动选择模型层"></nav></div>
 
 
@@ -47,6 +47,7 @@
 </section></div></main>
 <script src="layer-data.js"></script>
 <script src="layer-front.js"></script>
+<script>window.RankShardInspection=true;</script>
 <script src="pangu-layer-stack-preview.js"></script>
 <div class="rank-memory">
 <figure id="rank-memory" class="rank-memory-graphic" aria-label="单 rank 联动内存示意"></figure>
@@ -59,6 +60,7 @@
 <script src="rank-memory-data.js"></script>
 <script src="rank-memory-view.js"></script>
 <script src="rank-memory-bootstrap.js"></script>
+<script src="rank-shard-inspection.js"></script>
 <script src="global-legend.js"></script>
 <script src="rank-memory-drawer.js"></script>
 </body></html>
