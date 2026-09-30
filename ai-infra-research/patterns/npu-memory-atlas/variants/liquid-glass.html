@@ -690,7 +690,7 @@ window.addEventListener('resize',()=>{closeTensorMenu(false);transform();});
 document.addEventListener('visibilitychange',()=>{lastFrame=null});
 function tick(now){if(lastFrame!==null&&playing&&!document.hidden){simTime+=(now-lastFrame);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 render();if(!ATLAS_EMBED)requestAnimationFrame(tick);
-</script><script src="npu-memory-atlas-embed.js"></script><script>
+</script><script src="../npu-memory-atlas-embed.js"></script><script>
 
 // Preview-only starting configuration. Normal reset still fits the entire scene.
 $('cfg-tp').value='8';

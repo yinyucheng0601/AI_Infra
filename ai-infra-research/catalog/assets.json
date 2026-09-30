@@ -64,12 +64,12 @@
       ],
       "status": "reviewed",
       "visibility": "internal",
-      "content": "patterns/npu-memory-atlas-training-v10.html",
+      "content": "patterns/npu-memory-atlas/index.html",
       "sources": [
         {
           "repository": "ai-infra",
           "url": null,
-          "path": "ai-infra-research/patterns/npu-memory-atlas-training-v10.html",
+          "path": "ai-infra-research/patterns/npu-memory-atlas/index.html",
           "revision": null,
           "sha256": "35aa2b5e9688d621fcf17411d5f810df15134a3f6cc816c93f9ce60d64561770"
         }

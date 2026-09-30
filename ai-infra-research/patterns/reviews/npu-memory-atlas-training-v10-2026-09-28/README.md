@@ -2,7 +2,7 @@
 
 用户已确认当前版本已评审，所有 UI 样式 approved。完整基线保存在 `approved.html`，哈希和范围在 `review.json`。该确认不代表教学模型或新接入关系已完成技术/视觉验收。
 
-当前入口仍为 `../../npu-memory-atlas-training-v10.html`。新增并行关系按当前 16 Rank 配置接入，未使用参考页的 64 Rank 预设、布局、配色或业务指标。
+当前入口为 `../../npu-memory-atlas/index.html`。新增并行关系按当前 16 Rank 配置接入，未使用参考页的 64 Rank 预设、布局、配色或业务指标。
 
 - 全部 Rank：单击任意 Rank 显示它的 TP、PP、DP、EP、专家副本组；再点该 Rank、点空白或按 Escape 清除。
 - 双击 Rank 进入单卡；键盘 Enter / Space 选择关系组。

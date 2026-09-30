@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),path=require('path');
 const root=path.resolve(__dirname,'..');
-const source=fs.readFileSync(path.join(root,'patterns/npu-memory-atlas-training-v10.html'),'utf8');
+const source=fs.readFileSync(path.join(root,'patterns/npu-memory-atlas/index.html'),'utf8');
 const approved=fs.readFileSync(path.join(root,'patterns/reviews/npu-memory-atlas-training-v10-2026-09-28/approved.html'),'utf8');
 assert.strictEqual(source.split('<script>')[0].replace(/\/\* Config layout extension:[\s\S]*?\/\* End Config layout extension\. \*\/\n/,'').replace(/\.layer-atlas-embed[\s\S]*?<\/style>/,'</style>').replace(/<fieldset class="rank-spacing" id="parallel-config">[\s\S]*?<\/fieldset>/,''),approved.split('<script>')[0], 'Approved HTML and CSS changed');
 const elements=new Map();function el(id){if(!elements.has(id))elements.set(id,{value:id==='tensor'?'0':id==='speed'?'1':'',hidden:false,innerHTML:'',classList:{toggle(){}},attrs:{},setAttribute(k,v){this.attrs[k]=v;},addEventListener(){},focus(){},style:{},querySelectorAll(){return []},querySelector(){return null},getBoundingClientRect(){return {width:1400,height:900,top:id==='nav'?820:0}},options:[]});return elements.get(id)}

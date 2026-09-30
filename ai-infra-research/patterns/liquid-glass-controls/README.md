@@ -1,6 +1,6 @@
 # Liquid Glass Controls
 
-从 `npu-memory-atlas-training-v10-liquid-glass.html` 提取的深色画布玻璃材质。原页面未修改。零依赖、无构建步骤，普通 HTML、file://、Vue / React 页面均可使用。CSS 仅作用于带属性的元素，不接管布局、字号、圆角、按钮事件、焦点或选中态。
+从 [Liquid Glass 衍生方案](../npu-memory-atlas/variants/liquid-glass.html) 提取的深色画布玻璃材质。原页面未修改。零依赖、无构建步骤，普通 HTML、file://、Vue / React 页面均可使用。CSS 仅作用于带属性的元素，不接管布局、字号、圆角、按钮事件、焦点或选中态。
 
 ## 最短接入
 
