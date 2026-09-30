@@ -12,7 +12,7 @@ nav[aria-label="视图操作"] .sep{flex-shrink:0;margin:0 3px}
 #tensor{width:190px;max-width:190px;text-align:left;white-space:nowrap}
 @media(max-width:600px){nav[aria-label="视图操作"]{max-width:calc(100vw - 28px)}.transport input{width:100px}}
 .rank-settings{position:fixed;top:28px;right:28px;z-index:3}.rank-settings>button{display:grid;place-items:center;width:40px;height:40px;padding:9px;background:#202020;border:1px solid #505050}.rank-settings svg{width:20px;height:20px;pointer-events:none}.rank-settings-panel{position:absolute;right:0;top:48px;width:248px;padding:16px;background:#202020;border:1px solid #505050;border-radius:4px;box-shadow:0 8px 24px #0006}.rank-settings-panel[hidden]{display:none}.rank-settings-panel label{display:block;color:#e8e8e8;margin-bottom:10px}.rank-settings-panel select{width:100%;max-width:none;border:1px solid #505050}.rank-settings-panel p{margin:10px 0 0;color:#999;font-size:12px}@media(max-width:600px){.rank-settings{top:14px;right:14px}}
-.memory-legend{position:fixed;top:88px;left:28px;max-width:260px;display:flex;flex-wrap:wrap;gap:10px 18px;pointer-events:none;color:#bdbdbd;font-size:11px}.memory-legend[hidden]{display:none}.memory-legend span{display:flex;align-items:center;gap:7px}.memory-legend i{width:12px;height:12px;display:inline-block;flex-shrink:0}.rank-settings-panel label:not(:first-child){margin-top:16px}@media(max-width:600px){.memory-legend{left:14px;max-width:190px;font-size:9px;gap:6px 10px}}
+.memory-legend{flex-direction:column;align-items:flex-start;position:fixed;top:50%;transform:translateY(-50%);left:28px;max-width:260px;display:flex;flex-wrap:wrap;gap:10px 18px;pointer-events:auto;color:#bdbdbd;font-size:11px}.memory-legend[hidden]{display:none}.memory-legend button{display:flex;align-items:center;gap:9px;padding:6px 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:inherit;font:inherit;cursor:pointer;text-align:left}.memory-legend button:hover{background:rgb(255 255 255 / 7%);color:#fff}.memory-legend button[aria-pressed="true"]{background:rgb(255 255 255 / 10%);border-color:rgb(255 255 255 / 18%);color:#fff}.memory-legend button:focus-visible{outline:2px solid #fff;outline-offset:2px}.memory-legend i{width:12px;height:12px;display:inline-block;flex-shrink:0}.rank-settings-panel label:not(:first-child){margin-top:16px}@media(max-width:600px){.memory-legend{left:14px;max-width:190px;font-size:9px;gap:6px 10px}}
 .rank-spacing{margin:16px 0 0;padding:12px 0 0;border:0;border-top:1px solid #505050}.rank-spacing legend{padding:0 0 4px;color:#e8e8e8}.rank-spacing-row{display:grid;grid-template-columns:1fr 100px;align-items:center;gap:10px;margin-top:8px}.rank-settings-panel .rank-spacing-row label{margin:0}.rank-spacing input{width:100%;padding:7px 8px;background:#111;color:#e8e8e8;border:1px solid #505050;border-radius:2px;font:inherit}.rank-spacing input:focus-visible{outline:2px solid #fff;outline-offset:2px}.rank-settings-panel{max-height:calc(100vh - 110px);overflow-y:auto}
 
 
@@ -175,6 +175,8 @@ let tensors=groups.map(t=>[t[0],t[1],t[2]*2/1e9<.01?'<0.01':(t[2]*2/1e9).toFixed
 let scope='all',selectedRank=2,renderRank=2,relationRank=null;
 let shardInfoOpen=false;
 let mode='explode',labels=true,zoom=1.5,pan=[0,0];
+let selectedMemoryCategory=null;
+function memoryCategoryVisible(i){return selectedMemoryCategory===null||selectedMemoryCategory===i;}
 let viewMode='2.5D';
 let rankRatio=[3,3,4],labelMode='side',fitRequested=false;
 // Aggregated module playback: illustrative order across a pass, not a layer trace.
@@ -285,6 +287,7 @@ function text(x,y,s,size=16,c='#e8e8e8',extra=''){return `<text x="${x}" y="${y}
 
 function backFaces(){const h=64*6.7;return `<g class="rank-back-faces" fill="#000" fill-opacity=".8"><polygon points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}"/><polygon points="${pts([[0,0,0],[245,0,0],[245,0,h],[0,0,h]])}"/><polygon points="${pts([[0,0,0],[0,155,0],[0,155,h],[0,0,h]])}"/></g>`;}
 function surfaceValue(i,z,h,free=false,a=cats[i]){
+ if(!memoryCategoryVisible(i))return '';
  const x=free?245:239,y=free?155:149;
  const top=P(x,y,z+h),bottom=P(x,y,z),height=bottom[1]-top[1];
  if(height<1)return '';
@@ -318,13 +321,13 @@ stackOrder.forEach(i=>{const a=cats[i],free=i===cats.length-1,h=a.value*6.7*layo
  if(exploded&&free){if(labels&&labelMode==='surface')surfaceLabels+=surfaceValue(i,z,frameHeight-z,true);anchors.push(P(245,0,z+(frameHeight-z)/2));labelBands[i]={top:P(245,0,frameHeight)[1],bottom:P(245,0,z)[1]};return;}
  if(exploded&&h>.01&&drawn>0)z+=gap;
  anchors.push(P(245,0,z+h/2));labelBands[i]={top:P(245,0,z+h)[1],bottom:P(245,0,z)[1]};
- if(h>.01&&!free)s+=block(layout.ix,layout.iy,z,245-layout.ix*2,155-layout.iy*2,h,a.color,true);
+ if(h>.01&&!free&&memoryCategoryVisible(i))s+=block(layout.ix,layout.iy,z,245-layout.ix*2,155-layout.iy*2,h,a.color,true);
  if(labels&&labelMode==='surface'&&!free&&h>.01)surfaceLabels+=surfaceValue(i,z,h);
 z+=h;if(!free&&h>.01)drawn++;
 });
 s+=(viewMode==='2.5D'?surfaceLabels:'')+outline(0,frameHeight);
 if(viewMode==='2.5D'&&labels&&labelMode==='side'){const names=['权重','梯度','优化器态','激活','临时工作区','通信缓冲','分配器可复用','空余'];
-const rows=stackOrder.map(i=>({a:cats[i],i,...labelBands[i]})).filter(r=>r.bottom-r.top>.01).reverse();
+const rows=stackOrder.map(i=>({a:cats[i],i,...labelBands[i]})).filter(r=>r.bottom-r.top>.01&&memoryCategoryVisible(r.i)).reverse();
 // Keep swatches at their physical layer bounds; only text shifts to avoid collisions.
 let previous=-Infinity;
 rows.forEach(r=>{r.y=Math.max((r.top+r.bottom)/2,previous+30);previous=r.y;});
@@ -448,9 +451,8 @@ function focusedRankGeometry(geometry,id,focus){
    polygon([[245,0,0],[245,155,0],[245,155,h],[245,0,h]],'#222222','none')+
    polygon([[0,0,h],[245,0,h],[245,155,h],[0,155,h]],'#272727','none')+'</g>';
  }
- const color=id===relationRank?'#FFFFFF':parallelColors[focus.byRank[id]];
- const shell=outline(0,64*6.7).replace('stroke="#FFFFFF"',`stroke="${color}"`).replace('stroke-width="4.8"',`stroke-width="${id===relationRank?6.4:4.8}"`);
- return `<g filter="url(#rank-neutral)">${geometry}</g>`+shell;
+ const shell=outline(0,64*6.7).replace('stroke-width="4.8"',`stroke-width="${id===relationRank?6.4:4.8}"`);
+ return geometry+shell;
 }
 function selectParallelTag(dim,index){
  const r=ranks[relationRank===null?selectedRank:relationRank];
@@ -534,12 +536,13 @@ function drawViewGroups(){
   return `<text x="${x}" y="${y}" fill="#aaa" font-size="13" style="pointer-events:none">${axis.toUpperCase()} ${index} · ${rs.length} ranks</text>`;
  }).join('');
 }
-function render(){setRankData(selectedRank);if(mode==='shard'&&playing){const active=currentModule(simulationState(simTime,selectedRank));if(active!==null)$('tensor').value=String(active);}let s='';const focus=parallelFocus();const savedLabels=labels,savedTensor=$("tensor").value;if(scope==='all'){labels=savedLabels&&labelMode==='surface';for(const r of rankPaintOrder()){setRankData(r.id);const [x,y]=rankPosition(r);const geom=focusedRankGeometry(drawRank(),r.id,focus);s+=`<g opacity="1" data-linked="${!!focus&&focus.members.has(r.id)}" data-rank="${r.id}" data-rack="${physicalPlacement(r).rack}" data-node="${physicalPlacement(r).node}" role="button" tabindex="0" aria-pressed="${relationRank===r.id}" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}，机柜 ${physicalPlacement(r).rack}，节点 ${physicalPlacement(r).node}；单击显示并行关系，双击进入单卡" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)"><title>Rank ${r.id} · 机柜 ${physicalPlacement(r).rack} / 节点 ${physicalPlacement(r).node} / 卡 ${physicalPlacement(r).slot}</title>${geom}</g>`;}labels=savedLabels;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=drawRank();}
-$('world').innerHTML=(focus?'<defs><filter id="rank-neutral" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/></filter></defs>':'')+s+drawRelations()+drawParallelTags()+drawViewGroups();
+function render(){if(mode==='shard'&&![0,2].includes(selectedMemoryCategory))selectedMemoryCategory=null;setRankData(selectedRank);if(mode==='shard'&&playing){const active=currentModule(simulationState(simTime,selectedRank));if(active!==null)$('tensor').value=String(active);}let s='';const focus=parallelFocus();const savedLabelMode=labelMode,savedTensor=$("tensor").value;if(scope==='all'){labelMode='surface';for(const r of rankPaintOrder()){setRankData(r.id);const [x,y]=rankPosition(r);const geom=focusedRankGeometry(drawRank(),r.id,focus);s+=`<g opacity="1" data-linked="${!!focus&&focus.members.has(r.id)}" data-rank="${r.id}" data-rack="${physicalPlacement(r).rack}" data-node="${physicalPlacement(r).node}" role="button" tabindex="0" aria-pressed="${relationRank===r.id}" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}，机柜 ${physicalPlacement(r).rack}，节点 ${physicalPlacement(r).node}；单击显示并行关系，双击进入单卡" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)"><title>Rank ${r.id} · 机柜 ${physicalPlacement(r).rack} / 节点 ${physicalPlacement(r).node} / 卡 ${physicalPlacement(r).slot}</title>${geom}</g>`;}labelMode=savedLabelMode;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=drawRank();}
+$('world').innerHTML=s+drawRelations()+drawParallelTags()+drawViewGroups();
 renderShardInspector();
-$('memory-legend').hidden=!(labels&&labelMode==='surface');
-$('memory-legend').innerHTML=(mode==='shard'?[0,2]:stackOrder).map(i=>{const a=cats[i];return `<span><i style="background:${i===7?'transparent':focus?'#999999':a.color};${i===7?'border:1px solid #555':''}"></i>${a.name}</span>`;}).join('');
-syncTensorMenu();transform();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));$('tensor').classList.toggle('hidden',mode!=='shard');$('labels').setAttribute('aria-pressed',labels&&(scope==='single'||labelMode==='surface'));$('labels').disabled=scope==='all'&&labelMode==='side';$('relations').classList.toggle('hidden',scope!=='all'||relationRank===null);$('single').setAttribute('aria-pressed',scope==='single');$('all').setAttribute('aria-pressed',scope==='all');$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('scene').setAttribute('aria-label',scope==='all'?worldSize+' rank 内存总览':'Rank '+selectedRank+' 内存细节')}
+$('memory-legend').hidden=!(labels&&(scope==='all'||labelMode==='surface'));
+const legendHTML=(mode==='shard'?[2,0]:[...stackOrder].reverse()).map(i=>{const a=cats[i];return `<button type="button" data-memory-category="${i}" aria-pressed="${selectedMemoryCategory===i}" title="只显示${a.name}；再次点击恢复全部"><i aria-hidden="true" style="background:${i===7?'transparent':a.color};${i===7?'border:1px solid #555':''}"></i>${a.name}</button>`;}).join('');
+if($('memory-legend')._legendHTML!==legendHTML){$('memory-legend')._legendHTML=legendHTML;const active=document.activeElement?.closest('[data-memory-category]')?.dataset.memoryCategory;$('memory-legend').innerHTML=legendHTML;if(active!==undefined)$('memory-legend').querySelector(`[data-memory-category="${active}"]`)?.focus();}
+syncTensorMenu();transform();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode));$('tensor').classList.toggle('hidden',mode!=='shard');$('labels').setAttribute('aria-pressed',labels);$('labels').disabled=false;$('relations').classList.toggle('hidden',scope!=='all'||relationRank===null);$('single').setAttribute('aria-pressed',scope==='single');$('all').setAttribute('aria-pressed',scope==='all');$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('scene').setAttribute('aria-label',scope==='all'?worldSize+' rank 内存总览':'Rank '+selectedRank+' 内存细节')}
 function memorySize(gb){return gb>=1?gb.toFixed(3)+' GB':(gb*1000).toFixed(2)+' MB';}
 const shardStates=[{name:'BF16 权重',bytes:2,cat:0},{name:'FP32 主权重',bytes:4,cat:2},{name:'FP32 一阶动量 m',bytes:4,cat:2},{name:'FP32 二阶动量 v',bytes:4,cat:2}];
 function drawShards(){
@@ -551,11 +554,13 @@ function drawShards(){
   const x=layout.ix+(row||g[3]==='copy'?w-sw:(rank.tp/Math.max(1,TP-1))*(w-sw)),y=layout.iy+(!row?d-sd:(rank.tp/Math.max(1,TP-1))*(d-sd));
   for(const state of shardStates){
    const a=cats[state.cat],h=localParams*state.bytes/1e9*6.7*layout.scale;
+   if(memoryCategoryVisible(state.cat)){
    s+=block(layout.ix,layout.iy,z,w,d,h,shade(a.color,.28));
    const value={name:state.name,color:a.color,value:g[2]*state.bytes/1e9,sub:g[0]+' · '+owner.identity};
    s+=`<g data-state="${state.name}" data-shard="${owner.key}"><title>${g[0]} · ${owner.identity} · ${state.name} · ${memorySize(value.value)}</title>`+block(x,y,z,sw,sd,h,a.color)+`<path d="M${P(x,y,z+h)} L${P(x+sw,y,z+h)} L${P(x+sw,y+sd,z+h)} L${P(x,y+sd,z+h)} Z" fill="none" stroke="#fff" stroke-width="${scope==='all'?2:1}"/></g>`;
    if(labels&&labelMode==='surface')s+=surfaceValue(state.cat,z,h,false,value);
    callouts.push({a:value,top:P(245,0,z+h)[1],bottom:P(245,0,z)[1]});
+   }
    z+=h+8;
   }
   if(labels&&labelMode==='side')s+=sideMemoryLabels(callouts.reverse());
@@ -587,7 +592,7 @@ function transform(){
  const points=ranks.flatMap(r=>{const [x,y]=rankPosition(r);return [[x+RANK_SCALE*(P(0,155,0)[0]-440)-105,y+RANK_SCALE*P(0,0,64*6.7)[1]-65],[x+RANK_SCALE*(P(245,0,0)[0]-440)+115,y+RANK_SCALE*P(245,155,0)[1]+85]];});
  const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),lo=Math.min(...ys),hi=Math.max(...ys);
  fit=Math.max(.001,Math.min(1320/(Math.max(...xs)-Math.min(...xs)),Math.max(120,bottom-24)/(hi-lo)));sceneY=(lo+hi)/2;
- }}$('world').setAttribute('transform',`translate(${700+pan[0]} ${cy+pan[1]}) scale(${zoom*fit}) translate(-${rankSceneCenterX()} -${scope==='all'?sceneY:425})`);$('zoom').textContent=Math.round(zoom*100)+'%'}document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render()});$('labels').onclick=()=>{labels=!labels;render()};$('plus').onclick=()=>changeZoom(1.25);$('minus').onclick=()=>changeZoom(1/1.25);$('fit').onclick=fitCanvas;let drag=null,pointerTravel=0,pointerRank=null,pointerOnRelation=false,pointerTag=null;$('scene').onpointerdown=e=>{pointerTravel=0;const tag=e.target.closest('[data-parallel-tag]');pointerTag=tag?{dim:tag.dataset.parallelTag,index:+tag.dataset.index}:null;const target=e.target.closest('[data-rank]');pointerRank=target?+target.dataset.rank:null;pointerOnRelation=!!e.target.closest('[data-relation]');drag=[e.clientX,e.clientY,...pan]};$('scene').onpointermove=e=>{if(!drag)return;pointerTravel=Math.max(pointerTravel,Math.hypot(e.clientX-drag[0],e.clientY-drag[1]));if(pointerTravel<=4)return;$('scene').setPointerCapture(e.pointerId);let r=$('scene').getBoundingClientRect(),scale=Math.min(r.width/1400,r.height/900);pan=[drag[2]+(e.clientX-drag[0])/scale,drag[3]+(e.clientY-drag[1])/scale];transform()};$('scene').onpointerup=()=>{const tapped=drag&&pointerTravel<=4;drag=null;if(tapped&&scope==='all'){if(pointerTag){selectParallelTag(pointerTag.dim,pointerTag.index);return;}if(pointerRank!==null)pickRelationRank(pointerRank);else if(!pointerOnRelation){relationRank=null;render();}}};$('scene').onpointercancel=()=>{drag=null;pointerRank=null;};
+ }}$('world').setAttribute('transform',`translate(${700+pan[0]} ${cy+pan[1]}) scale(${zoom*fit}) translate(-${rankSceneCenterX()} -${scope==='all'?sceneY:425})`);$('zoom').textContent=Math.round(zoom*100)+'%'}document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render()});$('memory-legend').onclick=e=>{const button=e.target.closest('[data-memory-category]');if(!button)return;const category=+button.dataset.memoryCategory;selectedMemoryCategory=selectedMemoryCategory===category?null:category;render();};$('labels').onclick=()=>{labels=!labels;if(!labels)selectedMemoryCategory=null;render()};$('plus').onclick=()=>changeZoom(1.25);$('minus').onclick=()=>changeZoom(1/1.25);$('fit').onclick=fitCanvas;let drag=null,pointerTravel=0,pointerRank=null,pointerOnRelation=false,pointerTag=null,pointerBlank=false;$('scene').onpointerdown=e=>{pointerTravel=0;pointerBlank=e.target===$('scene')||e.target===$('world');const tag=e.target.closest('[data-parallel-tag]');pointerTag=tag?{dim:tag.dataset.parallelTag,index:+tag.dataset.index}:null;const target=e.target.closest('[data-rank]');pointerRank=target?+target.dataset.rank:null;pointerOnRelation=!!e.target.closest('[data-relation]');drag=[e.clientX,e.clientY,...pan]};$('scene').onpointermove=e=>{if(!drag)return;pointerTravel=Math.max(pointerTravel,Math.hypot(e.clientX-drag[0],e.clientY-drag[1]));if(pointerTravel<=4)return;$('scene').setPointerCapture(e.pointerId);let r=$('scene').getBoundingClientRect(),scale=Math.min(r.width/1400,r.height/900);pan=[drag[2]+(e.clientX-drag[0])/scale,drag[3]+(e.clientY-drag[1])/scale];transform()};$('scene').onpointerup=()=>{const tapped=drag&&pointerTravel<=4;drag=null;if(tapped&&selectedMemoryCategory!==null&&(scope==='all'?pointerRank===null&&!pointerOnRelation&&!pointerTag:pointerBlank)){selectedMemoryCategory=null;render();}if(tapped&&scope==='all'){if(pointerTag){selectParallelTag(pointerTag.dim,pointerTag.index);return;}if(pointerRank!==null)pickRelationRank(pointerRank);else if(!pointerOnRelation){relationRank=null;render();}}};$('scene').onpointercancel=()=>{drag=null;pointerRank=null;};
 function changeZoom(factor){
  const before=zoom;zoom=Math.max(.05,Math.min(32,zoom*factor));
  const ratio=zoom/before;pan=pan.map(v=>v*ratio);cameras[scope]={zoom,pan:[...pan]};transform();
