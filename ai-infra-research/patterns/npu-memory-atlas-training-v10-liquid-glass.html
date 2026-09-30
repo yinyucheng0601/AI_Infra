@@ -126,8 +126,9 @@ nav[aria-label="视图操作"]{flex-wrap:nowrap;width:max-content;max-width:calc
 .view-dial svg{display:block;width:100%;height:100%;overflow:visible}
 .dial-ring{fill:none;stroke:#666;stroke-width:1}.dial-label{fill:#888;font:9px ui-monospace,monospace;text-anchor:middle}.dial-marker{fill:#ddd}.cube-face{stroke:#ddd;stroke-width:1.2;stroke-linejoin:round}.view-dial button:hover .dial-ring{stroke:#bbb}.dial-name{display:block;color:#ddd;font-size:11px;letter-spacing:1.5px;margin-top:2px}
 @media(max-width:600px){.view-dial{top:128px;right:14px;width:88px}.view-dial button{width:88px;height:88px}}
+
 /* Readability tuning: backdrop tint must survive the non-Chromium fallback too. */
-.bar,.rank-settings>button{background:rgb(26 26 26 / 72%);border:1px solid rgb(255 255 255 / 18%);box-shadow:inset 0 1px 0 rgb(255 255 255 / 8%),0 8px 24px rgb(0 0 0 / 18%)}
+.bar,.rank-settings>button,#cycle-view{background:rgb(26 26 26 / 72%);border:1px solid rgb(255 255 255 / 18%);box-shadow:inset 0 1px 0 rgb(255 255 255 / 8%),0 8px 24px rgb(0 0 0 / 18%)}
 /* Navigation glass: clearer backdrop and a visible refracting rim. */
 .bar{background:rgb(26 26 26 / 28%);border-color:rgb(255 255 255 / 28%);box-shadow:inset 0 1px 0 rgb(255 255 255 / 22%),inset 0 -1px 0 rgb(255 255 255 / 7%),0 8px 24px rgb(0 0 0 / 22%)}
 .bar button:not([aria-pressed=true]),.bar select,.bar .readout,.bar .status{color:#eee;text-shadow:0 1px 3px rgb(0 0 0 / 90%)}
@@ -136,21 +137,21 @@ nav[aria-label="视图操作"]{flex-wrap:nowrap;width:max-content;max-width:calc
 .rank-settings-panel p,.rank-settings-panel #config,.rank-spacing legend,.shard-inspector p,.shard-inspector .eyebrow{color:#c4c4c4}
 .rank-settings-panel select,.rank-spacing input{background-color:rgb(12 12 12 / 65%);border-color:rgb(255 255 255 / 22%);color:#eee}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
- .bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list{background:#242424}
+ .bar,.rank-settings>button,#cycle-view,.rank-settings-panel,.shard-inspector,#tensor-list{background:#242424}
 }
 
 #config-status:empty{display:none}
 #config-status{padding:10px 12px;border:1px solid var(--ui-border);border-radius:10px;background:#242424;color:#ddd}
 #config-status[data-state="error"]{border-color:#d88778;color:#ffd9d2;background:#35221f}
 </style></head><body><div class="view-dial" aria-label="Rank 视角">
-<button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front">
+<button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front → Side">
 <svg viewBox="0 0 148 148" aria-hidden="true">
 <path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
 <text class="dial-label" x="74" y="21">0°</text><text class="dial-label" x="135" y="77">90°</text><text class="dial-label" x="74" y="134">180°</text><text class="dial-label" x="13" y="77">-90°</text>
 <g id="dial-marker" transform="rotate(-35 74 74)"><rect class="dial-marker" x="70" y="14" width="8" height="8"/></g>
 <g id="dial-cube"><path class="cube-face" fill="#353535" d="M74 45 99 59 74 74 49 59Z"/><path class="cube-face" fill="#202020" d="M49 59 74 74 74 103 49 88Z"/><path class="cube-face" fill="#515151" d="M74 74 99 59 99 88 74 103Z"/></g>
 </svg></button><span class="dial-name" id="view-name" aria-live="polite">2.5D</span></div>
-<svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，深灰分区表示空余；正交轴测视角"><g id="world"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重分片</button><button id="tensor" class="hidden" value="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="tensor-list">attn.q · 列切 ×2 ▾</button><div class="transport"><button id="play" class="icon-button" data-playing="true" aria-label="暂停模拟" title="暂停模拟"><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5a1 1 0 0 1 1.5-.86l12 7.5a1 1 0 0 1 0 1.72l-12 7.5A1 1 0 0 1 7 19.5Z"/></svg></button><button id="restart" class="icon-button" aria-label="重播当前训练步" title="重播当前训练步"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.7 7M4 4v6h6"/></svg></button><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><span id="phase" class="status"></span></div></nav><nav class="bar zoom-controls embedded-zoom-controls" aria-label="缩放控制"><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">150%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button></nav><div class="rank-settings" role="group" aria-label="说明、标注与配置"><button id="shard-info" class="hidden" aria-label="权重分片说明" title="权重分片说明" aria-expanded="false" aria-controls="shard-inspector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".8" fill="currentColor" stroke="none"/></svg></button><button id="labels" aria-label="显示标注" title="显示／隐藏标注" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg></button><button id="rank-settings-toggle" aria-label="Rank 显示配置" title="Rank 显示配置" aria-expanded="false" aria-controls="rank-settings-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6l.6 2.4 2.1 1.2 2.4-.6 3 5.2-1.8 1.8v2.4l1.8 1.8-3 5.2-2.4-.6-2.1 1.2L15 24H9l-.6-2.4-2.1-1.2-2.4.6-3-5.2 1.8-1.8v-2.4L.9 10.8l3-5.2 2.4.6 2.1-1.2Z" transform="translate(2 0) scale(.83)"/><circle cx="12" cy="11.2" r="3.2"/></svg></button><div id="rank-settings-panel" class="rank-settings-panel" hidden><fieldset class="rank-spacing" id="parallel-config"><legend>Config · 规模与并行</legend><span class="readout" id="config" title="教学 mock：TP2 × PP4 × DP4 = 32；ETP2、EP2、专家副本2；EP折入DP。沿用8B尺寸，FFN改为两个半宽专家，top-1。非真实模型配置。">32 Rank · TP2 · PP4 · DP4 · EP2</span><div class="config-grid"><div class="rank-spacing-row"><label for="cfg-world">World Size</label><output id="cfg-world" for="cfg-tp cfg-pp cfg-dp" aria-live="polite">32</output></div><div class="rank-spacing-row"><label for="cfg-tp">TP · Y 轴</label><input id="cfg-tp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-pp">PP · Z 轴</label><input id="cfg-pp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-dp">DP · X 轴</label><input id="cfg-dp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-ep">EP · 折入 DP</label><input id="cfg-ep" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-node">每节点卡数</label><input id="cfg-node" type="number" min="1" max="512" step="1" value="8"></div></div><p>World Size = TP × PP × DP；EP 折入 DP，ETP 跟随 TP。World Size 根据并行度自动计算。</p><p>当前机柜规格固定为 64 卡。按 TP → DP → PP 排列，机柜边界增加轴间距。</p><button id="apply-config">应用配置</button><p id="config-status" role="status" aria-live="polite"></p></fieldset><label for="rank-ratio">Rank 长 : 宽 : 高</label><select id="rank-ratio"><option value="3:3:4" selected>3 : 3 : 4（默认）</option><option value="1:1:1">1 : 1 : 1（立方体）</option><option value="3:3:2">3 : 3 : 2（扁平）</option></select><p>底面长宽相等，应用于所有 rank。</p><label for="label-mode">标注模式</label><select id="label-mode"><option value="side">模式 1 · 侧边标注</option><option value="surface">模式 2 · 表面数值 + 图例</option></select><fieldset class="rank-spacing"><legend>全部 rank · 轴间距</legend><div class="rank-spacing-row"><label for="rank-spacing-x">X · DP</label><input id="rank-spacing-x" type="number" min="0" max="3000" step="10" value="480" aria-label="全部 rank X 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-y">Y · TP</label><input id="rank-spacing-y" type="number" min="0" max="3000" step="10" value="700" aria-label="全部 rank Y 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-z">Z · PP</label><input id="rank-spacing-z" type="number" min="0" max="3000" step="10" value="900" aria-label="全部 rank Z 轴间距"></div><p>相邻 rank 的原点间距，仅影响全部 rank 视图。</p></fieldset></div></div><div id="memory-legend" class="memory-legend" aria-label="内存类别图例" hidden></div><div id="tensor-list" role="listbox" aria-label="参数模块" hidden></div><aside id="shard-inspector" class="shard-inspector" aria-label="权重分片说明" hidden></aside><script>
+<svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，深灰分区表示空余；正交轴测视角"><g id="world"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重分片</button><button id="tensor" class="hidden" value="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="tensor-list">attn.q · 列切 ×2 ▾</button><div class="transport"><button id="play" class="icon-button" data-playing="true" aria-label="暂停模拟" title="暂停模拟"><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5a1 1 0 0 1 1.5-.86l12 7.5a1 1 0 0 1 0 1.72l-12 7.5A1 1 0 0 1 7 19.5Z"/></svg></button><button id="restart" class="icon-button" aria-label="重播当前训练步" title="重播当前训练步"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.7 7M4 4v6h6"/></svg></button><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><span id="phase" class="status"></span></div></nav><nav class="bar zoom-controls embedded-zoom-controls" aria-label="缩放控制"><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">100%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button></nav><div class="rank-settings" role="group" aria-label="说明、标注与配置"><button id="shard-info" class="hidden" aria-label="权重分片说明" title="权重分片说明" aria-expanded="false" aria-controls="shard-inspector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".8" fill="currentColor" stroke="none"/></svg></button><button id="labels" aria-label="显示标注" title="显示／隐藏标注" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg></button><button id="rank-settings-toggle" aria-label="Rank 显示配置" title="Rank 显示配置" aria-expanded="false" aria-controls="rank-settings-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6l.6 2.4 2.1 1.2 2.4-.6 3 5.2-1.8 1.8v2.4l1.8 1.8-3 5.2-2.4-.6-2.1 1.2L15 24H9l-.6-2.4-2.1-1.2-2.4.6-3-5.2 1.8-1.8v-2.4L.9 10.8l3-5.2 2.4.6 2.1-1.2Z" transform="translate(2 0) scale(.83)"/><circle cx="12" cy="11.2" r="3.2"/></svg></button><div id="rank-settings-panel" class="rank-settings-panel" hidden><fieldset class="rank-spacing" id="parallel-config"><legend>Config · 规模与并行</legend><span class="readout" id="config" title="教学 mock：TP2 × PP2 × DP4 = 16；ETP2、EP2、专家副本2；EP折入DP。沿用8B尺寸，FFN改为两个半宽专家，top-1。非真实模型配置。">TP2 · PP2 · DP4 · EP2</span><div class="config-grid"><div class="rank-spacing-row"><label for="cfg-world">World Size</label><output id="cfg-world" for="cfg-tp cfg-pp cfg-dp" aria-live="polite">16</output></div><div class="rank-spacing-row"><label for="cfg-tp">TP · Y 轴</label><input id="cfg-tp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-pp">PP · Z 轴</label><input id="cfg-pp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-dp">DP · X 轴</label><input id="cfg-dp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-ep">EP · 折入 DP</label><input id="cfg-ep" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-node">每节点卡数</label><input id="cfg-node" type="number" min="1" max="512" step="1" value="8"></div></div><p>World Size = TP × PP × DP；EP 折入 DP，ETP 跟随 TP。World Size 根据并行度自动计算。</p><p>当前机柜规格固定为 64 卡。按 TP → DP → PP 排列，机柜边界增加轴间距。</p><p id="config-status" role="status" aria-live="polite" tabindex="-1"></p><button id="apply-config" type="button">应用配置</button></fieldset><label for="rank-ratio">Rank 长 : 宽 : 高</label><select id="rank-ratio"><option value="3:3:4" selected>3 : 3 : 4（默认）</option><option value="1:1:1">1 : 1 : 1（立方体）</option><option value="3:3:2">3 : 3 : 2（扁平）</option></select><p>底面长宽相等，应用于所有 rank。</p><label for="label-mode">标注模式</label><select id="label-mode"><option value="side">模式 1 · 侧边标注</option><option value="surface">模式 2 · 表面数值 + 图例</option></select><fieldset class="rank-spacing"><legend>全部 rank · 轴间距</legend><div class="rank-spacing-row"><label for="rank-spacing-x">X · DP</label><input id="rank-spacing-x" type="number" min="0" max="3000" step="10" value="480" aria-label="全部 rank X 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-y">Y · TP</label><input id="rank-spacing-y" type="number" min="0" max="3000" step="10" value="700" aria-label="全部 rank Y 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-z">Z · PP</label><input id="rank-spacing-z" type="number" min="0" max="3000" step="10" value="900" aria-label="全部 rank Z 轴间距"></div><p>相邻 rank 的原点间距，仅影响全部 rank 视图。</p></fieldset></div></div><div id="memory-legend" class="memory-legend" aria-label="内存类别图例" hidden></div><div id="tensor-list" role="listbox" aria-label="参数模块" hidden></div><aside id="shard-inspector" class="shard-inspector" aria-label="权重分片说明" hidden></aside><script>
 const ATLAS_EMBED=new URLSearchParams(location.search).get('embed')==='layer-atlas'&&window.parent!==window;
 let atlasHostState=null;
 if(ATLAS_EMBED)document.documentElement.classList.add('layer-atlas-embed');
@@ -162,7 +163,7 @@ const $=s=>document.getElementById(s);// Reference configuration: Llama 3 8B, 32
 // https://huggingface.co/docs/transformers/v4.35.1/en/model_memory_anatomy
 // This is a capacity illustration, not measured NPU performance or memory.
 const H=4096,L=32,I=14336,V=128256;
-let TP=2,PP=4,DP=4,EP=2,ETP=2,worldSize=32,cardsPerNode=8;
+let TP=2,PP=2,DP=4,EP=2,ETP=2,worldSize=16,cardsPerNode=8;
 const cardsPerRack=64; // Fixed capacity for this deployment model, not a universal NPU rack standard.
 const baseGroups=[['attn.q','列切',L*H*H,'col'],['attn.kv','头切',L*2*H*1024,'col'],['attn.out','行切',L*H*H,'row'],['mlp.gate/up','列切',L*2*H*I,'col'],['mlp.down','行切',L*H*I,'row'],['embed','词表切分',V*H,'row'],['lm_head','词表切分',V*H,'row'],['norm','复制',(L*2+1)*H,'copy']];
 let groups=baseGroups.map(t=>[...t]);
@@ -174,14 +175,14 @@ cats.push({name:'空余',value:64-occupied,color:'#282828',sub:'估算余量'});
 let tensors=groups.map(t=>[t[0],t[1],t[2]*2/1e9<.01?'<0.01':(t[2]*2/1e9).toFixed(2),t[3]]);
 let scope='all',selectedRank=2,renderRank=2,relationRank=null;
 let shardInfoOpen=false;
-let mode='explode',labels=true,zoom=1.5,pan=[0,0];
+let mode='explode',labels=true,zoom=1,pan=[0,0];
 let viewMode='2.5D';
 let rankRatio=[3,3,4],labelMode='side',fitRequested=false;
 // Aggregated module playback: illustrative order across a pass, not a layer trace.
 const moduleOrder=[5,7,0,1,2,7,3,4,7,6];
 function currentModule(st,id=selectedRank){if(st.active==='update'||st.active==='zero'||st.active==='idle')return null;const owned=rankGroups(id),forward=moduleOrder.filter(i=>owned[i][2]>0),order=st.active==='backward'?[...forward].reverse():forward;return order[Math.min(order.length-1,Math.floor(st.q*order.length))];}
 const PEAK_ACT=3.8,BASE_RESERVE=2.3,CYCLE_MS=31000;
-let simTime=0,step=1,playing=!ATLAS_EMBED&&!matchMedia('(prefers-reduced-motion: reduce)').matches,lastFrame=null,lastPaint=0;
+let simTime=0,step=1,playing=false,lastFrame=null,lastPaint=0;
 // Sources: https://pytorch.org/blog/activation-checkpointing-techniques/
 // https://docs.pytorch.org/docs/stable/notes/cuda.html#memory-management
 // https://docs.pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html
@@ -275,7 +276,7 @@ function applySimulation(){const st=simulationState(simTime);
 }
 
 // Normalize the logical memory box to the selected physical aspect ratio.
-function P(x,y,z){const unit=245/rankRatio[0];x=x/245*rankRatio[0]*unit;y=y/155*rankRatio[1]*unit;z=z/(64*6.7)*rankRatio[2]*unit;if(viewMode==='Top')return[575+x,265+y];if(viewMode==='Front')return[575+x,510-z];return[575+(x-y)*Math.sqrt(3)/2,510+(x+y)*.5-z]};function pts(a){return a.map(p=>P(...p).join(',')).join(' ')}function polygon(a,c,stroke='#FFFFFF',width=.8){return `<polygon points="${pts(a)}" fill="${c}" stroke="${stroke}" stroke-width="${width*(scope==='all'?2:1)}" stroke-linejoin="round"/>`};function shade(color,factor){const n=parseInt(color.slice(1),16);return '#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.min(255,Math.round(v*factor)).toString(16).padStart(2,'0')).join('');}
+function P(x,y,z){const unit=245/rankRatio[0];x=x/245*rankRatio[0]*unit;y=y/155*rankRatio[1]*unit;z=z/(64*6.7)*rankRatio[2]*unit;if(viewMode==='Top')return[575+x,265+y];if(viewMode==='Front')return[575+x,510-z];if(viewMode==='Side')return[575+y,510-z];return[575+(x-y)*Math.sqrt(3)/2,510+(x+y)*.5-z]};function pts(a){return a.map(p=>P(...p).join(',')).join(' ')}function polygon(a,c,stroke='#FFFFFF',width=.8){return `<polygon points="${pts(a)}" fill="${c}" stroke="${stroke}" stroke-width="${width*(scope==='all'?2:1)}" stroke-linejoin="round"/>`};function shade(color,factor){const n=parseInt(color.slice(1),16);return '#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.min(255,Math.round(v*factor)).toString(16).padStart(2,'0')).join('');}
 function block(x,y,z,w,d,h,c,top=true){let a='';const stroke='none';
  a+=polygon([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],shade(c,.82),stroke);
  a+=polygon([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],shade(c,1.04),stroke);
@@ -300,25 +301,16 @@ function sideMemoryLabels(rows){
   return `<g class="memory-label"><title>${a.name}：${memorySize(a.value)} · ${a.sub||''}</title><rect x="${x}" y="${top}" width="5" height="${Math.max(1,bottom-top)}" fill="${free?'none':a.color}" stroke="${free?'#484848':'none'}"/><text x="${x+16}" y="${y}" dominant-baseline="middle" fill="#f5f5f5"><tspan font-size="20" font-weight="700">${a.value>=.01?a.value.toFixed(2):(a.value*1000).toFixed(2)}</tspan><tspan dx="6" font-size="12">${a.value>=.01?'GB':'MB'}</tspan><tspan dx="8" font-size="13" fill="#bdbdbd">${a.name}</tspan></text></g>`;
  }).join('');
 }
-// Padding is measured in projected units so all visible edges have equal spacing.
-function rankContentLayout(values,exploded=true){
- const frame=64*6.7,ortho=viewMode!=='2.5D',pad=18;
- const ix=ortho?pad:6,iy=ortho?pad/(245*rankRatio[1]/rankRatio[0]/155):6;
- const iz=ortho?pad/(245*rankRatio[2]/rankRatio[0]/frame):6;
- const count=values.filter(v=>v>.01).length,gap=exploded?8:0;
- const scale=ortho?Math.max(0,frame-2*iz-gap*Math.max(0,count-1))/(Math.max(64,values.reduce((a,b)=>a+b,0))*6.7):1;
- return {ix,iy,iz,gap,scale};
-}
-function drawRank(){applySimulation();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=64*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
+function drawRank(){applySimulation();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=64*6.7,inset=6;let z=inset;
 // Fixed separation uses part of free capacity; the remainder stays above the stack.
-const gap=layout.gap;
+const gap=exploded?8:0;
 let drawn=0,anchors=[],labelBands=[],surfaceLabels='';
 s+=`<path d="M${P(0,0,0)} L${P(0,0,frameHeight)}" fill="none" stroke="#505050" stroke-width="${scope==='all'?4.8:2.4}"/>`;
-stackOrder.forEach(i=>{const a=cats[i],free=i===cats.length-1,h=a.value*6.7*layout.scale;
+stackOrder.forEach(i=>{const a=cats[i],free=i===cats.length-1,h=a.value*6.7;
  if(exploded&&free){if(labels&&labelMode==='surface')surfaceLabels+=surfaceValue(i,z,frameHeight-z,true);anchors.push(P(245,0,z+(frameHeight-z)/2));labelBands[i]={top:P(245,0,frameHeight)[1],bottom:P(245,0,z)[1]};return;}
  if(exploded&&h>.01&&drawn>0)z+=gap;
  anchors.push(P(245,0,z+h/2));labelBands[i]={top:P(245,0,z+h)[1],bottom:P(245,0,z)[1]};
- if(h>.01&&!free)s+=block(layout.ix,layout.iy,z,245-layout.ix*2,155-layout.iy*2,h,a.color,true);
+ if(h>.01&&!free)s+=block(inset,inset,z,245-inset*2,155-inset*2,h,a.color,true);
  if(labels&&labelMode==='surface'&&!free&&h>.01)surfaceLabels+=surfaceValue(i,z,h);
 z+=h;if(!free&&h>.01)drawn++;
 });
@@ -358,13 +350,14 @@ function physicalPlacement(r){
  return {rack,node:Math.floor(slot/cardsPerNode),slot:slot%cardsPerNode};
 }
 function rankPosition(r){
- // Shared isometric axes: X=DP (4), Y=TP (2), Z=PP (2).
+ // Shared isometric axes follow configuration: X=DP, Y=TP, Z=PP.
  if(viewMode!=='2.5D'){
   const w=245,d=245*rankRatio[1]/rankRatio[0],h=245*rankRatio[2]/rankRatio[0];
-  const sx=w+90,sy=d+110,sz=h+130,gap=160;
+  const sx=Math.max(w+140,rankSpacing.x),sy=Math.max(d+140,rankSpacing.y),sz=Math.max(h+140,rankSpacing.z),gap=220;
   // Unfold the hidden axis into adjacent panels, preserving the two visible axes.
   if(viewMode==='Top')return [537+(r.dp*sx+r.pp*(DP*sx+gap))*RANK_SCALE,325+r.tp*sy*RANK_SCALE];
   if(viewMode==='Front')return [537+(r.dp*sx+r.tp*(DP*sx+gap))*RANK_SCALE,325-r.pp*sz*RANK_SCALE];
+  return [537+(r.tp*sy+r.dp*(TP*sy+gap))*RANK_SCALE,325-r.pp*sz*RANK_SCALE];
  }
  const a=rackShape(),gap=180;
  const x=r.dp*rankSpacing.x+Math.floor(r.dp/a.dp)*gap,y=r.tp*rankSpacing.y+Math.floor(r.tp/a.tp)*gap,z=r.pp*rankSpacing.z+Math.floor(r.pp/a.pp)*gap;
@@ -485,12 +478,11 @@ function drawParallelTags(){
   if(angle>Math.PI/2)angle-=Math.PI;
   if(angle< -Math.PI/2)angle+=Math.PI;
   // Oblique axes use vertical sides; the vertical PP axis uses a readable rotation.
-  const projection=viewMode!=='2.5D'?'':Math.abs(Math.cos(angle))>.15
+  const projection=Math.abs(Math.cos(angle))>.15
    ?`matrix(${Math.cos(angle)} ${Math.sin(angle)} 0 1 0 0)`
    :`rotate(${angle*180/Math.PI}) skewX(-12)`;
   const c=parallelColors[dim],name={dp:'X · DP',tp:'Y · TP',pp:'Z · PP'}[dim];
-  const labelEdge=viewMode==='2.5D'?44:Math.min(Math.abs(ux)>1e-6?44/Math.abs(ux):Infinity,Math.abs(uy)>1e-6?16.5/Math.abs(uy):Infinity);
-  const leader=`<path d="M${bx+ux*(extent+6)} ${by+uy*(extent+6)} L${bx+ux*(distance-labelEdge)} ${by+uy*(distance-labelEdge)}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
+  const leader=`<path d="M${bx+ux*(extent+6)} ${by+uy*(extent+6)} L${bx+ux*(distance-44)} ${by+uy*(distance-44)}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="4 4"/>`;
   return leader+`<g data-parallel-group="${dim}" transform="translate(${x} ${y}) ${projection}" aria-label="${name}，Rank ${members.join('、')}"><title>${name} · Rank ${members.join('、')}</title><rect x="-41" y="-13.5" width="82" height="27" rx="4" fill="#202020" stroke="${c}" stroke-width="1"/><text x="0" y=".5" dominant-baseline="middle" text-anchor="middle" fill="${c}" font-size="13" font-weight="700">${name}</text></g>`;
  }).join('')+'</g>';
 }
@@ -501,14 +493,6 @@ function drawRackTags(){
  return [...bins].map(([rack,rs])=>{const r=[...rs].sort((a,b)=>a.pp-b.pp||b.tp-a.tp||b.dp-a.dp)[0],[x,y]=relationAnchor(r.id,'dp');
  return `<g data-rack-tag="${rack}" transform="translate(${x-41} ${y+58})" style="pointer-events:none"><title>机柜 ${rack} · ${rs.length}/${cardsPerRack} 卡 · 每节点 ${cardsPerNode} 卡</title><rect width="82" height="27" rx="4" fill="#202020" stroke="#858585"/><text x="41" y="18" text-anchor="middle" fill="#bdbdbd" font-size="13">机柜 ${rack}</text></g>`;}).join('');
 }
-function relationPath(x,y,xx,yy){
- if(viewMode==='2.5D')return `M${x} ${y} L${xx} ${yy}`;
- const dx=xx-x,dy=yy-y,length=Math.hypot(dx,dy);
- if(length<1)return `M${x} ${y} L${xx} ${yy}`;
- // A restrained outward bow keeps orthographic links distinct from box edges.
- const bend=Math.min(36,Math.max(16,length*.12));
- return `M${x} ${y} Q${(x+xx)/2-dy/length*bend} ${(y+yy)/2+dx/length*bend} ${xx} ${yy}`;
-}
 function drawRelations(){
  const focus=parallelFocus();if(!focus)return '';
  const definitions=[['tp','TP · 矩阵分片组 / 计算同步','none'],['pp','PP · 层段链 / 前向激活，反向激活梯度','6 4'],['dp','DP · 稠密参数副本 / 梯度同步','4 4'],['ep','EP · 不同专家 / Dispatch、Combine','2 4'],['edp','专家副本 · 相同专家参数 / 梯度同步','8 3 2 3']];
@@ -517,7 +501,7 @@ function drawRelations(){
   const members=parallelMembers(dim,relationRank),group=members.join('、');
   for(const [a,b] of parallelEdges(dim,relationRank)){
    const [x,y]=relationAnchor(a,dim),[xx,yy]=relationAnchor(b,dim);
-   const path=relationPath(x,y,xx,yy);
+   const path=`M${x} ${y} L${xx} ${yy}`;
    const title=`${label} · Rank ${a} ↔ ${b} · 组 [${group}] · 逻辑关系示意，非实测链路`;
    out+=`<path data-relation="${dim}" data-from="${a}" data-to="${b}" d="${path}" fill="none" stroke="${parallelColors[dim]}" stroke-width="1.2" stroke-dasharray="${dash}" ${dim==='pp'?'marker-start="url(#relation-arrow)" marker-end="url(#relation-arrow)"':''}><title>${title}</title></path>`;
   }
@@ -527,7 +511,7 @@ function drawRelations(){
 function pickRelationRank(id){relationRank=relationRank===id?null:id;if(relationRank!==null)selectedRank=id;render();}
 function drawViewGroups(){
  if(scope!=='all'||viewMode==='2.5D')return '';
- const axis={Top:'pp',Front:'tp'}[viewMode],groups=new Map();
+ const axis={Top:'pp',Front:'tp',Side:'dp'}[viewMode],groups=new Map();
  for(const r of ranks){if(!groups.has(r[axis]))groups.set(r[axis],[]);groups.get(r[axis]).push(r);}
  return [...groups].map(([index,rs])=>{
   const points=rs.flatMap(rankSilhouette),x=Math.min(...points.map(p=>p[0])),y=Math.min(...points.map(p=>p[1]))-45;
@@ -535,7 +519,7 @@ function drawViewGroups(){
  }).join('');
 }
 function render(){setRankData(selectedRank);if(mode==='shard'&&playing){const active=currentModule(simulationState(simTime,selectedRank));if(active!==null)$('tensor').value=String(active);}let s='';const focus=parallelFocus();const savedLabels=labels,savedTensor=$("tensor").value;if(scope==='all'){labels=savedLabels&&labelMode==='surface';for(const r of rankPaintOrder()){setRankData(r.id);const [x,y]=rankPosition(r);const geom=focusedRankGeometry(drawRank(),r.id,focus);s+=`<g opacity="1" data-linked="${!!focus&&focus.members.has(r.id)}" data-rank="${r.id}" data-rack="${physicalPlacement(r).rack}" data-node="${physicalPlacement(r).node}" role="button" tabindex="0" aria-pressed="${relationRank===r.id}" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}，机柜 ${physicalPlacement(r).rack}，节点 ${physicalPlacement(r).node}；单击显示并行关系，双击进入单卡" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)"><title>Rank ${r.id} · 机柜 ${physicalPlacement(r).rack} / 节点 ${physicalPlacement(r).node} / 卡 ${physicalPlacement(r).slot}</title>${geom}</g>`;}labels=savedLabels;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=drawRank();}
-$('world').innerHTML=(focus?'<defs><filter id="rank-neutral" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/></filter></defs>':'')+s+drawRelations()+drawParallelTags()+drawViewGroups();
+$('world').innerHTML=(focus?'<defs><filter id="rank-neutral" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/></filter></defs>':'')+s+drawRelations()+drawParallelTags()+drawRackTags()+drawViewGroups();
 renderShardInspector();
 $('memory-legend').hidden=!(labels&&labelMode==='surface');
 $('memory-legend').innerHTML=(mode==='shard'?[0,2]:stackOrder).map(i=>{const a=cats[i];return `<span><i style="background:${i===7?'transparent':focus?'#999999':a.color};${i===7?'border:1px solid #555':''}"></i>${a.name}</span>`;}).join('');
@@ -544,14 +528,14 @@ function memorySize(gb){return gb>=1?gb.toFixed(3)+' GB':(gb*1000).toFixed(2)+' 
 const shardStates=[{name:'BF16 权重',bytes:2,cat:0},{name:'FP32 主权重',bytes:4,cat:2},{name:'FP32 一阶动量 m',bytes:4,cat:2},{name:'FP32 二阶动量 v',bytes:4,cat:2}];
 function drawShards(){
  const g=groups[+$('tensor').value],owner=shardOwnership(+$('tensor').value),rank=ranks[renderRank];
- const layout=rankContentLayout(shardStates.map(state=>localParams*state.bytes/1e9)),w=245-layout.ix*2,d=155-layout.iy*2,fraction=g[2]/localParams;
- let s='',z=layout.iz,callouts=[];
+ const w=233,d=143,fraction=g[2]/localParams;
+ let s='',z=6,callouts=[];
  if(owner.present){
   const row=g[3]==='row',sw=row?w:w*fraction,sd=row?d*fraction:d;
-  const x=layout.ix+(row||g[3]==='copy'?w-sw:(rank.tp/Math.max(1,TP-1))*(w-sw)),y=layout.iy+(!row?d-sd:(rank.tp/Math.max(1,TP-1))*(d-sd));
+  const x=6+(row||g[3]==='copy'?w-sw:(rank.tp/Math.max(1,TP-1))*(w-sw)),y=6+(!row?d-sd:(rank.tp/Math.max(1,TP-1))*(d-sd));
   for(const state of shardStates){
-   const a=cats[state.cat],h=localParams*state.bytes/1e9*6.7*layout.scale;
-   s+=block(layout.ix,layout.iy,z,w,d,h,shade(a.color,.28));
+   const a=cats[state.cat],h=localParams*state.bytes/1e9*6.7;
+   s+=block(6,6,z,w,d,h,shade(a.color,.28));
    const value={name:state.name,color:a.color,value:g[2]*state.bytes/1e9,sub:g[0]+' · '+owner.identity};
    s+=`<g data-state="${state.name}" data-shard="${owner.key}"><title>${g[0]} · ${owner.identity} · ${state.name} · ${memorySize(value.value)}</title>`+block(x,y,z,sw,sd,h,a.color)+`<path d="M${P(x,y,z+h)} L${P(x+sw,y,z+h)} L${P(x+sw,y+sd,z+h)} L${P(x,y+sd,z+h)} Z" fill="none" stroke="#fff" stroke-width="${scope==='all'?2:1}"/></g>`;
    if(labels&&labelMode==='surface')s+=surfaceValue(state.cat,z,h,false,value);
@@ -593,10 +577,10 @@ function changeZoom(factor){
  const ratio=zoom/before;pan=pan.map(v=>v*ratio);cameras[scope]={zoom,pan:[...pan]};transform();
 }
 function fitCanvas(){fitRequested=true;zoom=1;pan=[0,0];cameras[scope]={zoom:1,pan:[0,0]};render();}
-const cameras={single:{zoom:1,pan:[0,0]},all:{zoom:1.5,pan:[0,0]}};
+const cameras={single:{zoom:1,pan:[0,0]},all:{zoom:1,pan:[0,0]}};
 function switchScope(next){cameras[scope]={zoom,pan:[...pan]};scope=next;({zoom,pan}=cameras[scope]);render();}
 
-const viewModes=['2.5D','Top','Front'];
+const viewModes=['2.5D','Top','Front','Side'];
 const dialFaces=[...$('dial-cube').children].map(p=>p.getAttribute('d'));
 $('cycle-view').onclick=()=>{
  viewMode=viewModes[(viewModes.indexOf(viewMode)+1)%viewModes.length];
@@ -624,8 +608,15 @@ function validateConfig(c){
  if(maxParams*18/1e9+PEAK_ACT+BASE_RESERVE>64*.9)return '该切分无法保留至少 10% 空余内存，请增加 TP 或 PP。';
  return '';
 }
+function reportConfig(message,state){
+ const status=$('config-status');status.textContent=message;status.dataset.state=state;
+ status.setAttribute('role',state==='error'?'alert':'status');
+ if(state==='error'){setSettingsOpen(true);status.scrollIntoView({block:'nearest'});status.focus({preventScroll:true});}
+}
 function applyParallelConfig(){
- const c=configValues(),error=validateConfig(c);if(error){$('config-status').textContent=error;return false;}
+ const c=configValues(),error=validateConfig(c);
+ $('cfg-world').textContent=Number.isInteger(c.world)&&c.world>0?String(c.world):'—';
+ if(error){reportConfig('未应用：'+error+' 当前场景仍为 '+worldSize+' Rank（TP'+TP+' / PP'+PP+' / DP'+DP+'）。','error');return false;}
  ({world:worldSize,tp:TP,pp:PP,dp:DP,ep:EP,node:cardsPerNode}=c);ETP=TP;
  ranks=makeRanks();params=ranks.map(r=>rankGroups(r.id).reduce((n,g)=>n+g[2],0));rankReserved=params.map(n=>n*18/1e9+PEAK_ACT+BASE_RESERVE);
  selectedRank=Math.min(selectedRank,worldSize-1);relationRank=relationRank===null?null:Math.min(relationRank,worldSize-1);
@@ -633,12 +624,18 @@ function applyParallelConfig(){
  $('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="${i===+$('tensor').value}">${g[0]} · ${g[1]}${g[3]==='copy'?'':' ×'+TP}</button>`).join('');
  $('config').textContent=`${worldSize} Rank · TP${TP} · PP${PP} · DP${DP} · EP${EP}`;
  const rackCount=new Set(ranks.map(r=>physicalPlacement(r).rack)).size;
- $('config-status').textContent=`已应用 ${worldSize} Rank · ${rackCount} 柜（按并行组对齐，可不满）。TP 优先连续放置；EP 在 DP 组内，${DP/EP} 组专家副本。`;
+ reportConfig(`已应用 ${worldSize} Rank · X / DP ${DP} × Y / TP ${TP} × Z / PP ${PP} · ${rackCount} 柜。EP ${EP}，专家副本 ${DP/EP}。`,'applied');
  $('config').title=$('config-status').textContent;document.title=worldSize+' Rank · 内存轴测';
  cameras[scope]={zoom,pan:[...pan]};scope='all';lastFrame=null;setSettingsOpen(false);fitCanvas();return true;
 }
-$('apply-config').onclick=applyParallelConfig;
-for(const k of ['tp','pp','dp'])$('cfg-'+k).oninput=()=>{const c=configValues();$('cfg-world').textContent=Number.isInteger(c.world)&&c.world>0?String(c.world):'—';};
+$('apply-config').onclick=()=>{
+ try{return applyParallelConfig();}
+ catch(error){console.error('配置应用失败',error);reportConfig('配置应用失败：'+error.message,'error');return false;}
+};
+for(const k of ['tp','pp','dp','ep','node'])$('cfg-'+k).oninput=()=>{
+ const c=configValues();$('cfg-world').textContent=Number.isInteger(c.world)&&c.world>0?String(c.world):'—';
+ reportConfig('待应用：修改后请点击下方按钮。当前场景 '+worldSize+' Rank · TP'+TP+' / PP'+PP+' / DP'+DP,'pending');
+};
 $('config').setAttribute('role','button');$('config').setAttribute('tabindex','0');
 $('config').onclick=()=>setSettingsOpen(true);
 $('config').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setSettingsOpen(true);}};
@@ -659,7 +656,7 @@ $('rank').onchange=()=>{selectedRank=+$('rank').value;render();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&relationRank!==null){relationRank=null;render();}});
 $('scene').addEventListener('dblclick',e=>{const g=e.target.closest('[data-rank]'),id=g?+g.dataset.rank:pointerRank;if(id!==null){selectedRank=id;switchScope('single');}});
 $('scene').addEventListener('keydown',e=>{const tag=e.target.closest('[data-parallel-tag]');if(tag&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selectParallelTag(tag.dataset.parallelTag,+tag.dataset.index);return;}const g=e.target.closest('[data-rank]');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pickRelationRank(+g.dataset.rank);}});
-$('config').title='TP2 × PP4 × DP4 = 32；EP2 折入 DP，ETP2，专家副本2。按每卡层段、矩阵分片、专家归属计算参数；ZeRO 关闭。沿用8B尺寸的双半宽专家教学配置，未计router参数。';
+$('config').title='TP2 × PP2 × DP4 = 16；EP2 折入 DP，ETP2，专家副本2。按每卡层段、矩阵分片、专家归属计算参数；ZeRO 关闭。沿用8B尺寸的双半宽专家教学配置，未计router参数。';
 function syncTensorMenu(){
  const index=+$('tensor').value,g=baseGroups[index];
  $('tensor').title=playing?'播放中：按前向 / 反向顺序遍历；手动选择会暂停':'手动查看；点击播放恢复模块遍历';
@@ -694,6 +691,16 @@ document.addEventListener('visibilitychange',()=>{lastFrame=null});
 function tick(now){if(lastFrame!==null&&playing&&!document.hidden){simTime+=(now-lastFrame);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 render();if(!ATLAS_EMBED)requestAnimationFrame(tick);
 </script><script src="npu-memory-atlas-embed.js"></script><script>
+
+// Preview-only starting configuration. Normal reset still fits the entire scene.
+$('cfg-tp').value='8';
+$('cfg-pp').value='2';
+$('cfg-dp').value='8';
+$('cfg-world').textContent='128';
+if (!applyParallelConfig()) throw new Error('Invalid liquid glass preview configuration');
+// applyParallelConfig calls fitCanvas: 100% means the complete configured array fits the viewport.
+document.title='128 Rank · Liquid Glass 清晰效果';
+
 // Readability profiles: subtle refraction on controls, opaque frost on reading panels.
 // Keep the third-party implementation scoped and usable directly over file://.
 (() => {
@@ -919,7 +926,7 @@ function createLiquidGlass(element, options = {}) {
   };
 }
 
-const selector='.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list';
+const selector='.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list,#cycle-view';
 const surfaces=[...document.querySelectorAll(selector)];
 const instances=new Map();
 function glassOptions(element,rect) {

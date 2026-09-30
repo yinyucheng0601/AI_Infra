@@ -29,6 +29,28 @@
   --ss-line-focus: 2px;
   --ss-radius-control: 2px;
   --ss-radius-panel: 4px;
+  /* Dark spatial-canvas Liquid Glass materials. Optical parameters live in the bundled JS presets. */
+  --ss-ui-fill: rgb(26 26 26 / 28%);
+  --ss-ui-border: rgb(255 255 255 / 28%); /* Decorative, not the sole affordance. */
+  --ss-ui-blur: blur(12px); /* CSS fallback; control optical blur is 4px in JS. */
+  --ss-ui-panel-fill: rgb(26 26 26 / 94%);
+  --ss-ui-panel-border: rgb(255 255 255 / 18%);
+  --ss-ui-panel-blur: blur(18px);
+  --ss-ui-icon-fill: rgb(26 26 26 / 72%);
+  --ss-ui-icon-border: rgb(255 255 255 / 18%);
+  --ss-ui-fallback: #242424;
+  --ss-ui-radius: 999px;
+  --ss-ui-panel-radius: 20px;
+  --ss-ui-selected-fill: #ffffff;
+  --ss-ui-selected-text: #111111;
+  --ss-ui-icon-size: 18px;
+  --ss-ui-hit-size: 36px;
+  --ss-ui-touch-hit-size: 44px;
+  /* Context volumes only, not numerical data encoding. */
+  --ss-context-top: #272727;
+  --ss-context-side-light: #222222;
+  --ss-context-side-dark: #1f1f1f;
+  --ss-context-occluder-opacity: 0.25; /* Apply once to the whole group. */
   --ss-motion-feedback: 160ms;
   --ss-motion-structure: 320ms;
   --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
