@@ -213,6 +213,7 @@ console.log('PASS: optional OOM, unchanged routing, atomic failed allocation, st
 
 vm.runInContext("viewMode='Top';epIncidentActive=false;inspectIncident(.44)",ctx);assert.equal(read('epIncidentActive'),false);
 vm.runInContext("viewMode='Front';inspectIncident(.44);setRankData(relationRank);applySimulation()",ctx);
+assert.equal(Number(vm.runInContext("$('timeline').value",ctx)),440,"Front OOM stop uses event progress, not milliseconds");
 assert(Math.abs(read('cats.reduce((a,c)=>a+c.value,0)')-64)<1e-8);
 assert(read('cats.at(-1).value')>0,'OOM leaves free memory below failed request');
 console.log('PASS: OOM confined to Front; front memory accounting retains failed-request headroom');
