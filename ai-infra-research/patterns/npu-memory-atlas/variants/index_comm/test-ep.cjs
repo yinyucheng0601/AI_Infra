@@ -218,7 +218,9 @@ assert(read('cats.at(-1).value')>0,'OOM leaves free memory below failed request'
 console.log('PASS: OOM confined to Front; front memory accounting retains failed-request headroom');
 
 element('ep-oom-mode').onclick();
-assert.equal(read('viewMode'),'Front');assert.equal(read('epIncidentActive'),true);assert.equal(read('playing'),false);
+assert.equal(read('viewMode'),'Front');assert.equal(read('epIncidentActive'),true);assert.equal(read('playing'),true);
 vm.runInContext("setAtlasMode('comm')",ctx);assert.equal(read('viewMode'),'Top');assert.equal(read('epIncidentActive'),false);
 assert(!html.includes('<select id="ep-route-style"'));
 console.log('PASS: explicit OOM entry opens Front, communication restores Top, route selector removed');
+
+assert(html.includes('data-oom-annotation='));
