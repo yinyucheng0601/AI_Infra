@@ -76,10 +76,49 @@ for(const dim of ['tp','pp','ep','dp','edp']){
 assert.equal(read('rankGroups(23)[3][2]'),12*2*4096*2048*8);
 assert.equal(read('simulationState(27999,23).mb'),8);
 
+// The memory block fraction and logical matrix partition are different units.
+assert.equal(read('shardSpec(0,23).fraction'),.5);
+assert.equal(read('shardSpec(0,23).shape'),'4096 × 2048');
+assert.equal(read('shardSpec(1,23).shape'),'2 × (4096 × 512)');
+assert.equal(read('shardSpec(2,23).axis'),'rows');
+assert.equal(read('shardSpec(2,23).shape'),'2048 × 4096');
+assert.equal(read('shardSpec(3,23).fraction'),1/8);
+assert.equal(read('shardSpec(3,23).shape'),'2 × (4096 × 2048) / 专家');
+assert.equal(read('shardSpec(3,23).replicas'),4);
+assert(read('shardSpec(3,23).identity').includes('E24–E31'));
+assert.equal(read('shardSpec(5,23).axis'),'rows');
+assert.equal(read('shardSpec(6,119).axis'),'columns');
+assert.equal(read('shardSpec(6,23).fraction'),0,'head absent before final PP');
+assert.equal(read('shardSpec(7,23).fraction'),1);
+assert.equal(read('shardSpec(7,23).local'),24*4096);
+assert.equal(read('shardSpec(7,119).copies'),25);
+assert.equal(read('shardSpec(8,23).replicas'),32);
+assert(read('shardMenuLabel(3)').includes('EP8 / ETP1'));
+assert(!read('shardMenuLabel(3)').includes('×2'));
+assert(!html.includes('shard-tip')&&!html.includes('showShardTip'),'shard tooltip removed');
+assert.deepEqual(read('shardGeometry(0,23,240,160)'),{axis:'columns',parts:2,part:1,fraction:.5,x:120,y:0,w:120,d:160});
+assert.deepEqual(read('shardGeometry(2,23,240,160)'),{axis:'rows',parts:2,part:1,fraction:.5,x:0,y:80,w:240,d:80});
+assert.deepEqual(read('shardGeometry(3,23,240,160)'),{axis:'experts',parts:8,part:0,fraction:1,x:0,y:0,w:240,d:160});
+for(const i of [7,8])assert.deepEqual(read(`shardGeometry(${i},23,240,160)`),{axis:'copy',parts:1,part:0,fraction:1,x:0,y:0,w:240,d:160});
+vm.runInContext(`(()=>{const old={TP,PP,DP,EP,worldSize,ranks};TP=4;PP=8;DP=8;EP=4;worldSize=256;ranks=makeRanks();
+ if(shardSpec(0,23).shape!=='4096 × 1024'||shardSpec(3,23).copies!==96||shardSpec(3,23).replicas!==8||shardSpec(3,23).parts!==4)throw Error('config-dependent shard metadata');
+ ({TP,PP,DP,EP,worldSize,ranks}=old);})()`,ctx);
+vm.runInContext(`(()=>{const old={mode,scope,playing,labels,labelMode,renderRank,selectedRank,tensor:$('tensor').value};mode='shard';scope='single';playing=false;labels=true;labelMode='side';setRankData(23);$('tensor').value='7';const svg=drawShards();
+ if((svg.match(/data-shard-detail=/g)||[]).length!==8||/NaN|undefined/.test(svg))throw Error('shard hover geometry');
+ const heights=[...svg.matchAll(/data-memory-height="([^"]+)"/g)].map(m=>+m[1]);
+ if(heights.length!==4||heights.some(h=>h>.01))throw Error('small Norm cannot fill Rank');
+ for(let i=0;i<9;i++){$('tensor').value=String(i);const output=drawShards();for(const m of output.matchAll(/data-local-gb="([^"]+)" data-memory-height="([^"]+)"/g)){if(Math.abs(+m[2]-(+m[1])*6.7)>1e-8)throw Error('local bytes height scale');}}
+ ({mode,scope,playing,labels,labelMode,renderRank,selectedRank}=old);$('tensor').value=old.tensor;setRankData(selectedRank);})()`,ctx);
+console.log('PASS: TP/EP/ETP partition specs, replicas, PP presence, small Norm bytes, hover targets and configuration changes');
+
 const baseline=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');
 const variantCSS=html.match(/<style>([\s\S]*?)<\/style>/)[1];
 const tokenLegendRule=/\.ep-token-legend\{[^\n]+\n/;
-assert.equal(variantCSS.replace(tokenLegendRule,''),baseline.match(/<style>([\s\S]*?)<\/style>/)[1],'approved CSS unchanged outside the EP token legend');
+const darkPaletteRule=/\/\* Dark surface palette override\.[\s\S]*?\/\* End dark surface palette override\. \*\/\n/;
+assert.equal(variantCSS.replace(tokenLegendRule,'').replace(darkPaletteRule,''),baseline.match(/<style>([\s\S]*?)<\/style>/)[1],'approved CSS unchanged outside token legend and requested dark palette');
+const allVariantCSS=[...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(m=>m[1]).join('\n');
+assert(allVariantCSS.includes('background:#151515'));
+assert(allVariantCSS.includes('background-color:#000000!important'));
 assert(!html.includes('ep-view.css')&&!html.includes('ep-view.js'),'standalone UI disconnected');
 element('relations').value='ep';
 for(const [t,phase] of [[0,'route'],[90,'dispatch'],[170,'compute'],[260,'combine']]){

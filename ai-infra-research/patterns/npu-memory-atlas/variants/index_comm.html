@@ -278,6 +278,14 @@ body[data-ep-mode="true"] .transport .status{display:none}
 body[data-ep-mode="true"] #ep-playback #ep-stops{height:14px;align-items:center}
 body[data-ep-mode="true"] #ep-playback #ep-stops button{min-height:14px;height:14px;padding:0 4px}
 #ep-playback #ep-markers{position:absolute;left:0;right:0;bottom:calc(100% + 14px);height:25px;margin:0 13.5px}
+/* Dark surface palette override. Keep data colors and selected-state contrast. */
+:root:not([data-theme="light"]),:root:not([data-theme="light"]) body{background:#151515}
+:root:not([data-theme="light"]){--ui-fill:#000000;--input-fill:#000000;--input-hover:#000000;--ui-border:rgb(255 255 255 / 12%)}
+:root:not([data-theme="light"]) :is(.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list,.ep-token-legend summary,.ep-token-legend .legend-panel,#ep-incident,#config-status,.rank-settings-panel select,.rank-spacing input,select option,.view-dial button){background-color:#000000!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+:root:not([data-theme="light"]) :is(.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list,.ep-token-legend summary,.ep-token-legend .legend-panel,.ep-token-legend .info-icon,.ep-token-legend .legend-note,#ep-incident,#config-status:not([data-state="error"]),.rank-settings-panel select,.rank-spacing input,.rank-spacing,.transport,.shard-inspector td,.shard-inspector details,.shard-inspector button,.memory-legend button[aria-pressed="true"]){border-color:var(--ui-border)!important}
+:root:not([data-theme="light"]) :is(.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list){box-shadow:0 8px 24px rgb(0 0 0 / 18%)}
+/* End dark surface palette override. */
+[data-shard-detail]:focus-visible{outline:1px solid currentColor;outline-offset:3px}
 </style></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front">
 <svg viewBox="0 0 148 148" aria-hidden="true">
@@ -353,11 +361,35 @@ function rankGroups(id){
 function shardOwnership(index,id=renderRank){
  const r=ranks[id],present=rankGroups(id)[index][2]>0,expert=index===3||index===4;
  const layers='L'+r.pp*(L/PP)+'–'+((r.pp+1)*(L/PP)-1);
- const axis=index===0?'Q 头 '+r.tp*(32/TP)+'–'+((r.tp+1)*(32/TP)-1):index===1?'K/V 头 '+r.tp*(8/TP)+'–'+((r.tp+1)*(8/TP)-1):index===2?'输入列 '+r.tp*(H/TP)+'–'+((r.tp+1)*(H/TP)-1):expert?'专家中间维 '+(ETP===1?0:r.tp)*(I/ETP)+'–'+(((ETP===1?0:r.tp)+1)*(I/ETP)-1):index===5||index===6?'词表 '+r.tp*(V/TP)+'–'+((r.tp+1)*(V/TP)-1):'TP 内复制';
+ const axis=index===0?'Q 头 '+r.tp*(32/TP)+'–'+((r.tp+1)*(32/TP)-1):index===1?'K/V 头 '+r.tp*(8/TP)+'–'+((r.tp+1)*(8/TP)-1):index===2?'输入维 '+r.tp*(H/TP)+'–'+((r.tp+1)*(H/TP)-1):expert?'完整专家矩阵 · ETP1':index===5||index===6?'词表 '+r.tp*(V/TP)+'–'+((r.tp+1)*(V/TP)-1):'TP 内复制';
  return {present,expert,layers,axis,replica:expert?'专家副本 '+r.edp:'DP 副本 '+r.dp,
   identity:!present?'本阶段无此模块':(index===5?'输入嵌入':index===6?'输出头':layers)+(expert?' · E'+(r.ep*(EXPERTS/EP)+'–'+((r.ep+1)*(EXPERTS/EP)-1)):'')+' · '+axis,
   key:!present?'absent':r.pp+':'+index+':'+(index>=7||expert&&ETP===1?'replicated':r.tp)+(expert?':E'+r.ep:'')};
 }
+// Logical shapes use Y = X A (input × output), not PyTorch's transposed storage.
+// Sources: Megatron Core tensor_parallel.layers and model_parallel_config docs.
+function shardSpec(index,id=renderRank){
+ const r=ranks[id],owner=shardOwnership(index,id),layers=L/PP,local=rankGroups(id)[index][2];
+ const n=EXPERTS/EP,first=r.ep*n;
+ const specs=[
+  {rule:`输出维 / Q 头切分 · TP${TP}`,axis:'columns',parts:TP,part:r.tp,full:`${H} × ${H}`,shape:`${H} × ${H/TP}`,copies:layers,unit:'层'},
+  {rule:`K、V 分别按头切分 · TP${TP}`,axis:'columns',parts:TP,part:r.tp,full:`2 × (${H} × 1024)`,shape:`2 × (${H} × ${1024/TP})`,copies:layers,unit:'层'},
+  {rule:`输入维切分 · TP${TP}`,axis:'rows',parts:TP,part:r.tp,full:`${H} × ${H}`,shape:`${H/TP} × ${H}`,copies:layers,unit:'层'},
+  {rule:`专家归属 · EP${EP} / ETP${ETP}`,axis:'experts',parts:EP,part:r.ep,full:`${EXPERTS} 个专家`,shape:`2 × (${H} × ${I}) / 专家`,copies:layers*n,unit:'层 × 专家'},
+  {rule:`专家归属 · EP${EP} / ETP${ETP}`,axis:'experts',parts:EP,part:r.ep,full:`${EXPERTS} 个专家`,shape:`${I} × ${H} / 专家`,copies:layers*n,unit:'层 × 专家'},
+  {rule:`词表维切分 · TP${TP}`,axis:'rows',parts:TP,part:r.tp,full:`${V} × ${H}`,shape:`${V/TP} × ${H}`,copies:1,unit:'矩阵'},
+  {rule:`输出词表维切分 · TP${TP}`,axis:'columns',parts:TP,part:r.tp,full:`${H} × ${V}`,shape:`${H} × ${V/TP}`,copies:1,unit:'矩阵'},
+  {rule:'完整复制 · 不做 TP 切分',axis:'copy',parts:1,part:0,full:`${H}`,shape:`${H}`,copies:layers*2+(r.pp===PP-1?1:0),unit:'Norm 向量'},
+  {rule:'完整复制 · 不做 TP / EP 切分',axis:'copy',parts:1,part:0,full:`${H} × ${EXPERTS}`,shape:`${H} × ${EXPERTS}`,copies:layers,unit:'层'}
+ ];
+ const s=specs[index];
+ return {...s,index,id,local,owner,fraction:owner.present?1/s.parts:0,
+  identity:owner.expert?`${owner.layers} · E${first}–E${first+n-1} · 每层 ${n} 个完整专家`:owner.identity,
+  replicas:owner.expert?DP/EP*TP/ETP:index>=7?DP*TP:DP,
+  scope:owner.expert?`每格 ${n} 个专家；亮色为本 Rank 的专家组，非专家内部切片`:index===1?'示意图分别适用于 K 和 V；每个矩阵均持有 1 / '+TP:index>=7?'亮色为完整副本；小内存占比不等于矩阵被切小':`亮色持有该矩阵的 1 / ${TP}`};
+}
+function shardMenuLabel(index){const s=shardSpec(index,selectedRank);return baseGroups[index][0]+' · '+s.rule;}
+function shardDetailAttrs(state){return `data-shard-detail="${renderRank}:${+$('tensor').value}:${state}" tabindex="0"`;}
 let params=ranks.map(r=>rankGroups(r.id).reduce((n,g)=>n+g[2],0));
 let rankReserved=params.map(n=>n*16/1e9+PEAK_ACT+BASE_RESERVE);
 
@@ -437,7 +469,7 @@ function epStage(e){
 }
 function epPalette(){
  const light=document.documentElement.dataset.theme==='light';
- return {ink:light?'#303030':'#dedede',muted:light?'#686868':'#929292',line:light?'#c6c6c6':'#303030',input:'#4DD3EF',output:'#FFAE00',local:light?'#686868':'#ababab',surface:light?'#f5f5f5':'#111111',token:light?'#555555':'#dedede',mark:light?'#ffffff':'#111111'};
+ return {ink:light?'#303030':'#dedede',muted:light?'#686868':'#929292',line:light?'#c6c6c6':'#303030',input:'#4DD3EF',output:'#FFAE00',local:light?'#686868':'#ababab',surface:light?'#f5f5f5':'#151515',token:light?'#555555':'#dedede',mark:light?'#ffffff':'#111111'};
 }
 function epBounds(){
  const ids=parallelMembers('ep',relationRank),p=ids.flatMap(id=>rankSilhouette(ranks[id]));
@@ -698,7 +730,7 @@ function surfaceValue(i,z,h,free=false,a=cats[i]){
  const top=P(x,y,z+h),bottom=P(x,y,z),height=bottom[1]-top[1];
  if(height<1)return '';
  const size=20,anchor=P(x,y-7,z+h/2);
- return `<g class="surface-value" aria-label="${a.name} ${a.value.toFixed(2)} GB"><title>${a.name}：${a.value.toFixed(2)} GB</title><text transform="matrix(0.8660254 -.5 0 1 ${anchor[0]} ${anchor[1]})" dominant-baseline="middle" fill="#fff" font-size="${size-2}" font-weight="700" style="pointer-events:none"><tspan>${a.value.toFixed(2)}</tspan><tspan dx="4" font-size="${size*.64-2}" font-weight="400">GB</tspan></text></g>`;
+ return `<g class="surface-value" ${a.shardState===undefined?'':shardDetailAttrs(a.shardState)} aria-label="${a.name} ${memorySize(a.value)}">${a.shardState===undefined?`<title>${a.name}：${memorySize(a.value)}</title>`:''}<text transform="matrix(0.8660254 -.5 0 1 ${anchor[0]} ${anchor[1]})" dominant-baseline="middle" fill="#fff" font-size="${size-2}" font-weight="700" style="pointer-events:${a.shardState===undefined?'none':'auto'}"><tspan>${a.shardState===undefined?a.value.toFixed(2):memorySize(a.value)}</tspan>${a.shardState===undefined?`<tspan dx="4" font-size="${size*.64-2}" font-weight="400">GB</tspan>`:''}</text></g>`;
 }
 // Silhouette only: keep the inner edges white and the outer perimeter distinct.
 function outerRankBorder(){
@@ -717,7 +749,7 @@ function sideMemoryLabels(rows){
  for(const r of rows){r.y=Math.max((r.top+r.bottom)/2,previous+30);previous=r.y;}
  return rows.map(({a,top,bottom,y,free=false})=>{
   const x=P(245,0,0)[0]+26;
-  return `<g class="memory-label"><title>${a.name}：${memorySize(a.value)} · ${a.sub||''}</title><rect x="${x}" y="${top}" width="5" height="${Math.max(1,bottom-top)}" fill="${free?'none':a.color}" stroke="${free?'#484848':'none'}"/><text x="${x+16}" y="${y}" dominant-baseline="middle" fill="#f5f5f5"><tspan font-size="20" font-weight="700">${a.value>=.01?a.value.toFixed(2):(a.value*1000).toFixed(2)}</tspan><tspan dx="6" font-size="12">${a.value>=.01?'GB':'MB'}</tspan><tspan dx="8" font-size="13" fill="#bdbdbd">${a.name}</tspan></text></g>`;
+  return `<g class="memory-label" ${a.shardState===undefined?'':shardDetailAttrs(a.shardState)}>${a.shardState===undefined?`<title>${a.name}：${memorySize(a.value)} · ${a.sub||''}</title>`:`<rect x="${x}" y="${y-14}" width="300" height="28" fill="transparent"/>`}<rect x="${x}" y="${top}" width="5" height="${Math.max(1,bottom-top)}" fill="${free?'none':a.color}" stroke="${free?'#484848':'none'}"/><text x="${x+16}" y="${y}" dominant-baseline="middle" fill="#f5f5f5"><tspan font-size="20" font-weight="700">${a.value>=.01?a.value.toFixed(2):(a.value*1000).toFixed(2)}</tspan><tspan dx="6" font-size="12">${a.value>=.01?'GB':'MB'}</tspan><tspan dx="8" font-size="13" fill="#bdbdbd">${a.name}</tspan></text></g>`;
  }).join('');
 }
 // Padding is measured in projected units so all visible edges have equal spacing.
@@ -985,20 +1017,32 @@ if($('memory-legend')._legendHTML!==legendHTML){$('memory-legend')._legendHTML=l
 syncTensorMenu();transform();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode&&!(mode==='comm'&&viewMode==='Front'&&epIncidentActive)));$('tensor').classList.toggle('hidden',mode!=='shard');$('labels').setAttribute('aria-pressed',labels);$('labels').disabled=false;$('relations').classList.toggle('hidden',mode==='comm'||scope!=='all'||relationRank===null);$('single').setAttribute('aria-pressed',scope==='single');$('all').setAttribute('aria-pressed',scope==='all');$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('scene').setAttribute('aria-label',mode==='comm'?`EP${EP} Token 分发与回收，来源 Rank ${relationRank}，可点击 Rank 切换来源`:scope==='all'?worldSize+' rank 内存总览':'Rank '+selectedRank+' 内存细节')}
 function memorySize(gb){return gb>=1?gb.toFixed(3)+' GB':(gb*1000).toFixed(2)+' MB';}
 const shardStates=[{name:'BF16 权重',bytes:2,cat:0},{name:'FP32 主权重',bytes:4,cat:2},{name:'FP32 一阶动量 m',bytes:4,cat:2},{name:'FP32 二阶动量 v',bytes:4,cat:2}];
+function shardGeometry(index,id,w,d){
+ const spec=shardSpec(index,id),row=spec.axis==='rows',n=spec.parts;
+ if(spec.owner.expert)return {axis:'experts',parts:EXPERTS/EP,part:0,fraction:1,x:0,y:0,w,d};
+ return {axis:spec.axis,parts:n,part:spec.part,fraction:spec.fraction,
+  x:row?0:w*spec.part/n,y:row?d*spec.part/n:0,w:row?w:w/n,d:row?d/n:d};
+}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-shard-detail]');if(mode==='shard'&&t&&pointerTravel<=4){const [id,index]=t.dataset.shardDetail.split(':').map(Number);selectedRank=id;$('tensor').value=String(index);playing=false;shardInfoOpen=true;setSettingsOpen(false);render();}});
 function drawShards(){
  const g=groups[+$('tensor').value],owner=shardOwnership(+$('tensor').value),rank=ranks[renderRank];
- const layout=rankContentLayout(shardStates.map(state=>localParams*state.bytes/1e9)),w=245-layout.ix*2,d=155-layout.iy*2,fraction=g[2]/localParams;
+ // Height encodes local bytes on the Rank's 64 GB scale. The base independently
+ // encodes logical TP ownership; expert bases contain only local experts.
+ const layout=rankContentLayout(shardStates.map(state=>g[2]*state.bytes/1e9)),w=245-layout.ix*2,d=155-layout.iy*2;
+ const geo=shardGeometry(+$('tensor').value,renderRank,w,d);
  let s='',z=layout.iz,callouts=[];
  if(owner.present){
-  const row=g[3]==='row',sw=row?w:w*fraction,sd=row?d*fraction:d;
-  const shardIndex=owner.expert&&ETP===1?0:rank.tp;
-  const x=layout.ix+(row||g[3]==='copy'?w-sw:(shardIndex/Math.max(1,TP-1))*(w-sw)),y=layout.iy+(!row?d-sd:(shardIndex/Math.max(1,TP-1))*(d-sd));
+  const sw=geo.w,sd=geo.d,x=layout.ix+geo.x,y=layout.iy+geo.y;
   for(const state of shardStates){
-   const a=cats[state.cat],h=localParams*state.bytes/1e9*6.7*layout.scale;
+   const a=cats[state.cat],h=g[2]*state.bytes/1e9*6.7*layout.scale;
    if(memoryCategoryVisible(state.cat)){
    s+=block(layout.ix,layout.iy,z,w,d,h,shade(a.color,.28));
-   const value={name:state.name,color:a.color,value:g[2]*state.bytes/1e9,sub:g[0]+' · '+owner.identity};
-   s+=`<g data-state="${state.name}" data-shard="${owner.key}"><title>${g[0]} · ${owner.identity} · ${state.name} · ${memorySize(value.value)}</title>`+block(x,y,z,sw,sd,h,a.color)+`<path d="M${P(x,y,z+h)} L${P(x+sw,y,z+h)} L${P(x+sw,y+sd,z+h)} L${P(x,y+sd,z+h)} Z" fill="none" stroke="#fff" stroke-width="${scope==='all'?2:1}"/></g>`;
+   const stateIndex=shardStates.indexOf(state),value={name:state.name,color:a.color,value:g[2]*state.bytes/1e9,sub:g[0]+' · '+owner.identity,shardState:stateIndex};
+   s+=`<g ${shardDetailAttrs(stateIndex)} data-local-gb="${value.value}" data-memory-height="${h}" data-partition-axis="${geo.axis}" data-partition-fraction="${geo.fraction}" data-state="${state.name}" data-shard="${owner.key}" aria-label="${g[0]} · ${state.name} · ${memorySize(value.value)}">`+block(x,y,z,sw,sd,h,a.color)+`<path d="M${P(x,y,z+h)} L${P(x+sw,y,z+h)} L${P(x+sw,y+sd,z+h)} L${P(x,y+sd,z+h)} Z" fill="none" stroke="#fff" stroke-width="${scope==='all'?2:1}"/></g>`;
+   for(let part=1;part<geo.parts;part++){
+    const row=geo.axis==='rows',a0=row?[layout.ix,layout.iy+d*part/geo.parts,z+h]:[layout.ix+w*part/geo.parts,layout.iy,z+h],b0=row?[layout.ix+w,a0[1],z+h]:[a0[0],layout.iy+d,z+h];
+    s+=`<path data-partition-boundary="${geo.axis}" d="M${P(...a0)} L${P(...b0)}" fill="none" stroke="#aaa" stroke-width=".8" pointer-events="none"/>`;
+   }
    if(labels&&labelMode==='surface')s+=surfaceValue(state.cat,z,h,false,value);
    callouts.push({a:value,top:P(245,0,z+h)[1],bottom:P(245,0,z)[1]});
    }
@@ -1012,7 +1056,8 @@ function renderShardInspector(){
  const panel=$('shard-inspector');panel.hidden=mode!=='shard'||!shardInfoOpen;$('shard-info').classList.toggle('hidden',mode!=='shard');$('shard-info').setAttribute('aria-expanded',String(!panel.hidden));document.body.classList.toggle('shard-view',mode==='shard');
  if(mode!=='shard')return;
  const g=groups[+$('tensor').value],owner=shardOwnership(+$('tensor').value,selectedRank);
- const markup=`<div class="eyebrow">Rank ${selectedRank} · 权重分片及优化器态</div><h2>${g[0]}</h2><p>${owner.identity}<br>${owner.replica}</p><table><tbody>${shardStates.map(a=>`<tr><td><i style="background:${cats[a.cat].color}"></i>${a.name}</td><td>${memorySize(g[2]*a.bytes/1e9)}</td></tr>`).join('')}</tbody></table><div class="total">${memorySize(g[2]*14/1e9)}</div><p>${g[2].toLocaleString('en-US')} 个本地参数 × 14 字节<br>权重 2 B + 主权重 / m / v 各 4 B</p><p class="note">亮色：所选模块的权重及对应优化器态。暗色：本卡其他模块的同类数据。主权重、m、v 计入优化器态。左右位置区分 TP 分片身份，体积表示内存份额，不代表物理地址。</p><p class="note">TP${TP} × PP${PP} × DP${DP}；EP${EP}、ETP${ETP}、专家参数副本${DP/EP*TP/ETP}；ZeRO 关闭。每阶段 ${L/PP} 层；首阶段持有 embed，末阶段持有最终 norm 和 lm_head。64 个专家，每个 FFN 中间维 2048；含 router 参数。</p><p class="note">不同 TP、PP、专家可持有等大但不同的权重；DP 副本持有相同权重分片。</p>`;
+ const spec=shardSpec(+$('tensor').value,selectedRank);
+ const markup=`<div class="eyebrow">Rank ${selectedRank} · 权重分片及优化器态</div><h2>${g[0]}</h2><p>${owner.present?spec.identity:'本阶段无此模块'}<br>${spec.rule}</p><p>完整形状：${spec.full}<br>本地形状：${owner.present?spec.shape:'—'}<br>${owner.present?spec.copies:0} ${spec.unit} · 同分片 ${spec.replicas} 个副本</p><table><tbody>${shardStates.map(a=>`<tr><td><i style="background:${cats[a.cat].color}"></i>${a.name}</td><td>${memorySize(g[2]*a.bytes/1e9)}</td></tr>`).join('')}</tbody></table><div class="total">${memorySize(g[2]*14/1e9)}</div><p>${g[2].toLocaleString('en-US')} 个本地参数 × 14 字节<br>权重 2 B + 主权重 / m / v 各 4 B</p><p class="note">厚度按本地内存量与 Rank 的 64 GB 尺度绘制；层间留白仅用于分隔。底面表示逻辑分片方向与比例，暗色为其他 TP 分片的参照，不计入本地占用。专家仅显示本地完整专家；Norm、Router 底面完整、厚度随参数量变化。矩阵按输入 × 输出表示，Embedding 按词表 × 隐藏维表示。</p><p class="note">TP${TP} × PP${PP} × DP${DP}；EP${EP}、ETP${ETP}；ZeRO 关闭，优化器态不额外按 DP 切分。每阶段 ${L/PP} 层；首阶段持有 embed，末阶段持有最终 norm 和 lm_head。${EXPERTS} 个 routed experts，每个 FFN 中间维 ${I}；含 router 参数，不含 shared expert、bias 等额外项。教学配置估算，非 checkpoint / 实测。</p><p class="note">依据：<a href="https://docs.nvidia.com/megatron-core/developer-guide/latest/apidocs/core/core.tensor_parallel.layers.html" target="_blank" rel="noopener">Megatron TP / 词表切分</a> · <a href="https://docs.nvidia.com/megatron-core/developer-guide/latest/apidocs/core/core.model_parallel_config.html" target="_blank" rel="noopener">EP / ETP 配置</a>。矩阵存储转置不改变分片归属；不同 TP、PP、专家可持有等大但不同的权重，副本持有相同权重。</p>`;
  if(panel.innerHTML!==markup)panel.innerHTML=markup;
 }
 
@@ -1131,7 +1176,7 @@ function applyParallelConfig(){
  ranks=makeRanks();params=ranks.map(r=>rankGroups(r.id).reduce((n,g)=>n+g[2],0));rankReserved=params.map(n=>n*16/1e9+PEAK_ACT+BASE_RESERVE);
  selectedRank=Math.min(selectedRank,worldSize-1);relationRank=relationRank===null?null:Math.min(relationRank,worldSize-1);
  $('rank').innerHTML=ranks.map(r=>`<option value="${r.id}">R${r.id}</option>`).join('');
- $('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="${i===+$('tensor').value}">${g[0]} · ${g[1]}${g[3]==='copy'?'':' ×'+TP}</button>`).join('');
+ $('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="${i===+$('tensor').value}">${shardMenuLabel(i)}</button>`).join('');
  $('config').textContent=`${worldSize} Rank · TP${TP} · PP${PP} · DP${DP} · EP${EP}`;
  const rackCount=new Set(ranks.map(r=>physicalPlacement(r).rack)).size;
  $('config-status').textContent=`已应用 ${worldSize} Rank · ${rackCount} 柜（按并行组对齐，可不满）。TP 优先连续放置；${DP/EP} 个 EDP 流水副本，同专家分片有 ${DP/EP*TP/ETP} 个参数副本。`;
@@ -1164,7 +1209,7 @@ $('config').title='rank-intro 数量基准：128 Rank · TP2 / PP4 / DP16 / EP8 
 function syncTensorMenu(){
  const index=+$('tensor').value,g=baseGroups[index];
  $('tensor').title=playing?'播放中：按前向 / 反向顺序遍历；手动选择会暂停':'手动查看；点击播放恢复模块遍历';
- $('tensor').textContent=g[0]+' · '+g[1]+(g[3]==='copy'?'':' ×'+TP)+' ▾';
+ $('tensor').textContent=shardMenuLabel(index)+' ▾';
  for(const option of $('tensor-list').querySelectorAll('[role="option"]'))option.setAttribute('aria-selected',String(+option.dataset.index===index));
  if(mode!=='shard')closeTensorMenu(false);
 }
@@ -1174,7 +1219,7 @@ function openTensorMenu(){
  list.style.left=Math.max(8,Math.min(r.left,window.innerWidth-248))+'px';list.style.bottom=(window.innerHeight-r.top+8)+'px';
  $('tensor').setAttribute('aria-expanded','true');list.querySelectorAll('[role="option"]')[+$('tensor').value].focus();
 }
-$('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="${i===0}">${g[0]} · ${g[1]}${g[3]==='copy'?'':' ×'+TP}</button>`).join('');
+$('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="${i===0}">${shardMenuLabel(i)}</button>`).join('');
 $('tensor').onclick=()=>{$('tensor-list').hidden?openTensorMenu():closeTensorMenu();};
 $('tensor').onkeydown=e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();openTensorMenu();}};
 $('tensor-list').onclick=e=>{const option=e.target.closest('[data-index]');if(!option)return;$('tensor').value=option.dataset.index;playing=false;lastFrame=null;closeTensorMenu();render();};
