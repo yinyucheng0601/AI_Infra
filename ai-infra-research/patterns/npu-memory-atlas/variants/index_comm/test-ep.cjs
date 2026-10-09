@@ -185,3 +185,40 @@ for(const key of ['ink','muted','line','local','surface','token','mark']){
 }
 assert(!gridSVG.includes('#15191c'),'no tinted panel fill');
 console.log('PASS: neutral grid palette and deterministic arrival symbols');
+
+// Fault injection never rewrites the existing event or admits a failed request.
+const unchangedEvent=M.event({layer:0}),beforeEvent=JSON.stringify(unchangedEvent);
+for(const id of unchangedEvent.ids){
+ const before=M.allocationIncident(unchangedEvent,id,.439),failure=M.allocationIncident(unchangedEvent,id,.44);
+ assert(failure.supported&&failure.failed);
+ assert.equal(before.usedBytes,failure.usedBytes);
+ assert.equal(failure.acceptedBytes,0);
+ assert(failure.requestBytes>failure.freeBytes);
+ assert(failure.requestBytes<=failure.normalFreeBytes);
+ assert.equal(failure.usedBytes+failure.freeBytes,failure.budgetBytes);
+ assert(!M.allocationIncident(unchangedEvent,id,.1).failed);
+}
+assert.equal(JSON.stringify(unchangedEvent),beforeEvent);
+assert(!M.allocationIncident(single,0,.44).supported);
+vm.runInContext("setAtlasMode('explode');setAtlasMode('comm');viewMode='Front';inspectIncident(.44)",ctx);
+assert.equal(read('incidentAt().failed'),true);assert.equal(read('playing'),false);
+assert.equal(read('epEventAt(simTime,relationRank).frame.t'),.44);
+vm.runInContext('seekEPStage(1)',ctx);assert.equal(read('incidentAt().failed'),true);
+vm.runInContext('seekEPStage(.16);playing=true;lastFrame=0;tick(10000)',ctx);
+assert.equal(read('playing'),false);assert.equal(read('epEventAt(simTime,relationRank).frame.t'),.44);
+element('ep-incident-close').onclick();
+vm.runInContext('seekEPStage(1)',ctx);assert.equal(read('epEventAt(simTime,relationRank).frame.complete'),true);
+vm.runInContext('inspectIncident(.44);pickRelationRank(17)',ctx);assert.equal(read('epIncidentActive'),false);
+console.log('PASS: optional OOM, unchanged routing, atomic failed allocation, stop/rewind/recovery and source isolation');
+
+vm.runInContext("viewMode='Top';epIncidentActive=false;inspectIncident(.44)",ctx);assert.equal(read('epIncidentActive'),false);
+vm.runInContext("viewMode='Front';inspectIncident(.44);setRankData(relationRank);applySimulation()",ctx);
+assert(Math.abs(read('cats.reduce((a,c)=>a+c.value,0)')-64)<1e-8);
+assert(read('cats.at(-1).value')>0,'OOM leaves free memory below failed request');
+console.log('PASS: OOM confined to Front; front memory accounting retains failed-request headroom');
+
+element('ep-oom-mode').onclick();
+assert.equal(read('viewMode'),'Front');assert.equal(read('epIncidentActive'),true);assert.equal(read('playing'),false);
+vm.runInContext("setAtlasMode('comm')",ctx);assert.equal(read('viewMode'),'Top');assert.equal(read('epIncidentActive'),false);
+assert(!html.includes('<select id="ep-route-style"'));
+console.log('PASS: explicit OOM entry opens Front, communication restores Top, route selector removed');

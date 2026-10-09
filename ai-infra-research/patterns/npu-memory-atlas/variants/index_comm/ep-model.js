@@ -77,7 +77,21 @@
       remote:sum('tokens',true),sent:sum('dispatched',true),returned:sum('returned'),
       remoteReturned:sum('returned',true),complete:f.complete,phase:f.phase.id};
   }
-  const api={baseline,phases,coordinates,members,expertReplicas,allocate,event,frame,trace,parcel};
+  // Optional fault injection over the SAME routing event. This is an incremental
+  // allocation budget, not a replacement for the full-device memory model.
+  function allocationIncident(e,id,position){
+    const r=frame(e,.3).ranks.find(r=>r.id===id);
+    const retainedBytes=r.bufferBytes,requestBytes=r.expertTokens*e.config.hidden*2;
+    const budgetBytes=retainedBytes+Math.floor(requestBytes/2);
+    const supported=retainedBytes>=Math.ceil(requestBytes/2)&&requestBytes>0;
+    const rootAt=.16,failAt=.44,t=clamp(position);
+    const usedBytes=t>=rootAt?retainedBytes:0,freeBytes=budgetBytes-usedBytes;
+    const failed=supported&&t>=failAt&&requestBytes>freeBytes;
+    return {id,supported,rootAt,failAt,retainedBytes,requestBytes,budgetBytes,usedBytes,freeBytes,
+      failed,acceptedBytes:0,normalFreeBytes:budgetBytes,expertTokens:r.expertTokens,
+      phase:failed?'failed':t>=rootAt?'retained':'pending'};
+  }
+  const api={baseline,phases,coordinates,members,expertReplicas,allocate,event,frame,trace,parcel,allocationIncident};
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.EPTeachingModel=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
