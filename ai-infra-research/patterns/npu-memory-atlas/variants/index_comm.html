@@ -13,6 +13,7 @@ nav[aria-label="视图操作"] .sep{flex-shrink:0;margin:0 3px}
 @media(max-width:600px){nav[aria-label="视图操作"]{max-width:calc(100vw - 28px)}.transport input{width:100px}}
 .rank-settings{position:fixed;top:28px;right:28px;z-index:3}.rank-settings>button{display:grid;place-items:center;width:40px;height:40px;padding:9px;background:#202020;border:1px solid #505050}.rank-settings svg{width:20px;height:20px;pointer-events:none}.rank-settings-panel{position:absolute;right:0;top:48px;width:248px;padding:16px;background:#202020;border:1px solid #505050;border-radius:4px;box-shadow:0 8px 24px #0006}.rank-settings-panel[hidden]{display:none}.rank-settings-panel label{display:block;color:#e8e8e8;margin-bottom:10px}.rank-settings-panel select{width:100%;max-width:none;border:1px solid #505050}.rank-settings-panel p{margin:10px 0 0;color:#999;font-size:12px}@media(max-width:600px){.rank-settings{top:14px;right:14px}}
 .memory-legend{flex-direction:column;align-items:flex-start;position:fixed;top:50%;transform:translateY(-50%);left:28px;max-width:260px;display:flex;flex-wrap:wrap;gap:10px 18px;pointer-events:auto;color:#bdbdbd;font-size:11px}.memory-legend[hidden]{display:none}.memory-legend button{display:flex;align-items:center;gap:9px;padding:6px 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:inherit;font:inherit;cursor:pointer;text-align:left}.memory-legend button:hover{background:rgb(255 255 255 / 7%);color:#fff}.memory-legend button[aria-pressed="true"]{background:rgb(255 255 255 / 10%);border-color:rgb(255 255 255 / 18%);color:#fff}.memory-legend button:focus-visible{outline:2px solid #fff;outline-offset:2px}.memory-legend i{width:12px;height:12px;display:inline-block;flex-shrink:0}.rank-settings-panel label:not(:first-child){margin-top:16px}@media(max-width:600px){.memory-legend{left:14px;max-width:190px;font-size:9px;gap:6px 10px}}
+.ep-token-legend{position:fixed;top:28px;left:28px;z-index:3;width:292px;color:#bdbdbd;font-size:11px}.ep-token-legend[hidden]{display:none}.ep-token-legend summary{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 12px;list-style:none;cursor:pointer;border:1px solid #505050;border-radius:999px;background:#202020;color:#e8e8e8}.ep-token-legend summary::-webkit-details-marker{display:none}.ep-token-legend summary:focus-visible{outline:2px solid #fff;outline-offset:2px}.ep-token-legend .info-icon{display:grid;place-items:center;width:17px;height:17px;border:1px solid #8c8c8c;border-radius:50%;font:11px/1 ui-monospace,monospace}.ep-token-legend .legend-panel{margin-top:8px;max-height:min(220px,calc(100vh - 170px));overflow:auto;padding:14px 16px;background:#202020;border:1px solid #505050;border-radius:12px;box-shadow:0 8px 24px #0006}.ep-token-legend strong{display:block;margin-bottom:8px;color:#f0f0f0;font-weight:600}.ep-token-legend ol{margin:0;padding-left:20px}.ep-token-legend li+li{margin-top:5px}.ep-token-legend code{color:#f0f0f0;font:inherit}.ep-token-legend .legend-note{margin:10px 0 0;padding-top:9px;border-top:1px solid #3d3d3d;color:#929292}.ep-token-legend .legend-symbol{display:inline-block;width:10px;height:10px;margin:0 4px;border:1px solid #777;vertical-align:-1px}.ep-token-legend .legend-symbol.expert{width:15px;border-color:#aaa}.ep-token-legend .legend-symbol.token{background:#dedede;border-color:#dedede}@media(max-width:600px){.ep-token-legend{top:14px;left:14px;width:calc(100vw - 28px);font-size:10px}}
 .rank-spacing{margin:16px 0 0;padding:12px 0 0;border:0;border-top:1px solid #505050}.rank-spacing legend{padding:0 0 4px;color:#e8e8e8}.rank-spacing-row{display:grid;grid-template-columns:1fr 100px;align-items:center;gap:10px;margin-top:8px}.rank-settings-panel .rank-spacing-row label{margin:0}.rank-spacing input{width:100%;padding:7px 8px;background:#111;color:#e8e8e8;border:1px solid #505050;border-radius:2px;font:inherit}.rank-spacing input:focus-visible{outline:2px solid #fff;outline-offset:2px}.rank-settings-panel{max-height:calc(100vh - 110px);overflow-y:auto}
 
 
@@ -277,7 +278,7 @@ body[data-ep-mode="true"] .transport .status{display:none}
 body[data-ep-mode="true"] #ep-playback #ep-stops{height:14px;align-items:center}
 body[data-ep-mode="true"] #ep-playback #ep-stops button{min-height:14px;height:14px;padding:0 4px}
 #ep-playback #ep-markers{position:absolute;left:0;right:0;bottom:calc(100% + 14px);height:25px;margin:0 13.5px}
-</style></head><body><div class="view-dial" aria-label="Rank 视角">
+</style></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front">
 <svg viewBox="0 0 148 148" aria-hidden="true">
 <path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
@@ -448,10 +449,6 @@ function epGrid(id){
  const step=Math.min(w*.88/8,h*.88/rows);
  return {x:p[0][0]+(w-step*8)/2,y:p[0][1]+(h-step*rows)/2,step,rows};
 }
-function epPacketPosition(id,k,sourceIndex=-1){
- const g=epGrid(id),col=sourceIndex>=0?k:2+k%4,row=sourceIndex>=0?sourceIndex:3+Math.floor(k/4);
- return [g.x+(col+.5)*g.step,g.y+(row+.5)*g.step];
-}
 function epPacket(p,color,output=false,opacity=1,size=2,added=false){
  const c=epPalette(),symbol=added?`<path data-ep-added="true" d="M${p[0]-size*.43} ${p[1]}h${size*.86}M${p[0]} ${p[1]-size*.43}v${size*.86}" stroke="${c.mark}" stroke-width="${Math.max(.6,size*.22)}"/>`:output?`<circle cx="${p[0]}" cy="${p[1]}" r="${size*.18}" fill="${c.mark}"/>`:'';
  return `<rect x="${p[0]-size}" y="${p[1]-size}" width="${size*2}" height="${size*2}" fill="${color}" opacity="${opacity}"/>${symbol}`;
@@ -482,7 +479,71 @@ function epRankTitle(id){
  const e=epEventAt(simTime,relationRank);
  if(e.event._traceTime!==simTime||e.event._traceSource!==relationRank){e.event._trace=EPTeachingModel.trace(e.event,e.frame.t,relationRank);e.event._traceTime=simTime;e.event._traceSource=relationRank;}
  const f=e.event._trace.buckets.find(v=>v.target===id);
- return f?`R${relationRank} → R${id} · ${f.tokens} Token · ${(f.bytes/1e6).toFixed(2)} MB；已接收 ${f.received}；已返回 ${f.returned}；在途 ${f.inFlight}。${f.local?'本地处理，不计网络流量。':'仅跟踪所选源的份额。'}白色方格表示 Token 分组；＋表示刚接收，小圆点表示专家输出；每格为目的桶的 1/8。底部比值为当前已接收或已返回数量 / 总量。点击切换来源。`:`Rank ${id} · 点击查看该 Rank 的 EP 通信组`;
+ return f?`R${relationRank} → R${id} · ${f.tokens.toLocaleString('en-US')} 专家分配份额 · ${(f.bytes/1048576).toFixed(2)} MiB；点击切换来源。`:`Rank ${id} · 点击查看该 Rank 的 EP 通信组`;
+}
+function epTokenLayout(id,e){
+ const g=epGrid(id),size=g.step*8,count=EXPERTS/EP,lane=size/count,unit=256;
+ const max=Math.max(...e.event.expertMatrix[0].map((_,k)=>e.event.expertMatrix.reduce((a,r)=>a+r[k],0)));
+ const cells=Math.ceil(max/unit),rows=Math.ceil(Math.sqrt(cells/count)),cols=rows*count,step=size/cols;
+ const p=rankSilhouette(ranks[id]);
+ return {x:g.x,y:g.y,size,count,lane,unit,cols,rows,step,left:p[0][0],right:p[1][0],start:ranks[id].ep*count};
+}
+function epTokenPosition(id,e,k){
+ const l=epTokenLayout(id,e);return [l.x+l.size*.5,l.y+(k+.5)*l.lane];
+}
+function epCellPosition(l,k,i){return [l.x+(i%l.cols+.08)*l.step,l.y+k*l.lane+(Math.floor(i/l.cols)+.08)*l.step];}
+function epSourcePosition(e,i){
+ const l=epTokenLayout(relationRank,e),perLane=Math.ceil(e.event.config.seq*e.event.config.mbs/l.unit/l.count);
+ return epCellPosition(l,Math.floor(i/perLane),i%perLane);
+}
+function drawEPSourceTokens(c,e){
+ const l=epTokenLayout(relationRank,e),state=EPTeachingModel.reconstruction(e.event,e.frame.t,relationRank),perLane=Math.ceil(state.groups.length/l.count),returning=e.frame.phase.id==='combine',side=l.step*.84;
+ let out=`<g data-ep-source-tokens="${relationRank}" data-returned="${state.returned}" data-complete-tokens="${state.complete}">`;
+ for(let k=0;k<l.count;k++){
+  const start=k*perLane*l.unit,end=Math.min(e.event.config.seq*e.event.config.mbs,(k+1)*perLane*l.unit),groups=state.groups.slice(k*perLane,(k+1)*perLane),received=groups.reduce((n,g)=>n+g.returned,0),total=groups.reduce((n,g)=>n+g.tokens*state.topk,0),y=l.y+(k+.5)*l.lane;
+  out+=`<text x="${l.left-5}" y="${y}" dominant-baseline="middle" text-anchor="end" fill="${c.ink}" font-size="${l.lane*.23}">T${start}–${Math.max(start,end-1)}</text><text x="${l.right+5}" y="${y}" dominant-baseline="middle" fill="${c.muted}" font-size="${l.lane*.225}">${returning?received.toLocaleString('en-US')+' / '+total.toLocaleString('en-US'):(end-start).toLocaleString('en-US')+' tokens'}</text>`;
+  for(let i=0;i<l.cols*l.rows;i++){const [x,y]=epCellPosition(l,k,i);out+=`<rect x="${x}" y="${y}" width="${side}" height="${side}" fill="${c.line}" opacity=".22"/>`;}
+ }
+ state.groups.forEach((g,i)=>{
+  const [x,y]=epSourcePosition(e,i),fraction=returning?g.returned/(g.tokens*state.topk):1,width=side*g.tokens/l.unit;
+  out+=`<rect data-source-cell="${i}" data-returned="${g.returned}" data-complete="${g.complete}" x="${x}" y="${y}" width="${width}" height="${side}" fill="none" stroke="${c.line}" stroke-width=".3"/>`;
+  if(fraction)out+=`<rect x="${x}" y="${y}" width="${width*fraction}" height="${side}" fill="${c.token}"/>`;
+  if(returning&&g.complete===g.tokens)out+=`<circle cx="${x+width*.5}" cy="${y+side*.5}" r="${side*.12}" fill="${c.mark}"/>`;
+ });
+ return out+'</g>';
+}
+function drawEPTokenExperts(id,c,e){
+ const l=epTokenLayout(id,e),incoming=e.event.flows.filter(f=>f.target===id),phase=e.frame.phase.id;
+ const ordered=[...incoming].sort((a,b)=>(a.source===relationRank?-1:b.source===relationRank?1:a.source-b.source));
+ let out=`<g data-ep-token-experts="${id}" data-token-unit="256">`;
+ for(let k=0;k<l.count;k++){
+  let received=0,own=0;
+  const total=incoming.reduce((a,f)=>a+f.experts[k],0);
+  incoming.forEach(f=>{const m=EPTeachingModel.parcel(e.frame,k,l.count,f.local),arrived=phase!=='route'&&(f.local||phase==='compute'||phase==='combine'||m.place==='target');if(arrived){received+=f.experts[k];if(f.source===relationRank)own+=f.experts[k];}});
+  const done=phase==='combine'||phase==='compute'&&e.frame.q>=(k+1)/l.count,computing=phase==='compute'&&e.frame.q>=k/l.count&&e.frame.q<(k+1)/l.count,y=l.y+k*l.lane,font=l.lane*.25;
+  const arrival=.35+(l.count===1?0:k/(l.count-1)*.65),added=phase==='dispatch'&&id!==relationRank&&e.frame.q>=arrival&&e.frame.q<arrival+.16;
+  const held=phase==='combine'?incoming.reduce((n,f)=>n+(EPTeachingModel.parcel(e.frame,k,l.count,f.local).place==='target'?f.experts[k]:0),0):received;
+  out+=`<g data-expert-id="${l.start+k}" data-assignments="${received}" data-source-assignments="${own}" data-total-assignments="${total}"><text data-expert-label="true" x="${l.left-5}" y="${y+l.lane*.5}" dominant-baseline="middle" text-anchor="end" fill="${c.ink}" font-size="${font}">E${l.start+k}</text><text data-expert-count="true" x="${l.right+5}" y="${y+l.lane*.5}" dominant-baseline="middle" text-anchor="start" fill="${c.muted}" font-size="${font*.9}">${held.toLocaleString('en-US')} / ${total.toLocaleString('en-US')}</text>`;
+  for(let i=0;i<l.cols*l.rows;i++){
+   const amount=Math.max(0,Math.min(l.unit,total-i*l.unit)),base=l.step*.84,side=base,x=l.x+(i%l.cols+.08)*l.step,cy=y+(Math.floor(i/l.cols)+.08)*l.step;
+   out+=`<rect data-grid-cell="${i}" x="${x}" y="${cy}" width="${base}" height="${base}" fill="${c.line}" opacity=".22"/>`;
+   if(!amount)continue;
+   out+=`<rect data-token-cell="${i}" x="${x}" y="${cy}" width="${side*amount/l.unit}" height="${side}" fill="none" stroke="${c.line}" stroke-width=".3"/>`;
+   let offset=0;
+   // Selected source first, then other sources: fixed offsets, never compact on arrival.
+   ordered.forEach(f=>{
+    const lo=Math.max(i*l.unit,offset),hi=Math.min((i+1)*l.unit,offset+f.experts[k]);offset+=f.experts[k];if(hi<=lo)return;
+    const motion=EPTeachingModel.parcel(e.frame,k,l.count,f.local),arrived=phase!=='route'&&(f.local||phase==='compute'||phase==='combine'||motion.place==='target'),departed=phase==='combine'&&motion.place!=='target';
+    if(!arrived||departed)return;
+    const own=f.source===relationRank,xx=x+side*(lo-i*l.unit)/l.unit,ww=side*(hi-lo)/l.unit,color=computing?c.output:own?(phase==='dispatch'&&!f.local?c.input:c.token):c.muted;
+    out+=`<rect data-token-state="${computing?'computing':done?'output':added&&own?'received':'input'}" x="${xx}" y="${cy}" width="${ww}" height="${side}" fill="${color}" opacity="${own||computing?1:.55}"/>`;
+    if(added&&own&&ww>side*.6){const r=side*.2;out+=`<path data-ep-added="true" d="M${xx+ww*.5-r} ${cy+side*.5}h${2*r}M${xx+ww*.5} ${cy+side*.5-r}v${2*r}" stroke="${c.mark}" stroke-width="${side*.16}"/>`;}
+    if(done)out+=`<circle cx="${xx+ww*.5}" cy="${cy+side*.5}" r="${Math.min(side*.12,ww*.25)}" fill="${c.mark}"/>`;
+   });
+  }
+  out+='</g>';
+ }
+ return out+'</g>';
 }
 function drawEPCommunication(){
  const e=epEventAt(simTime,relationRank),stage=epStage(e),phase=e.frame.phase.id,c=epPalette();
@@ -492,15 +553,17 @@ function drawEPCommunication(){
  const anchor=id=>{const p=rankSilhouette(ranks[id]);return [p[1][0]-7,p[2][1]+70];};
  tr.buckets.forEach((f,i)=>{
   const p=rankSilhouette(ranks[f.target]),w=p[1][0]-p[0][0],h=p[2][1]-p[0][1],cx=p[0][0]+w/2;
-  // This is a token field, not an HBM fill. The shell stays in its original position.
+  // Fixed local expert lanes; outlines show assignments still awaiting arrival.
   out+=`<g data-ep-bucket="${f.target}" data-ep-received="${f.received}" data-ep-returned="${f.returned}">`;
   out+=`<rect x="${p[0][0]+3}" y="${p[0][1]+3}" width="${w-6}" height="${h-6}" fill="${c.surface}"/>`;
   const grid=epGrid(f.target);
-  for(let row=0;row<grid.rows;row++)for(let col=0;col<8;col++)out+=`<rect data-ep-grid="true" x="${grid.x+col*grid.step+.35}" y="${grid.y+row*grid.step+.35}" width="${grid.step-.7}" height="${grid.step-.7}" fill="${c.line}"/>`;
-  const amount=f.local?(returning?tr.returned:tr.total):(returning?f.returned:f.received),total=f.local?tr.total:f.tokens;
+  out+=f.local&&phase!=='compute'?drawEPSourceTokens(c,e):drawEPTokenExperts(f.target,c,e);
+  const expanded=phase==='compute'||phase==='dispatch';
+  const amount=expanded?f.received:f.local?(returning?tr.returned:tr.total):(returning?f.returned:f.received),total=expanded?f.tokens:f.local?tr.total:f.tokens;
   const xx=p[0][0]+w*.15,yy=p[2][1]+12,ww=w*.7,color=c.muted;
   out+=`<path d="M${xx} ${yy}h${ww}" stroke="${c.line}" stroke-width="1.3"/><path d="M${xx} ${yy}h${ww*amount/total}" stroke="${color}" stroke-width="1.3"/>`;
   out+=caption(xx,yy+12,`${amount.toLocaleString('en-US')} / ${total.toLocaleString('en-US')}`,8,c.muted);
+  out+=caption(xx,yy+23,f.local&&returning?`已收齐 ${EPTeachingModel.reconstruction(e.event,e.frame.t,relationRank).complete.toLocaleString('en-US')} / ${e.event.config.seq*e.event.config.mbs} tokens`:`R${relationRank} · 专家分配份额`,6,c.muted);
   out+='</g>';
  });
  // Draw routes and parcels after all token fields so remote arrivals are visible.
@@ -508,30 +571,42 @@ function drawEPCommunication(){
   const from=anchor(relationRank),to=anchor(f.target),height=50+Math.abs(to[0]-from[0])*.09;
   const a=returning?to:from,b=returning?from:to,path=`M${a[0]} ${a[1]-70}L${a} `+epRoute(a,b,height)+` L${b[0]} ${b[1]-70}`;
   if(!f.local&&epRouteStyle!=='particles'){
-   out+=`<path data-ep-route="${returning?f.target:relationRank}-${returning?relationRank:f.target}" d="${path}" fill="none" stroke="${c.line}" stroke-width=".6" opacity="${moving?.55:.25}"/>`;
+   out+=`<path data-ep-route="${returning?f.target:relationRank}-${returning?relationRank:f.target}" d="${path}" fill="none" stroke="${c.line}" stroke-width="${Math.max(.4,2*f.tokens/tr.total*EP)}" opacity="${moving?.8:.25}"/>`;
 
   }
-  for(let k=0;k<8;k++){
-   const src=epPacketPosition(relationRank,k,i),dst=f.local?src:epPacketPosition(f.target,k);
-   // Each dot is a fixed eighth of a destination bucket (128 tokens in baseline).
-   // Per-parcel timing is also used by the accounting model.
-   const motion=EPTeachingModel.parcel(e.frame,k,8,f.local);
-   const output=motion.output,inFlight=motion.place==='outbound'||motion.place==='inbound';
-   const arrival=.35+k/7*.65,added=!f.local&&((phase==='dispatch'&&motion.place==='target')||(phase==='combine'&&motion.place==='source'))&&e.frame.q>=arrival&&e.frame.q<arrival+.16;
-   const computing=phase==='compute'&&!(epIncidentActive&&incidentAt().failed)&&Math.floor(e.frame.q*8)===k;
-   const color=computing?c.output:(inFlight||added)?(output?c.output:c.input):c.token;
-   const size=inFlight?2:Math.max(.6,epGrid(motion.place==='target'?f.target:relationRank).step/2-.35);
-   let pos=motion.place==='source'?src:motion.place==='target'?dst:epTravel(motion.place==='outbound'?src:dst,motion.place==='outbound'?dst:src,motion.place==='outbound'?from:to,motion.place==='outbound'?to:from,motion.q,height);
-   out+=`<g data-ep-parcel="${f.target}-${k}" data-place="${motion.place}">${epPacket(pos,color,output,1,size,added)}</g>`;
+  if(f.local)return;
+  const layout=epTokenLayout(f.target,e),side=layout.step*.84,map=EPTeachingModel.mapping(e.event,relationRank);
+  for(let k=0;k<f.experts.length;k++){
+   const motion=EPTeachingModel.parcel(e.frame,k,f.experts.length,false),arrival=.35+(f.experts.length===1?0:k/(f.experts.length-1)*.65),added=phase==='combine'&&!e.frame.complete&&motion.place==='source'&&e.frame.q>=arrival&&e.frame.q<arrival+.16;
+   if(added){
+    const cells=new Set(map.fragments.filter(v=>v.target===f.target&&v.k===k).map(v=>v.sourceCell));
+    cells.forEach(i=>{const p=epSourcePosition(e,i),r=side*.2;out+=`<path data-ep-return-added="${f.target}-${k}-${i}" d="M${p[0]+side*.5-r} ${p[1]+side*.5}h${2*r}M${p[0]+side*.5} ${p[1]+side*.5-r}v${2*r}" stroke="${c.mark}" stroke-width="${side*.16}"/>`;});
+   }
+   if(motion.place!=='outbound'&&motion.place!=='inbound')continue;
+   out+=`<g data-ep-parcel="${f.target}-${k}" data-place="${motion.place}">`;
+   map.fragments.filter(v=>v.target===f.target&&v.k===k).forEach(v=>{
+    const source=epSourcePosition(e,v.sourceCell),target=epCellPosition(layout,k,v.targetCell),width=side*v.tokens.length/layout.unit;
+    const src=[source[0]+width*.5,source[1]+side*.5],dst=[target[0]+side*v.offset/layout.unit+width*.5,target[1]+side*.5];
+    const pos=epTravel(returning?dst:src,returning?src:dst,returning?to:from,returning?from:to,motion.q,height);
+    const spread=Math.sin(Math.PI*motion.q);
+    pos[0]+=spread*((v.sourceCell%8)-3.5)*side*1.2;
+    pos[1]+=spread*(Math.floor(v.sourceCell/8)*8+v.targetCell)*side*1.2;
+    // Keep proportional square fragments in transit; reshape only at the cell
+    // boundary, preserving area while fitting the exact destination slice.
+    const square=side*Math.sqrt(v.tokens.length/layout.unit),edge=Math.max(0,1-Math.min(motion.q,1-motion.q)/.06),drawWidth=square+(width-square)*edge,drawHeight=width*side/drawWidth;
+    out+=`<g data-route-fragment="${v.expert}-${v.sourceCell}-${v.targetCell}" data-token-count="${v.tokens.length}"><rect x="${pos[0]-drawWidth*.5}" y="${pos[1]-drawHeight*.5}" width="${drawWidth}" height="${drawHeight}" fill="${returning?c.token:c.input}"/>${returning?`<circle cx="${pos[0]}" cy="${pos[1]}" r="${Math.min(drawHeight*.12,drawWidth*.25)}" fill="${c.mark}"/>`:''}</g>`;
+   });
+   out+='</g>';
   }
 
  });
  if(mode==='comm'){
   const b=epBounds(),x=b.x,y=b.y-230,width=210;
-  out+=caption(x,y,`EP${EP} · R${relationRank} · ${tr.total.toLocaleString('en-US')} TOKEN`,10,c.muted);
+  out+=caption(x,y,`EP${EP} · R${relationRank} · 8,192 TOKENS × TOP-8 → ${tr.total.toLocaleString('en-US')} ASSIGNMENTS`,10,c.muted);
   let offset=0;
   tr.buckets.forEach(f=>{const w=width*f.tokens/tr.total;out+=`<rect x="${x+offset}" y="${y+12}" width="${Math.max(0,w-2)}" height="4" fill="${f.local?c.ink:c.muted}" opacity=".65"/>`;offset+=w;});
-  out+=caption(x,y+32,`本地 ${(tr.local/tr.total*100).toFixed(1)}%`,8,c.local);
+  out+=caption(x,y+32,`本地 ${(tr.local/tr.total*100).toFixed(1)}% · 256 / 格（T token · E 分配）`,8,c.local);
+  out+=caption(x,y+47,returning?'原始 token 顺序 · 填充表示 Top-K 返回份额，圆点表示已收齐':'T：原始 token · E：本地专家 · 蓝色分发，黄色计算，圆点输出',7,c.muted);
   out+=caption(x+width,y+32,`跨卡 ${(tr.remote/tr.total*100).toFixed(1)}%`,8,c.muted,'end');
  }
  return out+'</g>';
@@ -543,8 +618,11 @@ function describeEPEvent(){
  $('phase').textContent=mode==='comm'?`EP · ${epStage(e)} · 教学慢放`:`EP · ${status} · μb 1 · L${e.event.layer}`;
  if(mode==='comm')$('timeline').value=Math.round(e.frame.t*1000);
  const flows=e.event.flows.filter(f=>f.source===relationRank&&!f.local);
- const detail=`白色方格表示 Token 分组，＋表示刚接收，小圆点表示专家输出；每格代表目的桶的八分之一，不表示 HBM 占比。高亮仅用于在途或计算中的 Token；目标计数仅来自 R${relationRank}，不是全组接收量。本地结果在计算结束时计入回收；Combine 传输专家输出。教学 Top-1；首微批代表层事件 ${e.start}–${e.end} ms（非实测耗时）。R${relationRank} 本地 ${e.rank.local} tokens；跨卡 ${e.rank.remoteOut} tokens；当前 EP 收发暂存 ${(e.rank.bufferBytes/1e6).toFixed(1)} MB。跟踪所选 Rank 的 Token：Dispatch 发出激活，Combine 收回专家输出。`+flows.map(f=>` R${f.target}: ${f.tokens} tokens / ${(f.bytes/1e6).toFixed(2)} MB。`).join('');
+ const detail='Top-K 8 模拟路由；Dispatch 按专家归属跨 Rank 分发，Combine 返回专家输出并按路由权重合并。';
  $('phase').title=detail;
+ const legend=$('ep-token-legend'),localCount=EXPERTS/EP;
+ const legendMarkup=`<strong>Route → Dispatch → Compute → Combine</strong><ol><li>Route：8,192 个原始 token 各选择 8 个不同专家，保存 token ID、专家 ID 和路由权重；按专家归属分发，本地专家不跨卡通信。</li><li>相同网格骨架随阶段承载不同张量。T 行是来源 Rank 的原始 token 顺序，完整格为 256 tokens；E 行是 ${localCount} 个本地专家，完整格为 256 次专家分配。底格仅用于对齐，不代表显存容量。</li><li>蓝色＝跨 Rank 输入；＋＝刚接收；黄色仅表示正在计算；圆点＝完成计算的输出。白色突出当前来源，灰色表示其他来源。</li><li>移动片段保存真实模拟 token ID，同时在来源 token 格和目标专家格边界拆分；片段面积按分配数量缩放，并落入对应格，不使用固定大小的聚合包。</li><li>Combine：输出沿逆映射返回原始 token。T 行填充比例＝已返回份额 /（token 数 × Top-K）；收齐 8 份后加圆点。右侧计数为返回份额，底部显示收齐的 token 数。数学上按路由权重求和 y[t]＝Σ w[t,e]·expert[e](x[t])，不是拼接成 8 倍 token。</li><li>E 行在回收阶段显示尚未发出的份额／总分配量，发送后清空；来源 Rank 原地切换 T 行收集结果。完成后留下 8,192 个 token 输出，不保留黄色和悬浮包。</li></ol><p class="legend-note">教学模拟：路由、token ID、计数与逆映射一致；未执行真实专家张量运算。仅展示 routed experts 与当前来源的通信路径，非实测 Trace、HBM 地址或具体通信库的物理打包方式。</p>`;
+ if(legend.dataset.content!==legendMarkup){legend.querySelector('.legend-panel').innerHTML=legendMarkup;legend.dataset.content=legendMarkup;}
  $('timeline').setAttribute('aria-valuetext',`${status}，${(simTime/1000).toFixed(2)}秒；教学事件`);
 }
 function simulationState(t,id=renderRank){
@@ -703,7 +781,7 @@ function rankPosition(r){
  // Shared isometric axes: X=DP (4), Y=TP (2), Z=PP (2).
  if(viewMode!=='2.5D'){
   const w=245,d=245*rankRatio[1]/rankRatio[0],h=245*rankRatio[2]/rankRatio[0];
-  const sx=w+90,sy=d+110,sz=h+130,gap=160;
+ const sx=w+(mode==='comm'&&viewMode==='Top'?180:90),sy=d+110,sz=h+130,gap=160;
   // Unfold the hidden axis into adjacent panels, preserving the two visible axes.
   if(viewMode==='Top')return [537+(r.dp*sx+r.pp*(DP*sx+gap))*RANK_SCALE,325+r.tp*sy*RANK_SCALE];
   if(viewMode==='Front')return [537+(r.dp*sx+r.tp*(DP*sx+gap))*RANK_SCALE,325-r.pp*sz*RANK_SCALE];
@@ -901,6 +979,7 @@ renderShardInspector();describeEPEvent();renderIncident();$('ep-oom-mode').setAt
  document.querySelectorAll('#ep-stops button').forEach((b,i)=>b.setAttribute('aria-current',i===stageIndex?'step':'false'));
 
 $('memory-legend').hidden=(mode==='comm'&&viewMode==='Top')||!(labels&&(scope==='all'||labelMode==='surface'));
+$('ep-token-legend').hidden=!(mode==='comm'&&viewMode==='Top'&&scope==='all');
 const legendHTML=(mode==='shard'?[2,0]:[...stackOrder].reverse()).map(i=>{const a=cats[i];return `<button type="button" data-memory-category="${i}" aria-pressed="${selectedMemoryCategory===i}" title="只显示${a.name}；再次点击恢复全部"><i aria-hidden="true" style="background:${i===7?'transparent':a.color};${i===7?'border:1px solid #555':''}"></i>${i===6&&epIncidentActive&&viewMode==='Front'?'其他不可用占用（注入）':a.name}</button>`;}).join('');
 if($('memory-legend')._legendHTML!==legendHTML){$('memory-legend')._legendHTML=legendHTML;const active=document.activeElement?.closest('[data-memory-category]')?.dataset.memoryCategory;$('memory-legend').innerHTML=legendHTML;if(active!==undefined)$('memory-legend').querySelector(`[data-memory-category="${active}"]`)?.focus();}
 syncTensorMenu();transform();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===mode&&!(mode==='comm'&&viewMode==='Front'&&epIncidentActive)));$('tensor').classList.toggle('hidden',mode!=='shard');$('labels').setAttribute('aria-pressed',labels);$('labels').disabled=false;$('relations').classList.toggle('hidden',mode==='comm'||scope!=='all'||relationRank===null);$('single').setAttribute('aria-pressed',scope==='single');$('all').setAttribute('aria-pressed',scope==='all');$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('scene').setAttribute('aria-label',mode==='comm'?`EP${EP} Token 分发与回收，来源 Rank ${relationRank}，可点击 Rank 切换来源`:scope==='all'?worldSize+' rank 内存总览':'Rank '+selectedRank+' 内存细节')}
