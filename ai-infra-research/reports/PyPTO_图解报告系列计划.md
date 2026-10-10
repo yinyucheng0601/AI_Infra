@@ -8,14 +8,14 @@
 | --- | --- | --- | --- | --- | --- |
 | 01 | P0 | 一个算子如何经过 PyPTO 编译流水线 | 从 Tensor 表达到 Tile、循环、核函数、任务和内存地址，各阶段改变了什么 | Pass Atlas、Transform Explorer、Control Flow Explorer | 已完成，沿用现有报告 |
 | 02 | P0 | 片上内存复用：从张量生命期到地址分配 | 不同值如何共享存储，哪些约束阻止共享，怎样检查最终地址布局 | Atlas、Memory Inspector、Transform Explorer | 已完成；用户已指示继续下一篇 |
-| 03 | P0 | 编译器自动决策如何影响并行与流水 | 分块、流水深度、内存复用、依赖和同步为何需要一起看 | Decision Studio、调优工作台、Insight 调优方法论 | 已生成，等待用户 approve |
+| 03 | P0 | 编译器自动决策如何影响并行与流水 | 分块、流水深度、内存复用、依赖和同步为何需要一起看 | Decision Studio、调优工作台、Insight 调优方法论 | 已生成；全系列统一自查待完成 |
 | 04 | P1 | 沿一个 Callable 追踪计算结构的演变 | 一个源码计算范围如何被内联、提取为独立函数、拆核，以及如何保持对象对应 | Transform Explorer 的 Callable 主线、Control Flow Explorer | 待开始 |
 | 05 | P1 | 从运行异常反向追踪编译证据 | 如何从等待或性能下降，逐步建立可验证的编译假设 | Gap Investigator、Tuning Console、编译失败诊断、Insight | 待开始 |
 | 06 | P2 | Pass 之间的契约与首次偏离定位 | Pass 的前置条件、后置性质和验证器如何帮助缩小错误范围 | Atlas 属性依赖、Insight 开发者体验报告、UX Report | 待开始 |
 
 ## 本轮范围与审批节奏
 
-2026-10-10：用户要求将全部图解报告与计划统一迁入 AI_Infra/ai-infra-research/reports，并按计划继续第三篇。第三篇完成后提交用户审阅；第四至第六篇仍待开始。
+2026-10-10：用户要求将全部图解报告与计划统一迁入 AI_Infra/ai-infra-research/reports，并按计划继续第三篇。后续用户已授权完成全部六篇，并统一检查图元复用、概念一致性、Insight 覆盖和方法改进；不再逐篇等待审批。
 
 ## 第二份的讲解计划
 
@@ -65,4 +65,15 @@
 
 导航、正文、图注和释义按 skill 的技术概念规范统一校对。遵循目标仓库 AGENTS，本轮执行结构与脚本检查，视觉验收交由用户；两者分别记录。
 
-第三份入口：[编译器自动决策如何影响并行与流水](llm-compute/pypto-compiler-decisions-guide/index.html)。共 11 节、19 种正文图示状态；[来源与验证记录](llm-compute/pypto-compiler-decisions-guide/README.md)。已完成文案、结构与脚本检查；等待用户审阅，第四份未开始。
+第三份入口：[编译器自动决策如何影响并行与流水](llm-compute/pypto-compiler-decisions-guide/index.html)。共 11 节、19 种正文图示状态；[来源与验证记录](llm-compute/pypto-compiler-decisions-guide/README.md)。已完成文案、结构与脚本检查；进入全系列统一自查范围；第四至第六篇继续制作。
+
+
+## 全系列完成与统一自查（新增授权）
+
+用户要求完成全部报告后统一自查：① 可收录的新图元；② 报告间概念一致性；③ Insight 目录尚未解释的概念；④ 可以沉淀的改进。自查需记录实际文件、来源与未覆盖范围，不以文件存在代替验证。视觉验收仍遵循目标仓库规则，不默认执行浏览器自动化。
+
+### 第四份讲解计划
+
+固定同一份编译输入与配置，依次区分 Function / Call / Scope / Kernel / Task，说明 InlineFunctions 的多调用点展开、OutlineIncoreScopes 的自由变量与输出分析、Tensor→Tile 后的签名联动、ExpandMixedKernel 的混合与纯核分支，以及循环与分支内的数据对应。最后解释 Transform Explorer 按名称索引与有限拆核规则的适用边界，避免把名字相似当成完整 provenance。
+
+章节：对象层级 → 两个调用点 → 内联展开 → 区域提取 → 接口联动 → 混合拆核 → 纯核分支 → 控制流 → 对应证据 → 完整追踪。图示均为明确标注的结构教学案例，不冒充一次真实编译的连续快照。

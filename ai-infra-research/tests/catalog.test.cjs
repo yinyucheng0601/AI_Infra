@@ -6,6 +6,12 @@ const C=require('../web/catalog-core.js');
 const root=path.join(__dirname,'..');
 const assets=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.filter(a=>a.type==='knowledge');
 const initial=()=>C.parseState('',assets);
+test('NPU Pattern uses the requested communication entry and updated title',()=>{
+ const a=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.find(a=>a.id==='npu-memory-atlas-training');
+ assert.equal(a.title,'NPU 训练内存与 EP 通信');
+ for(const config of [{mode:'standalone'},{mode:'standalone',fileMode:true},{mode:'pto'}])assert.equal(C.sourceHref(a,config),'http://127.0.0.1:8769/variants/index_comm.html');
+ assert.ok(fs.existsSync(path.join(root,a.content)));
+});
 test('Layer Atlas Pattern uses the specified entry in both static modes',()=>{
  const a=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.find(a=>a.id==='pangu-layer-atlas');
  assert.equal(a.type,'pattern');
