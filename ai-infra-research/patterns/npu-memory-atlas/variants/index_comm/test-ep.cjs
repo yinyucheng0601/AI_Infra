@@ -57,11 +57,16 @@ function element(id){
 }
 const ctx={console,URLSearchParams,location:{search:''},localStorage:{getItem(){return null;}},matchMedia:()=>({matches:true}),requestAnimationFrame(){},getComputedStyle:()=>({getPropertyValue(){return '';}}),document:{getElementById:element,documentElement:{dataset:{},classList:{add(){}}},body:{dataset:{},classList:{toggle(){}}},activeElement:null,querySelectorAll:()=>[],querySelector:()=>element('nav'),addEventListener(){}},window:{location:{search:''},addEventListener(){}}};
 ctx.EPTeachingModel=M;
+ctx.RankAtlasModel=require("./rank-model.js");
 vm.createContext(ctx);
 const legacy=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('function makeRanks'));
 vm.runInContext(legacy,ctx);
 const read=source=>JSON.parse(JSON.stringify(vm.runInContext(source,ctx)));
 assert.equal(read('worldSize'),128);
+for(const view of ['Top','Front','Side','2.5D']){
+ vm.runInContext(`viewMode='${view}';render()`,ctx);
+ assert(!/NaN|undefined/.test(element('world').innerHTML),'finite geometry in '+view);
+}
 assert.deepEqual(read('parallelMembers("ep",23)'),[17,19,21,23,25,27,29,31]);
 assert.deepEqual(read('parallelMembers("edp",23)'),[6,7,22,23]);
 assert.equal(read('shardOwnership(3,22).key'),read('shardOwnership(3,23).key'),'ETP1 expert weight identity shared across TP');

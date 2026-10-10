@@ -2,43 +2,193 @@
   "version": 1,
   "assets": [
     {
+      "id": "atlas-950-explorer",
+      "title": "Atlas 950 · 3D Explorer",
+      "form": "交互 Pattern",
+      "domains": [
+        "Ascend",
+        "AI Infra",
+        "3D",
+        "Hardware"
+      ],
+      "summary": "以代表性计算机柜为入口，通过部件选择、抽出与 Inner 内部视图逐层探索硬件结构。",
+      "designValue": "收录整柜总览、部件聚焦、内部检查与方向切换的渐进式三维探索交互。",
+      "outline": [
+        "单计算机柜总览",
+        "计算节点抽出与 Inner 内部检查",
+        "灵衢互联、供电与配线部件导航",
+        "方向切换、旋转缩放与视图选项"
+      ],
+      "type": "pattern",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/atlas-950-explorer.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "atlas-950-explorer/index.html",
+          "revision": null,
+          "sha256": "556f6923cdd6afe3da93182185f65fccd7e231a331563d5e27de8c24eb653d13"
+        }
+      ],
+      "validation": [
+        "2026-10-10：按用户指定的 index.html 收录，检查源文件、目录字段、链接解析及生成入口。未进行浏览器视觉验收；非华为官方 CAD，机械布局不代表官方产品规格。",
+        "2026-10-10：采用用户提供的整柜截图作为 Pattern 卡片封面；未重新执行浏览器视觉验收。"
+      ],
+      "related": [
+        "spatial-systems-ui-style-guide"
+      ],
+      "reviewedAt": "2026-10-10",
+      "topics": [
+        "operators",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
+      "id": "pypto-compilation-guide",
+      "title": "PyPTO 编译流水线图解",
+      "form": "交互图解",
+      "domains": [
+        "PyPTO",
+        "Compiler",
+        "AI Infra"
+      ],
+      "summary": "从 MatMul 出发，串起 Tensor、Tile、循环、Kernel、Task、设备指令与内存对象，区分 IR 和 Pass。",
+      "designValue": "以统一图元、逐步展开和可点击释义呈现编译对象层级，连接程序表示、调度与设备执行。",
+      "outline": [
+        "继承图元与新增对象",
+        "Tensor 到 Tile 与分块循环",
+        "Kernel、Task 与设备指令",
+        "MemRef 与地址复用",
+        "真实 IR 对照与编译总览"
+      ],
+      "type": "knowledge",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "knowledge/pypto-compilation-guide.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "ai-infra-research/reports/llm-compute/pypto-compilation-guide.html",
+          "revision": null,
+          "sha256": "5dc2025ed6542a2224f6676441364a743a70eeabe8de53d9b6489b77c30e124f"
+        }
+      ],
+      "validation": [
+        "2026-10-10：用户确认收录；源报告已检查布局与交互。本次检查目录、脚本语法与生成入口，未重新执行浏览器验收或编译器实验。"
+      ],
+      "related": [
+        "llm-compute-diagrams",
+        "transformer-layer-guide"
+      ],
+      "reviewedAt": "2026-10-10",
+      "topics": [
+        "operators",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "pangu-layer-atlas-2",
       "title": "Pangu Layer Atlas 2",
       "form": "交互 Pattern",
-      "domains": ["Pangu", "Distributed Training", "Observability"],
+      "domains": [
+        "Pangu",
+        "Distributed Training",
+        "Observability"
+      ],
       "summary": "在模型层叠视图中呈现层内计算结构，结合异常高亮与训练路径，关联整网层级和局部计算。",
       "designValue": "提供从整网空间总览到层内计算结构的多尺度表达参考。",
-      "outline": ["模型层叠总览", "层内计算结构", "异常层高亮与层选择", "训练路径表达"],
+      "outline": [
+        "模型层叠总览",
+        "层内计算结构",
+        "异常层高亮与层选择",
+        "训练路径表达"
+      ],
       "type": "pattern",
-      "media": ["web"],
+      "media": [
+        "web"
+      ],
       "status": "reviewed",
       "visibility": "internal",
       "content": "patterns/pangu-layer-atlas-2.md",
-      "sources": [{"repository": "ai-infra", "url": null, "path": "layer_stack/pangu-layer-stack_2.html", "revision": null, "sha256": "4f67a132107c1eed53204b1ab7f17d97d00d53e3e414e1fe642cfc89b4fefdd2"}],
-      "validation": ["2026-09-29：按用户指定入口与名称收录，使用用户截图作封面，检查静态资源引用；未进行技术事实复审或浏览器视觉验收。"],
-      "related": ["pangu-layer-atlas"],
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "layer_stack/pangu-layer-stack_2.html",
+          "revision": null,
+          "sha256": "4f67a132107c1eed53204b1ab7f17d97d00d53e3e414e1fe642cfc89b4fefdd2"
+        }
+      ],
+      "validation": [
+        "2026-09-29：按用户指定入口与名称收录，使用用户截图作封面，检查静态资源引用；未进行技术事实复审或浏览器视觉验收。"
+      ],
+      "related": [
+        "pangu-layer-atlas"
+      ],
       "reviewedAt": "2026-09-29",
-      "topics": ["training", "visual"],
+      "topics": [
+        "training",
+        "visual"
+      ],
       "author": "Yucheng"
     },
     {
       "id": "pangu-layer-atlas",
       "title": "PanGu · Layer Atlas",
       "form": "交互 Pattern",
-      "domains": ["Pangu", "Distributed Training", "Observability"],
+      "domains": [
+        "Pangu",
+        "Distributed Training",
+        "Observability"
+      ],
       "summary": "以 49 层空间堆叠联动张量采样、训练阶段与 Rank 内存，从模型总览逐层探索异常与细节。",
       "designValue": "提供空间层级导航、矩阵详情、异常定位与内存总览联动的交互表达参考。",
-      "outline": ["2.5D 与侧视图切换", "激活、参数梯度与权重观测", "层导航、异常定位与矩阵采样详情", "传播路径教学模拟", "单 Rank 与全部 Rank 内存联动"],
+      "outline": [
+        "2.5D 与侧视图切换",
+        "激活、参数梯度与权重观测",
+        "层导航、异常定位与矩阵采样详情",
+        "传播路径教学模拟",
+        "单 Rank 与全部 Rank 内存联动"
+      ],
       "type": "pattern",
-      "media": ["web"],
+      "media": [
+        "web"
+      ],
       "status": "reviewed",
       "visibility": "internal",
       "content": "patterns/pangu-layer-atlas.md",
-      "sources": [{"repository": "ai-infra", "url": null, "path": "layer_stack/pangu-layer-stack_副本.html", "revision": null, "sha256": "24f6e149fef5736772e4874e5da3103fc98d1febc93b096a306010b0ed0991cf"}],
-      "validation": ["2026-09-28：按用户指定入口收录，核对页面与本地资源引用。数据为教学模拟，未独立复核技术事实或进行浏览器视觉验收。"],
-      "related": ["npu-memory-atlas-training", "spatial-systems-ui-style-guide"],
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "layer_stack/pangu-layer-stack_副本.html",
+          "revision": null,
+          "sha256": "24f6e149fef5736772e4874e5da3103fc98d1febc93b096a306010b0ed0991cf"
+        }
+      ],
+      "validation": [
+        "2026-09-28：按用户指定入口收录，核对页面与本地资源引用。数据为教学模拟，未独立复核技术事实或进行浏览器视觉验收。"
+      ],
+      "related": [
+        "npu-memory-atlas-training",
+        "spatial-systems-ui-style-guide"
+      ],
       "reviewedAt": "2026-09-28",
-      "topics": ["training", "visual"],
+      "topics": [
+        "training",
+        "visual"
+      ],
       "author": "Yucheng"
     },
     {
@@ -92,25 +242,52 @@
         "scope": "接入并行关系前的全部UI样式；并行关系功能新增部分待用户复审"
       }
     },
-
     {
       "id": "devkit-tui-competitive-analysis",
       "title": "Kunpeng DevKit AI · TUI 竞品分析",
       "form": "竞品分析",
-      "domains": ["Kunpeng", "DevKit", "TUI"],
+      "domains": [
+        "Kunpeng",
+        "DevKit",
+        "TUI"
+      ],
       "summary": "横跨终端工作台、AI Coding TUI、工程观测与 Hybrid TUI，比较 8 个产品的框架、交互和布局。",
       "designValue": "为 DevKit 的工作台布局、Agent 交互、权限审查及数据呈现提供参考，定位行业分歧与体验机会。",
-      "outline": ["TUI 分辨率与两层画布模型", "四类竞品与六阶段用户旅程", "22 项触点对比与模式识别", "SWOT、差距矩阵与行业分歧", "机会点、截图观察与研究资料"],
+      "outline": [
+        "TUI 分辨率与两层画布模型",
+        "四类竞品与六阶段用户旅程",
+        "22 项触点对比与模式识别",
+        "SWOT、差距矩阵与行业分歧",
+        "机会点、截图观察与研究资料"
+      ],
       "type": "knowledge",
-      "media": ["web"],
+      "media": [
+        "web"
+      ],
       "status": "reviewed",
       "visibility": "internal",
       "content": "knowledge/devkit-tui-competitive-analysis.md",
-      "sources": [{"repository": "devkit", "url": null, "path": "web/competitive-analysis.html", "revision": null, "sha256": "370f01e98fbb6b90486690944d4ed2ce41df812d373bd45aafa17c38d6740066"}],
-      "validation": ["2026-09-23：按用户要求收录，核对标题、章节与静态依赖并保存页面快照；未独立复核竞品事实或进行浏览器视觉验收。"],
-      "related": ["dynamo-product-analysis"],
+      "sources": [
+        {
+          "repository": "devkit",
+          "url": null,
+          "path": "web/competitive-analysis.html",
+          "revision": null,
+          "sha256": "370f01e98fbb6b90486690944d4ed2ce41df812d373bd45aafa17c38d6740066"
+        }
+      ],
+      "validation": [
+        "2026-09-23：按用户要求收录，核对标题、章节与静态依赖并保存页面快照；未独立复核竞品事实或进行浏览器视觉验收。"
+      ],
+      "related": [
+        "dynamo-product-analysis"
+      ],
       "reviewedAt": "2026-09-23",
-      "topics": ["competitive", "experience", "visual"],
+      "topics": [
+        "competitive",
+        "experience",
+        "visual"
+      ],
       "author": "Xindi"
     },
     {
@@ -119,26 +296,46 @@
       "form": "Skill",
       "packagePath": "methods/design-spatial-systems-ui",
       "downloadUrl": "methods/design-spatial-systems-ui.zip",
-      "domains": ["Visualization", "AI Infra"],
+      "domains": [
+        "Visualization",
+        "AI Infra"
+      ],
       "summary": "面向复杂系统与科学数据的空间界面风格指南，以真实数据对象为视觉主体，建立克制、精确的布局与交互秩序。",
       "designValue": "为矩阵、拓扑、时间轴及 2.5D / 3D 可视化提供统一的视觉和交互参考，覆盖从总览到细节的探索流程。",
-      "outline": ["主体舞台、留白与布局状态", "排版、灰度与强调色", "图表、矩阵、拓扑及空间对象", "选择、Inspector、平移缩放与动效", "响应式、可访问性与设计检查清单"],
+      "outline": [
+        "主体舞台、留白与布局状态",
+        "排版、灰度与强调色",
+        "图表、矩阵、拓扑及空间对象",
+        "选择、Inspector、平移缩放与动效",
+        "响应式、可访问性与设计检查清单"
+      ],
       "type": "method",
-      "media": ["document"],
+      "media": [
+        "document"
+      ],
       "status": "reviewed",
       "visibility": "internal",
       "content": "methods/design-spatial-systems-ui/SKILL.md",
-      "sources": [{
-        "repository": "ai-infra",
-        "url": null,
-        "path": "ai-infra-research/methods/design-spatial-systems-ui/SKILL.md",
-        "revision": null,
-        "sha256": "e1f27301c707896b1c6265b431b9b951a8d4af9990a23a85f0193113ee9e8d88"
-      }],
-      "validation": ["2026-09-23：替换为用户提供的完整 Skill 包，保留截图；核对入口与打包内容，未进行跨场景设计验证。"],
-      "related": ["observability-design-style"],
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "ai-infra-research/methods/design-spatial-systems-ui/SKILL.md",
+          "revision": null,
+          "sha256": "e1f27301c707896b1c6265b431b9b951a8d4af9990a23a85f0193113ee9e8d88"
+        }
+      ],
+      "validation": [
+        "2026-09-23：替换为用户提供的完整 Skill 包，保留截图；核对入口与打包内容，未进行跨场景设计验证。"
+      ],
+      "related": [
+        "observability-design-style"
+      ],
       "reviewedAt": "2026-09-23",
-      "topics": ["experience", "visual"],
+      "topics": [
+        "experience",
+        "visual"
+      ],
       "author": "Yucheng"
     },
     {

@@ -1,0 +1,86 @@
+/* The existing atlas owns the shell, theme, controls and optical treatment. */
+:root{--wb-bg:#000;--wb-fg:#eee;--wb-muted:#aaa;--wb-line:#666;--wb-soft:#242424;--wb-error:#ff826b}
+:root[data-theme=light]{--wb-bg:#fff;--wb-fg:#222;--wb-muted:#666;--wb-line:#999;--wb-soft:#eee;--wb-error:#b43022}
+[hidden]{display:none!important}
+.view-dial{width:200px;top:92px;right:28px;height:228px;z-index:2}
+.view-dial .view-orbit{position:absolute;inset:20px 20px 48px;border:1px solid var(--wb-line);border-radius:50%;pointer-events:none}
+.view-dial #cycle-view{position:absolute;left:60px;top:60px;width:80px;height:80px;padding:14px;border-radius:50%;background:transparent!important;color:var(--wb-fg)!important}
+.view-dial #cycle-view:hover{background:var(--wb-soft)!important}
+.view-dial #cycle-view>svg{width:100%;height:100%;stroke-width:1.5px}
+.view-dial #cycle-view>svg *{vector-effect:non-scaling-stroke}
+.view-dial .dial-port{position:absolute;display:grid;place-items:center;width:42px;height:42px;min-width:0;min-height:0;padding:9px;border-radius:50%;background:var(--wb-bg)!important;color:var(--wb-muted);border:0}
+.view-dial .dial-port svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.3}
+.view-dial .dial-port{color:var(--wb-muted)!important}
+:root #rank-view-dial button.dial-port[aria-pressed=true]{background:#fff!important;color:#000!important;outline:none;box-shadow:none}
+.view-dial .dial-port:hover{background:var(--wb-soft)!important;color:var(--wb-fg)}
+.view-dial .dial-port[data-slot="0"]{left:-1px;top:79px}.view-dial .dial-port[data-slot="1"]{left:79px;top:-1px}.view-dial .dial-port[data-slot="2"]{left:79px;top:159px}.view-dial .dial-port[data-slot="3"]{left:159px;top:79px}
+.view-dial .dial-name{position:absolute;top:248px;left:0;right:0;margin:0;font-size:11px;color:var(--wb-muted);letter-spacing:1px}
+.view-dial[data-layout=flat] .view-orbit{border-style:dashed}
+#workbench-tooltip{position:fixed;z-index:30;pointer-events:none;padding:7px 11px;border:0;border-radius:6px;background:var(--wb-bg);color:var(--wb-fg);font-size:12px;white-space:nowrap}
+#flat-stage{position:fixed;inset:92px 28px 150px 28px;overflow:hidden;touch-action:none;cursor:grab}
+#flat-stage:active{cursor:grabbing}#flat-canvas{width:100%;height:100%;display:block}
+#flat-context{position:fixed;left:28px;top:28px;max-width:calc(50vw - 120px);font:12px/1.7 ui-monospace,monospace;color:var(--wb-muted);pointer-events:none}
+#flat-context strong{display:block;font:20px/1.5 Arial,sans-serif;color:var(--wb-fg)}
+body[data-layout=flat] #scene{display:none}body[data-layout=flat] .memory-legend{top:auto;bottom:107px;left:28px;right:300px;max-width:none;transform:none;flex-direction:row;gap:4px 12px;font-size:11px}
+body[data-layout=flat] .memory-legend button{padding:4px 6px}body[data-layout=flat] #ep-token-legend{display:none!important}
+.config-section{margin-top:18px;padding-top:14px;border-top:1px solid var(--ui-border)}.config-section h3{font:12px Arial,sans-serif;margin:0 0 12px;color:var(--wb-muted)}
+.config-grid output{padding:8px 0;font-variant-numeric:tabular-nums}.config-grid select{min-width:0;font-size:12px}.config-grid input{width:100%;min-width:0}
+#rank-settings-panel [aria-invalid=true]{border-color:var(--wb-error)!important}#config-status[data-state=error]{color:var(--wb-error)}
+.config-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.config-actions button{border:1px solid var(--ui-border);border-radius:8px;padding:8px 12px;font-size:12px}
+.config-note{font-size:12px;color:var(--wb-muted)}.config-checks{display:flex;gap:14px;flex-wrap:wrap}.rank-settings-panel .config-checks label{display:flex;align-items:center;gap:6px;font-size:12px;margin:0}.config-checks input{accent-color:var(--wb-fg)}
+#graph-query{position:fixed;top:92px;bottom:155px;left:28px;width:292px;z-index:3;overflow:auto;background:var(--wb-bg);border:1px solid var(--ui-border);border-radius:20px;padding:18px;color:var(--wb-fg)}
+#graph-query header,.wb-inspector-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}#graph-query header strong{font-size:14px;font-weight:400}
+#graph-query input,#graph-query select{width:100%;max-width:none;min-width:0;border:1px solid var(--ui-border);background:var(--wb-bg);padding:9px;border-radius:8px;color:var(--wb-fg);font:12px Arial,sans-serif}
+#graph-query label{display:block;font-size:11px;color:var(--wb-muted);margin:12px 0 5px}.query-locations{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.operator-path{display:flex;flex-direction:column;align-items:center;margin:16px 0}.operator-path button{border:1px solid var(--wb-line);border-radius:4px;background:var(--wb-bg);width:100%;font-size:14px;min-height:34px;padding:7px;color:var(--wb-fg)}
+.operator-path button[aria-pressed=true]{background:var(--wb-fg);color:var(--wb-bg)}.operator-path .flow-arrow{height:18px;color:var(--wb-muted);font:14px monospace}.operator-path .residual-node{border-style:dashed}
+.expert-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:10px}.expert-grid button{padding:6px 2px;border:1px solid var(--ui-border);font-size:11px;border-radius:4px;min-height:32px}.expert-grid button[aria-pressed=true]{background:var(--wb-fg);color:var(--wb-bg)}
+.graph-branches{display:flex;gap:8px;align-items:stretch;width:100%;padding-top:8px;border-top:1px solid var(--wb-line)}.graph-branches>button,.graph-branches>.graph-chain{flex:1;min-width:0}.graph-branches button{font-size:13px;white-space:normal}.graph-chain,.residual-flow{display:flex;flex-direction:column;align-items:center;width:100%}.shared-branch{justify-content:center;border-right:1px solid var(--wb-line);padding-right:6px}.residual-flow{position:relative;border-left:1px dashed var(--wb-line);padding:8px 0 8px 15px}.residual-flow:before,.residual-flow:after{content:'';position:absolute;left:0;width:14px;border-top:1px dashed var(--wb-line)}.residual-flow:before{top:8px}.residual-flow:after{bottom:25px}.residual-label{position:absolute;left:-4px;top:40%;writing-mode:vertical-rl;background:var(--wb-bg);color:var(--wb-muted);font-size:10px;padding:4px 0}.graph-repeat{width:100%}.graph-caption,.graph-merge{display:block;text-align:center;font-size:11px;color:var(--wb-muted);padding:8px}.graph-repeat summary{font-size:11px;color:var(--wb-muted);padding:10px 0}.query-gap{height:8px}
+.wb-inspector-head strong{font-weight:400;font-size:13px}.wb-inspector-head button,#graph-query header button{padding:3px 8px;min-height:28px}
+.shard-inspector.workbench-inspector{z-index:3;top:380px;bottom:155px;width:300px;right:28px;padding:18px;background:var(--ui-fill)!important}.workbench-inspector h2{font-size:21px;font-weight:400}.workbench-inspector p{font-size:12px;line-height:1.7}.workbench-inspector .overflow{color:var(--wb-error)}.workbench-inspector .ledger-row td{padding:7px 0}.workbench-inspector .meta{color:var(--wb-muted);font-size:11px}
+#flat-hover{position:fixed;pointer-events:none;background:var(--wb-bg);border:0;border-radius:5px;padding:8px 10px;font:12px/1.6 ui-monospace,monospace;z-index:10;color:var(--wb-fg)}
+body[data-query=true] #flat-stage{left:28px}
+
+@media(max-width:900px){.view-dial{transform:scale(.75);transform-origin:top right;right:18px;top:90px}.rank-settings{right:18px}#flat-stage{right:18px;left:18px;bottom:178px}#flat-context{left:18px}.shard-inspector.workbench-inspector{left:18px;right:18px;top:auto;bottom:160px;width:auto;max-height:36vh}#graph-query{width:270px;left:18px;top:90px;bottom:165px}body[data-query=true] #flat-stage{left:18px}.scope-switch{left:18px!important;transform:none!important;top:75px!important}body[data-layout=flat] .memory-legend{right:18px;bottom:110px}}
+@media(max-width:600px){.view-dial{transform:scale(.64);top:86px;right:14px}#flat-stage{top:260px;right:14px;left:14px;bottom:174px}#flat-context{top:16px;max-width:calc(100vw - 170px);font-size:10px}#flat-context strong{font-size:16px}.rank-settings{top:14px;right:14px}#graph-query{top:88px;left:14px;right:14px;width:auto;bottom:168px}.shard-inspector.workbench-inspector{bottom:164px;left:14px;right:14px;max-height:46vh}body[data-layout=flat] .memory-legend{bottom:108px;left:14px;gap:0}.memory-legend button{font-size:10px}.config-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rank-settings-panel{max-height:calc(100dvh - 95px)}nav[aria-label="视图操作"]{max-width:calc(100vw - 28px)!important}#ep-dock{max-width:100vw}#workbench-tooltip{max-width:calc(100vw - 16px);white-space:normal}}
+@media(prefers-reduced-motion:reduce){#flat-stage{animation:none!important}}
+
+.rank-settings{z-index:6}#graph-query{z-index:4}
+.expert-grid button[data-local=true]{border-color:var(--wb-line)}
+@media(max-width:760px){
+ #ep-dock{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;overflow:visible}
+ #ep-dock>nav[aria-label="视图操作"]{grid-column:1/-1;width:100%;max-width:100%!important;justify-content:center;overflow-x:auto}
+ #ep-dock>#ep-playback{min-width:0;max-width:none;width:100%;margin:0;padding:6px}
+ #ep-dock>.zoom-controls{padding:4px!important;gap:0;max-width:164px}
+ #ep-dock .zoom-controls button{padding:5px;min-width:30px}#ep-dock #zoom{min-width:40px;font-size:10px;padding:0 3px}
+ #ep-dock .transport .status{display:none}#ep-dock .transport{gap:0}#ep-playback .transport .icon-button{min-width:28px;width:28px;padding:5px}
+ #flat-stage{bottom:204px}body[data-layout=flat] .memory-legend{bottom:142px}.shard-inspector.workbench-inspector,#graph-query{bottom:200px}
+}
+
+/* Keep pointer targets stable while the simulation updates the dial. */
+.view-dial button svg{pointer-events:none}
+
+.expert-detail{width:100%;margin:6px 0 12px}.expert-detail .expert-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:220px;overflow-y:auto;margin-top:0}.expert-detail .expert-grid button{min-width:0;min-height:30px;padding:5px 2px}
+
+/* Observation scope belongs to the spatial view controls, beside the dial. */
+#view-scope{position:fixed;top:372px;right:28px;width:240px;z-index:2;display:flex;flex-direction:column;align-items:stretch;gap:8px}
+#view-scope #rank{width:100%;max-width:none;border-radius:12px;padding:8px 12px;background:var(--wb-bg);color:var(--wb-fg);border:1px solid var(--ui-border)}
+body[data-layout=space] .shard-inspector.workbench-inspector{top:480px}
+@media(max-width:900px){#view-scope{top:302px;right:18px;width:180px}body[data-layout=space] .shard-inspector.workbench-inspector{top:auto}}
+@media(max-width:600px){#view-scope{top:266px;right:14px;width:154px}}
+
+@media(max-width:600px){body[data-query=true] #flat-stage{left:14px}}
+
+/* Full viewport stage; floating chrome never changes canvas geometry. */
+body #flat-stage,body[data-query=true] #flat-stage{inset:0;z-index:0}
+#flat-canvas{outline:none}
+#flat-context{z-index:1}
+#rank-view-dial .view-orbit{background:rgb(45 45 45 / 22%);border:1px solid rgb(255 255 255 / 14%);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;filter:none}
+#rank-view-dial .dial-name{left:52px;right:52px;top:207px;padding:8px 0;border-radius:999px;background:rgb(45 45 45 / 26%);color:var(--wb-fg);box-shadow:inset 0 1px 0 rgb(255 255 255 / 12%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#rank-view-dial #cycle-view{background:rgb(0 0 0 / 76%)!important}
+#rank-view-dial .dial-port{background:rgb(0 0 0 / 76%)!important}
+#graph-query{background:var(--ui-fill)}
+:root[data-theme=light] #rank-view-dial :is(.view-orbit,.dial-name){background:rgb(255 255 255 / 32%);border-color:rgb(255 255 255 / 55%)}
+:root[data-theme=light] #rank-view-dial #cycle-view,:root[data-theme=light] #rank-view-dial .dial-port{background:rgb(255 255 255 / 76%)!important}
+#flat-help{position:fixed;left:28px;bottom:145px;z-index:1;max-width:calc(100vw - 56px);font:10px/1.5 ui-monospace,monospace;color:var(--wb-muted);pointer-events:none}
+@media(max-width:760px){#flat-help{left:14px;bottom:181px;max-width:calc(100vw - 28px);font-size:9px}}

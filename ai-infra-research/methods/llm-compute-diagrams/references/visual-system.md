@@ -117,3 +117,7 @@ function multiplyShape(cx, cy) {
 ```
 
 引入 Multiply 时同步补到独立图例页。检查分步图、系数加权图和总览中的乘法节点，连线落在圆周，选中与等比缩放保持圆形。调整 OP 尺寸后，不能只改节点外观而保留原端点：重新计算进出线锚点，并检查相邻节点间距及外置参数、系数标签的留白。
+
+## 编译与执行专题扩展
+
+涉及 IR OP、循环、Kernel、Task、设备指令、MemRef 或 Pass 时，采用 [compiler-objects.md](compiler-objects.md) 的用户确认图元和配色，并复用独立 SVG 生成器。该专题中的 OP 胶囊、Task 紫色系和数据双折角箭头覆盖本文件的通用默认；普通模型图不自动迁移。

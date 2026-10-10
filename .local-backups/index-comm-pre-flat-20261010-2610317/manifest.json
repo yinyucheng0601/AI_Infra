@@ -1,0 +1,12 @@
+{
+  "commit": "2610317fa8b438ccb29c5078361811a5251c67b2",
+  "ref": "origin/main (cached remote-tracking snapshot)",
+  "remote": "https://github.com/yinyucheng0601/AI_Infra.git",
+  "fresh_fetch_verified": false,
+  "reason": "Remote fetch timed out through configured network and direct connection",
+  "files": {
+    "variants/index_comm.html": "b95c62f1f68572acb42f09a8a357488452dbc79e213431975eb21c165b615ad8",
+    "variants/index_comm/ep-model.js": "76d62c12477211d9a1c95b3dfc0d01088fa285cbdbc933995dead208e296561f",
+    "npu-memory-atlas-embed.js": "64181fcfe92b2a65468c902bc15bf20d3cb7f576d52fe37157cad52ad4a65083"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "dump": "32_after_AllocateMemoryAddr.py",
+  "backend": {
+    "name": "Ascend910B",
+    "arch": "a2a3",
+    "detected": false
+  },
+  "sha256": "10f7afe3830bd1f4bf7451e6af323a3ddee907bb1152ee1a09ccdd20720b973b",
+  "functions": [
+    {
+      "name": "copy_hidden",
+      "ftype": "AIV",
+      "src_start": 6,
+      "src_end": 16,
+      "source": [
+        "    @pl.function(type=pl.FunctionType.AIV, level=pl.Level.AIV, role=pl.Role.SubWorker)",
+        "    def copy_hidden(cur__iter_v1: pl.Out[pl.Tensor[[16, 5120], pl.FP32, pl.MemRef(\"mem_ddr_0\", pl.const(0, pl.INT64), 327680)]], hidden_states__ssa_v0: pl.Tensor[[16, 5120], pl.BF16, pl.MemRef(\"mem_ddr_1\", pl.const(0, pl.INT64), 163840)], cb0__idx_v0: pl.Scalar[pl.INDEX]) -> pl.Tensor[[16, 5120], pl.FP32]:",
+        "        mem_vec_2: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, 8192)",
+        "        mem_vec_3: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, 16384)",
+        "        for ckb__idx_v0, (cur__iter_v3,) in pl.range(20, init_values=(cur__iter_v1,)):",
+        "            ck0__ssa_v0: pl.Scalar[pl.INDEX] = ckb__idx_v0 * 256",
+        "            t__tile: pl.Tile[[16, 256], pl.BF16, pl.MemRef(mem_vec_2, pl.const(0, pl.INT64), 8192), pl.Mem.Vec] = pl.tile.load(hidden_states__ssa_v0, [cb0__idx_v0, ck0__ssa_v0], [16, 256], [16, 256], target_memory=pl.Mem.Vec, transpose=False)",
+        "            t__tile_1: pl.Tile[[16, 256], pl.FP32, pl.MemRef(mem_vec_3, pl.const(8192, pl.INT64), 16384), pl.Mem.Vec] = pl.tile.cast(t__tile, target_type=pl.FP32, mode='round')",
+        "            cur__tile: pl.Tensor[[16, 5120], pl.FP32, pl.MemRef(\"mem_ddr_0\", pl.const(0, pl.INT64), 327680)] = pl.tile.store(t__tile_1, [cb0__idx_v0, ck0__ssa_v0], cur__iter_v3)",
+        "            cur__rv_v4: pl.Tensor[[16, 5120], pl.FP32, pl.MemRef(\"mem_ddr_4\", pl.const(0, pl.INT64), 327680)] = pl.yield_(cur__tile)",
+        "        return cur__iter_v1"
+      ],
+      "spaces": [
+        {
+          "space": "Vec",
+          "hwm": 24576,
+          "limit": 188416,
+          "tiles": 2,
+          "bases": 2
+        }
+      ],
+      "boxes": [
+        {
+          "name": "t__tile",
+          "space": "Vec",
+          "base": "mem_vec_2",
+          "offset": 0,
+          "size": 8192,
+          "shape": [
+            16,
+            256
+          ],
+          "dtype": "BF16",
+          "op": "tile.load",
+          "start": 12,
+          "end": 13,
+          "aliases": [],
+          "view": false,
+          "conflict": false
+        },
+        {
+          "name": "t__tile_1",
+          "space": "Vec",
+          "base": "mem_vec_3",
+          "offset": 8192,
+          "size": 16384,
+          "shape": [
+            16,
+            256
+          ],
+          "dtype": "FP32",
+          "op": "tile.cast",
+          "start": 13,
+          "end": 14,
+          "aliases": [],
+          "view": false,
+          "conflict": false
+        }
+      ]
+    },
+    {
+      "name": "copy_out",
+      "ftype": "AIV",
+      "src_start": 17,
+      "src_end": 26,
+      "source": [
+        "    @pl.function(type=pl.FunctionType.AIV, level=pl.Level.AIV, role=pl.Role.SubWorker)",
+        "    def copy_out(out__iter_v1: pl.Out[pl.Tensor[[16, 5120], pl.BF16, pl.MemRef(\"mem_ddr_0\", pl.const(0, pl.INT64), 163840)]], cur__ssa_v8: pl.Tensor[[16, 5120], pl.FP32, pl.MemRef(\"mem_ddr_1\", pl.const(0, pl.INT64), 327680)], ob0__idx_v0: pl.Scalar[pl.INDEX]) -> pl.Tensor[[16, 5120], pl.BF16]:",
+        "        mem_vec_2: pl.Ptr = pl.tile.alloc(pl.Mem.Vec, 16384)",
+        "        for okb__idx_v0, (out__iter_v3,) in pl.range(20, init_values=(out__iter_v1,)):",
+        "            ok0__ssa_v0: pl.Scalar[pl.INDEX] = okb__idx_v0 * 256",
+        "            t__tile: pl.Tile[[16, 256], pl.FP32, pl.MemRef(mem_vec_2, pl.const(0, pl.INT64), 16384), pl.Mem.Vec] = pl.tile.load(cur__ssa_v8, [ob0__idx_v0, ok0__ssa_v0], [16, 256], [16, 256], target_memory=pl.Mem.Vec, transpose=False)",
+        "            t__tile_1: pl.Tile[[16, 256], pl.BF16, pl.MemRef(mem_vec_2, pl.const(0, pl.INT64), 16384), pl.Mem.Vec] = pl.tile.cast(t__tile, target_type=pl.BF16, mode='round')",
+        "            out__tile: pl.Tensor[[16, 5120], pl.BF16, pl.MemRef(\"mem_ddr_0\", pl.const(0, pl.INT64), 163840)] = pl.tile.store(t__tile_1, [ob0__idx_v0, ok0__ssa_v0], out__iter_v3)",
+        "            out__rv_v4: pl.Tensor[[16, 5120], pl.BF16, pl.MemRef(\"mem_ddr_4\", pl.const(0, pl.INT64), 163840)] = pl.yield_(out__tile)",
+        "        return out__iter_v1"
+      ],
+      "spaces": [
+        {
+          "space": "Vec",
+          "hwm": 16384,
+          "limit": 188416,
+          "tiles": 1,
+          "bases": 1
+        }
+      ],
+      "boxes": [
+        {
+          "name": "t__tile",
+          "space": "Vec",
+          "base": "mem_vec_2",
+          "offset": 0,
+          "size": 16384,
+          "shape": [
+            16,
+            256
+          ],
+          "dtype": "FP32",
+          "op": "tile.load",
+          "start": 22,
+          "end": 24,
+          "aliases": [
+            "t__tile_1"
+          ],
+          "view": false,
+          "conflict": false
+        }
+      ]
+    }
+  ]
+}

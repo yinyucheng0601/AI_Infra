@@ -13,9 +13,12 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 
 技术内容分为通用机制、具体实现、教学示例三种证据层级。涉及模型配置、论文新机制、框架并行组或实际 trace 时，核对官方文档、源码或原始论文，并把来源链接放在相关解释旁。材料不足时标注示例及假设；不要将假定的 rank、shape、耗时或通信关系写成观测事实。
 
+技术概念使用来源中可核对的名称与定义；标题应说明对象、机制或约束，不以绘图动作或口语化比喻替代概念。按 [文字规范](references/teaching-and-copy.md#技术概念与专业表达)统一校对导航、标题、正文、图注和点击释义。
+
 按主题读取相关参考，避免把所有主题知识都塞入每次任务：
 
 - 视觉、网页交互或图元实现：读取 [visual-system.md](references/visual-system.md)。
+- 编译流程、IR、Pass、Kernel、Task 或设备指令图解：读取 [compiler-objects.md](references/compiler-objects.md)，复用 [compiler-primitives.js](assets/compiler-primitives.js)。该扩展使用紫色 OP / Kernel / Task、指令窄条和中性灰编译步骤；其专题规则优先于下文通用模块默认样式。
 - 标题、正文、知识递进：读取 [teaching-and-copy.md](references/teaching-and-copy.md)。
 - Attention、FFN、Dense、MoE、普通残差或 mHC：读取 [sublayers.md](references/sublayers.md)。
 - 多卡训练、并行组和通信：读取 [parallelism.md](references/parallelism.md)。切分图例使用 [visual-system.md 的确认色板](references/visual-system.md#并行切分与-moe-图例用户确认)，区分张量填色与切分维度色；EP／MoE 标识沿用橙色。

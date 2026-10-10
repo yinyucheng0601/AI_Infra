@@ -10,6 +10,8 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'atlas-950-explorer':{src:'__ATLAS_950_COVER__',alt:'Atlas 950 概念机柜：用户提供的整柜轴测截图'},
+    'pypto-compilation-guide':{src:'__PYPTO_COMPILATION_COVER__',alt:'PyPTO 编译图解：张量、计算、Kernel 与 Task 的关系'},
     'pangu-layer-atlas-2':{src:'__PANGU_LAYER_ATLAS_2_COVER__',alt:'Pangu Layer Atlas 2：层内计算结构、空间层叠与 L18 异常高亮'},
     'pangu-layer-atlas':{src:'__PANGU_LAYER_ATLAS_COVER__',alt:'Layer Atlas：49 层空间堆叠、异常层高亮、选中 L32 与 Rank 内存联动'},
     'npu-memory-atlas-training':{src:'__NPU_MEMORY_COVER__',alt:'Rank 2 训练内存轴测分层：权重、梯度、优化器态、激活与空余容量'},

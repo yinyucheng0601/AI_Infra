@@ -1,0 +1,237 @@
+[
+  {
+    "path": "models/cosmo/lod1/exterior.glb",
+    "bytes": 51328,
+    "meshes": 8,
+    "extensions": [
+      "KHR_draco_mesh_compression",
+      "KHR_materials_emissive_strength",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/exterior.glb"
+  },
+  {
+    "path": "models/cosmo/lod1/fans.glb",
+    "bytes": 24836,
+    "meshes": 3,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/fans.glb"
+  },
+  {
+    "path": "models/cosmo/lod1/heatsink.glb",
+    "bytes": 37160,
+    "meshes": 6,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/heatsink.glb"
+  },
+  {
+    "path": "models/cosmo/lod1/interior.glb",
+    "bytes": 166520,
+    "meshes": 32,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/interior.glb"
+  },
+  {
+    "path": "models/cosmo/lod1/memory.glb",
+    "bytes": 7772,
+    "meshes": 2,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/memory.glb"
+  },
+  {
+    "path": "models/cosmo/lod1/perforations.glb",
+    "bytes": 7008,
+    "meshes": 4,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/perforations.glb"
+  },
+  {
+    "path": "models/cosmo/lod1/shroud.glb",
+    "bytes": 3196,
+    "meshes": 1,
+    "extensions": [
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/cosmo/lod1/shroud.glb"
+  },
+  {
+    "path": "models/cosmo/pcb.png",
+    "bytes": 165564,
+    "url": "https://explorer.oxide.computer/models/cosmo/pcb.png"
+  },
+  {
+    "path": "models/patch-panel/lod1/panel.glb",
+    "bytes": 20000,
+    "meshes": 5,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/patch-panel/lod1/panel.glb"
+  },
+  {
+    "path": "models/perforations.png",
+    "bytes": 35711,
+    "url": "https://explorer.oxide.computer/models/perforations.png"
+  },
+  {
+    "path": "models/power-shelf/lod1/perforations.glb",
+    "bytes": 3008,
+    "meshes": 2,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/power-shelf/lod1/perforations.glb"
+  },
+  {
+    "path": "models/power-shelf/lod1/shelf.glb",
+    "bytes": 47588,
+    "meshes": 9,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_materials_emissive_strength",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/power-shelf/lod1/shelf.glb"
+  },
+  {
+    "path": "models/rack-frame/lod1/body.glb",
+    "bytes": 33996,
+    "meshes": 4,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/rack-frame/lod1/body.glb"
+  },
+  {
+    "path": "models/rack-frame/lod1/core.glb",
+    "bytes": 36008,
+    "meshes": 4,
+    "extensions": [
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/rack-frame/lod1/core.glb"
+  },
+  {
+    "path": "models/rack-frame/lod1/cosmo-housing.glb",
+    "bytes": 96004,
+    "meshes": 22,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/rack-frame/lod1/cosmo-housing.glb"
+  },
+  {
+    "path": "models/rack-frame/lod1/patch-housing.glb",
+    "bytes": 5864,
+    "meshes": 1,
+    "extensions": [
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/rack-frame/lod1/patch-housing.glb"
+  },
+  {
+    "path": "models/rack-frame/lod1/power-housing.glb",
+    "bytes": 13480,
+    "meshes": 3,
+    "extensions": [
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/rack-frame/lod1/power-housing.glb"
+  },
+  {
+    "path": "models/sidecar/lod1/cover.glb",
+    "bytes": 1732,
+    "meshes": 1,
+    "extensions": [
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/sidecar/lod1/cover.glb"
+  },
+  {
+    "path": "models/sidecar/lod1/exterior.glb",
+    "bytes": 81104,
+    "meshes": 15,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_materials_emissive_strength",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/sidecar/lod1/exterior.glb"
+  },
+  {
+    "path": "models/sidecar/lod1/interior.glb",
+    "bytes": 367748,
+    "meshes": 43,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/sidecar/lod1/interior.glb"
+  },
+  {
+    "path": "models/sidecar/lod1/perforations.glb",
+    "bytes": 3872,
+    "meshes": 2,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "KHR_draco_mesh_compression",
+      "KHR_mesh_quantization"
+    ],
+    "external_uris": [],
+    "url": "https://explorer.oxide.computer/models/sidecar/lod1/perforations.glb"
+  }
+]
