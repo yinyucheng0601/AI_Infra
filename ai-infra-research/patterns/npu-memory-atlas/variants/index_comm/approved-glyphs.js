@@ -35,11 +35,17 @@ function draw(kind,x,y,label='',color='#B1EF6B',scale=1){
 }
 // 01.4 data roles: tensorNode / dataTiles from training-parallel-communication-v1.
 // Height accommodates the atlas metadata line; tile geometry and label treatment are retained.
-function tensor(x,y,w,label,summary,color){
+function tensor(x,y,w,label,summary,color,shard=null){
  const h=62.4,pad=5,gap=3,cell=11,rows=Math.max(1,Math.floor((h-pad*2+gap)/(cell+gap))),cols=Math.max(1,Math.floor((w-pad*2+gap)/(cell+gap))),gw=cols*(cell+gap)-gap,gh=rows*(cell+gap)-gap;
  let tiles='';
  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)tiles+=`<rect class="data-tile" x="${x+(w-gw)/2+c*(cell+gap)}" y="${y+(h-gh)/2+r*(cell+gap)}" width="${cell}" height="${cell}" fill="${color}" opacity="0.22"/>`;
- return `<g data-glyph-source="data-4" data-glyph-variant="tensor-node"><rect class="outline data-block tensor-node" x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#131313" stroke="${color}" stroke-width="1.2"/><g pointer-events="none">${tiles}</g><g class="data-label" style="paint-order:stroke;stroke:#131313;stroke-width:2.5px;stroke-linejoin:round" pointer-events="none"><text x="${x+w/2}" y="${y+25}" text-anchor="middle" font-size="14" fill="${color}">${esc(label)}</text><text x="${x+w/2}" y="${y+45}" text-anchor="middle" font-size="12" fill="#ababab">${esc(summary)}</text></g></g>`;
+ let partitions='';
+ if(shard){
+  const horizontal=shard.axis==='行',shown=Math.min(shard.count,horizontal?8:16),first=Math.max(0,Math.min(shard.count-shown,shard.index-Math.floor(shown/2))),span=(horizontal?h-10:w-10)/shown;
+  for(let slot=0;slot<shown;slot++){const i=first+slot;partitions+=`<rect class="weight-partition" data-partition="${i}" data-owned="${i===shard.index}" x="${x+5+(horizontal?0:slot*span)}" y="${y+5+(horizontal?slot*span:0)}" width="${horizontal?w-10:Math.max(.3,span-1)}" height="${horizontal?Math.max(.3,span-1):h-10}" fill="${i===shard.index?color:'#131313'}" opacity="${i===shard.index?.55:.8}"/>`;}
+  shard={...shard,label:shard.count===1?'完整副本':`${shard.axis==='专家'?'EP':'TP'} ${shard.index} / ${shard.count} · [${shard.start}, ${shard.end})${shown<shard.count?' · 局部':''}`};
+ }
+ return `<g data-glyph-source="data-4" data-glyph-variant="tensor-node" ${shard?'data-sharded="true"':''}><rect class="outline data-block tensor-node" x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#131313" stroke="${color}" stroke-width="1.2"/><g pointer-events="none">${tiles}</g><g pointer-events="none">${partitions}</g><g class="data-label" style="paint-order:stroke;stroke:#131313;stroke-width:2.5px;stroke-linejoin:round" pointer-events="none"><text x="${x+w/2}" y="${y+(shard?17:25)}" text-anchor="middle" font-size="14" fill="${color}">${esc(label)}</text><text x="${x+w/2}" y="${y+(shard?35:45)}" text-anchor="middle" font-size="12" fill="#ababab">${esc(summary)}</text>${shard?`<text x="${x+w/2}" y="${y+53}" text-anchor="middle" font-size="11" fill="#ccc">${esc(shard.label)}</text>`:''}</g></g>`;
 }
 root.RankApprovedGlyphs={draw,tensor,sources};
 })(globalThis);

@@ -1,5 +1,6 @@
 /* The existing atlas owns the shell, theme, controls and optical treatment. */
 :root{--wb-bg:#000;--wb-fg:#eee;--wb-muted:#aaa;--wb-line:#666;--wb-soft:#242424;--wb-error:#ff826b}
+#ep-dock #relations{display:none!important}
 :root[data-theme=light]{--wb-bg:#fff;--wb-fg:#222;--wb-muted:#666;--wb-line:#999;--wb-soft:#eee;--wb-error:#b43022}
 [hidden]{display:none!important}
 .view-dial{width:200px;top:92px;right:28px;height:228px;z-index:2}
@@ -96,13 +97,15 @@ body #flat-stage,body[data-query=true] #flat-stage{inset:0;z-index:0}
 .approved-compute-svg .comm{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:6 5}
 .approved-compute-svg [data-glyph-source="system-add"] circle{stroke-width:1.5}
 .approved-compute-svg [data-glyph-source="system-add"] path{stroke-linecap:round;stroke-linejoin:round}
-.cg-hit{cursor:pointer;outline:none}.cg-inactive{opacity:.35}
+.cg-hit{cursor:pointer;outline:none;--cg-highlight:#c17df3}.cg-inactive{opacity:.35}
 .cg-hit:hover,.cg-hit:focus-visible,.cg-hit[aria-pressed=true]{opacity:1}
-.cg-hit:hover .outline,.cg-hit:focus-visible .outline,.cg-hit[aria-pressed=true] .outline{stroke:#fff;stroke-width:2.5}
-.cg-hit:hover [data-glyph-source="data-2"]>rect:first-child,.cg-hit:focus-visible [data-glyph-source="data-2"]>rect:first-child,.cg-hit[aria-pressed=true] [data-glyph-source="data-2"]>rect:first-child{stroke:#fff;stroke-opacity:1;stroke-width:2.5}
-.cg-hit:hover circle,.cg-hit:focus-visible circle,.cg-hit[aria-pressed=true] circle{stroke:#fff;stroke-width:2.5}
+.cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .op{fill:var(--cg-highlight);stroke:none}
+.cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-glyph-variant="comm"]>rect:first-child{fill:var(--cg-highlight)}
+.cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .tensor-node{stroke-width:1.2}
+.cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-glyph-source="data-4"]>g:first-of-type rect{opacity:.65}
+.cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-glyph-source="system-add"] circle{fill:var(--cg-highlight);stroke:none}
 #query-note{flex:none;margin:0;padding:10px 20px;background:#111;color:#aaa;border-top:1px solid #353535;font-size:11px;line-height:1.5;max-height:90px;overflow:auto}
-.cg-search-result{display:block;border:0;background:none;padding:0;margin:6px 0;width:280px;cursor:pointer}.cg-search-result .approved-compute-svg{min-width:0}.cg-search-result:hover .op{stroke:#fff}
+.cg-search-result{display:block;border:0;background:none;padding:0;margin:6px 0;width:280px;cursor:pointer}.cg-search-result .approved-compute-svg{min-width:0}.cg-search-result:hover .op{fill:#c17df3;stroke:none}
 #graph-query button{color:#eee}.graph-caption{display:block;font-size:11px;color:#aaa;margin:10px 0}
 @media(max-width:900px){#graph-query{left:18px;max-width:calc(100vw - 36px);width:min(760px,calc(100vw - 36px));bottom:165px}}
 @media(max-width:760px){#graph-query{bottom:200px}}

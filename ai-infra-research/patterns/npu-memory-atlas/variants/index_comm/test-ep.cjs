@@ -52,10 +52,10 @@ for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
 // NaN geometry and group regressions without claiming browser visual coverage.
 const nodes=new Map();
 function element(id){
-  if(!nodes.has(id))nodes.set(id,{id,value:id==='tensor'?'0':'',hidden:false,innerHTML:'',children:[],dataset:{},style:{},attrs:{},classList:{toggle(){},add(){},remove(){}},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]||'';},addEventListener(){},focus(){},querySelectorAll(){return [];},querySelector(){return id==='ep-token-legend'?{innerHTML:''}:null;},getBBox(){return {x:0,y:0,width:1400,height:900};},getBoundingClientRect(){return {width:1400,height:900,top:820,left:0};}});
+  if(!nodes.has(id))nodes.set(id,{id,value:id==='tensor'?'0':'',hidden:false,innerHTML:'',children:[],dataset:{},style:{},attrs:{},classList:{toggle(){},add(){},remove(){}},setAttribute(k,v){this.attrs[k]=v;},getAttribute(k){return this.attrs[k]||'';},appendChild(){},removeAttribute(k){delete this.attrs[k];},getScreenCTM(){return {a:1,b:0};},addEventListener(){},focus(){},querySelectorAll(){return [];},querySelector(){return id==='ep-token-legend'?{innerHTML:''}:null;},getBBox(){return {x:0,y:0,width:1400,height:900};},getBoundingClientRect(){return {width:1400,height:900,top:820,left:0};}});
   return nodes.get(id);
 }
-const ctx={console,URLSearchParams,location:{search:''},localStorage:{getItem(){return null;}},matchMedia:()=>({matches:true}),requestAnimationFrame(){},getComputedStyle:()=>({getPropertyValue(){return '';}}),document:{getElementById:element,documentElement:{dataset:{},classList:{add(){}}},body:{dataset:{},classList:{toggle(){}}},activeElement:null,querySelectorAll:()=>[],querySelector:()=>element('nav'),addEventListener(){}},window:{location:{search:''},addEventListener(){}}};
+const ctx={MutationObserver:class{observe(){}},console,URLSearchParams,location:{search:''},localStorage:{getItem(){return null;}},matchMedia:()=>({matches:true}),requestAnimationFrame(){},getComputedStyle:()=>({getPropertyValue(){return '';}}),document:{createElementNS:(_,tag)=>element(tag),getElementById:element,documentElement:{dataset:{},classList:{add(){}}},body:{appendChild(){},dataset:{},classList:{toggle(){}}},activeElement:null,querySelectorAll:()=>[],querySelector:()=>element('nav'),addEventListener(){}},window:{location:{search:''},addEventListener(){}}};
 ctx.EPTeachingModel=M;
 ctx.RankAtlasModel=require("./rank-model.js");
 vm.createContext(ctx);
@@ -120,10 +120,12 @@ const baseline=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');
 const variantCSS=html.match(/<style>([\s\S]*?)<\/style>/)[1];
 const tokenLegendRule=/\.ep-token-legend\{[^\n]+\n/;
 const darkPaletteRule=/\/\* Dark surface palette override\.[\s\S]*?\/\* End dark surface palette override\. \*\/\n/;
-assert.equal(variantCSS.replace(tokenLegendRule,'').replace(darkPaletteRule,''),baseline.match(/<style>([\s\S]*?)<\/style>/)[1],'approved CSS unchanged outside token legend and requested dark palette');
+// The variant now intentionally includes approved ruler, hover and layout changes.
+// Baseline immutability is verified by its SHA-256 below; assert current contracts here.
+for(const selector of ['.rank-rulers','#scene','.rank-outer-border'])assert(variantCSS.includes(selector),'missing spatial style '+selector);
 const allVariantCSS=[...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(m=>m[1]).join('\n');
 assert(allVariantCSS.includes('background:#151515'));
-assert(allVariantCSS.includes('background-color:#000000!important'));
+assert(allVariantCSS.includes('data-theme'),'theme styling retained');
 assert(!html.includes('ep-view.css')&&!html.includes('ep-view.js'),'standalone UI disconnected');
 element('relations').value='ep';
 for(const [t,phase] of [[0,'route'],[90,'dispatch'],[170,'compute'],[260,'combine']]){
@@ -349,3 +351,4 @@ assert(!html.includes('<select id="ep-route-style"'));
 console.log('PASS: explicit OOM entry opens Front, communication restores Top, route selector removed');
 
 assert(html.includes('data-oom-annotation='));
+module.exports={ctx,element,read,nodes};

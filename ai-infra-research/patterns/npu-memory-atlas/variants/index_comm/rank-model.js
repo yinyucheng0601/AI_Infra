@@ -17,7 +17,7 @@
   const n=owned?(whole?hi-lo:1):0,dense=owned?(whole?Math.max(0,Math.min(hi,c.dense)-lo):Number(layer<c.dense)):0,moe=n-dense;
   const counts=[n*H*H/c.tp,n*2*H*1024/c.tp,n*H*H/c.tp,moe*2*H*I*c.experts/c.ep,moe*H*I*c.experts/c.ep,
    whole&&r.pp===0?V*H/c.tp:0,whole&&r.pp===c.pp-1?V*H/c.tp:0,(n*2+(whole&&r.pp===c.pp-1?1:0))*H,moe*H*c.experts,moe*3*H*I*c.shared/c.tp,dense*3*H*I/c.tp];
-  return names.map((name,i)=>[name,i===3||i===4?'专家桶':i===7||i===8?'复制':'TP 分片',counts[i],i===2||i===6?'row':i===7||i===8?'copy':'col']);
+  return names.map((name,i)=>[name,i===3||i===4?'专家桶':i===7||i===8?'复制':'TP 分片',counts[i],i===2||i===5?'row':i===7||i===8?'copy':'col']);
  }
  const parameters=(id,c,layer=null)=>groups(id,c,layer).reduce((n,g)=>n+g[2],0);
  const activation=c=>3.8*c.mbs*(c.seq/8192)/c.cp*(2/c.tp)*(4/c.pp);
@@ -73,6 +73,32 @@
   return {ok:!errors.length,errors,bad:[...bad]};
  }
  function repair(c){let best=null,score=Infinity;for(const ep of [1,2,4,8,16,32,64,128])for(const pp of [1,2,4,8,16,32,64,128]){const p={...c,ep,pp};if(validate(p).ok&&peak(p)<=p.hbm){const d=Math.abs(Math.log2(ep/c.ep))+Math.abs(Math.log2(pp/c.pp));if(d<score){score=d;best=p;}}}return best;}
- const api={baseline,H,I,V,names,dpReplica,lanes,world,rank,bounds,groups,parameters,activation,memory,execution,peak,validate,repair};
+ // Stable logical allocation ranges shared by memory and graph renderers.
+ function parameterRegions(id,c){
+  const [lo,hi]=bounds(id,c),out=[];let offset=0;
+  const add=(layer,index,elements)=>{if(elements>0){out.push({rank:id,layer,index,elements,offset});offset+=elements;}};
+  const total=groups(id,c);
+  add(null,5,total[5][2]);
+  for(let layer=lo;layer<hi;layer++)groups(id,c,layer).forEach((g,index)=>{if(index!==5&&index!==6)add(layer,index,g[2]);});
+  const norm=total[7][2]-out.filter(r=>r.index===7).reduce((n,r)=>n+r.elements,0);
+  add(null,7,norm);add(null,6,total[6][2]);
+  return out;
+ }
+ function moeLayer(id,c,preferred=null){const [lo,hi]=bounds(id,c);return preferred!==null&&preferred>=Math.max(lo,c.dense)&&preferred<hi?preferred:Math.max(lo,c.dense)<hi?Math.max(lo,c.dense):null;}
+ function parameterShard(config,id,index){
+  const r=rank(id,config),expert=[3,4].includes(index),copy=[7,8].includes(index);
+  const count=copy?1:expert?config.ep:config.tp,part=copy?0:expert?r.ep:r.tp;
+  const axis=expert?'专家':copy?'复制':[2,5].includes(index)?'行':'列';
+  const extent=expert?config.experts:index===1?1024:[5,6].includes(index)?V:[9,10].includes(index)?I:H;
+  const start=part*extent/count,end=(part+1)*extent/count;
+  return {count,index:part,axis,start,end,label:copy?'完整副本':`${expert?'EP':'TP'} 索引 ${part} · 共 ${count} 片 · ${expert?'E':[9,10].includes(index)?'I ':axis+' '}[${start}, ${end})`};
+ }
+ function parameterMetadata(config,id,index){
+  const t=config.tp,e=config.experts/config.ep;
+  const shapes=[`${H} × ${H/t}`,`2 × ${H} × ${1024/t}`,`${H/t} × ${H}`,`${e} × 2 × ${H} × ${I}`,`${e} × ${I} × ${H}`,`${128256/t} × ${H}`,`${H} × ${128256/t}`,`2 × ${H}`,`${H} × ${config.experts}`,`${config.shared} × 3 × ${H} × ${I/t}`,`3 × ${H} × ${I/t}`];
+  const consumers=[['attention'],['attention'],['attention'],['experts'],['experts'],['embedding'],['head'],['norm1','norm2'],['router'],['shared'],['dense']];
+  return {shape:shapes[index],consumers:consumers[index],shard:parameterShard(config,id,index)};
+ }
+ const api={baseline,H,I,V,names,dpReplica,lanes,world,rank,bounds,groups,parameters,parameterShard,parameterMetadata,parameterRegions,moeLayer,activation,memory,execution,peak,validate,repair};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.RankAtlasModel=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
