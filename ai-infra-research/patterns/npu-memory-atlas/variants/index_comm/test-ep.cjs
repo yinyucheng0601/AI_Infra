@@ -45,7 +45,7 @@ for(const hot of [false,true])for(const layer of [0,7,47])for(const microbatch o
 const htmlPath=path.join(__dirname,'../index_comm.html'),html=fs.readFileSync(htmlPath,'utf8');
 for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
   const src=match[1].match(/src="([^"]+)"/);
-  if(src)assert(fs.existsSync(path.resolve(path.dirname(htmlPath),src[1])),'missing '+src[1]);
+  if(src)assert(fs.existsSync(path.resolve(path.dirname(htmlPath),src[1].split('?')[0])),'missing '+src[1]);
   else new vm.Script(match[2]);
 }
 // Run legacy scene code against a minimal DOM fixture: catches missing controls,
