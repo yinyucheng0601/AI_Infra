@@ -1,0 +1,1376 @@
+{
+  "version": "2026-10-12",
+  "sourceSha256": "5a6201f409ebbe7dfe877d85a6a69b6f9f9197b6170ccdd76b3737d34d7d451a",
+  "sources": [
+    {
+      "id": "pypto-compilation-guide",
+      "title": "PyPTO 编译流水线图解",
+      "file": "reports/llm-compute/pypto-compilation-guide/index.html",
+      "sha256": "5e7b49f20da962aede72d8aa92c98363eaaace67139ed984261f3f89675da6e0"
+    },
+    {
+      "id": "pypto-guides",
+      "title": "PyPTO 函数变换、内存复用与问题定位",
+      "file": "reports/llm-compute/pypto-guides/index.html",
+      "sha256": "25498cc6d10e1314ad543e3351b3f7afb6ea1e4a04ca4c19ab6266915408456e"
+    },
+    {
+      "id": "llm-inference-dense-to-clusters",
+      "title": "LLM 推理全流程：从单卡到集群",
+      "file": "reports/llm-compute/llm-inference-dense-to-clusters-v1.html",
+      "sha256": "17e11e0a2eec5e4746628da0080c73d813aad381f18eb08d5a5e3a0d991cd692"
+    },
+    {
+      "id": "training-parallel-communication",
+      "title": "多卡并行配置与通信图解",
+      "file": "reports/llm-compute/training-parallel-communication-v1.html",
+      "sha256": "5153c90d6513249ea4e47068f5d43bc7b283cec89967d83fba72b2410a85f00d"
+    },
+    {
+      "id": "dense-ffn-to-moe",
+      "title": "从 Dense FFN 到 MoE",
+      "file": "reports/llm-compute/dense-ffn-to-moe-v1.html",
+      "sha256": "dd84b450f56cec6311c3e5a6e66e32844f7d6d023dc55e46d669753b5e0d2cc6"
+    },
+    {
+      "id": "transformer-layer-guide",
+      "title": "Transformer 层内图解：从 Token 到残差",
+      "file": "reports/llm-compute/transformer-layer-guide-v3.html",
+      "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+    },
+    {
+      "id": "layer-stack-demo",
+      "title": "Layer Stack · 正式 Demo",
+      "file": "../layer_stack/pangu-layer-stack_2.html",
+      "url": "../../../../layer_stack/pangu-layer-stack_2.html",
+      "sha256": "4f67a132107c1eed53204b1ab7f17d97d00d53e3e414e1fe642cfc89b4fefdd2",
+      "kind": "demo"
+    }
+  ],
+  "items": [
+    {
+      "id": "data-1",
+      "title": "折叠值 / Tile",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-1.svg",
+      "sha256": "aee8eb392b13e6fcfdd090bd27f08445147028ff2aa0d01041a57724c00e6050",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-2",
+      "title": "展开矩阵",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-2.svg",
+      "sha256": "a458ab910b6766ae4ad6a2222dafa985621b7c3701c8770878490a24cae29931",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-3",
+      "title": "数值向量",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-3.svg",
+      "sha256": "360a873ef5075a0b0d8d11a607e5a47ffec23c5bdfbc6f126bce476e6d1ac29d",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-4",
+      "title": "数据角色",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-4.svg",
+      "sha256": "fd2e5b883fa8d57d33aa5a9e61d5ab704a09e4b6e9a4d40a3c2343dc3aa4c846",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-5",
+      "title": "KV cache",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-5.svg",
+      "sha256": "7bb059ef05173acb9f5c144604884b2d26893675a7377742fe6c6a73c467c547",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-6",
+      "title": "分块状态",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-6.svg",
+      "sha256": "a90e30886a3613095de5fd3a8f063a30d3dc6bb615a4610063aba447ee0ae378",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-7",
+      "title": "局部异常采样",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-7.svg",
+      "sha256": "609fcc438b62af52028f38c5314fd8eaf7f2dcfd09d31d464b1a70934d5e3f8f",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "data-8",
+      "title": "灰度采样矩阵",
+      "family": "system-value",
+      "layer": "system",
+      "file": "data-8.svg",
+      "sha256": "7a36266888dadd348db97ee3e55c3e6ab924a7348c03b7d3b92c26b90886b38a",
+      "description": "同一个值通过稳定 ID 关联折叠表示、矩阵展开与数值向量。参数、激活、聚合结果和梯度是数据角色；shape 是对象元数据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "ring"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        },
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "token",
+      "title": "Token",
+      "family": "token",
+      "layer": "system",
+      "file": "token.svg",
+      "sha256": "40618b5843d61d409f25c9317f803ee49a59cac6292e69db88de7f63797bfc57",
+      "description": "独立标签表示离散 token 或其编号，不能把该标签直接当作隐藏特征矩阵。",
+      "sources": [
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-1"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-op",
+      "title": "计算与通信操作",
+      "family": "system-op",
+      "layer": "system",
+      "file": "system-op.svg",
+      "sha256": "0fd9691aab69279b24e237992c21abe0c00ac83214b9331bcccc380f72bc4d70",
+      "description": "具名计算操作采用统一胶囊。模型层操作与 IR 操作通过名称、所属层级和来源区分，跨阶段对应需要变换证据。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "structure-tile"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-add",
+      "title": "逐元素加／乘",
+      "family": "system-add",
+      "layer": "system",
+      "file": "system-add.svg",
+      "sha256": "8ad09179868affec6a72403084f9096b0d7104717b51faf24eb4e4ef47fbe35d",
+      "description": "圆形加号保留独立形态；输入形状与广播条件由操作定义决定。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "expert",
+      "title": "MoE 专家",
+      "family": "expert",
+      "layer": "system",
+      "file": "expert.svg",
+      "sha256": "5fc3354c35355af22d97b69a3d5dc7a176d087dc82dd239f5e019d6040ac1bd5",
+      "description": "专家胶囊内部以三组参数小格概括 SwiGLU 参数，边界标识专家身份。 降低轮廓与参数网格的亮度，表达当前 token 路由中未选中的专家；专家参数仍然存在。",
+      "sources": [
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-loop",
+      "title": "循环范围",
+      "family": "system-loop",
+      "layer": "system",
+      "file": "system-loop.svg",
+      "sha256": "ce1c6eabd6b0068491066cb12c432c3116f3b3ee75d602571aae8c74ccee793d",
+      "description": "左括线与虚线范围表达控制结构；迭代次数不是设备数量。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "structure-control"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-kernel",
+      "title": "核函数",
+      "family": "system-kernel",
+      "layer": "system",
+      "file": "system-kernel.svg",
+      "sha256": "610fe9c379527e5ff37e3881c7ff58db6511b23af95328ceb118bc6ae36f5f92",
+      "description": "10% 白色填充的函数范围与目标标签表示核函数；函数体可包含 OP 与循环。普通函数不自动等同于设备端入口。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "structure-kernels"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "outline"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "structure-outline"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-task",
+      "title": "调度任务",
+      "family": "system-task",
+      "layer": "system",
+      "file": "system-task.svg",
+      "sha256": "d6f1e750a3688e9f61090bfefebc9f58c95fa173900a44b3dae0046daa25a2b1",
+      "description": "亮绿色实心条与调度图标表示一次核函数调度，任务 0 是示例中的第 0 个任务实例，projection 是目标核函数。与设备指令共用样式，但语义层级不同。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "diagnosis-instance"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-instruction",
+      "title": "设备指令",
+      "family": "system-instruction",
+      "layer": "system",
+      "file": "system-instruction.svg",
+      "sha256": "009542afd3665f76a931f9c7ec8d6cd49e4b30db7ff90084667690875aca4198",
+      "description": "亮绿色实心条与终端图标表示设备执行动作。DataCopy 为搬运指令的示意名称，不代表某个 ISA 的具体操作码。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-rank",
+      "title": "Rank 进程",
+      "family": "system-rank",
+      "layer": "system",
+      "file": "system-rank.svg",
+      "sha256": "93aada8858e29c8605ec29204bb625930b0be72364061042abf02c2a73987134",
+      "description": "部署容器具有稳定进程身份；设备绑定和并行组分别记录，容器外形不代表硬件规格。",
+      "sources": [
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-memref",
+      "title": "存储引用",
+      "family": "system-memref",
+      "layer": "system",
+      "file": "system-memref.svg",
+      "sha256": "7d0132eb5c1bb611deef35849b6ef67b6a744baee07e195bbceb7a6caf500376",
+      "description": "槽形表示 MemRef，记录底层分配身份、偏移与访问范围；多个引用可关联同一分配。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        }
+      ],
+      "status": "retained-original"
+    },
+    {
+      "id": "system-storage",
+      "title": "地址区间",
+      "family": "system-storage",
+      "layer": "system",
+      "file": "system-storage.svg",
+      "sha256": "f89b9330689b7712654f3ef87c7b1f6eeb41367e61a575d9071a946bfb27f5eb",
+      "description": "带刻度的区间表示某一内存空间内的字节范围，必须同时标明空间、偏移与单位。",
+      "sources": [
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "memory"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-address"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "lifetime",
+      "title": "静态生命周期",
+      "family": "lifetime",
+      "layer": "system",
+      "file": "lifetime.svg",
+      "sha256": "9f51da611db3f5910619ccec87e4ef0522214729c8d0d85ef5c30a3cd6ba5c94",
+      "description": "条带沿定义／使用位置延展，用于说明哪些值需要同时保留；横轴不是设备运行时间。",
+      "sources": [
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-lifetime"
+        }
+      ],
+      "status": "retained-original"
+    },
+    {
+      "id": "ir",
+      "title": "中间表示 · IR",
+      "family": "ir",
+      "layer": "system",
+      "file": "ir.svg",
+      "sha256": "eef0b02ebe227edbe9685f4788b271dcfd157a97e38dfbe73b58002f2dc68758",
+      "description": "中性灰范围内展示局部数据流。完整 IR 还包含函数、控制流、类型等信息。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "diagnosis-conditions"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "system-pass",
+      "title": "编译步骤",
+      "family": "system-pass",
+      "layer": "system",
+      "file": "system-pass.svg",
+      "sha256": "879357ef7c775d3cfb6649edf5a3414cc4412c881a33166d34b14ce087287e7d",
+      "description": "窄矩形表达分析或变换步骤；名称和版本用于追溯，不表示运行任务。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "diagnosis-conditions"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "relation-data",
+      "title": "数据依赖",
+      "family": "relation-data",
+      "layer": "system",
+      "file": "relation-data.svg",
+      "sha256": "ed27cf2fcabdaa07c1e186a8241f862d1b0042bd7a90a09e02f0de9aa050c1b9",
+      "description": "从生产者指向消费者；线长不编码运行耗时。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        }
+      ],
+      "status": "retained-original"
+    },
+    {
+      "id": "parameter-read",
+      "title": "参数读取",
+      "family": "parameter-read",
+      "layer": "system",
+      "file": "parameter-read.svg",
+      "sha256": "d06462db30d03ba52d225f6d392e4c9b9be341f4b4443a32fbf36faeb0626fed",
+      "description": "推理报告用蓝紫色虚线表示读取参数；应与青色梯度反向关系区分。",
+      "sources": [
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "backward",
+      "title": "反向求导关系",
+      "family": "backward",
+      "layer": "system",
+      "file": "backward.svg",
+      "sha256": "135383299805a5957ad98a240972f5d0732f5e5453c705b55f41c9a39e38e4c3",
+      "description": "青色虚线指向上游，表示反向传播关系；简写图不能代替完整求导计算图。",
+      "sources": [
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-12"
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "relation-call",
+      "title": "调用",
+      "family": "relation-call",
+      "layer": "system",
+      "file": "relation-call.svg",
+      "sha256": "ce383c7161a56c3f4325c14a109cb286c3895537df793e662ca89d3eb0f7b665",
+      "description": "虚线开口箭头连接调用方与函数定义，区别于值的数据依赖。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "task-dependency",
+      "title": "任务依赖",
+      "family": "task-dependency",
+      "layer": "system",
+      "file": "task-dependency.svg",
+      "sha256": "211b5a55d0db52c902d8df6a8faf08f5c6eab2b1b6ee26637d6fab2bb4710fe6",
+      "description": "实线开口箭头表达前置任务完成条件，线长不表示等待时间。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "relation-binding",
+      "title": "存储绑定",
+      "family": "relation-binding",
+      "layer": "system",
+      "file": "relation-binding.svg",
+      "sha256": "1b649cc87a2730f3293f6d41230d4ef93f6dcb45164e9f0278087d77da972d34",
+      "description": "圆端点连接值或视图与存储引用；不是计算顺序。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "relation-mapping",
+      "title": "跨阶段对应",
+      "family": "relation-mapping",
+      "layer": "system",
+      "file": "relation-mapping.svg",
+      "sha256": "9cb61951ae6cb09dca44232621b03713e8edee03bfb2c610c5e5dc3f329b341f",
+      "description": "点线空心菱形表示有证据支持的对应；不暗示新增运行依赖。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "checks",
+      "title": "检查结果",
+      "family": "checks",
+      "layer": "system",
+      "file": "checks.svg",
+      "sha256": "ae90e23664caffcf10181bdb547462c5ac72371bb7c00142050b092a9642c713",
+      "description": "勾号表示指定检查在该快照通过；仅覆盖所述性质与检查范围。 叉号表示指定检查失败；需要结合前后快照与检查覆盖定位偏离区间。 实线圆与横线表示旧验证保证不再适用，需要重新检查。 虚线圆与横线表示未获得检查记录，不能解释为通过或失败。",
+      "sources": [
+        {
+          "id": "pypto-guides",
+          "anchor": "diagnosis-first"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "runtime-intervals",
+      "title": "执行与等待区间",
+      "family": "runtime-intervals",
+      "layer": "system",
+      "file": "runtime-intervals.svg",
+      "sha256": "82b0cf08e233429aa7f768750ce311847aee15f00d127ceb32fea50d2456a8a6",
+      "description": "事件条对应时间轴上的执行区间；只有标注单位与时间证据后，长度才可以用于比较耗时。 dispatch 与 start 之间的区间表示待解释的时间间隔，单凭间隔不能判定依赖、排队或资源竞争。",
+      "sources": [
+        {
+          "id": "pypto-guides",
+          "anchor": "diagnosis-wait"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-forward",
+      "title": "Forward · 连续前向符号",
+      "family": "layer-forward",
+      "layer": "system",
+      "file": "layer-forward.svg",
+      "sha256": "15b7fb2bca533720a87bf93b1eb2b8c56c0f0183aea36185c84a64a84b627b3e",
+      "description": "提取层边界连续右向折线符号；沿路径表达前向依赖方向。此处为水平排列、2 倍放大的图元样例，不是执行时间轴。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-backward",
+      "title": "Backward · 连续反向符号",
+      "family": "layer-backward",
+      "layer": "system",
+      "file": "layer-backward.svg",
+      "sha256": "81b3b8ca4440fb54e937fb8cc565411b9c58ea8a319667d7a8d4fda4f4fda211",
+      "description": "使用相同折线符号水平镜像，连续指向左侧；表示层间反向依赖，不把参数梯度当作激活梯度。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-parameter",
+      "title": "参数读取",
+      "family": "layer-parameter",
+      "layer": "system",
+      "file": "layer-parameter.svg",
+      "sha256": "36385fcffce776df300bdc758a882fe56337d8478acf7eed442a1929c1b49023",
+      "description": "参数保留紫色网格；读取路径为中性灰实线。与图例库上一轮批准的紫色虚线是不同方案，仅收集对比。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-rank-volume",
+      "title": "2.5D Rank · 容量分层",
+      "family": "layer-rank-volume",
+      "layer": "system",
+      "file": "layer-rank-volume.svg",
+      "sha256": "1cad325234941824cc3f3796074bfa82b8e61718b8735324c258f9aa3494d291",
+      "description": "直接执行原 renderer；正交投影、三面明暗、贴面文字与容量比例均保留。64 GB 及分配量为示例。该图表示 Rank 的内存视图，不把进程当作物理芯片。权重色使用源 demo 的 #D185E6，尚未替换库内参数紫色。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-rank-shard",
+      "title": "表示变体 · Rank 异常分片",
+      "family": "layer-rank-shard",
+      "layer": "system",
+      "file": "layer-rank-shard.svg",
+      "sha256": "40281d6374e36d8b5e61dae9c6f157291b5b7d53ac9b979fa818fe8fcb31e2b6",
+      "description": "直接执行原 renderer 的分片检查分支：遮挡上层不再绘制，背景分配变暗，异常切片使用橙红。位置由 layer % 8 得到，只是模拟定位，不是真实内存地址。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "pattern-compute",
+      "title": "参数化计算",
+      "family": "pattern-compute",
+      "layer": "pattern",
+      "file": "pattern-compute.svg",
+      "sha256": "a38f8dfbbfa49602525e1cb8c6aa572aab1626c9dc48a3e1ba6a06babbf3a87f",
+      "description": "X [2,4] 与参数 W [4,3] 输入 MatMul，输出 Y [2,3]。参数和输入作为独立数据对象连接操作；展开使用统一 24 单位格距。",
+      "sources": [
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "pattern-distribution",
+      "title": "分片／复制／部分结果",
+      "family": "pattern-distribution",
+      "layer": "pattern",
+      "file": "pattern-distribution.svg",
+      "sha256": "27da3b02646cc3ac202b361f25adf47c5e34453888cf530ea992bd3ea69565ac",
+      "description": "同一布局比较三种分布语义：分片覆盖不同索引范围，复制持有同一逻辑值，部分结果需要归约组合。TP 外侧标记不覆盖内部数据角色色。",
+      "sources": [
+        {
+          "id": "training-parallel-communication"
+        },
+        {
+          "id": "training-parallel-communication",
+          "anchor": "vocab"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "inherited"
+        },
+        {
+          "id": "llm-inference-dense-to-clusters",
+          "anchor": ""
+        },
+        {
+          "id": "dense-ffn-to-moe",
+          "anchor": ""
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": "step-2"
+        },
+        {
+          "id": "transformer-layer-guide",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "pattern-storage",
+      "title": "值／视图／存储",
+      "family": "pattern-storage",
+      "layer": "pattern",
+      "file": "pattern-storage.svg",
+      "sha256": "8fc7501c359c443b5562b1aa2246beabcf165c6479fa9e2e53c585bf7166a559",
+      "description": "连续 FP16 数据 V [4,4] 占 32 B；后两行视图 [2,4] 引用同一分配的 [16,32) B。值、视图、MemRef 与底层分配分别标识。",
+      "sources": [
+        {
+          "id": "pypto-guides"
+        },
+        {
+          "id": "pypto-compilation-guide"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "tile"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "objects"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "memory"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": "memory-address"
+        },
+        {
+          "id": "pypto-compilation-guide",
+          "anchor": "relations"
+        },
+        {
+          "id": "pypto-guides",
+          "anchor": ""
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-residual-pattern",
+      "title": "Pattern · 残差旁路",
+      "family": "layer-residual-pattern",
+      "layer": "pattern",
+      "file": "layer-residual-pattern.svg",
+      "sha256": "936063e2b2433755c223694ceda29c2659dea0a8dca8706af1d8c0b6fab2e4bf",
+      "description": "复用源图元组合。侧路绕过计算分支，在圆形加号处汇合；示例只保留局部结构，不将 demo 的四路 mHC 简化为整层恒等连接。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    },
+    {
+      "id": "layer-layer-face-pattern",
+      "title": "Pattern · 层内计算的紧凑／展开表示",
+      "family": "layer-layer-face-pattern",
+      "layer": "pattern",
+      "file": "layer-layer-face-pattern.svg",
+      "sha256": "eeea1967f5c89f276dc30847e64c667a4c147e4caf4d48a590973a3a14fa6ec0",
+      "description": "直接执行同一 renderer 的两种 detailed 配置。展开增加 Norm 节点并重新分配间距，保持总高度与对象 ID；不是只把图放大。这里只提取计算组合，不恢复已删除的通用 Layer 边界图例。",
+      "sources": [
+        {
+          "id": "layer-stack-demo"
+        }
+      ],
+      "status": "current-library"
+    }
+  ]
+}

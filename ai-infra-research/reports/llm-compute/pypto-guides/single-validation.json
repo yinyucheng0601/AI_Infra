@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-12T03:14:10.296Z",
+  "checkedAt": "2026-10-13T01:40:30.573Z",
   "scope": "Static syntax, offline dependencies, all chapter/mode rendering with a simulated DOM, glossary selection, next/previous, fit/zoom and local source targets. No browser layout or reader study.",
   "reports": [
     {
@@ -11,7 +11,7 @@
       "simulatedReader": "pass",
       "keyboardSequence": "62 positions forward/backward, boundaries, outline chapter modes and editable exclusion pass",
       "localSources": "pass",
-      "sha256": "25498cc6d10e1314ad543e3351b3f7afb6ea1e4a04ca4c19ab6266915408456e"
+      "sha256": "5852dc6c20a21c02307bbfb194320062a0ca2a66acf6e3f4469d81ee0e67d14e"
     }
   ],
   "uniqueChapterIds": 24,

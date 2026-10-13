@@ -130,12 +130,13 @@
           "url": null,
           "path": "ai-infra-research/reports/llm-compute/pypto-compilation-guide/index.html",
           "revision": null,
-          "sha256": "5e7b49f20da962aede72d8aa92c98363eaaace67139ed984261f3f89675da6e0"
+          "sha256": "328eece3a72ea49dbb2678d078240a638c1c2113a1a1cb66688702c61c7a14e2"
         }
       ],
       "validation": [
         "2026-10-10：用户确认收录；源报告已检查布局与交互。本次检查目录、脚本语法与生成入口，未重新执行浏览器验收或编译器实验。",
-        "2026-10-12：按用户指定入口更新至独立定稿版本，核对文件指纹与目录链接；报告正文未改动。"
+        "2026-10-12：按用户指定入口更新至独立定稿版本，核对文件指纹与目录链接；报告正文未改动。",
+        "2026-10-13：同步已确认的运行时图元与 Kernel 样式，清理教学示意措辞；脚本与 SVG 检查通过，未完成浏览器视觉验收。"
       ],
       "related": [
         "llm-compute-diagrams",
@@ -180,11 +181,12 @@
           "url": null,
           "path": "ai-infra-research/reports/llm-compute/pypto-guides/index.html",
           "revision": null,
-          "sha256": "25498cc6d10e1314ad543e3351b3f7afb6ea1e4a04ca4c19ab6266915408456e"
+          "sha256": "1af831b187727a3e9172d9e7c41be9c4fcd4784449b0ff7740971137c55b622a"
         }
       ],
       "validation": [
-        "2026-10-12：用户确认收录第 2–6 篇合并报告；已通过 24 节、61 种图示状态的静态与模拟 DOM 检查。本次核对目录、文件指纹与入口，不新增浏览器视觉验收或编译器实验结论。"
+        "2026-10-12：用户确认收录第 2–6 篇合并报告；已通过 24 节、61 种图示状态的静态与模拟 DOM 检查。本次核对目录、文件指纹与入口，不新增浏览器视觉验收或编译器实验结论。",
+        "2026-10-13：同步已确认的运行时图元与 Kernel 样式，清理教学示意措辞；脚本与 SVG 检查通过，未完成浏览器视觉验收。"
       ],
       "related": [
         "pypto-compilation-guide",

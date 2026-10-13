@@ -1,3 +1,5 @@
+> 当前视觉基线见 [approved-glyphs.md](approved-glyphs.md)。下文历史尺寸、配色与 renderer 若冲突，以该基线与 SVG 为准；不要据旧规则生成紫色 Task 或不同直径的加乘圆。
+
 # 图元和页面规范
 
 ## 配色与排版

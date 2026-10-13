@@ -1,3 +1,5 @@
+> 当前视觉基线见 [approved-glyphs.md](approved-glyphs.md)。下文历史尺寸、配色与 renderer 若冲突，以该基线与 SVG 为准；不要据旧规则生成紫色 Task 或不同直径的加乘圆。
+
 # 编译与执行图元扩展
 
 2026-10-10 用户确认，来源：PyPTO compilation guide。适用于编译器、Kernel 与任务图解；不是行业统一符号，也不强制覆盖普通模型模块的旧样式。

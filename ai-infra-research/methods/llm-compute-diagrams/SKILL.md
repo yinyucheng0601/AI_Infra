@@ -7,6 +7,10 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 
 把计算机制组织成读者可以逐页理解、操作并最终读懂完整结构的网页。面向具备产品或设计经验、正在建立 AI infra 概念体系的读者。默认使用中文专业解释、深色矩阵图元和离线单文件 HTML；用户本次要求优先。
 
+## 当前图元入口
+
+制作或修改图元前，先读取 [已确认图元规范](references/approved-glyphs.md)，按 `assets/approved-glyphs/manifest.json` 复用 SVG，并查看 [当前离线图例库](assets/approved-legend-library.html)。该基线优先于旧示例与旧 renderer 的视觉默认值；用户当前要求优先。
+
 ## 先确定要解释的关系
 
 从用户的问题中识别具体认知缺口，明确本次范围：模型计算结构、张量及形状、设备部署、运行事件，或几者之间的映射。以给定材料的当前内容为依据；修改现有网页时优先使用用户选中的最新文件，而非本技能示例。
@@ -18,7 +22,7 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 按主题读取相关参考，避免把所有主题知识都塞入每次任务：
 
 - 视觉、网页交互或图元实现：读取 [visual-system.md](references/visual-system.md)。
-- 编译流程、IR、Pass、Kernel、Task 或设备指令图解：读取 [compiler-objects.md](references/compiler-objects.md)，复用 [compiler-primitives.js](assets/compiler-primitives.js)。该扩展使用紫色 OP / Kernel / Task、指令窄条和中性灰编译步骤；其专题规则优先于下文通用模块默认样式。
+- 编译流程、IR、Pass、Kernel、Task 或设备指令图解：读取 [compiler-objects.md](references/compiler-objects.md)，复用 [compiler-primitives.js](assets/compiler-primitives.js)。该扩展保留历史实现；视觉样式以已确认图元规范为准，尤其 Task／指令为绿色矩形，Kernel 为低对比容器。
 - 标题、正文、知识递进：读取 [teaching-and-copy.md](references/teaching-and-copy.md)。
 - Attention、FFN、Dense、MoE、普通残差或 mHC：读取 [sublayers.md](references/sublayers.md)。
 - 多卡训练、并行组和通信：读取 [parallelism.md](references/parallelism.md)。切分图例使用 [visual-system.md 的确认色板](references/visual-system.md#并行切分与-moe-图例用户确认)，区分张量填色与切分维度色；EP／MoE 标识沿用橙色。
@@ -39,7 +43,7 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 
 数据块采用统一语义配色：蓝紫色表示模型参数（权重和偏置，`t: 'w'`），绿色表示输入及计算中间值（Q/K/V、激活、输出等，`t: 'i'`），黄色表示归一化等运算所需的聚合结果（均值、Softmax 最大值与指数和，`t: 'a'`）。梯度另用青色（`t: 'g'`）。具体色值和实现映射以 [visual-system.md](references/visual-system.md) 为准；修改时同步图例、数据块、标签、点击释义和正文，所有分步页及总览保持一致。通信事件、等待区间和设备标识另设明确标记。注意力系数、路由系数和运行时连接系数属于绿色中间值；生成这些系数的可训练参数属于蓝紫色。
 
-新建或扩展网页前，必须读取 visual-system.md 的图元字典和 Add 实现，并查看参考 HTML 的图元页（VISUAL VOCABULARY，含封面时为第三页）。既有语义复用既有图元：逐元素 Add 使用圆形加号，逐元素乘法及标量广播乘法使用大圆圈内的乘号 ×（读取 visual-system.md 的 Multiply 规范），Norm、Attention、FFN 等计算模块使用中灰填充的大圆角矩形与居中白色粗体文字；不要将所有可点击节点统一套成矩形卡片。
+新建或扩展网页前，必须读取 visual-system.md 的图元字典和 Add 实现，并查看参考 HTML 的图元页（VISUAL VOCABULARY，含封面时为第三页）。既有语义复用既有图元：逐元素 Add 使用圆形加号，逐元素乘法及标量广播乘法使用与 Add 相同直径的圆圈及线描乘号 ×（读取 visual-system.md 的 Multiply 规范），Norm、Attention、FFN 等计算模块使用中灰填充的大圆角矩形与居中白色粗体文字；不要将所有可点击节点统一套成矩形卡片。
 
 张量小格统一为正方形，真实 shape 通过文字标注。示意网格的格数与亮度不承诺真实值；需要真实数值时另行标注。随视图缩放保持横纵比例一致。所有关键输入、分支结果、残差合并结果、参数、梯度和必要的数据边界都应可解释。
 

@@ -108,10 +108,10 @@
    if(mode==='comm')legacy.setAtlasMode('explode');
    state.space={viewMode,scope,zoom,pan:[...pan]};scope='all';state.layout='flat';if(state.layer!==null){const [lo,hi]=M.bounds(selectedRank,atlasConfig);if(state.layer<lo||state.layer>=hi)state.layer=null;}
   }else{state.layout='space';state.graphScene=false;if(state.space){({viewMode,scope,zoom}=state.space);pan=[...state.space.pan];}state.query=false;}
-  tooltip.hidden=true;hover.hidden=true;syncShell();dial();render();
+  tooltip.hidden=true;hover.hidden=true;flatHoverPoint=null;window.hideRankObjectHover?.();syncShell();dial();render();
   if(next==='flat'&&!matchMedia('(prefers-reduced-motion: reduce)').matches)canvas.animate([{transform:'translateY(14px) scale(.985)'},{transform:'translateY(0) scale(1)'}],{duration:280,easing:'ease-out'});
  }
- function syncShell(){const flat=state.layout==='flat';$('memory-legend').hidden=flat||!labels;viewScope.hidden=flat;spatialSettings.hidden=flat;$('flat-display-settings').hidden=!flat;$('flat-heat').closest('label').hidden=true;document.body.dataset.layout=state.layout;document.body.dataset.query=String(state.query);stage.hidden=!flat;flatHelp.hidden=!flat;context.hidden=!flat;query.hidden=!state.query;syncSceneButtons();}
+ function syncShell(){const flat=state.layout==='flat';$('memory-legend').hidden=flat||!labels||(scope==='all'&&viewMode==='2.5D'&&mode!=='comm'&&relationRank===null);viewScope.hidden=flat;spatialSettings.hidden=flat;$('flat-display-settings').hidden=!flat;$('flat-heat').closest('label').hidden=true;document.body.dataset.layout=state.layout;document.body.dataset.query=String(state.query);stage.hidden=!flat;flatHelp.hidden=!flat;context.hidden=!flat;query.hidden=!state.query;syncSceneButtons();}
  function syncSceneButtons(){
   const oom=mode==='comm'&&viewMode==='Front'&&epIncidentActive;
   graphButton.setAttribute('aria-pressed',String(state.graphScene));
@@ -217,9 +217,17 @@
   ctx.font='11px ui-monospace,monospace';ctx.textAlign='right';
   if(labels)for(let row=0;row<rows;row+=Math.max(1,Math.ceil(17/rh))){const y=y0+(row+.5)*rh;if(y<0||y>h)continue;const r=ranks[selected.pp*perStage+(scope==='single'?rowSelected:row)];ctx.fillStyle=r.id===selectedRank?ink:muted;ctx.fillText(state.showTP?`D${r.dpIndex}${atlasConfig.cp>1?' C'+r.cp:''} T${r.tp}`:'R'+r.id,x0-10,y);}
   flatHelp.textContent='大框：Rank · 灰格：Layer · 紫色：当前层 · 白底：当前算子 · 白框：选中'+(maxTier===3&&visibleExecution?' · 细节慢放':'');
-  $('zoom').textContent=Math.round(state.flat.zoom*100)+'%';
+  $('zoom').textContent=Math.round(state.flat.zoom*100)+'%';refreshFlatObjectHover();
  }
  function hit(e){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;return state.hits.find(h=>x>=h.x&&x<=h.x+h.w&&y>=h.y&&y<=h.y+h.h);}
+ let flatHoverPoint=null;
+ function refreshFlatObjectHover(){
+  if(!flatHoverPoint)return;
+  const h=hit(flatHoverPoint),b=canvas.getBoundingClientRect();
+  if(h)window.showRankObjectHover?.({left:b.left+h.x,top:b.top+h.y,width:h.w,height:h.h});else window.hideRankObjectHover?.();
+ }
+ canvas.addEventListener('pointermove',e=>{flatHoverPoint=e.buttons?null:{clientX:e.clientX,clientY:e.clientY};if(flatHoverPoint)refreshFlatObjectHover();else window.hideRankObjectHover?.();});
+ for(const name of ['pointerdown','pointerleave','pointercancel'])canvas.addEventListener(name,()=>{flatHoverPoint=null;window.hideRankObjectHover?.();});
  function selectCell(h){if(h.op){selectedRank=h.id;state.layer=h.layer;selectOperator(ops.find(o=>o.id===h.op));return;}state.op=null;state.expert=null;selectedRank=h.id;relationRank=h.id;state.layer=h.layer;state.inspect=true;const [lo,hi]=M.bounds(h.id,atlasConfig);if(state.layer!==null&&(state.layer<lo||state.layer>=hi))state.layer=null;rebuildQuery();render();}
  let drag=null;
  canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,fx:state.flat.x,fy:state.flat.y,moved:false};canvas.setPointerCapture(e.pointerId);});
