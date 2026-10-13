@@ -6,6 +6,7 @@ import os
 from zipfile import ZipFile, ZIP_DEFLATED
 from pathlib import Path
 from validate_catalog import validate
+from version_rank_demo import refresh
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -28,6 +29,7 @@ def design_system_markup(mode):
 
 
 def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowledge'):
+    refresh(ROOT)
     data = json.loads((ROOT / 'catalog/assets.json').read_text())
     validate(data)
     template = (ROOT / 'web/index.template.html').read_text()
