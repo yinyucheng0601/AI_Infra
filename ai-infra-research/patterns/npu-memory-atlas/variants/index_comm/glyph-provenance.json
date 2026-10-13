@@ -1,0 +1,18 @@
+{
+  "contract": "Geometry and renderer-rule reuse with atlas metadata, neutral colors and partition extensions; not byte-identical fragments.",
+  "sources": [
+    {
+      "file": "reports/llm-compute/training-parallel-communication-v1.html",
+      "functions": {
+        "dataTiles": "69ff33129d26a5526d574123002e34e4489a88d356bf48a4f83cccae96276959",
+        "tensorNode": "144892f3ef9522e6aae3e8d15403d152636d5ee4da12eb4b459cd302a4091a75"
+      }
+    },
+    {
+      "file": "reports/llm-compute/pypto-compilation-guide/index.html",
+      "functions": {
+        "op": "17380dc7cf5a61b3dbf2401ad9d30f0d3aa03b665bff8676dbcc01b63f11841d"
+      }
+    }
+  ]
+}
