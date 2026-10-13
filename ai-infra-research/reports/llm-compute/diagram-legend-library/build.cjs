@@ -113,9 +113,20 @@ if(fs.existsSync(approvalPath)){
  for(const decision of approval.items){
   const item=system.find(e=>e.id===decision.id);
   if(!item)throw Error('Unknown approved legend: '+decision.id);
-  if(decision.decision==='approved')item.svg=decision.candidate;
+  item.svg=decision.decision==='approved'?decision.candidate:decision.before;
  }
 }
+// User-specified memory treatment supersedes the earlier review snapshot.
+Object.assign(system.find(e=>e.id==='system-memref'),{
+ title:'存储引用 · MemRef',
+ svg:V.wrap(V.memory('buffers','qk_pv buffers','15 addressed',20,35,300,106),340,180),
+ desc:'灰色圆角网格板表示存储引用集合；15 addressed 表示该示例中已有地址的引用数量。背景网格仅为纹理，不表示引用数量、张量形状或地址。'
+});
+Object.assign(system.find(e=>e.id==='system-storage'),{
+ title:'内存空间与容量',
+ svg:V.wrap(V.memory('l0a','L0A buffers','16/64KB',20,35,300,106,true),340,180),
+ desc:'蓝色圆角网格板表示具名内存空间；16/64KB 为已用容量与总容量的格式示例，不声明特定芯片容量。背景网格不编码容量比例；具体分配的地址仍需记录空间、偏移和字节长度。'
+});
 // Approved Layer Stack extractions are self-contained snapshots with source provenance.
 const layerExtract=JSON.parse(fs.readFileSync(path.join(__dirname,'layer-extract.json'),'utf8'));
 const layerFile='../layer_stack/pangu-layer-stack_2.html';
@@ -127,10 +138,12 @@ system.push(...layerItems.filter(e=>e.layer==='pattern'));
 // Data identity owns its role, sampling and progress representations.
 const dataCard=system.find(e=>e.id==='system-value');
 const samples=layerItems.filter(e=>['layer-sample','layer-sample-gray'].includes(e.id));
-const roleExamples=[['激活','#B1EF6B'],['参数','#BCA0F3'],['聚合','#F2C45F'],['梯度','#79D4F2'],['优化器','#B0B0B0']];
-const roleSvg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 180">${roleExamples.map(([label,color],i)=>`<g transform="translate(${i*96+6} 55)"><rect width="84" height="48" rx="4" fill="#111" stroke="${color}"/>${Array.from({length:8},(_,j)=>`<rect x="${6+j%4*19}" y="${6+Math.floor(j/4)*19}" width="15" height="15" fill="${color}" fill-opacity=".25"/>`).join('')}<text x="42" y="76" text-anchor="middle" fill="${color}" font-size="13" font-family="system-ui">${label}</text></g>`).join('')}</svg>`;
+// Reuse the training report P02 renderer and its four data roles verbatim.
+add('training-data-roles','数据与状态','Tensor · 数据节点','训练报告 P02 定义的激活、参数、参数梯度和优化器状态；网格是底纹，不编码元素数量。',training,
+ "[[B,'activation','激活 X · [T,H]'],[G,'weight','参数 W · [H,F]'],[P,'grad','参数梯度 G · [H,F]'],[O,'optimizer','优化器状态 m · [H,F]']].map(([c,k,label],i)=>tensorNode(20,5+i*45,280,label,c,k)).join('')",[ref(T,'vocab')]);
+const roleSvg=rows.find(r=>r.id==='training-data-roles').svg;
 const dataTiles=[
- ['折叠值 / Tile',V.render('system-value')],['展开矩阵',byId.matrix.svg],['数值向量',byId.vector.svg],
+ ['折叠值 / Tile',V.wrap(V.data({id:'value-0',label:'X',role:'activation',shape:[2,4]},80,58),320,180)],['展开矩阵',byId.matrix.svg],['数值向量',byId.vector.svg],
  ['数据角色',roleSvg],['KV cache',byId.kv.svg],['分块状态',montage([['归约完成',byId['completed-block'].svg],['未完成归约',byId['pending-block'].svg]])],
  ['局部异常采样',samples[0].svg],['灰度采样矩阵',samples[1].svg]
 ];

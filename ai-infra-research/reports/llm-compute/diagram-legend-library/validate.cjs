@@ -87,8 +87,9 @@ assert.equal(decodeVariants('system-value').length,8);
 const approval=JSON.parse(fs.readFileSync(path.join(__dirname,'style-approval.json'),'utf8'));
 assert.equal(approval.items.filter(e=>e.decision==='approved').length,13);
 assert.equal(approval.items.filter(e=>e.decision==='revise').length,3);
-for(const e of approval.items)assert.equal(data.items.find(x=>x.id===e.id).svg,e.decision==='approved'?e.candidate:e.before);
-console.log('PASS: 13 approved SVGs applied exactly; 3 revision requests retain originals.');
+for(const e of approval.items.filter(e=>!['system-memref','system-storage'].includes(e.id)))assert.equal(data.items.find(x=>x.id===e.id).svg,e.decision==='approved'?e.candidate:e.before);
+for(const [id,color,label] of [['system-memref','#2d2d2d','15 addressed'],['system-storage','#087CFA','16/64KB']]){const svg=data.items.find(e=>e.id===id).svg;assert(svg.includes(color));assert(svg.includes(label));assert.equal((svg.match(/<rect /g)||[]).length,86);}
+console.log('PASS: prior snapshots preserved except user-requested memory replacements; both memory cards have 85 texture cells and explicit metadata.');
 
 const extraction=JSON.parse(fs.readFileSync(path.join(__dirname,'layer-extract.json'),'utf8'));
 for(const e of extraction.extracts){if(['sample','sample-gray'].includes(e.id)){assert.equal(data.items.find(x=>x.id==='system-value').incorporated.find(x=>x.id==='layer-'+e.id).svg,e.svg);continue;}const item=data.items.find(x=>x.id==='layer-'+e.id);assert(item);assert.equal(item.svg,e.svg);run('show('+JSON.stringify(item.id)+')');assert.equal(get('variantControls').innerHTML,'');assert.equal(get('detailImg').src,get('download').href);}

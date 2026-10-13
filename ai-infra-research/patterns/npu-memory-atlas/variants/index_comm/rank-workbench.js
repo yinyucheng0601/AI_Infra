@@ -5,7 +5,7 @@
 (function(){
  'use strict';
  const M=RankAtlasModel;
- const state={layout:'space',grain:'layer',layer:null,op:null,expert:null,query:false,graphScene:false,inspect:false,showTP:true,showLayer:true,heat:false,space:null,flat:{zoom:1,x:0,y:0},hits:[],draft:null,repair:null};
+ const state={layout:'space',grain:'layer',layer:null,op:null,expert:null,graphComm:null,query:false,graphScene:false,inspect:false,showTP:true,showLayer:true,heat:false,space:null,flat:{zoom:1,x:0,y:0},hits:[],draft:null,repair:null};
  const legacy={render,transform,fitCanvas,changeZoom,setAtlasMode,switchScope,renderShardInspector,shardSpec,shardOwnership,simulationState};
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const fmt=n=>n<.01?(n*1000).toFixed(2)+' MB':n.toFixed(2)+' GB';
@@ -19,9 +19,29 @@
  let visibleExecution=false;
  window.rankAtlasPlaybackRate=()=>state.layout==='flat'&&canvas.dataset.detailTier==='3'&&visibleExecution?.005:1;
  const context=add('div','flat-context',{hidden:'','aria-live':'polite'}),hover=add('div','flat-hover',{hidden:''}),tooltip=add('div','workbench-tooltip',{hidden:'',role:'tooltip'});
- const query=add('aside','graph-query',{hidden:'','aria-label':'计算图与专家查询'});
- query.innerHTML='<header><strong>计算图</strong><button type="button" data-close-query aria-label="关闭计算图">×</button></header><label for="query-op">查找算子或专家</label><input id="query-op" type="search" placeholder="RMSNorm / Combine / E24"><label for="query-layer">查看范围</label><select id="query-layer"></select><div id="operator-path" class="operator-path"></div><p class="config-note" id="query-note"></p>';
- const graphButton=document.createElement('button');graphButton.id='graph-mode';graphButton.type='button';graphButton.textContent='计算图';graphButton.setAttribute('aria-pressed','false');$('ep-oom-mode').after(graphButton);
+ const query=add('aside','graph-query',{hidden:'','aria-label':'计算与通信图'});
+ query.innerHTML='<header class="graph-query-head"><div><span>STRUCTURE / COMMUNICATION</span><strong>计算与通信图</strong></div><button type="button" data-close-query aria-label="关闭计算图">×</button></header><details class="graph-query-locator"><summary><span>定位与查找</span><small id="query-locator-context"></small></summary><div class="graph-query-tools"><label for="query-op"><span>查找算子或专家</span><input id="query-op" type="search" placeholder="RMSNorm / Combine / E24"></label><label for="query-layer"><span>查看范围</span><select id="query-layer"></select></label></div></details><div id="operator-path" class="operator-path"></div><p class="config-note" id="query-note"></p>';
+ const graphButton=document.createElement('button');graphButton.id='graph-mode';graphButton.type='button';graphButton.textContent='计算图';graphButton.setAttribute('aria-pressed','false');graphButton.setAttribute('aria-expanded','false');graphButton.setAttribute('aria-controls','graph-query');graphButton.setAttribute('aria-label','打开计算图抽屉');document.body.append(graphButton);
+ const graphResize=document.createElement('div');graphResize.className='graph-resize';graphResize.tabIndex=0;graphResize.setAttribute('role','separator');graphResize.setAttribute('aria-orientation','vertical');graphResize.setAttribute('aria-label','调整计算图抽屉宽度');query.append(graphResize);
+ const graphSeparator=document.createElement('span');graphSeparator.className='graph-toggle-separator';graphSeparator.setAttribute('aria-hidden','true');
+ const layerTab=document.querySelector('[data-mode="explode"]');layerTab.before(graphButton,graphSeparator);
+ function syncDrawerBottom(){
+  const dock=$('ep-dock').getBoundingClientRect();
+  query.style.bottom=Math.max(12,innerHeight-dock.top+12)+'px';
+ }
+ new ResizeObserver(syncDrawerBottom).observe($('ep-dock'));
+ window.addEventListener('resize',syncDrawerBottom);
+ let drawerWidth=null,drawerDrag=null;
+ function resizeDrawer(width){
+  const max=Math.max(0,innerWidth-48),min=Math.min(360,max);
+  drawerWidth=Math.max(min,Math.min(max,width));query.style.width=drawerWidth+'px';
+  graphResize.setAttribute('aria-valuemin',String(min));graphResize.setAttribute('aria-valuemax',String(max));graphResize.setAttribute('aria-valuenow',String(Math.round(drawerWidth)));
+ }
+ graphResize.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();drawerDrag={x:e.clientX,width:query.getBoundingClientRect().width};graphResize.setPointerCapture(e.pointerId);});
+ graphResize.addEventListener('pointermove',e=>{if(drawerDrag)resizeDrawer(drawerDrag.width+e.clientX-drawerDrag.x);});
+ for(const event of ['pointerup','pointercancel','lostpointercapture'])graphResize.addEventListener(event,()=>drawerDrag=null);
+ graphResize.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();resizeDrawer(e.key==='Home'?360:e.key==='End'?innerWidth:query.getBoundingClientRect().width+(e.key==='ArrowLeft'?-32:32));});
+ window.addEventListener('resize',()=>{if(drawerWidth!==null)resizeDrawer(drawerWidth);});
  const orbit=document.querySelector('.view-dial');orbit.id='rank-view-dial';orbit.innerHTML='<div class="view-orbit"></div><button id="cycle-view" type="button" aria-label="切换3D / 2D" data-wb-tip="切换3D / 2D"></button>'+[0,1,2,3].map(i=>`<button class="dial-port" type="button" data-slot="${i}"></button>`).join('')+'<span id="view-name" class="dial-name" aria-live="polite"></span>';
  function dial(){
   orbit.dataset.layout=state.layout;const flat=state.layout==='flat';
@@ -47,7 +67,7 @@
  }
  const sceneTips={'[data-mode=explode]':'显存构成 · 立体 / 展开','[data-mode=shard]':'参数分布 · 立体 / 展开','[data-mode=comm]':'Token 分发与回收 · 顶视图','#ep-oom-mode':'显存溢出 · 正视图','#graph-mode':'算子与专家 · 展开视图'};
  for(const [selector,text] of Object.entries(sceneTips))document.querySelector(selector).dataset.wbTip=text;
- for(const host of [orbit,$('ep-dock')]){host.addEventListener('pointerover',tip);host.addEventListener('pointermove',tip);host.addEventListener('focusin',tip);host.addEventListener('pointerout',()=>tooltip.hidden=true);host.addEventListener('focusout',()=>tooltip.hidden=true);host.addEventListener('click',()=>tooltip.hidden=true);}
+ for(const host of [orbit,$('ep-dock'),query]){host.addEventListener('pointerover',tip);host.addEventListener('pointermove',tip);host.addEventListener('focusin',tip);host.addEventListener('pointerout',()=>tooltip.hidden=true);host.addEventListener('focusout',()=>tooltip.hidden=true);host.addEventListener('click',()=>tooltip.hidden=true);host.addEventListener('scroll',()=>tooltip.hidden=true,true);}
  $('cycle-view').onclick=()=>setLayout(state.layout==='space'?'flat':'space');
  orbit.querySelectorAll('.dial-port').forEach((b,i)=>b.onclick=()=>{if(state.layout==='flat'){state.grain=i===0?'stage':'layer';render();}else if(i===0){const next=scope==='all'?'single':'all';if(mode==='comm')setAtlasMode('explode');viewMode='2.5D';epIncidentActive=false;switchScope(next);fitCanvas();}else{if(mode==='comm'&&i!==1&&i!==2)legacy.setAtlasMode('explode');viewMode=viewModes[i];epIncidentActive=false;dial();fitCanvas();}tooltip.hidden=true;});
 
@@ -92,7 +112,7 @@
   const check=M.validate(c);if(!check.ok||(!allowOverflow&&M.peak(c)>c.hbm)){reportConfig(c);return false;}
   if(mode==='comm')legacy.setAtlasMode('explode');
   atlasConfig={...c};({tp:TP,pp:PP,ep:EP,layers:L,experts:EXPERTS,ga:MICROBATCHES,hbm:HBM,node:cardsPerNode}=c);DP=M.lanes(c);worldSize=M.world(c);PEAK_ACT=M.activation(c);CYCLE_MS=c.ga*3500+3000;
-  ranks=makeRanks();params=ranks.map(r=>M.parameters(r.id,c));rankReserved=params.map(n=>n*16/1e9+PEAK_ACT+BASE_RESERVE);epEventCache.clear();selectedRank=Math.min(selectedRank,worldSize-1);relationRank=relationRank===null?null:Math.min(relationRank,worldSize-1);state.layer=null;state.op=null;state.expert=null;state.space=null;simTime=0;lastFrame=null;
+  ranks=makeRanks();params=ranks.map(r=>M.parameters(r.id,c));rankReserved=params.map(n=>n*16/1e9+PEAK_ACT+BASE_RESERVE);epEventCache.clear();selectedRank=Math.min(selectedRank,worldSize-1);relationRank=relationRank===null?null:Math.min(relationRank,worldSize-1);state.layer=null;state.op=null;state.expert=null;state.graphComm=null;state.space=null;simTime=0;lastFrame=null;
   $('rank').innerHTML=ranks.map(r=>`<option value="${r.id}">R${r.id}</option>`).join('');$('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="false">${esc(g[0])}</button>`).join('');
   $('timeline').max=String(CYCLE_MS);$('locate-rank').max=String(worldSize-1);$('locate-layer').max=String(L-1);document.title=worldSize+' Rank · 内存与通信';fillConfig();setSettingsOpen(false);rebuildQuery();fitCanvas();return true;
  }
@@ -107,18 +127,20 @@
   if(next==='flat'){
    if(mode==='comm')legacy.setAtlasMode('explode');
    state.space={viewMode,scope,zoom,pan:[...pan]};scope='all';state.layout='flat';if(state.layer!==null){const [lo,hi]=M.bounds(selectedRank,atlasConfig);if(state.layer<lo||state.layer>=hi)state.layer=null;}
-  }else{state.layout='space';state.graphScene=false;if(state.space){({viewMode,scope,zoom}=state.space);pan=[...state.space.pan];}state.query=false;}
+  }else{state.layout='space';if(state.space){({viewMode,scope,zoom}=state.space);pan=[...state.space.pan];}}
   tooltip.hidden=true;hover.hidden=true;flatHoverPoint=null;window.hideRankObjectHover?.();syncShell();dial();render();
   if(next==='flat'&&!matchMedia('(prefers-reduced-motion: reduce)').matches)canvas.animate([{transform:'translateY(14px) scale(.985)'},{transform:'translateY(0) scale(1)'}],{duration:280,easing:'ease-out'});
  }
  function syncShell(){const flat=state.layout==='flat';$('memory-legend').hidden=flat||!labels||(scope==='all'&&viewMode==='2.5D'&&mode!=='comm'&&relationRank===null);viewScope.hidden=flat;spatialSettings.hidden=flat;$('flat-display-settings').hidden=!flat;$('flat-heat').closest('label').hidden=true;document.body.dataset.layout=state.layout;document.body.dataset.query=String(state.query);stage.hidden=!flat;flatHelp.hidden=!flat;context.hidden=!flat;query.hidden=!state.query;syncSceneButtons();}
  function syncSceneButtons(){
   const oom=mode==='comm'&&viewMode==='Front'&&epIncidentActive;
-  graphButton.setAttribute('aria-pressed',String(state.graphScene));
-  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(!state.graphScene&&!oom&&b.dataset.mode===mode)));
-  $('ep-oom-mode').setAttribute('aria-pressed',String(!state.graphScene&&oom));
+  graphButton.setAttribute('aria-pressed',String(state.query));
+  graphButton.setAttribute('aria-expanded',String(state.query));
+  graphButton.setAttribute('aria-label',state.query?'关闭计算图抽屉':'打开计算图抽屉');
+  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(!oom&&b.dataset.mode===mode)));
+  $('ep-oom-mode').setAttribute('aria-pressed',String(oom));
  }
- setAtlasMode=function(next){state.graphScene=false;state.query=false;if(next==='comm'){if(state.layout==='flat')setLayout('space');state.inspect=false;state.query=false;if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}if(atlasConfig.seq/atlasConfig.cp*atlasConfig.mbs*EXPERTS*EP>16777216){setSettingsOpen(true);$('config-status').textContent='当前精确 token 路由规模过大。请缩小 Sequence / Micro Batch / EP 后查看逐 token 动画；配置与显存视图不受影响。';return;}}
+ setAtlasMode=function(next){if(next==='comm'){if(state.layout==='flat')setLayout('space');state.inspect=false;if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}if(atlasConfig.seq/atlasConfig.cp*atlasConfig.mbs*EXPERTS*EP>16777216){setSettingsOpen(true);$('config-status').textContent='当前精确 token 路由规模过大。请缩小 Sequence / Micro Batch / EP 后查看逐 token 动画；配置与显存视图不受影响。';return;}}
   if(state.layout==='flat'&&next!=='comm'){setLayout('space');}legacy.setAtlasMode(next);syncShell();};
  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setAtlasMode(b.dataset.mode));
  const oomClick=$('ep-oom-mode').onclick;$('ep-oom-mode').onclick=()=>{setAtlasMode('comm');if(mode!=='comm')return;state.inspect=false;oomClick();dial();};
@@ -217,6 +239,17 @@
   ctx.font='11px ui-monospace,monospace';ctx.textAlign='right';
   if(labels)for(let row=0;row<rows;row+=Math.max(1,Math.ceil(17/rh))){const y=y0+(row+.5)*rh;if(y<0||y>h)continue;const r=ranks[selected.pp*perStage+(scope==='single'?rowSelected:row)];ctx.fillStyle=r.id===selectedRank?ink:muted;ctx.fillText(state.showTP?`D${r.dpIndex}${atlasConfig.cp>1?' C'+r.cp:''} T${r.tp}`:'R'+r.id,x0-10,y);}
   flatHelp.textContent='大框：Rank · 灰格：Layer · 紫色：当前层 · 白底：当前算子 · 白框：选中'+(maxTier===3&&visibleExecution?' · 细节慢放':'');
+  if(state.query&&graphRelation){
+   const boxes=state.hits.filter(b=>b.layer===null&&graphRelation.members.includes(b.id)),source=boxes.find(b=>b.id===selectedRank);
+   ctx.save();ctx.strokeStyle='#79D4F2';ctx.lineWidth=1.5;
+   for(const b of boxes){
+    ctx.strokeRect(b.x,b.y,b.w,b.h);
+    if(source&&b!==source&&scope!=='single'){
+     ctx.beginPath();ctx.moveTo(source.x+source.w/2,source.y+source.h/2);ctx.lineTo(b.x+b.w/2,b.y+b.h/2);ctx.stroke();
+    }
+   }
+   ctx.restore();
+  }
   $('zoom').textContent=Math.round(state.flat.zoom*100)+'%';refreshFlatObjectHover();
  }
  function hit(e){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;return state.hits.find(h=>x>=h.x&&x<=h.x+h.w&&y>=h.y&&y<=h.y+h.h);}
@@ -242,36 +275,101 @@
 
  const ops=[{id:'embed',name:'Embedding',group:5,global:'input'},{id:'norm1',name:'RMSNorm',group:7},{id:'q',name:'Q projection',group:0},{id:'kv',name:'K / V projection',group:1},{id:'attention',name:'Attention',group:null},{id:'out',name:'Output projection',group:2},{id:'residual1',name:'Residual Add',group:null},{id:'norm2',name:'Pre-FFN RMSNorm',group:7},{id:'router',name:'Router · Top-K',group:8,moe:true},{id:'dispatch',name:'EP Dispatch',group:null,moe:true},{id:'experts',name:'Expert Compute',group:3,moe:true},{id:'combine',name:'EP Combine',group:null,moe:true},{id:'shared',name:'Shared Expert FFN',group:9,moe:true},{id:'dense',name:'Dense FFN',group:10,dense:true},{id:'residual2',name:'Residual Add',group:null},{id:'finalnorm',name:'Final RMSNorm',group:7,global:'output'},{id:'head',name:'LM Head',group:6,global:'output'}];
  function opExists(id,layer,pp){const op=ops.find(o=>o.id===id);if(!op)return true;if(op.global)return layer===null&&(op.global==='input'?pp===0:pp===PP-1);if(layer===null){const lo=pp*L/PP,hi=(pp+1)*L/PP;return op.dense?lo<atlasConfig.dense:op.moe?hi>atlasConfig.dense&&(id!=='shared'||atlasConfig.shared>0):true;}return op.dense?layer<atlasConfig.dense:op.moe?layer>=atlasConfig.dense&&(id!=='shared'||atlasConfig.shared>0):true;}
- function selectOperator(op){state.expert=null;state.op=op.id;state.inspect=true;if(op.global){const lane=selectedRank%(TP*DP);selectedRank=(op.global==='input'?0:PP-1)*TP*DP+lane;state.layer=null;}else{let l=state.layer??M.bounds(selectedRank,atlasConfig)[0];if(op.moe)l=Math.max(l,atlasConfig.dense);if(op.dense)l=Math.min(l,atlasConfig.dense-1);if(l<0||l>=L)return;state.layer=l;selectedRank=Math.floor(l/(L/PP))*TP*DP+selectedRank%(TP*DP);}relationRank=selectedRank;if(op.group!==null)$('tensor').value=String(op.group);playing=false;if(innerWidth<=900)state.query=false;rebuildQuery();render();}
+ function selectOperator(op){state.expert=null;state.graphComm=null;state.op=op.id;state.inspect=true;if(op.global){const lane=selectedRank%(TP*DP);selectedRank=(op.global==='input'?0:PP-1)*TP*DP+lane;state.layer=null;}else{let l=state.layer??M.bounds(selectedRank,atlasConfig)[0];if(op.moe)l=Math.max(l,atlasConfig.dense);if(op.dense)l=Math.min(l,atlasConfig.dense-1);if(l<0||l>=L)return;state.layer=l;selectedRank=Math.floor(l/(L/PP))*TP*DP+selectedRank%(TP*DP);}relationRank=selectedRank;if(op.group!==null)$('tensor').value=String(op.group);playing=false;if(innerWidth<=600)state.query=false;rebuildQuery();render();}
  function expertMarkup(search=''){
   const match=/^e\s*(\d+)$/i.exec(search),hasMoE=state.layer===null?atlasConfig.dense<L:state.layer>=atlasConfig.dense;
   if(!hasMoE||(!match&&state.op!=='experts'))return '';
   const ids=Array.from({length:EXPERTS},(_,e)=>e).filter(e=>!match||e===+match[1]);
   return '<section class="expert-detail" aria-label="路由专家"><span class="graph-caption">路由专家 · 选择后定位所属 Rank</span><div id="expert-list" class="expert-grid">'+ids.map(e=>`<button type="button" data-expert="${e}" data-local="${Math.floor(e/(EXPERTS/EP))===ranks[selectedRank].ep}" aria-pressed="${state.expert===e}" title="E${e} · EP${Math.floor(e/(EXPERTS/EP))}">E${e}</button>`).join('')+'</div>'+(ids.length?'':'<p class="config-note">没有该编号的专家。</p>')+'</section>';
  }
+ let graphNotes={};
+ let graphRelation=null,graphContext='',graphWeight=null;
+ function selectWeightShard(id,index){
+  const weight=RankComputeGraph.weightSelection(atlasConfig,id,state.layer,index);
+  graphWeight=weight;graphRelation=null;state.graphComm=null;state.op=null;state.expert=null;
+  if(!weight){rebuildQuery();return;}
+  selectedRank=id;state.layer=weight.layer;
+  $('query-op').value='';
+  rebuildQuery();render();
+ }
+ document.addEventListener('click',e=>{
+  const shard=e.target.closest('[data-shard-detail]');
+  if(mode==='shard'&&shard&&pointerTravel<=4){const [id,index]=shard.dataset.shardDetail.split(':').map(Number);selectWeightShard(id,index);}
+  else if(mode==='shard'&&e.target.closest('#tensor-list [data-index]'))selectWeightShard(selectedRank,+$('tensor').value);
+ });
+ $('scene').addEventListener('keydown',e=>{
+  const shard=e.target.closest('[data-shard-detail]');
+  if(mode==='shard'&&shard&&['Enter',' '].includes(e.key)){e.preventDefault();const [id,index]=shard.dataset.shardDetail.split(':').map(Number);selectWeightShard(id,index);}
+ });
+ const originalFocus=parallelFocus,originalRelations=drawRelations;
+ parallelFocus=function(){
+  if(!state.query||!graphRelation)return originalFocus();
+  const members=new Set(graphRelation.members),byRank={};
+  for(const id of members)if(id!==selectedRank)byRank[id]='tp';
+  return {dim:'graph',dims:[],members,byRank,transparent:foregroundContextRanks(members)};
+ };
+ drawRelations=function(){
+  if(!state.query||!graphRelation)return originalRelations();
+  if(scope==='single')return '';
+  const [x,y]=relationAnchor(selectedRank,'tp');
+  return '<g aria-label="计算图通信关联 Rank">'+graphRelation.members.filter(id=>id!==selectedRank).map(id=>{
+   const [xx,yy]=relationAnchor(id,'tp'),expert=graphRelation.expertMembers?.includes(id);
+   return `<path data-relation="tp" data-from="${selectedRank}" data-to="${id}" d="${relationPath(x,y,xx,yy)}" fill="none" stroke="${expert?'#BCA0F3':'#79D4F2'}" stroke-width="1.5" ${expert?'stroke-dasharray="5 3"':''}><title>R${selectedRank} ↔ R${id}${expert?' · 含专家参数同步':''}</title></path>`;
+  }).join('')+'</g>';
+ };
+ function selectGraphNode(key){
+  graphWeight=null;
+  const note=graphNotes[key];if(!note)return;
+  state.graphComm=key;state.op=null;state.expert=null;
+  if(note.communication){
+   graphRelation=note.communication.enabled?note.communication:null;
+   relationRank=selectedRank;
+   rebuildQuery();render();return;
+  }
+  playing=false;
+  state.layer=state.layer??M.bounds(selectedRank,atlasConfig)[0];
+  if(note.tensor){
+   if(state.layout!=='space')setLayout('space');
+   state.query=true;state.inspect=false;mode='explode';viewMode='2.5D';
+   relationRank=selectedRank;graphRelation=note.communication||null;
+   scope=note.tensor?'single':'all';selectedMemoryCategory=note.tensor?.category??null;
+   $('relations').value='none';fitCanvas();
+  }
+  rebuildQuery();render();
+ }
  function graphMarkup(layer,search){
-  const node=id=>{const o=ops.find(o=>o.id===id);return `<button type="button" data-op="${id}" aria-pressed="${state.op===id}">${o.name}</button>`+(id==='experts'?expertMarkup(search):'');};
-  const arrow='<span class="flow-arrow" aria-hidden="true">↓</span>',chain=ids=>ids.map(node).join(arrow);
   if(/^e\s*\d+$/i.test(search))return expertMarkup(search);
-  if(search)return ops.filter(o=>(!o.moe||atlasConfig.dense<L)&&(o.id!=='shared'||atlasConfig.shared>0)&&(!o.dense||atlasConfig.dense>0)&&(o.name.toLowerCase().includes(search)||o.id.includes(search))).map(o=>node(o.id)).join('<span class="query-gap"></span>');
-  const attention='<div class="residual-flow"><span class="residual-label">残差</span>'+node('norm1')+arrow+'<div class="graph-branches">'+node('q')+node('kv')+'</div>'+arrow+chain(['attention','out','residual1'])+'</div>';
-  function ffn(moe){return '<div class="residual-flow"><span class="residual-label">残差</span>'+node('norm2')+arrow+(moe?'<div class="graph-branches moe-branches"><div class="graph-chain">'+chain(['router','dispatch','experts','combine'])+'</div>'+(atlasConfig.shared?'<div class="graph-chain shared-branch">'+node('shared')+'</div>':'')+'</div>'+(atlasConfig.shared?'<span class="graph-merge">求和 ⊕</span>':''):node('dense'))+arrow+node('residual2')+'</div>';}
-  if(layer!==null)return attention+arrow+ffn(layer>=atlasConfig.dense);
-  return node('embed')+arrow+'<div class="graph-repeat"><span class="graph-caption">Transformer × '+L+'</span>'+attention+arrow+(atlasConfig.dense?'<details open><summary>L0–'+(atlasConfig.dense-1)+' · Dense</summary>'+ffn(false)+'</details>':'')+(atlasConfig.dense<L?'<details open><summary>L'+atlasConfig.dense+'–'+(L-1)+' · MoE</summary>'+ffn(true)+'</details>':'')+'</div>'+arrow+chain(['finalnorm','head']);
+  if(search)return ops.filter(o=>(!o.moe||atlasConfig.dense<L)&&(o.id!=='shared'||atlasConfig.shared>0)&&(!o.dense||atlasConfig.dense>0)&&(o.name.toLowerCase().includes(search)||o.id.includes(search))).map(o=>'<button class="cg-search-result" data-op="'+o.id+'"><svg class="approved-compute-svg" viewBox="0 0 280 64">'+RankApprovedGlyphs.draw('op',10,8,o.name)+'</svg></button>').join('');
+  const current=layer??M.bounds(selectedRank,atlasConfig)[0];
+  const binding=RankComputeGraph.bindings(atlasConfig,selectedRank,current);
+  const weight=graphWeight&&graphWeight.rank===selectedRank?RankComputeGraph.weightSelection(atlasConfig,selectedRank,current,graphWeight.index):null;
+  graphRelation=binding.comm[state.graphComm]?.enabled?binding.comm[state.graphComm]:null;
+  const graph=RankComputeGraph.render({bindings:binding,weight:weight?.layer===current?weight:null,layer:current,dense:atlasConfig.dense,layers:L,tp:TP,cp:atlasConfig.cp,pp:PP,ep:EP,topk:atlasConfig.topk,shared:atlasConfig.shared,dp:M.dpReplica(atlasConfig),op:state.op,selected:state.graphComm});
+  graphNotes=graph.notes;
+  return '<div class="cg-context">R'+selectedRank+' · L'+current+' · '+(current<atlasConfig.dense?'Dense':'MoE')+(weight?.layer===current?' · '+esc(weight.label)+' · '+weight.scope:'')+'</div>'+graph.html+expertMarkup(search);
  }
  function rebuildQuery(){
   const select=$('query-layer');if(!select)return;const key=L+':'+atlasConfig.dense;if(select.dataset.layers!==key){select.innerHTML='<option value="all">整网</option>'+Array.from({length:L},(_,l)=>`<option value="${l}">Layer ${l}${l<atlasConfig.dense?' · Dense':' · MoE'}</option>`).join('');select.dataset.layers=key;}
   select.value=state.layer===null?'all':String(state.layer);
   const search=$('query-op').value.trim().toLowerCase(),l=state.layer,pp=ranks[selectedRank].pp;
   $('operator-path').innerHTML=graphMarkup(l,search);
-  $('query-note').textContent=l===null?`${L} 层 · ${atlasConfig.dense} Dense / ${L-atlasConfig.dense} MoE。选择算子查看归属与显存；选择 Expert Compute 查看专家。`:`L${l} · PP${pp} · ${l<atlasConfig.dense?'Dense FFN':`${EXPERTS} routed + ${atlasConfig.shared} shared experts`}。`;
+  $('query-locator-context').textContent=l===null?`整网 · ${L} Layers`:`L${l} · PP${pp} · ${l<atlasConfig.dense?'Dense':'MoE'}`;
+  const note=graphNotes[state.graphComm];
+  $('query-note').textContent=note?note.title+'：'+note.description+(note.communication?' · '+(note.communication.enabled?'关联 Rank：'+note.communication.members.map(id=>'R'+id).join('、'):'当前无跨 Rank 通信')+(note.communication.expertMembers?.length?'；专家参数副本：'+note.communication.expertMembers.map(id=>'R'+id).join('、'):''):''):'激活 · 绿 / 参数 · 紫 / 梯度 · 青。选择 tensor 定位内存区域，选择通信节点查看关联 Rank。';
+
 
  }
- graphButton.onclick=()=>{if(state.layout!=='flat')setLayout('flat');state.graphScene=true;state.query=true;mode='explode';selectedMemoryCategory=null;syncShell();rebuildQuery();render();};query.querySelector('[data-close-query]').onclick=()=>{state.graphScene=false;state.query=false;syncShell();render();};
+ const showGraphRanks=document.createElement('button');
+ showGraphRanks.type='button';showGraphRanks.textContent='查看全部关联 Rank';showGraphRanks.hidden=true;
+ $('query-note').after(showGraphRanks);
+ showGraphRanks.onclick=()=>{if(!graphRelation)return;scope='all';rebuildQuery();render();};
+ function toggleGraphDrawer(open){state.query=open;syncShell();if(open){syncDrawerBottom();rebuildQuery();}render();}
+ graphButton.onclick=()=>toggleGraphDrawer(!state.query);query.querySelector('[data-close-query]').onclick=()=>toggleGraphDrawer(false);
  $('rank').onchange=()=>{const id=Number($('rank').value);const [lo,hi]=M.bounds(id,atlasConfig);selectCell({id,layer:state.layer===null?null:Math.max(lo,Math.min(hi-1,state.layer))});};
- $('query-op').oninput=rebuildQuery;$('query-layer').onchange=e=>{if(e.target.value==='all')state.layer=null;else{const l=Number(e.target.value);state.layer=l;selectedRank=Math.floor(l/(L/PP))*TP*DP+selectedRank%(TP*DP);relationRank=selectedRank;}state.op=null;state.expert=null;rebuildQuery();render();};
- query.addEventListener('click',e=>{const op=e.target.closest('[data-op]');if(op){selectOperator(ops.find(o=>o.id===op.dataset.op));return;}const expert=e.target.closest('[data-expert]');if(expert){const n=Number(expert.dataset.expert),r=ranks[selectedRank],lane=r.edp*EP+Math.floor(n/(EXPERTS/EP));state.layer=Math.max(state.layer??r.pp*L/PP,atlasConfig.dense);selectedRank=Math.floor(state.layer/(L/PP))*TP*DP+lane*TP+r.tp;relationRank=selectedRank;state.expert=n;state.op='experts';state.inspect=true;playing=false;if(innerWidth<=900)state.query=false;rebuildQuery();render();}});
+ $('query-op').oninput=rebuildQuery;$('query-layer').onchange=e=>{if(e.target.value==='all')state.layer=null;else{const l=Number(e.target.value);state.layer=l;selectedRank=Math.floor(l/(L/PP))*TP*DP+selectedRank%(TP*DP);relationRank=selectedRank;}state.op=null;state.expert=null;state.graphComm=null;rebuildQuery();render();};
+ query.addEventListener('click',e=>{const op=e.target.closest('[data-op]');if(op){graphRelation=null;selectOperator(ops.find(o=>o.id===op.dataset.op));return;}const glyph=e.target.closest('[data-cg-node]');if(glyph){selectGraphNode(glyph.dataset.cgNode);return;}const expert=e.target.closest('[data-expert]');if(expert){const n=Number(expert.dataset.expert),r=ranks[selectedRank],lane=r.edp*EP+Math.floor(n/(EXPERTS/EP));state.layer=Math.max(state.layer??r.pp*L/PP,atlasConfig.dense);selectedRank=Math.floor(state.layer/(L/PP))*TP*DP+lane*TP+r.tp;relationRank=selectedRank;state.expert=n;state.op='experts';state.graphComm=null;graphRelation=null;state.inspect=true;playing=false;if(innerWidth<=600)state.query=false;rebuildQuery();render();}});
 
+ query.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('g[data-cg-node]')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
  function renderInspector(){
   const panel=$('shard-inspector');if(!state.inspect){panel.classList.remove('workbench-inspector');if(state.layout==='flat'){panel.hidden=true;$('shard-info').classList.toggle('hidden',mode!=='shard');}else legacy.renderShardInspector();return;}
   panel.hidden=false;panel.classList.add('workbench-inspector');$('shard-info').classList.remove('hidden');$('shard-info').setAttribute('aria-expanded','true');
@@ -289,6 +387,13 @@
  const infoClick=$('shard-info').onclick;$('shard-info').onclick=()=>{if(state.layout==='flat'||state.inspect){state.inspect=!state.inspect;render();}else infoClick();};
  renderShardInspector=function(){renderInspector();};
  render=function(){
+  if(state.query){
+   const [lo,hi]=M.bounds(selectedRank,atlasConfig);
+   if(state.layer!==null&&(state.layer<lo||state.layer>=hi))state.layer=lo;
+   const key=JSON.stringify([selectedRank,state.layer,state.graphComm,atlasConfig]);
+   if(key!==graphContext){graphContext=key;rebuildQuery();}
+  }else graphRelation=null;
+  showGraphRanks.hidden=!(state.query&&graphRelation&&scope==='single');
   syncShell();
   if(state.layout==='space'){legacy.render();if(state.inspect)renderInspector();syncSceneButtons();dial();return;}
   setRankData(selectedRank);applySimulation();drawFlat();renderInspector();
@@ -296,7 +401,7 @@
   $('ep-navigation').innerHTML='';$('ep-token-legend').hidden=true;$('ep-incident').hidden=true;document.body.dataset.epMode='false';$('ep-stops').classList.add('hidden');$('ep-markers').hidden=true;$('ep-oom-mode').setAttribute('aria-pressed','false');
   $('relations').classList.add('hidden');$('tensor').classList.toggle('hidden',mode!=='shard');$('single').setAttribute('aria-pressed',String(scope==='single'));$('all').setAttribute('aria-pressed',String(scope==='all'));$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('labels').setAttribute('aria-pressed',String(labels));document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
   const legend=$('memory-legend');legend.hidden=true;const indices=state.heat?[0,2,1,3,4,5,6]:mode==='shard'?[0,2]:state.grain==='layer'?[0,1,2,3,4,5,6,7]:[0,1,2];const markup=indices.map(i=>`<button type="button" data-memory-category="${i}" aria-pressed="${selectedMemoryCategory===i}"><i style="background:${cats[i].color}"></i>${cats[i].name}</button>`).join('');if(legend.innerHTML!==markup)legend.innerHTML=markup;
-  syncTensorMenu();$('tensor').classList.toggle('hidden',state.graphScene||mode!=='shard');syncSceneButtons();dial();
+  syncTensorMenu();$('tensor').classList.toggle('hidden',mode!=='shard');syncSceneButtons();dial();
  };
  // New parameter modules join the existing tensor menu, with its keyboard handling.
  $('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="false">${esc(g[0])}</button>`).join('');

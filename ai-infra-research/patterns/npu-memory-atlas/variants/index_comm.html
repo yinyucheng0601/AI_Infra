@@ -1341,7 +1341,7 @@ function tick(now){if(lastFrame!==null&&playing&&!document.hidden){
  }else{simTime+=(now-lastFrame)*(window.rankAtlasPlaybackRate?.()??1);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}
 }lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 if(!window.RankAtlasModel){render();if(!ATLAS_EMBED)requestAnimationFrame(tick);}
-</script><script src="index_comm/rank-workbench.js"></script><script src="../npu-memory-atlas-embed.js"></script><script>
+</script><script src="index_comm/approved-glyphs.js"></script><script src="index_comm/compute-graph.js"></script><script src="index_comm/rank-workbench.js"></script><script src="../npu-memory-atlas-embed.js"></script><script>
 // Readability profiles: subtle refraction on controls, opaque frost on reading panels.
 // Keep the third-party implementation scoped and usable directly over file://.
 (() => {
@@ -1567,7 +1567,7 @@ function createLiquidGlass(element, options = {}) {
   };
 }
 
-const selector='.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list,.dial-name,#graph-query';
+const selector='.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list,.dial-name';
 const instances=new Map();
 function glassOptions(element,rect) {
   const dense=element.matches('.rank-settings-panel,.shard-inspector,#tensor-list');

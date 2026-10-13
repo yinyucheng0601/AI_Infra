@@ -7,16 +7,27 @@ const text=(x,y,s,size=14,color='#E8E8E8',anchor='start')=>`<text x="${x}" y="${
 const rect=(x,y,w,h,rx=4,stroke='#888',fill='#202020',extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" stroke="${stroke}" fill="${fill}" ${extra}/>`;
 function data(o,x,y,opts={}){
  const expanded=opts.expanded,shape=o.shape||[2,4],rows=shape.length===1?1:shape[0],cols=shape.length===1?shape[0]:shape[1],w=expanded?cols*tokens.cell:tokens.dataWidth,h=expanded?rows*tokens.cell:tokens.dataHeight,color=tokens.role[o.role]||'#B0B0B0';
- let body=expanded?'':rect(x,y,w,h,4,'#888','#202020');
+ let body=expanded?'':rect(x,y,w,h,6,'none','#2d2d2d');
  if(expanded){for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){body+=rect(x+c*24+2,y+r*24+2,20,20,1,'none',color,'fill-opacity=".18" data-element="true"');if(o.values)body+=text(x+c*24+12,y+r*24+12,o.values[r*cols+c],11,color,'middle')}body+=text(x,y-14,`${o.label} · [${shape}]`,14)}
- else body+=rect(x+10,y+12,4,h-24,1,'none',color)+text(x+24,y+24,o.label)+text(x+24,y+46,`[${shape}] · ${o.dtype||'FP16'}`,12,'#ababab');
+ else {
+  for(let i=0;i<4;i++)body+=rect(x+8,y+8+i*12,10,10,0,'none',color,`fill-opacity="${[1,.8,.6,.4][i]}"`);
+  body+=text(x+27,y+22,o.label,16,'#fff')+text(x+27,y+46,`${shape.join(' × ')}  ${o.dtype||'FP16'}`,12,'#ccc');
+ }
  if(opts.parallel&&opts.parallel!=='none'){let pc=tokens.parallel[opts.parallel];body+=`<path data-decoration="distribution" d="M${x},${y+h+8}v6h${w}v-6" stroke="${pc}" fill="none"/>`+text(x+w/2,y+h+30,`${opts.parallel} · ${opts.placement||'分片'}`,12,pc,'middle')}
  return `<g data-object="${esc(o.id)}" data-kind="${o.kind||'value'}" data-role="${esc(o.role||'activation')}" data-representation="${expanded?'expanded':'collapsed'}">${body}</g>`;
+}
+// Memory grid is a surface texture, not an element or capacity scale.
+function memory(id,label,detail,x,y,w=300,h=106,physical=false){
+ let b=rect(x,y,w,h,12,'none',physical?'#087CFA':'#2d2d2d');
+ const cols=17,rows=5,gap=3,pad=9,cw=(w-pad*2-gap*(cols-1))/cols,ch=(h-pad*2-gap*(rows-1))/rows;
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=rect(x+pad+c*(cw+gap),y+pad+r*(ch+gap),cw,ch,1.5,physical?'#B3D7FF':'#aaa','#000','fill-opacity=".10" style="stroke-width:.65;stroke-opacity:.30"');
+ b+=text(x+24,y+h*.36,label,Math.min(32,w*.09),'#fff')+text(x+24,y+h*.74,detail,Math.min(18,w*.047),'#eee');
+ return `<g data-object="${esc(id)}" data-kind="${physical?'storage':'memref'}">${b}</g>`;
 }
 function node(kind,id,label,x,y){let w=180,h=64,b='';
  if(kind==='op'||kind==='communication'){w=tokens.opWidth;h=tokens.opHeight;b=rect(x,y,w,h,24,'#858585','#505050',kind==='communication'?'stroke-dasharray="5 4"':'')+`<g font-weight="650">${text(x+w/2,y+24,label,18,'#fff','middle')}</g>`}
  else if(kind==='add'||kind==='multiply'){w=h=48;const cx=x+24,cy=y+24;b=`<circle cx="${cx}" cy="${cy}" r="24" stroke="#ddd" fill="#111" style="stroke-width:1.5"/><path d="${kind==='add'?`M${cx-8} ${cy}H${cx+8} M${cx} ${cy-8}V${cy+8}`:`M${cx-6} ${cy-6}L${cx+6} ${cy+6} M${cx-6} ${cy+6}L${cx+6} ${cy-6}`}" stroke="#eee" fill="none" style="stroke-width:2" stroke-linecap="round"/>`}
- else if(kind==='memref'){b=rect(x,y,w,h,1,'#C7AD88')+`<path d="M${x+7},${y+5}v${h-10} M${x+w-7},${y+5}v${h-10}" stroke="#C7AD88"/>`+text(x+w/2,y+h/2,label,14,'#C7AD88','middle')}
+ else if(kind==='memref'||kind==='storage'){return memory(id,label,kind==='memref'?'MemRef':'内存分配',x,y,w,h,kind==='storage')}
  else if(kind==='instruction'||kind==='task'){
  w=260;h=60;const green='#9EF04B';
  b=rect(x,y,w,h,0,'none',green)+rect(x+10,y+12,36,36,3,'none','#080b05');
@@ -46,5 +57,5 @@ function render(id,o={}){let b='',ex=!!o.expanded;const v=(id,label,role,shape,v
  else b=node(id.replace('system-',''),id,'示例 '+id.replace('system-',''),85,75);
  return wrap(b,id.startsWith('pattern-')?900:420,id.startsWith('pattern-')?350:280);
 }
-const api={tokens,data,node,edge,wrap,render};if(typeof module!=='undefined')module.exports=api;root.VisualSystem=api;
+const api={tokens,data,memory,node,edge,wrap,render};if(typeof module!=='undefined')module.exports=api;root.VisualSystem=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

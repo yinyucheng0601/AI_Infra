@@ -1,18 +1,18 @@
 {
-  "version": "2026-10-12",
-  "sourceSha256": "5a6201f409ebbe7dfe877d85a6a69b6f9f9197b6170ccdd76b3737d34d7d451a",
+  "version": "2026-10-13",
+  "sourceSha256": "c1157df7460f2f440424516b86b4ba5fca927a9cd4efaae94ed501aadbe78186",
   "sources": [
     {
       "id": "pypto-compilation-guide",
       "title": "PyPTO 编译流水线图解",
       "file": "reports/llm-compute/pypto-compilation-guide/index.html",
-      "sha256": "5e7b49f20da962aede72d8aa92c98363eaaace67139ed984261f3f89675da6e0"
+      "sha256": "7a1a14e0a566ae5731a25cfeff4c5c86d1e77f605df63184b7dff36576562294"
     },
     {
       "id": "pypto-guides",
       "title": "PyPTO 函数变换、内存复用与问题定位",
       "file": "reports/llm-compute/pypto-guides/index.html",
-      "sha256": "25498cc6d10e1314ad543e3351b3f7afb6ea1e4a04ca4c19ab6266915408456e"
+      "sha256": "5852dc6c20a21c02307bbfb194320062a0ca2a66acf6e3f4469d81ee0e67d14e"
     },
     {
       "id": "llm-inference-dense-to-clusters",
@@ -818,12 +818,12 @@
     },
     {
       "id": "system-memref",
-      "title": "存储引用",
+      "title": "存储引用 · MemRef",
       "family": "system-memref",
       "layer": "system",
       "file": "system-memref.svg",
-      "sha256": "7d0132eb5c1bb611deef35849b6ef67b6a744baee07e195bbceb7a6caf500376",
-      "description": "槽形表示 MemRef，记录底层分配身份、偏移与访问范围；多个引用可关联同一分配。",
+      "sha256": "7c755fa8cdec299bb9f593fdb4387d47af48e9a673a1e0f5413b38d9e906b77a",
+      "description": "灰色圆角网格板表示存储引用集合；15 addressed 表示该示例中已有地址的引用数量。背景网格仅为纹理，不表示引用数量、张量形状或地址。",
       "sources": [
         {
           "id": "pypto-compilation-guide"
@@ -840,16 +840,16 @@
           "anchor": "memory-objects"
         }
       ],
-      "status": "retained-original"
+      "status": "approved-2026-10-13"
     },
     {
       "id": "system-storage",
-      "title": "地址区间",
+      "title": "内存空间与容量",
       "family": "system-storage",
       "layer": "system",
       "file": "system-storage.svg",
-      "sha256": "f89b9330689b7712654f3ef87c7b1f6eeb41367e61a575d9071a946bfb27f5eb",
-      "description": "带刻度的区间表示某一内存空间内的字节范围，必须同时标明空间、偏移与单位。",
+      "sha256": "7f23b9236929626f8b04e40d2ee1ee46972d3483c972f0e3070b03f292a6664f",
+      "description": "蓝色圆角网格板表示具名内存空间；16/64KB 为已用容量与总容量的格式示例，不声明特定芯片容量。背景网格不编码容量比例；具体分配的地址仍需记录空间、偏移和字节长度。",
       "sources": [
         {
           "id": "pypto-guides"
@@ -863,7 +863,7 @@
           "anchor": "memory-address"
         }
       ],
-      "status": "current-library"
+      "status": "approved-2026-10-13"
     },
     {
       "id": "lifetime",
@@ -1302,7 +1302,7 @@
       "family": "pattern-storage",
       "layer": "pattern",
       "file": "pattern-storage.svg",
-      "sha256": "8fc7501c359c443b5562b1aa2246beabcf165c6479fa9e2e53c585bf7166a559",
+      "sha256": "9cc49dcacc6eb59a2fc581f904de0fbac60e457ca36d280e94b3943b31d2ff64",
       "description": "连续 FP16 数据 V [4,4] 占 32 B；后两行视图 [2,4] 引用同一分配的 [16,32) B。值、视图、MemRef 与底层分配分别标识。",
       "sources": [
         {
@@ -1340,7 +1340,7 @@
           "anchor": ""
         }
       ],
-      "status": "current-library"
+      "status": "approved-2026-10-13"
     },
     {
       "id": "layer-residual-pattern",
