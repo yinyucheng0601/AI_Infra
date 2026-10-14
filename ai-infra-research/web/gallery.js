@@ -11,6 +11,7 @@
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
     'csa-pass-field':{src:'__CSA_PASS_FIELD_COVER__',alt:'CSA Pass Field：qk_pv 核心 DAG、控制作用域、内存绑定与 PTO-ISA 指令'},
+    'atlas-950-anatomy':{src:'__ATLAS_ANATOMY_COVER__',alt:'Atlas 950 组件垂直展开与双语引线'},
     'atlas-950-explorer':{src:'__ATLAS_950_COVER__',alt:'Atlas 950 概念机柜：用户提供的整柜轴测截图'},
     'pypto-guides':{src:'__PYPTO_GUIDES_COVER__',alt:'内存复用图解：张量生命期与存储分配'},
     'pypto-compilation-guide':{src:'__PYPTO_COMPILATION_COVER__',alt:'PyPTO 编译图解：张量、计算、Kernel 与 Task 的关系'},

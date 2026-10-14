@@ -1,0 +1,17 @@
+[
+ ["click","[data-level='0']"], ["lines"],
+ ["shot","/Users/yin/AI_Infra/atlas-950-anatomy/shots/phone-overview.png",".workspace"],
+ ["click","[data-level='1']"], ["lines"],
+ ["key","e",".iso-stage"], ["wait",1200], ["lines"],
+ ["shot","/Users/yin/AI_Infra/atlas-950-anatomy/shots/phone-rack.png",".workspace"],
+ ["click","[data-level='2']"], ["lines"],
+ ["key","e",".iso-stage"], ["wait",1200], ["lines"],
+ ["shot","/Users/yin/AI_Infra/atlas-950-anatomy/shots/phone-node.png",".workspace"],
+ ["click","#theme"], ["lines"],
+ ["key","e",".iso-stage"], ["wait",1200], ["lines"],
+ ["shot","/Users/yin/AI_Infra/atlas-950-anatomy/shots/phone-dark.png",".workspace"],
+ ["click","[data-level='1']"], ["lines"],
+ ["key","e",".iso-stage"], ["wait",1200], ["lines"],
+ ["click","[data-level='0']"], ["lines"],
+ ["eval","({overflow:document.documentElement.scrollWidth>innerWidth, reduced:matchMedia('(prefers-reduced-motion: reduce)').matches, theme:document.body.dataset.theme})"]
+]

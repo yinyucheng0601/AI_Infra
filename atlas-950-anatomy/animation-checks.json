@@ -1,0 +1,1 @@
+[["eval", "anatomySeek(23)"], ["shot", "/Users/yin/AI_Infra/atlas-950-anatomy/shots/animation-exploded.png", "#world"], ["eval", "if(document.querySelectorAll('button,header,aside,nav,input').length)throw Error('UI remains'); 'UI-free scene verified'"], ["eval", "anatomySeek(10)"], ["shot", "/Users/yin/AI_Infra/atlas-950-anatomy/shots/animation-rack.png", "#world"]]

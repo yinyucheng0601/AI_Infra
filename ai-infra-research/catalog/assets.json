@@ -2,6 +2,55 @@
   "version": 1,
   "assets": [
     {
+      "id": "atlas-950-anatomy",
+      "title": "Atlas 950 · Anatomy",
+      "form": "交互 Pattern",
+      "domains": [
+        "Ascend",
+        "AI Infra",
+        "3D",
+        "Hardware"
+      ],
+      "summary": "从机柜群、单机柜、计算抽屉到组件展开与 950DT 封装的连续轴测动画。",
+      "designValue": "用同一组对象保持跨尺度连续性，以五步播放、垂直爆炸展开和双语引线解释硬件组成。",
+      "outline": [
+        "机柜群与单机柜连续聚焦",
+        "抽屉拉出与组件垂直展开",
+        "950DT 封装近景与双语引线",
+        "五步播放、暂停、进度拖动与重置"
+      ],
+      "type": "pattern",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/atlas-950-anatomy.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "atlas-950-anatomy/index.html",
+          "revision": null,
+          "sha256": "277fe86c3d94647eaabcdffa08f7550d4068ebe5d3d6f9521555c742dce43963"
+        }
+      ],
+      "validation": [
+        "2026-10-14：用户认可当前页面并要求收录；此前已完成 1440×1000 浏览器检查，验证五步切换、播放暂停、终点停播与封装标注。",
+        "2026-10-14：直接链接同仓库原页面，复用已生成的组件展开截图为封面；结构为依据源页面重绘的 SVG，非官方 CAD。"
+      ],
+      "related": [
+        "atlas-950-explorer",
+        "spatial-systems-ui-style-guide"
+      ],
+      "reviewedAt": "2026-10-14",
+      "topics": [
+        "operators",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "csa-pass-field",
       "title": "CSA Pass Field · 编译过程图",
       "form": "交互 Pattern",

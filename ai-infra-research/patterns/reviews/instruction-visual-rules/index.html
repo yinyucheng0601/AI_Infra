@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>指令视觉语法 · 三案重提</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0d0d;--text:#ededed;--compute:#bba1ef;--move:#60ced8;--sync:#efc45b;--memory:#91aeb8;--font:Inter,'PingFang SC',system-ui,sans-serif}
+*{box-sizing:border-box}html{background:var(--bg)}
+body{margin:0;color:var(--text);font:13px/1.5 var(--font);background:radial-gradient(circle at 50% -20%,#1c1c1c 0,#0d0d0d 44%)}
+button,a{font:inherit;color:inherit}button{cursor:pointer}
+header{max-width:1780px;margin:auto;padding:28px 36px 22px;display:flex;align-items:end;justify-content:space-between;gap:24px}
+.eyebrow{font:10px/1.2 ui-monospace,monospace;letter-spacing:2.4px;color:#888}.title-row{display:flex;align-items:baseline;gap:16px}
+h1{font-size:clamp(27px,3vw,42px);line-height:1.1;font-weight:420;letter-spacing:-1.2px;margin:12px 0 8px}.version{font:10px ui-monospace,monospace;color:#777}header p{margin:0;color:#999;font-size:12px}
+.controls{display:flex;align-items:center;gap:10px}.segmented{display:flex;gap:2px;padding:3px;border:1px solid #494949;background:#171717;border-radius:5px}
+.segmented button,.gray{min-height:36px;padding:7px 13px;border:0;border-radius:2px;background:transparent;color:#aaa}.segmented button[aria-pressed=true],.gray[aria-pressed=true]{background:#ededed;color:#111}.gray{border:1px solid #5c5c5c;color:#ddd}
+.segmented button:hover,.gray:hover{color:#fff;background:#282828}.segmented button[aria-pressed=true]:hover,.gray[aria-pressed=true]:hover{color:#111;background:#fff}button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #fff;outline-offset:3px}
+main{max-width:1780px;margin:auto;padding:0 24px 28px}.boards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.board{position:relative;min-width:0;border:1px solid #333;background:#090909;overflow:hidden}.board-header{position:absolute;z-index:2;inset:0 0 auto 0;display:flex;justify-content:space-between;align-items:flex-start;padding:17px 18px;pointer-events:none}
+.identity{display:flex;gap:10px;align-items:flex-start}.option{font:28px/.9 ui-monospace,monospace;letter-spacing:-2px;color:var(--accent)}.board h2{font-size:13px;font-weight:560;letter-spacing:.8px;margin:0 0 4px}.board-header p{font-size:9px;letter-spacing:1.2px;color:#7f7f7f;margin:0;text-transform:uppercase}
+.focus{pointer-events:auto;border:1px solid #505050;background:#111;color:#aaa;border-radius:2px;min-width:31px;height:31px;padding:0;font-size:16px}.focus:hover{color:#fff;border-color:#888}.art{display:block;width:100%;height:auto}
+.boards[data-view]:not([data-view=all]){grid-template-columns:minmax(0,1180px);justify-content:center}.boards[data-view]:not([data-view=all]) .board{display:none}.boards[data-view=A] .board[data-option=A],.boards[data-view=B] .board[data-option=B],.boards[data-view=C] .board[data-option=C]{display:block}
+.gray-mode .art{filter:grayscale(1)}.reading{margin:15px 4px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.reading span{display:flex;gap:10px;align-items:baseline;color:#898989;font-size:11px}.reading b{color:#cfcfcf;font:10px ui-monospace,monospace;font-weight:500}
+details{border-top:1px solid #333;margin:20px 4px 0;padding-top:14px;color:#929292;font-size:12px}summary{cursor:pointer;width:fit-content;color:#bdbdbd}details p{max-width:1080px;margin:12px 0 0}
+footer{margin:20px 4px 0;display:flex;justify-content:space-between;gap:16px;color:#777;font-size:11px}a{text-underline-offset:3px}
+@media(max-width:1050px){header{align-items:flex-start;flex-direction:column;padding:25px 24px 20px}.boards{gap:8px}.board-header{padding:12px}.option{font-size:22px}.board h2{font-size:11px}.board-header p{font-size:8px}.focus{width:28px;height:28px}.reading{gap:8px}.reading span{font-size:10px}.title-row{align-items:flex-end}}
+@media(max-width:720px){header{padding:22px 18px 17px}.title-row{display:block}.controls{width:100%;justify-content:space-between}.boards{grid-template-columns:1fr;gap:12px}.board-header{padding:17px}.option{font-size:28px}.board h2{font-size:13px}.board-header p{font-size:9px}.reading{grid-template-columns:1fr;margin-top:18px}.segmented button,.gray{padding:7px 10px}main{padding:0 12px 24px}footer{flex-direction:column}}
+/* Study 04: open, paper-like review surface; color belongs to the compositions. */
+:root{color-scheme:light;--bg:#faf9f6;--text:#30312f}
+html,body{background:var(--bg)}
+header{padding-top:40px;padding-bottom:32px}h1{font-weight:450;font-size:32px}
+header p{color:#72736e}.eyebrow{color:#7c7d77}
+.segmented{background:transparent;border-color:#d8d8d0}.segmented button,.gray{color:#686a63}
+.segmented button[aria-pressed=true],.gray[aria-pressed=true]{background:#30362f;color:#fff}
+.gray{border-color:#d8d8d0}.segmented button:hover,.gray:hover{background:#e5e6de;color:#252b25}
+main{padding:0 36px 28px}.boards{gap:26px;align-items:start}
+.board{border:0;background:transparent;overflow:visible}.board-header{position:relative;inset:auto;padding:0 0 14px;align-items:center;pointer-events:auto}
+.board h2{font-size:15px;font-weight:500;letter-spacing:1px}.focus{border-color:#dadbd2;background:transparent;color:#62675c}.focus:hover{color:#222;border-color:#888}
+.art{border:1px solid #00000009}.boards[data-view]:not([data-view=all]){grid-template-columns:minmax(0,760px)}
+.reading{margin-top:20px;gap:26px}.reading span{color:#73756c}.reading b{color:#343a30}
+details{border-color:#ddded6;color:#74786d}summary{color:#5d6457}footer{color:#7c8174}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline-color:#315acb}
+@media(max-width:1050px){.boards{gap:16px}.board-header{padding:0 0 12px}header{padding:26px 24px}main{padding:0 24px 24px}}
+@media(max-width:720px){main{padding:0 18px 24px}.boards{gap:28px}.board-header{padding:0 0 12px}.reading{gap:8px}h1{font-size:29px}}
+</style>
+</head>
+<body>
+<header><div><div class="eyebrow">INSTRUCTION VISUAL GRAMMAR / STUDY 04</div><div class="title-row"><h1>面建立秩序，点线表达关系。</h1></div><p>三套构成 · 计算 ƒx · 搬运 → · 同步 ●</p></div><div class="controls"><div class="segmented" aria-label="方案视图"><button data-view="all" aria-pressed="true">ALL</button><button data-view="A" aria-pressed="false">A</button><button data-view="B" aria-pressed="false">B</button><button data-view="C" aria-pressed="false">C</button></div><button class="gray" id="gray" aria-pressed="false">GRAY</button></div></header>
+<main><div class="boards" id="boards" data-view="all"></div>
+<div class="reading"><span><b>A</b>错位块面 / 暖白留空 / 朱色焦点</span><span><b>B</b>共享底面 / 同色层次 / 琥珀焦点</span><span><b>C</b>横向色带 / 疏密节奏 / 墨色焦点</span></div>
+<details><summary>参考提取与语义边界</summary><p>从参考中提取大面积色域与留白、线路的节奏、密集条带的整体轮廓。图元适用于 DAG、指令卡片与泳道；C/V 独立表示执行侧。内存取得、释放、读写及 slot 归还分别标记。当前宽度用于构图，真实时间轴由时间数据决定；同步点与有时长的等待区间分开表达。</p></details>
+<footer><span>候选 v0.4 · 待评审</span><a href="rules-v1.html">语义规则底稿 ↗</a></footer></main>
+<script src="options.js"></script>
+</body></html>
