@@ -63,21 +63,21 @@
   const weightKey=c.weight?(['weight-attn','weight-attn','weight-attn','weight-ffn','weight-ffn','weight-embedding','weight-head','weight-norm','weight-router','weight-shared','weight-ffn'][c.weight.index]):null;
   if(weightKey)c.bindings.tensors[weightKey]=c.weight;
   let lines='',nodes='';
-  const label=(x,y,s,tone=color.muted,size=14,anchor='start')=>`<text x="${x}" y="${y}" fill="${tone}" font-size="${size}" text-anchor="${anchor}">${esc(s)}</text>`;
+  const label=(x,y,s,tone=color.muted,size=14,anchor='start')=>`<text class="cg-annotation" x="${x}" y="${y}" fill="${tone}" font-size="${size}" text-anchor="${anchor}">${esc(s)}</text>`;
   function hit(key,body,title,description,op=null,enabled=true){
    notes[key]={title,description,op,...(c.bindings?.tensors[key]?{tensor:c.bindings.tensors[key]}:{}),...(c.bindings?.comm[key]?{communication:c.bindings.comm[key]}:{})};
    const selected=c.selected===key||op&&c.op===op||c.weight?.consumers.includes(key)||key===weightKey||c.weight&&(key==='weight-attn'&&c.weight.index<3||key==='weight-ffn'&&[3,4,10].includes(c.weight.index));
-   return `<g class="cg-hit${enabled?'':' cg-inactive'}" data-cg-node="${key}" data-wb-tip="${esc(description)}" ${op?`data-op="${op}"`:''} tabindex="0" role="button" aria-label="${esc(title)}" aria-pressed="${!!selected}">${body}</g>`;
+   return `<g class="cg-hit${enabled?'':' cg-inactive'}" data-cg-node="${key}" data-weight-focus="${!!c.weight&&(key===weightKey||c.weight.consumers.includes(key))}" data-wb-tip="${esc(description)}" ${op?`data-op="${op}"`:''} tabindex="0" role="button" aria-label="${esc(title)}" aria-pressed="${!!selected}">${body}</g>`;
   }
-  function wire(d,tone='i',dash=false){lines+=`<path d="${d}" fill="none" stroke="${color[tone]}" stroke-width="2" ${dash?'stroke-dasharray="6 5"':''} marker-end="url(#cg-arrow-${tone})"/>`;}
-  const vertical=(x,y1,y2,tone='i',dash=false)=>wire(`M${x} ${y1}V${y2}`,tone,dash);
+  function wire(d,tone='i',dash=false,owner=null){lines+=`<path class="cg-edge" data-weight-focus="${!!weightKey&&owner===weightKey}" d="${d}" fill="none" stroke="${color[tone]}" stroke-width="2" ${dash?'stroke-dasharray="6 5"':''} marker-end="url(#cg-arrow-${tone})"/>`;}
+  const vertical=(x,y1,y2,tone='i',dash=false,owner=null)=>wire(`M${x} ${y1}V${y2}`,tone,dash,owner);
   function op(key,text,x,y,opId,desc){nodes+=hit(key,G.draw('op',x,y,text),text,desc,opId);}
   function comm(key,text,x,y,enabled,desc){nodes+=hit(key,G.draw('comm',x,y,text),text,desc,null,enabled);}
   function tensor(key,text,x,y,tone='i',desc='',side=true){
    const data=c.bindings?.tensors[key];
    const width=key==='kv-remote'?240:260;
    if(key===weightKey)text=c.weight.label;
-   nodes+=hit(key,G.tensor(x+60.45-width/2,y,width,text,data?.summary||'',color[tone],data?.shard),text,data?.description||desc);
+   nodes+=hit(key,G.tensor(x+60.45-width/2,y,width,text,data?.summary||'',color[tone],c.weight&&key!==weightKey?null:data?.shard),text,data?.description||desc);
   }
   function add(key,x,y,opId,formula){nodes+=hit(key,G.draw('add',x-24,y-24)+label(x+45,y+6,formula,'#e8e8e8',16),formula,'逐元素残差相加，两个输入均为 T × H。',opId);}
   function frame(x,y,w,h,title){nodes+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="#191919" stroke="#545454" stroke-width="1.2"/>`+label(x+15,y+27,title);}
@@ -89,11 +89,11 @@
   tensor('input','层输入 X · T × H',420,25);
   if(c.layer===0){
    op('embedding','Embedding',350,-90,'embed','词表行分片映射到层输入。');
-   tensor('weight-embedding','W_Embedding',750,-97.2,'w');wire('M680.45 -66H610','w');vertical(480,-42,25);
+   tensor('weight-embedding','W_Embedding',750,-97.2,'w');wire('M680.45 -66H610','w',false,'weight-embedding');vertical(480,-42,25);
   }
   vertical(480,87.4,160);
   op('norm1','RMSNorm',350,160,'norm1','对当前层输入归一化。');
-  tensor('weight-norm','W_Norm · 本层两组',75,152.8,'w');wire('M265.45 184H350','w');
+  tensor('weight-norm','W_Norm · 本层两组',75,152.8,'w');wire('M265.45 184H350','w',false,'weight-norm');
   vertical(480,208,250);tensor('norm-x','归一化激活',420,250);
   vertical(480,312.4,370);
   op('attention','Attention · 本地计算',350,370,'attention','折叠 Q/K/V 投影、Attention 与输出投影；可在定位与查找中选择具体算子。');
@@ -111,14 +111,14 @@
    wire('M245.45 394H350');
   }
   tensor('weight-attn','W_Attn · 本地参数',750,362.8,'w','ZeRO 关闭；此视图已是当前 TP Rank 所需的参数部分。',false);
-  wire('M680.45 394H610','w');nodes+=label(810,347,'ZeRO 关闭',color.muted,13,'middle');
+  wire('M680.45 394H610','w',false,'weight-attn');nodes+=label(810,347,'ZeRO 关闭',color.muted,13,'middle');
   vertical(480,827.4,890);op('norm2','RMSNorm',350,890,'norm2','FFN / MoE 子层输入归一化。');
-  wire('M265.45 184H285V914H350','w');
+  wire('M265.45 184H285V914H350','w',false,'weight-norm');
   vertical(480,938,975);tensor('norm-y','归一化激活',420,975);
   let computeY=1070;
   if(moe){
    vertical(480,1037.4,1070);op('router','Router · Top-K',350,1070,'router',`按 token 选择 ${c.topk} 个专家。路由系数是输入相关中间值。`);
-   tensor('weight-router','W_Router',750,1062.8,'w');wire('M680.45 1094H610','w');
+   tensor('weight-router','W_Router',750,1062.8,'w');wire('M680.45 1094H610','w',false,'weight-router');
    vertical(480,1118,1151);comm('ep-dispatch','EP · All-to-All',350,1155,c.ep>1,'Dispatch：按专家目的地分发激活与路由元数据；本地块留在本地。');
    vertical(480,1205,1235);computeY=1235;
    op('experts','Experts · FFN',350,1235,'experts','本 Rank 持有的专家计算；ETP=1。选择后可查询专家归属。');
@@ -137,13 +137,13 @@
   vertical(480,resultY+62.4,mergeY-24);wire(`M350.45 796H300V${mergeY}H456`);add('residual2',480,mergeY,'residual2',moe?'Z = Y + R_MoE':'Z = Y + R_FFN');
   vertical(480,mergeY+24,outputY);tensor('output','层输出 Z · T × H',420,outputY);
   tensor('weight-ffn',moe?'W_Experts · 本地参数':'W_FFN · 本地参数',750,computeY-7.2,'w',moe?'按 EP 分布的专家参数；ETP=1，ZeRO 关闭。':'当前 TP Rank 的 FFN 参数，ZeRO 关闭。',false);
-  wire(`M680.45 ${computeY+24}H610`,'w');
+  wire(`M680.45 ${computeY+24}H610`,'w',false,'weight-ffn');
   const stageWidth=c.layers/c.pp,stage=Math.floor(c.layer/stageWidth),atEnd=(c.layer+1)%stageWidth===0&&stage<c.pp-1;
   vertical(480,outputY+62.4,ppY-4);
   if(c.layer===c.layers-1){op('finalnorm','Final RMSNorm',350,ppY,'finalnorm','最后一层之后的最终归一化。');tensor('weight-finalnorm','W_Final Norm',750,ppY-7.2,'w');wire(`M680.45 ${ppY+24}H610`,'w');}
   else comm('pp-forward','PP · P2P 激活',350,ppY,atEnd,atEnd?'当前层为 stage 末层，向下一 stage 发送 Z。':'当前层无需 PP 发送：在 stage 内继续下一层，或已处于最后 stage。');
   vertical(480,ppY+50,lossY);op(c.layer===c.layers-1?'head':'following',c.layer===c.layers-1?'LM Head / Loss':'后续层 / Loss',350,lossY,c.layer===c.layers-1?'head':null,'后续层与损失计算的折叠视图。');
-  if(c.layer===c.layers-1){tensor('weight-head','W_LM Head',750,lossY-7.2,'w');wire(`M680.45 ${lossY+24}H610`,'w');}
+  if(c.layer===c.layers-1){tensor('weight-head','W_LM Head',750,lossY-7.2,'w');wire(`M680.45 ${lossY+24}H610`,'w',false,'weight-head');}
   // Folded backward lane retains real dependencies and upstream direction.
   wire(`M610 ${lossY+24}H1160V${ppY+50}`,'g',true);
   comm('pp-backward','PP · P2P dZ',1030,ppY,atEnd,'仅在对应 PP 边界接收后级的激活梯度；stage 内为本地反向依赖。');
@@ -163,7 +163,7 @@
   wire('M1030 944H1005V184H1026','g',true);comm('pp-input','PP · P2P dX',1030,160,c.layer%stageWidth===0&&stage>0,'仅在 stage 输入边界向上游返回输入梯度，其余在本地继续反向。');
   nodes+=label(1160,250,'B 折叠子层与残差求导',color.muted,14,'middle');
   if(moe&&c.shared>0){
-   tensor('weight-shared','W_Shared',75,1120,'w');vertical(135.45,1182.4,1235,'w');
+   tensor('weight-shared','W_Shared',75,1120,'w');vertical(135.45,1182.4,1235,'w',false,'weight-shared');
    op('shared','Shared · FFN',0,1235,'shared',`${c.shared} 个共享专家，Gate/Up 与 Down 按 TP 分片。`);
    wire('M350.45 1006H280V1259H260');
    vertical(130,1283,1306);comm('tp-shared','TP · AllReduce',0,1310,c.tp>1,'归约共享专家行并行输出。');
@@ -171,7 +171,7 @@
   }
   const defs=Object.keys(color).filter(k=>k!=='muted').map(k=>`<marker id="cg-arrow-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="${color[k]}"/></marker>`).join('');
   const top=c.layer===0?120:0;
-  return {html:`<svg class="approved-compute-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1330 ${fullHeight+top}" preserveAspectRatio="xMidYMin meet" role="group" aria-label="Transformer 层计算与通信机制图"><defs>${defs}</defs><g transform="translate(0 ${top})">${frameMarkup}${lines}${nodes}</g></svg>`,notes};
+  return {html:`<svg class="approved-compute-svg" data-weight-isolation="${!!c.weight}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1330 ${fullHeight+top}" preserveAspectRatio="xMidYMin meet" role="group" aria-label="Transformer 层计算与通信机制图"><defs>${defs}</defs><g transform="translate(0 ${top})"><g class="cg-frames">${frameMarkup}</g>${lines}${nodes}</g></svg>`,notes};
  }
  root.RankComputeGraph={render,bindings,weightSelection};
 })(globalThis);

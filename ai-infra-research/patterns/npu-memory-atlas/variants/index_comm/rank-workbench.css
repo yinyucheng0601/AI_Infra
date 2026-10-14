@@ -104,6 +104,12 @@ body #flat-stage,body[data-query=true] #flat-stage{inset:0;z-index:0}
 .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .tensor-node{stroke-width:1.2}
 .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-glyph-source="data-4"]>g:first-of-type rect{opacity:.65}
 .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-glyph-source="system-add"] circle{fill:var(--cg-highlight);stroke:none}
+/* Shard ownership is context; only the selected parameter and its consumers remain bright. */
+.approved-compute-svg[data-weight-isolation=true] .cg-hit[data-weight-focus=false],
+.approved-compute-svg[data-weight-isolation=true] .cg-edge[data-weight-focus=false],
+.approved-compute-svg[data-weight-isolation=true] .cg-frames,
+.approved-compute-svg[data-weight-isolation=true] .cg-annotation{opacity:.08}
+.approved-compute-svg[data-weight-isolation=true] [data-weight-focus=true]{opacity:1}
 #query-note{flex:none;margin:0;padding:10px 20px;background:#111;color:#aaa;border-top:1px solid #353535;font-size:11px;line-height:1.5;max-height:90px;overflow:auto}
 .cg-search-result{display:block;border:0;background:none;padding:0;margin:6px 0;width:280px;cursor:pointer}.cg-search-result .approved-compute-svg{min-width:0}.cg-search-result:hover .op{fill:#c17df3;stroke:none}
 #graph-query button{color:#eee}.graph-caption{display:block;font-size:11px;color:#aaa;margin:10px 0}

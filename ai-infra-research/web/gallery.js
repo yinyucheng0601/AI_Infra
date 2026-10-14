@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'csa-pass-field':{src:'__CSA_PASS_FIELD_COVER__',alt:'CSA Pass Field：qk_pv 核心 DAG、控制作用域、内存绑定与 PTO-ISA 指令'},
     'atlas-950-explorer':{src:'__ATLAS_950_COVER__',alt:'Atlas 950 概念机柜：用户提供的整柜轴测截图'},
     'pypto-guides':{src:'__PYPTO_GUIDES_COVER__',alt:'内存复用图解：张量生命期与存储分配'},
     'pypto-compilation-guide':{src:'__PYPTO_COMPILATION_COVER__',alt:'PyPTO 编译图解：张量、计算、Kernel 与 Task 的关系'},
@@ -41,6 +42,7 @@
     if(documentFigures[a.id])return `<img class="document-figure document-figure-${esc(a.id)}" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}">`;
     const frame=content=>`<svg viewBox="0 0 240 150" role="img" aria-label="${esc(a.title)} 主题插画">${content}</svg>`;
     const arts={
+      'csa-pass-field':`<g class="line"><rect x="28" y="28" width="184" height="40" rx="5"/><rect x="58" y="78" width="154" height="40" rx="5"/><path d="M46 48h27m45 0h64M96 58v40h24m43 0h29M96 118v17m64-17v17"/></g><rect class="accent" x="73" y="39" width="45" height="18" rx="9"/><rect class="mid" x="120" y="89" width="43" height="18" rx="9"/><g class="solid"><rect x="78" y="131" width="36" height="8"/><rect x="143" y="131" width="36" height="8"/></g>`,
       'diagram-legend-library':`<g class="line"><path d="M25 18h190v114H25zM25 56h190M25 94h190M88 18v114M151 18v114"/><rect x="40" y="29" width="32" height="16" rx="2"/><path d="M48 29v16m8-16v16m8-16v16M40 37h32"/><rect x="99" y="29" width="42" height="16" rx="8"/><circle cx="183" cy="37" r="10"/><path d="M177 37h12m-6-6v12M39 75h32m-7-6 7 6-7 6M104 69l6 6-6 6m12-12 6 6-6 6m12-12 6 6-6 6"/><rect x="168" y="65" width="30" height="20" rx="4"/><path d="M40 106h32v14H40zM101 107h36m-36 10h25M171 107l6 6 13-12"/></g>`,
       'pangu-layer-atlas':`<g class="line"><path d="m108 26 73 35v67l-73-35zM92 29l73 35v67M76 32l73 35v67M60 35l73 35v67M44 38l73 35v67"/></g><path class="soft" d="m76 32 73 35v67L76 99z"/><path class="line" d="m76 32 73 35v67L76 99z"/><path class="accent" d="m97 65 15 7v18l-15-7z"/>`,
       'devkit-tui-competitive-analysis':`<rect class="soft" x="28" y="24" width="184" height="102" rx="10"/><path class="line" d="M28 45h184M89 45v81M89 86h123"/><circle class="solid" cx="41" cy="35" r="3"/><circle class="mid" cx="52" cy="35" r="3"/><path class="line" d="m41 61 8 6-8 6m17 0h17M103 59h87M103 72h54M103 99h48M103 112h78"/><rect class="accent" x="41" y="90" width="33" height="6" rx="3"/>`,

@@ -308,7 +308,7 @@ body[data-ep-mode="true"] #ep-playback #ep-stops button{min-height:14px;height:1
 :root:not([data-theme="light"]) :is(.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list){box-shadow:0 8px 24px rgb(0 0 0 / 18%)}
 /* End dark surface palette override. */
 [data-shard-detail]:focus-visible{outline:1px solid currentColor;outline-offset:3px}
-</style><link rel="stylesheet" href="index_comm/rank-workbench.css?v=605463b1370b"></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
+</style><link rel="stylesheet" href="index_comm/rank-workbench.css?v=6f604941cdb4"></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front">
 <svg viewBox="0 0 148 148" aria-hidden="true">
 <path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
@@ -1350,7 +1350,7 @@ function tick(now){if(lastFrame!==null&&playing&&!document.hidden){
  }else{simTime+=(now-lastFrame)*(window.rankAtlasPlaybackRate?.()??1);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}
 }lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 if(!window.RankAtlasModel){render();if(!ATLAS_EMBED)requestAnimationFrame(tick);}
-</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=e5be87d357e0"></script><script src="index_comm/rank-workbench.js?v=28b2e6777ee9"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
+</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="index_comm/rank-workbench.js?v=28b2e6777ee9"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
 // Readability profiles: subtle refraction on controls, opaque frost on reading panels.
 // Keep the third-party implementation scoped and usable directly over file://.
 (() => {
