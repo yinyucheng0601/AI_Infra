@@ -299,6 +299,44 @@
  }
  let graphNotes={};
  let graphRelation=null,graphContext='',graphWeight=null;
+ const graphCamera={zoom:1,x:0,y:0};
+ let graphPan=null;
+ function graphSurface(){return $('operator-path').querySelector('.cg-viewport > svg');}
+ function applyGraphCamera(){
+  const svg=graphSurface();if(!svg)return;
+  const box=svg.getBoundingClientRect();if(!box.width||!box.height)return;
+  const width=1330/graphCamera.zoom,height=width*box.height/box.width;
+  svg.setAttribute('viewBox',`${graphCamera.x} ${graphCamera.y} ${width} ${height}`);
+ }
+ const graphHost=$('operator-path');
+ graphHost.addEventListener('wheel',e=>{
+  const svg=graphSurface();if(!svg||!e.target.closest('.cg-viewport'))return;
+  e.preventDefault();e.stopPropagation();tooltip.hidden=true;
+  const box=svg.getBoundingClientRect(),old=1330/graphCamera.zoom;
+  const delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?box.height:1);
+  graphCamera.zoom=Math.max(.3,Math.min(8,graphCamera.zoom*Math.exp(-Math.max(-240,Math.min(240,delta))*.002)));
+  const next=1330/graphCamera.zoom;
+  graphCamera.x+=(e.clientX-box.left)/box.width*(old-next);
+  graphCamera.y+=(e.clientY-box.top)/box.width*(old-next);
+  applyGraphCamera();
+ },{passive:false});
+ graphHost.addEventListener('pointerdown',e=>{
+  if(e.button!==0||!e.target.closest('.cg-viewport')||e.target.closest('.cg-hit'))return;
+  const svg=graphSurface();if(!svg)return;
+  e.preventDefault();graphPan={id:e.pointerId,x:e.clientX,y:e.clientY,cx:graphCamera.x,cy:graphCamera.y,scale:1330/graphCamera.zoom/svg.getBoundingClientRect().width};
+  graphHost.setPointerCapture(e.pointerId);graphHost.classList.add('cg-panning');tooltip.hidden=true;
+ });
+ graphHost.addEventListener('pointermove',e=>{
+  if(!graphPan||e.pointerId!==graphPan.id)return;
+  graphCamera.x=graphPan.cx-(e.clientX-graphPan.x)*graphPan.scale;
+  graphCamera.y=graphPan.cy-(e.clientY-graphPan.y)*graphPan.scale;applyGraphCamera();
+ });
+ for(const type of ['pointerup','pointercancel','lostpointercapture'])graphHost.addEventListener(type,e=>{
+  if(!graphPan||e.pointerId!==graphPan.id)return;
+  graphPan=null;graphHost.classList.remove('cg-panning');
+  if(graphHost.hasPointerCapture(e.pointerId))graphHost.releasePointerCapture(e.pointerId);
+ });
+ new ResizeObserver(applyGraphCamera).observe(graphHost);
  function clearGraphSelection(){graphWeight=null;graphRelation=null;graphNotes={};graphContext='';state.graphComm=null;selectedMemoryTarget=null;selectedMemoryCategory=null;}
  query.addEventListener('click',e=>{if(e.target.closest('[data-op],[data-cg-node],[data-expert]'))graphWeight=null;},true);
  function selectWeightShard(id,index){
@@ -390,13 +428,14 @@
   graphRelation=binding.comm[state.graphComm]?.enabled?binding.comm[state.graphComm]:null;
   const graph=RankComputeGraph.render({bindings:binding,weight:weight?.layer===current?weight:null,layer:current,dense:atlasConfig.dense,layers:L,tp:TP,cp:atlasConfig.cp,pp:PP,ep:EP,topk:atlasConfig.topk,shared:atlasConfig.shared,dp:M.dpReplica(atlasConfig),op:state.op,selected:state.graphComm});
   graphNotes=graph.notes;
-  return '<div class="cg-context">R'+selectedRank+' · L'+current+' · '+(current<atlasConfig.dense?'Dense':'MoE')+(weight?.layer===current?' · '+esc(weight.label)+' · '+weight.scope:'')+'</div>'+graph.html+expertMarkup(search);
+  return '<div class="cg-context">R'+selectedRank+' · L'+current+' · '+(current<atlasConfig.dense?'Dense':'MoE')+(weight?.layer===current?' · '+esc(weight.label)+' · '+weight.scope:'')+'</div><div class="cg-viewport">'+graph.html+'</div>'+expertMarkup(search);
  }
  function rebuildQuery(){
   const select=$('query-layer');if(!select)return;const key=L+':'+atlasConfig.dense;if(select.dataset.layers!==key){select.innerHTML='<option value="all">当前 Rank 首层</option>'+Array.from({length:L},(_,l)=>`<option value="${l}">Layer ${l}${l<atlasConfig.dense?' · Dense':' · MoE'}</option>`).join('');select.dataset.layers=key;}
   select.value=state.layer===null?'all':String(state.layer);
   const search=$('query-op').value.trim().toLowerCase(),l=state.layer,pp=ranks[selectedRank].pp;
   $('operator-path').innerHTML=graphMarkup(l,search);
+  applyGraphCamera();
   $('query-locator-context').textContent=l===null?`当前 Rank 首层 · L${M.bounds(selectedRank,atlasConfig)[0]}`:`L${l} · PP${pp} · ${l<atlasConfig.dense?'Dense':'MoE'}`;
   const note=graphNotes[state.graphComm];
   $('query-note').textContent=note?note.title+'：'+note.description+(note.communication?' · '+(note.communication.enabled?'关联 Rank：'+note.communication.members.map(id=>'R'+id).join('、'):'当前无跨 Rank 通信')+(note.communication.expertMembers?.length?'；专家参数副本：'+note.communication.expertMembers.map(id=>'R'+id).join('、'):''):''):'激活 · 绿 / 参数 · 紫 / 梯度 · 青。选择 tensor 定位内存区域，选择通信节点查看关联 Rank。';

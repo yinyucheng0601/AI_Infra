@@ -42,3 +42,17 @@ assert(W.applyConfig({dense:12},true));W.select(0,0);vm.runInContext("setAtlasMo
 W.select(32,12);vm.runInContext("setAtlasMode('comm');seekEPStage(.3)",ctx);
 assert.equal(W.snapshot().memory.communication,read('epEventAt(simTime,selectedRank).rank.bufferBytes/1e9'));
 console.log('PASS: full adapter mount, exact tensor allocation, Shared nodes, state cleanup, projection preservation and event buffer ledger');
+
+const graphHost=dom('operator-path'),surface=graphHost.querySelector('.cg-viewport > svg');
+const box=()=>surface.getAttribute('viewBox').split(' ').map(Number);
+const original=box();
+for(const fn of graphHost.listeners.wheel)fn({target:{closest:()=>({})},deltaY:-100,deltaMode:0,clientX:700,clientY:900,preventDefault(){},stopPropagation(){}});
+const magnified=box();assert(magnified[2]<original[2]);
+assert(Math.abs(original[0]+original[2]*.5-magnified[0]-magnified[2]*.5)<1e-8);
+graphHost.setPointerCapture=()=>{};graphHost.hasPointerCapture=()=>true;graphHost.releasePointerCapture=()=>{};
+const blank={closest:s=>s==='.cg-viewport'?{}:null};
+for(const fn of graphHost.listeners.pointerdown)fn({target:blank,button:0,pointerId:1,clientX:700,clientY:900,preventDefault(){}});
+for(const fn of graphHost.listeners.pointermove)fn({pointerId:1,clientX:800,clientY:950});
+assert(box()[0]<magnified[0]);assert(box()[1]<magnified[1]);
+for(const fn of graphHost.listeners.pointerup)fn({pointerId:1});
+console.log('PASS: graph wheel anchor and drag camera');

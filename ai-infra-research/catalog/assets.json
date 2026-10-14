@@ -6,25 +6,47 @@
       "title": "CSA Pass Field · 编译过程图",
       "form": "交互 Pattern",
       "type": "pattern",
-      "domains": ["PyPTO", "Compiler", "AI Infra"],
+      "domains": [
+        "PyPTO",
+        "Compiler",
+        "AI Infra"
+      ],
       "summary": "沿 CSA qk_pv 的 Pass 变化探索数据流、控制作用域、跨核交接、内存绑定与 PTO-ISA 产物。",
       "designValue": "在同一张 DAG 中结合变化播放、关系高亮与指令局部展开，呈现编译对象的演化及对应关系。",
-      "outline": ["Pass 差分与变化播放", "Cube/AIC 与 Vector/AIV 拆分", "循环、条件与跨核交接", "MemRef 存储绑定", "PTO-ISA 静态指令展开"],
-      "media": ["web"],
+      "outline": [
+        "Pass 差分与变化播放",
+        "Cube/AIC 与 Vector/AIV 拆分",
+        "循环、条件与跨核交接",
+        "MemRef 存储绑定",
+        "PTO-ISA 静态指令展开"
+      ],
+      "media": [
+        "web"
+      ],
       "status": "reviewed",
       "visibility": "internal",
       "content": "patterns/csa-pass-field/index.html",
-      "sources": [{
-        "repository": "ai-infra",
-        "path": "ai-infra-research/patterns/csa-pass-field/index.html",
-        "url": null,
-        "revision": null,
-        "sha256": "d64090dcd861515e215eb56b26c083259b0fa7210e59cbe6123dc9a1234c15a0"
-      }],
-      "validation": ["2026-10-13：用户指定收录；来源为 PyPTO3-main/Design/csa-pass-field/dist/index.html 的独立 HTML 快照。原页面已完成构建和浏览器交互检查；收录副本执行一致性与目录校验，卡片视觉由用户验收。"],
-      "related": ["diagram-legend-library", "pypto-compilation-guide"],
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/csa-pass-field/index.html",
+          "url": null,
+          "revision": null,
+          "sha256": "4c4fc39142babb40ec8ca705833075d9d89ae2045f8cf64988b4b965d773f02e"
+        }
+      ],
+      "validation": [
+        "2026-10-13：用户指定收录；来源为 PyPTO3-main/Design/csa-pass-field/dist/index.html 的独立 HTML 快照。原页面已完成构建和浏览器交互检查；收录副本执行一致性与目录校验，卡片视觉由用户验收。"
+      ],
+      "related": [
+        "diagram-legend-library",
+        "pypto-compilation-guide"
+      ],
       "reviewedAt": "2026-10-13",
-      "topics": ["operators", "visual"],
+      "topics": [
+        "operators",
+        "visual"
+      ],
       "author": "Yucheng"
     },
     {
@@ -349,7 +371,7 @@
           "url": null,
           "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html",
           "revision": null,
-          "sha256": "8e8aaedd557f78fa52b2611c20dcf0fe45084fef4c11fcee81cc799dc285920c"
+          "sha256": "29bc6877ddd9975c9245a64e3a53954ace55ec743c68d50802ea07a186f1e72a"
         }
       ],
       "validation": [

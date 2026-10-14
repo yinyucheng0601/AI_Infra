@@ -90,6 +90,9 @@ body #flat-stage,body[data-query=true] #flat-stage{inset:0;z-index:0}
 .graph-query-tools{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;padding:4px 20px 12px}.graph-query-tools label{display:flex;flex-direction:column;gap:6px;font-size:10px;color:#aaa}
 #graph-query input,#graph-query select{width:100%;min-width:0;background:#191919;color:#eee;border:1px solid #454545;border-radius:6px;padding:8px;font:12px Arial,sans-serif}
 .operator-path{flex:1;min-height:0;overflow:auto;padding:18px;background:#111;overscroll-behavior:contain}
+.cg-viewport{height:calc(100% - 40px);min-height:240px;overflow:hidden;cursor:grab;touch-action:none;user-select:none}
+.cg-viewport>.approved-compute-svg{width:100%;height:100%;min-width:0;overflow:hidden;touch-action:none}
+.cg-panning .cg-viewport{cursor:grabbing}
 .cg-context{margin-bottom:16px;font:11px ui-monospace,monospace;color:#aaa}
 .approved-compute-svg{display:block;width:100%;min-width:900px;height:auto;overflow:visible;font-family:Arial,"Noto Sans SC",sans-serif}
 .approved-compute-svg .op{fill:#686868;stroke:#686868;stroke-width:1}
