@@ -1,8 +1,8 @@
 {
   "schemaVersion": "csa-pass-field.artifact.v1",
   "runId": "_jit_l3_decode_csa_20260903_010617",
-  "htmlSha256": "9a4452c4b2642b03985dde5d752bb05a3bed79ee6b7e1a5636425d1a26d4d91e",
-  "generatorSha256": "5c0e3d511e89cdc3a0be8e2306555a69047a8cc2fa1dd34a26e16f80e6139ead",
+  "htmlSha256": "6ede9da82af9ae42a5aec799d25fce6456449e4482358c4ab315c59b12d6731f",
+  "generatorSha256": "1d218acca7eb06f53e8977ca424ccd7e4bb80486b9f86326a85e46beace74655",
   "inputHashes": {
     "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/00_frontend.py": "1788e957a6f1a15c68eca812baf32406012604910a06d2553a8df065644ac9db",
     "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/01_after_InlineFunctions.py": "8aa2e1e4bc41e71815f994a121f54700872c36de44226f293f2562f0667ccac0",
@@ -63,6 +63,6 @@
   },
   "sourceRepository": "PyPTO3-main",
   "sourcePath": "Design/csa-pass-field",
-  "sourceFingerprint": "2633e2cf0d89fe0fbda32c80a7f79026d6453dd2a293a13d7dbcc22557b9af73",
+  "sourceFingerprint": "22b2731d049a72c987c2cb6e1356aca62ba3a4f10a4d33994b5c6645539bc3fc",
   "collectionPolicy": "generated-only; edit the source checkout and rebuild"
 }
