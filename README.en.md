@@ -12,16 +12,9 @@ Explore AI infrastructure through interactive diagrams—from model computation 
 
 [![Atlas 950 Anatomy: explore a cabinet array down to its NPU components](ai-infra-research/web/media/atlas-950-anatomy-cover.png)](https://yinyucheng0601.github.io/AI_Infra/atlas-950-anatomy/index.html)
 
-## Featured experiences
+## Credits
 
-| Experience | Explore |
-| --- | --- |
-| [Atlas 950 · Anatomy](https://yinyucheng0601.github.io/AI_Infra/atlas-950-anatomy/index.html) | A five-step animation with exploded components, a package close-up, and bilingual callouts |
-| [Atlas 950 · 3D Explorer](https://yinyucheng0601.github.io/AI_Infra/atlas-950-explorer/index.html) | Cabinets, drawers, and hardware components in three dimensions |
-| [CSA Pass Field](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/csa-pass-field/index.html) | Computation graphs and compiler objects evolving across passes |
-| [NPU Training Memory & EP Communication](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html) | Connections between ranks, memory placement, and expert-parallel communication |
-| [PyPTO Visual Guides](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/reports/llm-compute/pypto-guides/index.html) | Function transformations, memory reuse, and issue diagnosis |
-| [LLM Inference: From One Device to a Cluster](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/reports/llm-compute/llm-inference-dense-to-clusters-v1.html) | Model mechanisms and system deployment across inference scales |
+Atlas 950 Anatomy was built with Ryan’s [Anatomy Skill](https://github.com/wheresryan22/anatomy), including its isometric illustration approach and geometry toolkit. [Website](https://skills.wheresryan.sh/anatomy) · [Original MIT license](atlas-950-anatomy/ANATOMY-LICENSE.txt)
 
 [Maintenance guide](ai-infra-research/README.md) · [Contact](https://github.com/yinyucheng0601)
 

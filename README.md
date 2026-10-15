@@ -12,16 +12,9 @@
 
 [![Atlas 950 Anatomy：从机柜群逐层进入 NPU 组件](ai-infra-research/web/media/atlas-950-anatomy-cover.png)](https://yinyucheng0601.github.io/AI_Infra/atlas-950-anatomy/index.html)
 
-## 精选体验
+## 致谢
 
-| 作品 | 内容 |
-| --- | --- |
-| [Atlas 950 · Anatomy](https://yinyucheng0601.github.io/AI_Infra/atlas-950-anatomy/index.html) | 五步连续动画、组件爆炸图、封装近看与中英双语引线标注 |
-| [Atlas 950 · 3D Explorer](https://yinyucheng0601.github.io/AI_Infra/atlas-950-explorer/index.html) | 在三维空间中查看机柜、抽屉与硬件组件 |
-| [CSA Pass Field](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/csa-pass-field/index.html) | 跟随编译 Pass，观察计算图与编译对象的演变 |
-| [NPU 训练内存与 EP 通信](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html) | 关联 Rank、内存分布与专家并行通信 |
-| [PyPTO 图解系列](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/reports/llm-compute/pypto-guides/index.html) | 函数变换、内存复用与问题定位 |
-| [LLM 推理全流程](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/reports/llm-compute/llm-inference-dense-to-clusters-v1.html) | 从单卡计算走向集群推理，连接模型机制与系统部署 |
+Atlas 950 Anatomy 基于 Ryan 的 [Anatomy Skill 源仓库](https://github.com/wheresryan22/anatomy) 构建。感谢其轴测图解方法与几何工具包。 [官网](https://skills.wheresryan.sh/anatomy) · [原始 MIT 许可](atlas-950-anatomy/ANATOMY-LICENSE.txt)
 
 [维护指南](ai-infra-research/README.md) · [联系作者](https://github.com/yinyucheng0601)
 
