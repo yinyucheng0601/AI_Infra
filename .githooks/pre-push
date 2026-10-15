@@ -1,0 +1,9 @@
+#!/bin/sh
+# Verify exactly the outgoing commit, not an uncommitted working-tree build.
+while read local_ref local_sha remote_ref remote_sha
+do
+  case "$local_sha" in
+    0000000000000000000000000000000000000000) continue ;;
+  esac
+  rtk proxy python3 ai-infra-research/scripts/collect_csa.py --check --revision "$local_sha" || exit 1
+done

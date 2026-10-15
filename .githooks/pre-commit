@@ -1,0 +1,2 @@
+#!/bin/sh
+exec rtk proxy python3 ai-infra-research/scripts/collection_hook.py

@@ -14,3 +14,4 @@
 - 预览服务只绑定回环地址并使用文件白名单；不得为方便访问而开放整个家目录或所有仓库。
 - 不默认运行浏览器自动化或截图；由用户进行视觉验收，除非明确要求自动验证。
 - Shell 命令使用 rtk 前缀。修改后执行目录校验。
+- CSA Pass Field 唯一源码在 `PyPTO3-main/Design/csa-pass-field`；`patterns/csa-pass-field/index.html` 是自动构建产物，禁止直接编辑。运行 `scripts/build.py` 自动收录；来源/输入指纹和产物哈希见同目录 manifest。流程见 `patterns/csa-pass-field/README.md`。

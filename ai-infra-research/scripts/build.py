@@ -7,6 +7,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 from pathlib import Path
 from validate_catalog import validate
 from version_rank_demo import refresh
+from collect_csa import collect
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -85,6 +86,7 @@ if __name__ == '__main__':
     parser.add_argument('--pto-output', type=Path, help='explicit generated compatibility page output')
     parser.add_argument('--service-url', default='http://127.0.0.1:8766/')
     args = parser.parse_args()
+    collect()
     packages = [('methods/llm-compute-diagrams', 'methods/llm-compute-diagrams.zip')]
     data = json.loads((ROOT / 'catalog/assets.json').read_text())
     validate(data)

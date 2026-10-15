@@ -127,11 +127,12 @@
           "path": "ai-infra-research/patterns/csa-pass-field/index.html",
           "url": null,
           "revision": null,
-          "sha256": "4c4fc39142babb40ec8ca705833075d9d89ae2045f8cf64988b4b965d773f02e"
+          "sha256": "7baa5047bd336cfef61189f0b1886c0d870dffe27b4f376360bdce46af196df5"
         }
       ],
       "validation": [
-        "2026-10-13：用户指定收录；来源为 PyPTO3-main/Design/csa-pass-field/dist/index.html 的独立 HTML 快照。原页面已完成构建和浏览器交互检查；收录副本执行一致性与目录校验，卡片视觉由用户验收。"
+        "2026-10-15：PyPTO3-main/Design/csa-pass-field 为唯一源码；由 AI_Infra 构建自动收录独立 HTML。来源和产物哈希见同目录 artifact-manifest.json。",
+        "M1 已接入 Rank 0 执行证据；双 rank 计算图仍为静态 Mock。开发入口完成部分交互烟测，独立构建产物浏览器验收尚未完成。"
       ],
       "related": [
         "diagram-legend-library",
@@ -142,7 +143,13 @@
         "operators",
         "visual"
       ],
-      "author": "Yucheng"
+      "author": "Yucheng",
+      "buildSource": {
+        "repository": "PyPTO3-main",
+        "path": "Design/csa-pass-field",
+        "fingerprint": "6729eaac87484a1b1f5151a506e474b5ddc3da04c5fd5e28dd00a7b40bf103ce",
+        "policy": "sole-source; generated collection artifact"
+      }
     },
     {
       "id": "diagram-legend-library",

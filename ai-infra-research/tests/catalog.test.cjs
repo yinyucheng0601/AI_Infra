@@ -6,6 +6,19 @@ const C=require('../web/catalog-core.js');
 const root=path.join(__dirname,'..');
 const assets=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.filter(a=>a.type==='knowledge');
 const initial=()=>C.parseState('',assets);
+test('CSA sole source builds to a portable collected artifact URL',()=>{
+ const a=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.find(a=>a.id==='csa-pass-field');
+ assert.equal(a.buildSource.repository,'PyPTO3-main');
+ assert.equal(a.buildSource.path,'Design/csa-pass-field');
+ const manifest=JSON.parse(fs.readFileSync(path.join(root,'patterns/csa-pass-field/artifact-manifest.json')));
+ assert.equal(a.buildSource.fingerprint,manifest.sourceFingerprint);
+ for(const config of [{mode:'standalone'},{mode:'standalone',fileMode:true}]){
+  assert.match(C.sourceHref(a,config),/^patterns\/csa-pass-field\/index\.html\?v=[a-f0-9]{12}$/);
+ }
+ const html=fs.readFileSync(path.join(root,a.content));
+ assert.equal(require('node:crypto').createHash('sha256').update(html).digest('hex'),manifest.htmlSha256);
+ assert.equal(a.sources[0].sha256,manifest.htmlSha256);
+});
 test('NPU Pattern uses the requested communication entry and updated title',()=>{
  const a=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.find(a=>a.id==='npu-memory-atlas-training');
  assert.equal(a.title,'NPU 训练内存与 EP 通信');
