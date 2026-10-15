@@ -1,7 +1,7 @@
 {
   "schemaVersion": "csa-pass-field.artifact.v1",
   "runId": "_jit_l3_decode_csa_20260903_010617",
-  "htmlSha256": "7baa5047bd336cfef61189f0b1886c0d870dffe27b4f376360bdce46af196df5",
+  "htmlSha256": "9a4452c4b2642b03985dde5d752bb05a3bed79ee6b7e1a5636425d1a26d4d91e",
   "generatorSha256": "5c0e3d511e89cdc3a0be8e2306555a69047a8cc2fa1dd34a26e16f80e6139ead",
   "inputHashes": {
     "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/00_frontend.py": "1788e957a6f1a15c68eca812baf32406012604910a06d2553a8df065644ac9db",
@@ -61,9 +61,8 @@
     "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/dfx_outputs/rank0/d0/chip_swimlane_records.json": "54b496bc8539aac30cff94c556b735cafeb9aa1b75650c665c193a7cfe08909d",
     "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/dfx_outputs/rank1/d0/chip_swimlane_records.json": "21a0cc472ae06810451b1d4cd604f2537445633da2f1c29ce205f80c71674d6b"
   },
-  "executionSha256": "55a5a22f6b7d640631ebf10b4b5ded76d4e5d6f376bf8377549363cdf4c4f2ef",
   "sourceRepository": "PyPTO3-main",
   "sourcePath": "Design/csa-pass-field",
-  "sourceFingerprint": "6729eaac87484a1b1f5151a506e474b5ddc3da04c5fd5e28dd00a7b40bf103ce",
+  "sourceFingerprint": "2633e2cf0d89fe0fbda32c80a7f79026d6453dd2a293a13d7dbcc22557b9af73",
   "collectionPolicy": "generated-only; edit the source checkout and rebuild"
 }

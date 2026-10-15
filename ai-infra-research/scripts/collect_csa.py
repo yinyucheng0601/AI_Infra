@@ -104,7 +104,9 @@ def collect(root=ROOT, source=None, force=False, check=False, revision=None):
     }
     asset['validation'] = [
         '2026-10-15：PyPTO3-main/Design/csa-pass-field 为唯一源码；由 AI_Infra 构建自动收录独立 HTML。来源和产物哈希见同目录 artifact-manifest.json。',
-        'M1 已接入 Rank 0 执行证据；双 rank 计算图仍为静态 Mock。开发入口完成部分交互烟测，独立构建产物浏览器验收尚未完成。',
+        ('M1 已接入 Rank 0 执行证据；双 rank 计算图仍为静态 Mock。开发入口完成部分交互烟测，独立构建产物浏览器验收尚未完成。'
+         if (source / 'src/ExecutionView.jsx').is_file() else
+         '当前为 M0/M0.5 编译与 rank 上下文版本；执行模块已按用户要求回滚。rank 展开仍为静态 Mock，完整浏览器验收尚未完成。'),
     ]
     catalog.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
     print('Collected CSA from PyPTO3-main (generated HTML + provenance; no source copy)')
