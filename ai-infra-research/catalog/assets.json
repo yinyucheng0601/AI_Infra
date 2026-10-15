@@ -2,6 +2,52 @@
   "version": 1,
   "assets": [
     {
+      "id": "anatomy",
+      "title": "Anatomy",
+      "form": "Skill",
+      "domains": [
+        "Visualization",
+        "SVG",
+        "Interaction"
+      ],
+      "summary": "将技术概念变成可交互的轴测实体图解，以精细零件、四阶明暗与连贯动画解释系统机制。",
+      "designValue": "用实体结构和运动关系解释技术概念，支持独立 SVG/HTML 与 React 图解。",
+      "outline": [
+        "精细轴测实体与四阶明暗",
+        "交互行为与连续动画",
+        "SVG/HTML 与 React 输出",
+        "官网示例与安装指引"
+      ],
+      "type": "method",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "methods/anatomy.md",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": "https://skills.wheresryan.sh/anatomy",
+          "path": "ai-infra-research/methods/anatomy.md",
+          "revision": null,
+          "sha256": "cd3d454100fbd725681c20f1d40f97359e9ab97c7b0659cf32de8416f79d8526"
+        }
+      ],
+      "validation": [
+        "2026-10-15：核对官网、作者及用途；按用户要求直接跳转官网，不分发 Skill 包。"
+      ],
+      "related": [
+        "atlas-950-anatomy"
+      ],
+      "reviewedAt": "2026-10-15",
+      "topics": [
+        "experience",
+        "visual"
+      ],
+      "author": "Ryan"
+    },
+    {
       "id": "atlas-950-anatomy",
       "title": "Atlas 950 · Anatomy",
       "form": "交互 Pattern",

@@ -43,6 +43,7 @@
     if(documentFigures[a.id])return `<img class="document-figure document-figure-${esc(a.id)}" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}">`;
     const frame=content=>`<svg viewBox="0 0 240 150" role="img" aria-label="${esc(a.title)} 主题插画">${content}</svg>`;
     const arts={
+      'anatomy':`<g stroke="#787880" stroke-width="1" stroke-linejoin="round"><path fill="#dedee3" d="m43 91 77 39 78-39v12l-78 39-77-39z"/><path fill="#fafafa" d="m43 91 77-39 78 39-78 39z"/><path fill="#d0d0d7" d="m65 58 55 28 55-28v17l-55 28-55-28z"/><path fill="#fff" d="m65 58 55-28 55 28-55 28z"/><path fill="#dedee3" d="m90 29 30 15 30-15v12l-30 15-30-15z"/><path fill="#fff" d="m90 29 30-15 30 15-30 15z"/></g>`,
       'csa-pass-field':`<g class="line"><rect x="28" y="28" width="184" height="40" rx="5"/><rect x="58" y="78" width="154" height="40" rx="5"/><path d="M46 48h27m45 0h64M96 58v40h24m43 0h29M96 118v17m64-17v17"/></g><rect class="accent" x="73" y="39" width="45" height="18" rx="9"/><rect class="mid" x="120" y="89" width="43" height="18" rx="9"/><g class="solid"><rect x="78" y="131" width="36" height="8"/><rect x="143" y="131" width="36" height="8"/></g>`,
       'diagram-legend-library':`<g class="line"><path d="M25 18h190v114H25zM25 56h190M25 94h190M88 18v114M151 18v114"/><rect x="40" y="29" width="32" height="16" rx="2"/><path d="M48 29v16m8-16v16m8-16v16M40 37h32"/><rect x="99" y="29" width="42" height="16" rx="8"/><circle cx="183" cy="37" r="10"/><path d="M177 37h12m-6-6v12M39 75h32m-7-6 7 6-7 6M104 69l6 6-6 6m12-12 6 6-6 6m12-12 6 6-6 6"/><rect x="168" y="65" width="30" height="20" rx="4"/><path d="M40 106h32v14H40zM101 107h36m-36 10h25M171 107l6 6 13-12"/></g>`,
       'pangu-layer-atlas':`<g class="line"><path d="m108 26 73 35v67l-73-35zM92 29l73 35v67M76 32l73 35v67M60 35l73 35v67M44 38l73 35v67"/></g><path class="soft" d="m76 32 73 35v67L76 99z"/><path class="line" d="m76 32 73 35v67L76 99z"/><path class="accent" d="m97 65 15 7v18l-15-7z"/>`,
@@ -67,8 +68,8 @@
     return frame(arts[a.id]||arts['hardware-native-systems']);
   }
   function renderCard(a) {
-    const source=`${a.author} · ${C.projects[a.sources[0].repository]}`;
-    const href=a.type==='method'?detailHref(a):C.sourceHref(a,config);
+    const source=`${a.author} · ${a.sources[0].url?'官网':C.projects[a.sources[0].repository]}`;
+    const href=a.type==='method'&&!/^https?:\/\//i.test(a.sources[0].url||'')?detailHref(a):C.sourceHref(a,config);
     return `<article class="card-demo report-card">
       <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(href)}">${esc(a.title)}</a></h3><span class="card-kind">${esc(a.form)}</span></div>
       <a class="card-visual-link" href="${esc(href)}" tabindex="-1" aria-hidden="true"><div class="card-visual">${coverArt(a)}</div></a>
