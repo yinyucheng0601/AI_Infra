@@ -296,3 +296,7 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
 
 .card-visual:has(.document-figure-npu-memory-atlas-training, .document-figure-pangu-layer-atlas, .document-figure-pangu-layer-atlas-2) { height: 100%; }
 .card-visual .document-figure-npu-memory-atlas-training, .card-visual .document-figure-pangu-layer-atlas, .card-visual .document-figure-pangu-layer-atlas-2 { object-fit: contain; transform: none; filter: none; background: #111; border-radius: var(--radius-md); }
+
+.card-visual:has(.document-figure-pass-error-cases){height:100%}.card-visual .document-figure-pass-error-cases{object-fit:cover;object-position:center;transform:none;filter:none}
+
+.card-visual:has(.document-figure-memory-inspector){height:100%}.card-visual .document-figure-memory-inspector{object-fit:cover;object-position:center;transform:none;filter:none}

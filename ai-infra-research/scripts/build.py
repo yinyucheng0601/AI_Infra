@@ -56,6 +56,8 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '/* CONFIG_JSON */': json.dumps(config).replace('<', '\\u003c'),
         '/* CORE_JS */': (ROOT / 'web/catalog-core.js').read_text(),
         '/* APP_JS */': (ROOT / 'web/gallery.js').read_text(),
+        '__MEMORY_INSPECTOR_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/memory-inspector-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
+        '__PASS_ERROR_CASES_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/pass-error-cases-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__CSA_PASS_FIELD_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/csa-pass-field-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__ATLAS_ANATOMY_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/atlas-950-anatomy-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__ATLAS_950_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/atlas-950-explorer-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',

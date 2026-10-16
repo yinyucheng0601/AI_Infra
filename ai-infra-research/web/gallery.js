@@ -10,6 +10,8 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'memory-inspector':{src:'__MEMORY_INSPECTOR_COVER__',alt:'Memory Inspector：函数内存地址与静态生命周期图'},
+    'pass-error-cases':{src:'__PASS_ERROR_CASES_COVER__',alt:'Pass Error Cases：UB 共址告警与内存绑定修复案例'},
     'csa-pass-field':{src:'__CSA_PASS_FIELD_COVER__',alt:'CSA Pass Field：qk_pv 核心 DAG、控制作用域、内存绑定与 PTO-ISA 指令'},
     'atlas-950-anatomy':{src:'__ATLAS_ANATOMY_COVER__',alt:'Atlas 950 组件垂直展开与双语引线'},
     'atlas-950-explorer':{src:'__ATLAS_950_COVER__',alt:'Atlas 950 概念机柜：用户提供的整柜轴测截图'},
