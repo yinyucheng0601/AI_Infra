@@ -240,7 +240,7 @@
           "path": "ai-infra-research/patterns/csa-pass-field/index.html",
           "url": null,
           "revision": null,
-          "sha256": "0b6ac0d8b72f43e46ad0a9a1661c968c152b227bb0372af60863973eaa4e58c7"
+          "sha256": "df14b570b644744917176b5e28473d1aaed1b67038ad0580710fd30c9150005d"
         }
       ],
       "validation": [
@@ -260,7 +260,7 @@
       "buildSource": {
         "repository": "PyPTO3-main",
         "path": "Design/csa-pass-field",
-        "fingerprint": "6bb23c8ad29c9a5cd292d6a97214c267976dfe4684f7f8037e3d8c3085fe730f",
+        "fingerprint": "c69db777198bff8b3fe80f0597b3050f498f04be47cd508cc66436bfee56cf93",
         "policy": "sole-source; generated collection artifact"
       }
     },
