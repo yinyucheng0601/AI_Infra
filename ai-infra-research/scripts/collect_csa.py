@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 REL = 'patterns/csa-pass-field'
@@ -23,14 +24,14 @@ def source_path():
 def fingerprint(source):
     repo = source.parents[1]
     files = []
-    for folder in ('src', 'scripts'):
-        files.extend(p for p in (source / folder).rglob('*') if p.is_file())
+    for folder in ('src', 'scripts', 'docs', 'data'):
+        files.extend(p for p in (source / folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc')
     files.extend(source / name for name in ('index.html', 'package.json', 'package-lock.json', 'vite.config.mjs'))
     architecture = repo / 'Design/architecture/deepseek_v4_flash_csa'
     files.extend(architecture / name for name in ('implementation-programs.js', 'mapping-registry.js', 'json-architecture.js', 'json-architecture.json'))
     run = repo / 'Data/DeepseekV4' / RUN
     files.extend((run / 'passes_dump').glob('*.py'))
-    files.extend(run / 'next_levels/decode_csa_test/ptoas' / name for name in ('qk_pv.pto', 'qk_pv.cpp'))
+    files.extend(run / 'next_levels/decode_csa_test/ptoas' / name for name in ('qk_pv.pto', 'qk_pv.cpp', 'csa_merge_pack_publish.pto', 'csa_merge_pack_publish.cpp'))
     for rank in ('rank0', 'rank1'):
         files.append(run / f'dfx_outputs/{rank}/d0/chip_swimlane_records.json')
     rank0 = run / 'dfx_outputs/rank0/d0'
@@ -56,12 +57,19 @@ def collect(root=ROOT, source=None, force=False, check=False, revision=None):
     if revision:
         def committed(name):
             return subprocess.check_output(['rtk', 'proxy', 'git', 'show', f'{revision}:ai-infra-research/{REL}/{name}'], cwd=root.parent)
-        verify_manifest(source, json.loads(committed('artifact-manifest.json')), committed('index.html'))
+        saved = json.loads(committed('artifact-manifest.json'))
+        verify_manifest(source, saved, committed('index.html'))
+        for name, expected in saved.get('documentationHashes', {}).items():
+            if digest(committed(name)) != expected: raise RuntimeError('CSA documentation differs from manifest: ' + name)
         return False
     manifest_file = target / 'artifact-manifest.json'
     if manifest_file.is_file() and (target / 'index.html').is_file():
         try:
             verify_manifest(source, json.loads(manifest_file.read_text()), (target / 'index.html').read_bytes())
+            saved = json.loads(manifest_file.read_text())
+            for name, expected in saved.get('documentationHashes', {}).items():
+                if not (target / name).is_file() or digest((target / name).read_bytes()) != expected:
+                    raise RuntimeError('CSA documentation missing or outdated: ' + name)
             if not force:
                 print('CSA collection is current')
                 return False
@@ -88,6 +96,9 @@ def collect(root=ROOT, source=None, force=False, check=False, revision=None):
     })
     target.mkdir(parents=True, exist_ok=True)
     (target / 'index.html').write_bytes(html)
+    # Keep browser documentation beside the collected page, preserving relative links.
+    shutil.copytree(source / 'dist/docs', target / 'docs', dirs_exist_ok=True)
+    manifest['documentationHashes'] = {p.relative_to(target).as_posix(): digest(p.read_bytes()) for p in sorted((target / 'docs').rglob('*')) if p.is_file()}
     manifest_file.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     catalog = root / 'catalog/assets.json'
     data = json.loads(catalog.read_text())
@@ -104,9 +115,7 @@ def collect(root=ROOT, source=None, force=False, check=False, revision=None):
     }
     asset['validation'] = [
         '2026-10-15：PyPTO3-main/Design/csa-pass-field 为唯一源码；由 AI_Infra 构建自动收录独立 HTML。来源和产物哈希见同目录 artifact-manifest.json。',
-        ('M1 已接入 Rank 0 执行证据；双 rank 计算图仍为静态 Mock。开发入口完成部分交互烟测，独立构建产物浏览器验收尚未完成。'
-         if (source / 'src/ExecutionView.jsx').is_file() else
-         '当前为 M0/M0.5 编译与 rank 上下文版本；执行模块已按用户要求回滚。rank 展开仍为静态 Mock，完整浏览器验收尚未完成。'),
+        '2026-10-16：已接入 qk_pv / csa_merge_pack_publish 选择器、分配播放与两份 HTML 文档。数据及构建检查通过；完整浏览器视觉验收尚未完成。',
     ]
     catalog.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
     print('Collected CSA from PyPTO3-main (generated HTML + provenance; no source copy)')
