@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>128 Rank · EP 通信与显存</title><script src="index_comm/ep-model.js?v=76d62c124772"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>128 Rank · 显存与排布</title><script src="index_comm/ep-model.js?v=76d62c124772"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#e8e8e8;font:14px/1.5 Arial,"PingFang SC",sans-serif}svg{display:block;width:100%;height:100%;touch-action:none}svg text{font-variant-numeric:tabular-nums}svg text{font-family:Arial,"PingFang SC",sans-serif}.bar{position:fixed;bottom:28px;left:28px;max-width:calc(100vw - 56px);display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:7px;background:#202020;border:1px solid #505050;border-radius:4px}button,select{font:inherit;color:#b0b0b0;background:transparent;border:0;border-radius:2px;padding:9px 12px;cursor:pointer;min-height:38px}button:hover{background:#333;color:#fff}button[aria-pressed=true]{background:#e8e8e8;color:#111}button:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}select{max-width:200px;background:#202020;color:#e8e8e8}.sep{height:22px;width:1px;background:#505050;margin:0 6px}.readout{padding:0 12px;color:#e8e8e8;font-family:ui-monospace,monospace;font-size:13px}.hidden{display:none}#scene{cursor:grab}#scene:active{cursor:grabbing}@media(max-width:600px){.bar{bottom:14px;left:14px;max-width:calc(100vw - 28px);gap:0;padding:4px}button,select{padding:7px 9px;font-size:13px}.readout{font-size:12px;padding:0 8px}.sep{margin:0 3px}}
 .transport{flex-basis:100%;display:flex;align-items:center;gap:8px;border-top:1px solid #383838;padding-top:6px;margin-top:3px;flex-wrap:wrap}.transport input{width:210px;accent-color:#e8e8e8;cursor:pointer}.status{min-width:260px;color:#e8e8e8;font-size:13px;font-family:ui-monospace,monospace}.simtag{font-size:12px;color:#ababab;padding:0 8px}.bar{max-width:min(1100px,calc(100vw - 56px))}.transport button{min-width:48px}.transport select{max-width:80px}.transport input:focus-visible{outline:2px solid white}@media(max-width:600px){.transport input{width:140px}.status{min-width:220px}.bar{max-width:calc(100vw - 28px)}}
 .bar.scope-switch{top:28px;bottom:auto;left:50%;transform:translateX(-50%);flex-wrap:nowrap;max-width:calc(100vw - 28px)}@media(max-width:600px){.bar.scope-switch{top:14px}}
@@ -308,7 +308,8 @@ body[data-ep-mode="true"] #ep-playback #ep-stops button{min-height:14px;height:1
 :root:not([data-theme="light"]) :is(.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list){box-shadow:0 8px 24px rgb(0 0 0 / 18%)}
 /* End dark surface palette override. */
 [data-shard-detail]:focus-visible{outline:1px solid currentColor;outline-offset:3px}
-</style><link rel="stylesheet" href="index_comm/rank-workbench.css?v=fe9cfad48cec"></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
+.layout-tabs{display:flex;gap:4px;padding:4px;background:var(--input-fill);border-radius:12px}.rank-settings-panel .layout-tabs button{flex:1;min-height:36px;border:0;border-radius:9px;background:transparent;color:var(--ui-muted);font:inherit;cursor:pointer}.rank-settings-panel .layout-tabs button[aria-selected="true"]{background:var(--ui-text);color:#181818}.rank-settings-panel .layout-tabs button:hover:not([aria-selected="true"]){background:var(--ui-hover)}.rank-settings-panel .layout-tabs button:focus-visible{outline:2px solid var(--ui-text);outline-offset:2px}:root[data-theme="light"] .rank-settings-panel .layout-tabs button[aria-selected="true"]{color:#fff}.physical-group-frame{fill:none;stroke:var(--ui-muted);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.55;pointer-events:none}
+</style><link rel="stylesheet" href="index_comm/rank-workbench.css?v=a223914cd194"></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front">
 <svg viewBox="0 0 148 148" aria-hidden="true">
 <path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
@@ -316,7 +317,7 @@ body[data-ep-mode="true"] #ep-playback #ep-stops button{min-height:14px;height:1
 <g id="dial-marker" transform="rotate(-35 74 74)"><rect class="dial-marker" x="70" y="14" width="8" height="8"/></g>
 <g id="dial-cube"><path class="cube-face" fill="#353535" d="M74 45 99 59 74 74 49 59Z"/><path class="cube-face" fill="#202020" d="M49 59 74 74 74 103 49 88Z"/><path class="cube-face" fill="#515151" d="M74 74 99 59 99 88 74 103Z"/></g><path id="dial-cube-outline" class="dial-cube-outline" d="M74 45 99 59 99 88 74 103 49 88 49 59Z"/>
 </svg></button><span class="dial-name" id="view-name" aria-live="polite">2.5D</span></div>
-<svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，空白区域表示空余；正交轴测视角"><g id="world"></g><g id="ep-navigation"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><div id="ep-dock"><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重分片</button><button data-mode="comm" aria-pressed="false">通信</button><button id="ep-oom-mode" aria-pressed="false">OOM</button><button id="tensor" class="hidden" value="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="tensor-list">attn.q · 列切 ×2 ▾</button></nav><nav id="ep-playback" class="bar" aria-label="播放控制"><div class="transport"><button id="play" class="icon-button" data-playing="true" aria-label="暂停" title="暂停"><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5a1 1 0 0 1 1.5-.86l12 7.5a1 1 0 0 1 0 1.72l-12 7.5A1 1 0 0 1 7 19.5Z"/></svg></button><button id="restart" class="icon-button" aria-label="重播当前训练步" title="重播当前训练步"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.7 7M4 4v6h6"/></svg></button><span id="ep-progress"><span id="ep-markers" hidden><button id="ep-fault-marker" style="left:44%" title="新申请 64 MiB 时只剩 32 MiB，申请失败才触发 OOM">OOM</button></span><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><span id="ep-stops" class="hidden"><button data-ep-step="0" aria-label="查看分桶阶段">分桶</button><button data-ep-step="0.3" aria-label="查看分发阶段">分发</button><button data-ep-step="0.56" aria-label="查看计算阶段">计算</button><button data-ep-step="0.85" aria-label="查看回收阶段">回收</button><button data-ep-step="1" aria-label="查看完成阶段">完成</button></span></span><span id="phase" class="status"></span></div></nav><nav class="bar zoom-controls embedded-zoom-controls" aria-label="缩放控制"><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">125%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button></nav></div><aside id="ep-incident" aria-label="OOM 申请证据" hidden><header><strong id="ep-incident-title"></strong><button id="ep-incident-close" aria-label="退出 OOM，恢复正常通信">恢复正常</button></header><div id="ep-incident-chart"></div><p>收发暂存延迟释放，本次操作的可用预算受限。</p><p id="ep-incident-note" hidden></p></aside><div class="rank-settings" role="group" aria-label="说明、标注与配置"><button type="button" id="theme-toggle" aria-label="切换到浅色模式" title="切换到浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="sun-icon"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></g><path class="moon-icon" d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg></button><button id="shard-info" class="hidden" aria-label="权重分片说明" title="权重分片说明" aria-expanded="false" aria-controls="shard-inspector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".8" fill="currentColor" stroke="none"/></svg></button><button id="labels" aria-label="显示标注" title="显示／隐藏标注" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg></button><button id="rank-settings-toggle" aria-label="Rank 显示配置" title="Rank 显示配置" aria-expanded="false" aria-controls="rank-settings-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6l.6 2.4 2.1 1.2 2.4-.6 3 5.2-1.8 1.8v2.4l1.8 1.8-3 5.2-2.4-.6-2.1 1.2L15 24H9l-.6-2.4-2.1-1.2-2.4.6-3-5.2 1.8-1.8v-2.4L.9 10.8l3-5.2 2.4.6 2.1-1.2Z" transform="translate(2 0) scale(.83)"/><circle cx="12" cy="11.2" r="3.2"/></svg></button><div id="rank-settings-panel" class="rank-settings-panel" hidden><fieldset class="rank-spacing" id="parallel-config"><legend>Config · 规模与并行</legend><span class="readout" id="config" title="rank-intro 基准：TP2 × PP4 × DP16 = 128；EP8、ETP1、64 专家、48 层。">128 Rank · TP2 · PP4 · DP16 · EP8</span><div class="config-grid"><div class="rank-spacing-row"><label for="cfg-world">World Size</label><output id="cfg-world" for="cfg-tp cfg-pp cfg-dp" aria-live="polite">128</output></div><div class="rank-spacing-row"><label for="cfg-tp">TP · Y 轴</label><input id="cfg-tp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-pp">PP · Z 轴</label><input id="cfg-pp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-dp">DP · X 轴</label><input id="cfg-dp" type="number" min="1" max="512" step="1" value="16"></div><div class="rank-spacing-row"><label for="cfg-ep">EP · 折入 DP</label><input id="cfg-ep" type="number" min="1" max="512" step="1" value="8"></div><div class="rank-spacing-row"><label for="cfg-node">每节点卡数</label><input id="cfg-node" type="number" min="1" max="512" step="1" value="8"></div></div><p>World Size = TP × PP × DP；EP 折入 DP，ETP 固定为 1。World Size 根据并行度自动计算。</p><p>当前机柜规格固定为 64 卡。按 TP → DP → PP 排列，机柜边界增加轴间距。</p><button id="apply-config">应用配置</button><p id="config-status" role="status" aria-live="polite"></p></fieldset><label for="rank-ratio">Rank 长 : 宽 : 高</label><select id="rank-ratio"><option value="3:3:4" selected>3 : 3 : 4（默认）</option><option value="1:1:1">1 : 1 : 1（立方体）</option><option value="3:3:2">3 : 3 : 2（扁平）</option></select><p>底面长宽相等，应用于所有 rank。</p><label for="label-mode">标注模式</label><select id="label-mode"><option value="side">模式 1 · 侧边标注</option><option value="surface">模式 2 · 表面数值 + 图例</option></select><fieldset class="rank-spacing"><legend>全部 rank · 轴间距</legend><div class="rank-spacing-row"><label for="rank-spacing-x">X · DP</label><input id="rank-spacing-x" type="number" min="0" max="3000" step="10" value="560" aria-label="全部 rank X 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-y">Y · TP</label><input id="rank-spacing-y" type="number" min="0" max="3000" step="10" value="800" aria-label="全部 rank Y 轴间距"></div><div class="rank-spacing-row"><label for="rank-spacing-z">Z · PP</label><input id="rank-spacing-z" type="number" min="0" max="3000" step="10" value="1500" aria-label="全部 rank Z 轴间距"></div><p>相邻 rank 的原点间距，仅影响全部 rank 视图。</p></fieldset></div></div><div id="memory-legend" class="memory-legend" aria-label="内存类别图例" hidden></div><div id="tensor-list" role="listbox" aria-label="参数模块" hidden></div><aside id="shard-inspector" class="shard-inspector" aria-label="权重分片说明" hidden></aside><script>
+<svg id="scene" viewBox="0 0 1400 900" role="img" aria-label="Rank 2 的64GB内存：彩色分区表示占用，空白区域表示空余；正交轴测视角"><g id="world"></g><g id="ep-navigation"></g></svg><nav class="bar scope-switch" aria-label="观测范围"><button id="single" aria-pressed="false">单 rank</button><button id="all" aria-pressed="true">全部 rank</button></nav><div id="ep-dock"><nav class="bar" aria-label="视图操作"><select id="rank" aria-label="选中 rank"></select><select id="relations" aria-label="并行通信关系"><option value="tp">TP · AllReduce</option><option value="pp">PP · Send / Recv</option><option value="ep">EP · Dispatch / Combine</option><option value="dp">DP · 稠密梯度同步</option><option value="edp">专家副本 · 梯度同步</option><option value="none">隐藏通信关系</option></select><button data-mode="explode" aria-pressed="true">分层</button><button data-mode="shard" aria-pressed="false">权重分片</button><button data-mode="comm" aria-pressed="false">通信</button><button id="ep-oom-mode" aria-pressed="false">OOM</button><button id="tensor" class="hidden" value="0" aria-haspopup="listbox" aria-expanded="false" aria-controls="tensor-list">attn.q · 列切 ×2 ▾</button></nav><nav id="ep-playback" class="bar" aria-label="播放控制"><div class="transport"><button id="play" class="icon-button" data-playing="true" aria-label="暂停" title="暂停"><svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg><svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5a1 1 0 0 1 1.5-.86l12 7.5a1 1 0 0 1 0 1.72l-12 7.5A1 1 0 0 1 7 19.5Z"/></svg></button><button id="restart" class="icon-button" aria-label="重播当前训练步" title="重播当前训练步"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.7 7M4 4v6h6"/></svg></button><span id="ep-progress"><span id="ep-markers" hidden><button id="ep-fault-marker" style="left:44%" title="新申请 64 MiB 时只剩 32 MiB，申请失败才触发 OOM">OOM</button></span><input id="timeline" type="range" min="0" max="31000" value="0" step="10" aria-label="训练步进度"><span id="ep-stops" class="hidden"><button data-ep-step="0" aria-label="查看分桶阶段">分桶</button><button data-ep-step="0.3" aria-label="查看分发阶段">分发</button><button data-ep-step="0.56" aria-label="查看计算阶段">计算</button><button data-ep-step="0.85" aria-label="查看回收阶段">回收</button><button data-ep-step="1" aria-label="查看完成阶段">完成</button></span></span><span id="phase" class="status"></span></div></nav><nav class="bar zoom-controls embedded-zoom-controls" aria-label="缩放控制"><button id="minus" aria-label="缩小">−</button><span class="readout" id="zoom">125%</span><button id="plus" aria-label="放大">＋</button><button id="fit">复位</button></nav></div><aside id="ep-incident" aria-label="OOM 申请证据" hidden><header><strong id="ep-incident-title"></strong><button id="ep-incident-close" aria-label="退出 OOM，恢复正常通信">恢复正常</button></header><div id="ep-incident-chart"></div><p>收发暂存延迟释放，本次操作的可用预算受限。</p><p id="ep-incident-note" hidden></p></aside><div class="rank-settings" role="group" aria-label="说明、标注与配置"><button type="button" id="theme-toggle" aria-label="切换到浅色模式" title="切换到浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="sun-icon"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></g><path class="moon-icon" d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg></button><button id="shard-info" class="hidden" aria-label="权重分片说明" title="权重分片说明" aria-expanded="false" aria-controls="shard-inspector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".8" fill="currentColor" stroke="none"/></svg></button><button id="labels" aria-label="显示标注" title="显示／隐藏标注" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg></button><button id="rank-settings-toggle" aria-label="Rank 显示配置" title="Rank 显示配置" aria-expanded="false" aria-controls="rank-settings-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 3h6l.6 2.4 2.1 1.2 2.4-.6 3 5.2-1.8 1.8v2.4l1.8 1.8-3 5.2-2.4-.6-2.1 1.2L15 24H9l-.6-2.4-2.1-1.2-2.4.6-3-5.2 1.8-1.8v-2.4L.9 10.8l3-5.2 2.4.6 2.1-1.2Z" transform="translate(2 0) scale(.83)"/><circle cx="12" cy="11.2" r="3.2"/></svg></button><div id="rank-settings-panel" class="rank-settings-panel" hidden><div class="layout-tabs" id="ep-layout-rule" role="tablist" aria-label="排布"><button type="button" role="tab" data-layout="physical" aria-selected="false" tabindex="-1">物理</button><button type="button" role="tab" data-layout="parallel" aria-selected="true" tabindex="0">并行逻辑</button></div><p id="ep-layout-note">X · DP / Y · TP / Z · PP</p><fieldset class="rank-spacing" id="ep-physical-config" hidden><legend>Config · 物理排布</legend><div class="config-grid"><div class="rank-spacing-row"><label for="ep-cabinet-ranks">每柜 Rank 数</label><input id="ep-cabinet-ranks" type="number" min="1" max="32" step="1" value="32"></div><div class="rank-spacing-row"><label>总 Rank 数</label><output id="ep-physical-total">128</output></div><div class="rank-spacing-row"><label>机柜数量</label><output id="ep-cabinet-count">4</output></div></div><p>每柜可放 1–32 Rank，按两列排列，末柜允许不满。总 Rank 数沿用当前并行配置。</p><button type="button" id="ep-apply-physical">应用物理排布</button><p id="ep-physical-status" role="status"></p></fieldset><fieldset class="rank-spacing" id="parallel-config"><legend>Config · 规模与并行</legend><span class="readout" id="config" title="rank-intro 基准：TP2 × PP4 × DP16 = 128；EP8、ETP1、64 专家、48 层。">128 Rank · TP2 · PP4 · DP16 · EP8</span><div class="config-grid"><div class="rank-spacing-row"><label for="cfg-world">World Size</label><output id="cfg-world" for="cfg-tp cfg-pp cfg-dp" aria-live="polite">128</output></div><div class="rank-spacing-row"><label for="cfg-tp">TP · Y 轴</label><input id="cfg-tp" type="number" min="1" max="512" step="1" value="2"></div><div class="rank-spacing-row"><label for="cfg-pp">PP · Z 轴</label><input id="cfg-pp" type="number" min="1" max="512" step="1" value="4"></div><div class="rank-spacing-row"><label for="cfg-dp">DP · X 轴</label><input id="cfg-dp" type="number" min="1" max="512" step="1" value="16"></div><div class="rank-spacing-row"><label for="cfg-ep">EP · 折入 DP</label><input id="cfg-ep" type="number" min="1" max="512" step="1" value="8"></div><div class="rank-spacing-row"><label for="cfg-node">每节点卡数</label><input id="cfg-node" type="number" min="1" max="512" step="1" value="8"></div></div><p>World Size = TP × PP × DP；EP 折入 DP，ETP 固定为 1。World Size 根据并行度自动计算。</p><p>当前机柜规格固定为 64 卡。按 TP → DP → PP 排列，机柜边界增加轴间距。</p><button id="apply-config">应用配置</button><p id="config-status" role="status" aria-live="polite"></p></fieldset></div></div><div id="memory-legend" class="memory-legend" aria-label="内存类别图例" hidden></div><div id="tensor-list" role="listbox" aria-label="参数模块" hidden></div><aside id="shard-inspector" class="shard-inspector" aria-label="权重分片说明" hidden></aside><script>
 const ATLAS_EMBED=new URLSearchParams(location.search).get('embed')==='layer-atlas'&&window.parent!==window;
 let atlasHostState=null;
 if(ATLAS_EMBED)document.documentElement.classList.add('layer-atlas-embed');
@@ -603,6 +604,33 @@ function drawEPTokenExperts(id,c,e){
  }
  return out+'</g>';
 }
+// Spatial Sankey uses the same per-step assignments as the Top token view.
+// Width encodes assignments (including Top-K duplication), never measured traffic.
+function drawEPSpatialSankey(){
+ const e=epEventAt(simTime,relationRank),tr=EPTeachingModel.trace(e.event,e.frame.t,relationRank);
+ const returning=e.frame.t>=.7,ids=parallelMembers('ep',relationRank),colors=['#28bea6','#4e83e6','#cc79a2','#d5b75e'];
+ const color=id=>colors[ids.indexOf(id)%colors.length];
+ const point=(id,t)=>{const [x,y]=rankPosition(ranks[id]),p=P(245,155*t,8);return [x+RANK_SCALE*(p[0]-440),y+RANK_SCALE*p[1]];};
+ const path=points=>'M'+points.map(p=>p.join(' ')).join(' L')+' Z';
+ let defs='',ribbons='',ports='',offset=0;
+ const total=tr.total||1,portStart=.12,portSpan=.76;
+ // Partition the source port once: every ribbon receives an exact proportional slot.
+ for(const f of tr.buckets){
+  const lo=portStart+portSpan*offset/total,hi=portStart+portSpan*(offset+f.tokens)/total;offset+=f.tokens;
+  if(f.local)continue;
+  const targetSpan=portSpan*f.tokens/total,a0=point(relationRank,lo),a1=point(relationRank,hi),b0=point(f.target,.5-targetSpan/2),b1=point(f.target,.5+targetSpan/2);
+  const a=returning?b0:a0,aa=returning?b1:a1,b=returning?a0:b0,bb=returning?a1:b1;
+  const start=returning?f.target:relationRank,end=returning?relationRank:f.target,id=`spatial-flow-${start}-${end}`;
+  defs+=`<linearGradient id="ep-${id}" gradientUnits="userSpaceOnUse" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"><stop stop-color="${color(start)}"/><stop offset="1" stop-color="${color(end)}"/></linearGradient>`;
+  // Both ribbon edges follow the projected floor plane and terminate at port slots.
+  const d=path([a,b,bb,aa]);
+  ribbons+=`<path data-spatial-flow="${start}-${end}" data-assignments="${f.tokens}" d="${d}" fill="url(#ep-${id})" opacity=".76" pointer-events="visiblePainted"><title>R${start} → R${end} · ${returning?'Combine':'Dispatch'} · ${f.tokens.toLocaleString('en-US')} assignments · ${(f.tokens/total*100).toFixed(1)}% of R${relationRank}</title></path>`;
+ }
+ for(const id of ids){const a=point(id,portStart),b=point(id,portStart+portSpan),bucket=tr.buckets.find(f=>f.target===id);
+  ports+=`<g data-spatial-port="${id}" pointer-events="none"><path d="M${a}L${b}" stroke="${color(id)}" stroke-width="2.8" stroke-linecap="round"/><text x="${b[0]+4}" y="${b[1]+9}" fill="${epPalette().ink}" font-size="7">R${id} · ${id===relationRank?tr.total:bucket?.tokens??0} E${id===relationRank?' · SOURCE':''}</text></g>`;
+ }
+ return `<g data-ep-spatial-sankey="${returning?'combine':'dispatch'}"><defs>${defs}</defs>${ribbons}${ports}</g>`;
+}
 function drawEPCommunication(){
  const e=epEventAt(simTime,relationRank),stage=epStage(e),phase=e.frame.phase.id,c=epPalette();
  const tr=EPTeachingModel.trace(e.event,e.frame.t,relationRank),moving=e.active&&(phase==='dispatch'||phase==='combine'),returning=e.frame.t>=.7;
@@ -671,7 +699,7 @@ function drawEPCommunication(){
 }
 function drawEPStageNavigation(){return '';}
 function describeEPEvent(){
- if(scope!=='all'||viewMode!=='Top'||relationRank===null||$('relations').value!=='ep')return;
+ if(scope!=='all'||!['Top','2.5D'].includes(viewMode)||relationRank===null||$('relations').value!=='ep')return;
  const e=epEventAt(simTime,relationRank),status=e.active?e.frame.phase.name:simTime<e.start?'等待分发':'回收完成';
  $('phase').textContent=mode==='comm'?`EP · ${epStage(e)}`:`EP · ${status} · μb 1 · L${e.event.layer}`;
  if(mode==='comm')$('timeline').value=Math.round(e.frame.t*1000);
@@ -788,7 +816,7 @@ function rankContentLayout(values,exploded=true){
  const scale=ortho?Math.max(0,frame-2*iz-gap*Math.max(0,count-1))/(Math.max(HBM,values.reduce((a,b)=>a+b,0))*6.7):1;
  return {ix,iy,iz,gap,scale};
 }
-function drawRank(){applySimulation();if(mode==='comm'&&viewMode==='Top')return `<polygon data-ep-rank-hit="${renderRank}" points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}" fill="transparent" pointer-events="all"/>`+rankWallLabel()+outline(0,HBM*6.7)+outerRankBorder();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=HBM*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
+function drawRank(){applySimulation();if(mode==='comm'&&(viewMode==='Top'||viewMode==='2.5D'))return `<polygon data-ep-rank-hit="${renderRank}" points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}" fill="transparent" pointer-events="all"/>`+rankWallLabel()+outline(0,HBM*6.7)+outerRankBorder();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=HBM*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
 // Fixed separation uses part of free capacity; the remainder stays above the stack.
 const gap=layout.gap;
 let drawn=0,anchors=[],labelBands=[],surfaceLabels='';
@@ -830,7 +858,20 @@ function rankWallLabel(){
 }
 // Each PP floor is a TP × DP isometric array; rack boundaries add axis spacing.
 const RANK_SCALE=.36;
+let rankLayout='parallel',physicalRanksPerCabinet=32;
 const rankSpacing={x:560,y:800,z:1500};
+// Each cabinet has two columns and sixteen rows, numbered from top to bottom.
+function physicalCoordinates(r){const local=r.id%physicalRanksPerCabinet;return {group:Math.floor(r.id/physicalRanksPerCabinet),x:local%2,y:0,z:Math.ceil(physicalRanksPerCabinet/2)-1-Math.floor(local/2)};}
+function physicalRankPosition(r){
+ const c=physicalCoordinates(r),w=245,d=245*rankRatio[1]/rankRatio[0],h=245*rankRatio[2]/rankRatio[0];
+ const sx=w+Math.max(40,rankSpacing.x*.25),sy=d+Math.max(40,rankSpacing.y*.15),sz=h+Math.max(30,rankSpacing.z*.05);
+ const row=Math.ceil(physicalRanksPerCabinet/2)-1-c.z,midGap=row>=8?sz*.5:0,x=c.group*(2*sx+220)+c.x*sx,y=0,z=-(row*sz+midGap);
+ if(viewMode==='2.5D')return [537+(x-y)*Math.sqrt(3)/2*RANK_SCALE,325+((x+y)*.5-z)*RANK_SCALE];
+ // Orthographic views unfold the hidden axis to keep every Rank selectable.
+ if(viewMode==='Top')return [537+x*RANK_SCALE,325+(row*sy+(row>=8?sy*.5:0))*RANK_SCALE];
+ if(viewMode==='Front')return [537+x*RANK_SCALE,325-z*RANK_SCALE];
+ return [537+(c.group*(2*sy+220)+c.x*sy)*RANK_SCALE,325-z*RANK_SCALE];
+}
 function rackShape(){
  const gcd=(a,b)=>b?gcd(b,a%b):a;
  const t=gcd(TP,cardsPerRack),d=Math.min(DP,Math.floor(cardsPerRack/t)),p=Math.min(PP,Math.floor(cardsPerRack/t/d));
@@ -843,6 +884,7 @@ function physicalPlacement(r){
  return {rack,node:Math.floor(slot/cardsPerNode),slot:slot%cardsPerNode};
 }
 function rankPosition(r){
+ if(rankLayout==='physical')return physicalRankPosition(r);
  // Shared isometric axes: X=DP (4), Y=TP (2), Z=PP (2).
  if(viewMode!=='2.5D'){
   const w=245,d=245*rankRatio[1]/rankRatio[0],h=245*rankRatio[2]/rankRatio[0];
@@ -857,7 +899,7 @@ function rankPosition(r){
  return [537+(x-y)*Math.sqrt(3)/2*RANK_SCALE,325+((x+y)*.5-z)*RANK_SCALE];
 }
 // Paint back to front, lower floor first, so foreground ranks occlude correctly.
-function rankPaintOrder(){return [...ranks].sort((a,b)=>a.pp-b.pp||(a.dp*rankSpacing.x+a.tp*rankSpacing.y)-(b.dp*rankSpacing.x+b.tp*rankSpacing.y));}
+function rankPaintOrder(){if(rankLayout==='physical')return [...ranks].sort((a,b)=>{const aa=physicalCoordinates(a),bb=physicalCoordinates(b);return aa.z-bb.z||((aa.group*2+aa.x)*rankSpacing.x+aa.y*rankSpacing.y)-((bb.group*2+bb.x)*rankSpacing.x+bb.y*rankSpacing.y);});return [...ranks].sort((a,b)=>a.pp-b.pp||(a.dp*rankSpacing.x+a.tp*rankSpacing.y)-(b.dp*rankSpacing.x+b.tp*rankSpacing.y));}
 // Adapted from parallel-topology/demo.html: coordsOf/rankOf/groupMembers/epMembers.
 // CP1 / TP2 / PP4 / DP16 / EP8 / ETP1, with EP folded into DP.
 function parallelMembers(dim,id){
@@ -946,6 +988,10 @@ function focusedRankGeometry(geometry,id,focus){
 // All rulers share one origin; tick deltas follow the actual rank/rack spacing.
 function rankAxisRulers(){
  if(scope!=='all'||viewMode!=='2.5D')return [];
+ if(rankLayout==='physical'){
+  const axes=[['x','卡列',2,1],['y','纵深',1,1],['z','行',Math.ceil(physicalRanksPerCabinet/2),2]];
+  return axes.map(([axis,title,count,stride])=>({axis,title,count,points:Array.from({length:Math.min(count,Math.ceil(worldSize/stride))},(_,i)=>{const p=rankPosition(ranks[i*stride]);return [p[0]+(axis==='y'?-80:0),p[1]+100];})}));
+ }
  const base=ranks.find(r=>r.dp===0&&r.tp===0&&r.pp===0),start=rankPosition(base);
  // Place the common origin outside the projected array, not relative to Rank 0.
  // PP stays left of every silhouette; DP follows a supporting line below them;
@@ -1040,6 +1086,7 @@ function relationPath(x,y,xx,yy){
 }
 function drawRelations(){
  const focus=parallelFocus();if(!focus)return '';
+ if(focus.dim==='ep'&&mode==='comm'&&viewMode==='2.5D')return drawEPSpatialSankey();
  if(focus.dim==='ep'&&viewMode==='Top')return drawEPCommunication();
  const definitions=[['tp','TP · 矩阵分片组 / 计算同步','none'],['pp','PP · 层段链 / 前向激活，反向激活梯度','6 4'],['dp','DP · 稠密参数副本 / 梯度同步','4 4'],['ep','EP · 不同专家 / Dispatch、Combine','2 4'],['edp','专家副本 · 相同专家参数 / 梯度同步','8 3 2 3']];
  let out='<g aria-label="选中 Rank 的并行关系"><defs><marker id="relation-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto-start-reverse"><path d="M0 0 L7 3.5 L0 7" fill="'+parallelColors.pp+'"/></marker></defs>';
@@ -1055,7 +1102,20 @@ function drawRelations(){
  return out+'</g>';
 }
 function pickRelationRank(id){if(mode==='comm'&&RankAtlasModel.moeLayer(id,atlasConfig)===null){$('phase').textContent='当前 Rank 所属 stage 没有 MoE 层。';return;}if(mode==='comm'){epIncidentActive=false;relationRank=selectedRank=id;commCamera=null;simTime=epEventAt(0,id).start;lastFrame=null;render();return;}relationRank=relationRank===id?null:id;if(relationRank!==null)selectedRank=id;render();}
+function drawPhysicalGroupFrames(){
+ if(rankLayout!=='physical'||scope!=='all')return '';
+ const cross=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ return Array.from({length:Math.ceil(worldSize/physicalRanksPerCabinet)},(_,group)=>{
+  const points=ranks.filter(r=>Math.floor(r.id/physicalRanksPerCabinet)===group).flatMap(rankSilhouette).flatMap(([x,y])=>[[-28,-38],[28,-38],[28,28],[-28,28]].map(([dx,dy])=>[x+dx,y+dy])).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const lower=[],upper=[];
+  for(const p of points){while(lower.length>1&&cross(lower.at(-2),lower.at(-1),p)<=0)lower.pop();lower.push(p);}
+  for(const p of [...points].reverse()){while(upper.length>1&&cross(upper.at(-2),upper.at(-1),p)<=0)upper.pop();upper.push(p);}
+  const hull=lower.slice(0,-1).concat(upper.slice(0,-1));
+  return `<polygon class="physical-group-frame" data-physical-frame="${group}" points="${hull.map(p=>p.join(',')).join(' ')}"/>`;
+ }).join('');
+}
 function drawViewGroups(){
+ if(rankLayout==='physical'&&scope==='all')return Array.from({length:Math.ceil(worldSize/physicalRanksPerCabinet)},(_,group)=>{const rs=ranks.filter(r=>Math.floor(r.id/physicalRanksPerCabinet)===group),points=rs.flatMap(rankSilhouette),x=Math.min(...points.map(p=>p[0])),y=Math.min(...points.map(p=>p[1]))-62;return `<text data-physical-group="${group}" x="${x}" y="${y}" fill="${epPalette().muted}" font-size="13" pointer-events="none">机柜组 ${group} · R${rs[0].id}–R${rs[rs.length-1].id} · ${rs.length} Rank</text>`;}).join('');
  if(scope!=='all'||viewMode==='2.5D'||mode==='comm')return '';
  const axis={Top:'pp',Front:'tp',Side:'dp'}[viewMode],groups=new Map();
  for(const r of ranks){if(!groups.has(r[axis]))groups.set(r[axis],[]);groups.get(r[axis]).push(r);}
@@ -1065,7 +1125,7 @@ function drawViewGroups(){
  }).join('');
 }
 function render(){if(mode==='shard'&&![0,2].includes(selectedMemoryCategory))selectedMemoryCategory=null;setRankData(selectedRank);if(mode==='shard'&&playing){const active=currentModule(simulationState(simTime,selectedRank));if(active!==null)$('tensor').value=String(active);}let s='';const focus=parallelFocus();const savedLabelMode=labelMode,savedTensor=$("tensor").value;if(scope==='all'){labelMode='surface';for(const r of rankPaintOrder()){setRankData(r.id);const [x,y]=rankPosition(r);const geom=focusedRankGeometry(drawRank(),r.id,focus);s+=`<g opacity="${mode==='comm'&&epIncidentActive&&viewMode==='Front'?(r.id===relationRank?1:.12):mode==='comm'&&!focus.members.has(r.id)?.22:1}" data-linked="${!!focus&&focus.members.has(r.id)}" data-rank="${r.id}" data-rack="${physicalPlacement(r).rack}" data-node="${physicalPlacement(r).node}" role="button" tabindex="0" aria-pressed="${relationRank===r.id}" aria-label="Rank ${r.id}, TP ${r.tp}, PP ${r.pp}, DP ${r.dp}, EP ${r.ep}，机柜 ${physicalPlacement(r).rack}，节点 ${physicalPlacement(r).node}；单击显示并行关系，双击进入单卡" transform="translate(${x} ${y}) scale(${RANK_SCALE}) translate(-440 0)"><title>${mode==='comm'?epRankTitle(r.id):`Rank ${r.id} · 机柜 ${physicalPlacement(r).rack} / 节点 ${physicalPlacement(r).node} / 卡 ${physicalPlacement(r).slot}`}</title>${geom}</g>`;}labelMode=savedLabelMode;$("tensor").value=savedTensor;setRankData(selectedRank);applySimulation();}else{s=`<g data-rank="${selectedRank}">${drawRank()}</g>`;}
-$('world').innerHTML=s+(epIncidentActive&&viewMode==='Front'?'':drawRelations())+drawParallelTags()+drawViewGroups()+drawRankRulers()+drawIncidentAnnotation();
+$('world').innerHTML=drawPhysicalGroupFrames()+s+(epIncidentActive&&viewMode==='Front'?'':drawRelations())+drawParallelTags()+drawViewGroups()+drawRankRulers()+drawIncidentAnnotation();
 // Move the original closed outline above the annotation; never paint a substitute edge.
 if(mode==='comm'&&viewMode==='Front'&&epIncidentActive){
  const rankNode=$('world').querySelector(`[data-rank="${relationRank}"]`);
@@ -1087,7 +1147,7 @@ renderShardInspector();describeEPEvent();renderIncident();$('ep-oom-mode').setAt
  const stageIndex=mode==='comm'?['分桶','分发','计算','回收','完成'].indexOf(epStage(epEventAt(simTime,relationRank))):-1;
  document.querySelectorAll('#ep-stops button').forEach((b,i)=>b.setAttribute('aria-current',i===stageIndex?'step':'false'));
 
-$('memory-legend').hidden=(scope==='all'&&viewMode==='2.5D'&&mode!=='comm'&&relationRank===null)||(mode==='comm'&&viewMode==='Top')||!(labels&&(scope==='all'||labelMode==='surface'));
+$('memory-legend').hidden=(scope==='all'&&viewMode==='2.5D'&&mode!=='comm'&&relationRank===null)||(mode==='comm'&&['Top','2.5D'].includes(viewMode))||!(labels&&(scope==='all'||labelMode==='surface'));
 $('ep-token-legend').hidden=!(mode==='comm'&&viewMode==='Top'&&scope==='all');
 const legendHTML=(mode==='shard'?[2,0]:[...stackOrder].reverse()).map(i=>{const a=cats[i];return `<button type="button" data-memory-category="${i}" aria-pressed="${selectedMemoryCategory===i}" title="只显示${a.name}；再次点击恢复全部"><i aria-hidden="true" style="background:${i===7?'transparent':a.color};${i===7?'border:1px solid #555':''}"></i>${i===6&&epIncidentActive&&viewMode==='Front'?'其他不可用占用（注入）':a.name}</button>`;}).join('');
 if($('memory-legend')._legendHTML!==legendHTML){$('memory-legend')._legendHTML=legendHTML;const active=document.activeElement?.closest('[data-memory-category]')?.dataset.memoryCategory;$('memory-legend').innerHTML=legendHTML;if(active!==undefined)$('memory-legend').querySelector(`[data-memory-category="${active}"]`)?.focus();}
@@ -1147,6 +1207,7 @@ function rankSceneCenterX(){
 function transform(){
  if(mode==='comm'&&relationRank!==null){
   if(viewMode==='Front'&&epIncidentActive){const b=incidentGeometry();commCamera={x:b.x+b.w/2,y:b.y+b.h/2,fit:Math.min(500/b.h,600/(b.w*2.4))};}
+  if(!commCamera&&viewMode==='2.5D'){const b=epBounds();commCamera={x:b.x+b.width/2,y:b.y+b.height/2,fit:Math.min(1150/(b.width+100),620/(b.height+100))};}
   if(!commCamera){const b=epBounds();commCamera={x:b.x+b.width/2,y:b.y+15,fit:Math.min(1200/(Math.max(760,b.width)+40),610/(b.height+470))};}
   $('world').setAttribute('transform',`translate(${700+pan[0]} ${(epIncidentActive&&viewMode==='Front'?375:415)+pan[1]}) scale(${zoom*commCamera.fit}) translate(${-commCamera.x} ${-commCamera.y})`);
   $('ep-navigation').setAttribute('transform',$('world').getAttribute('transform'));
@@ -1184,11 +1245,11 @@ $('scene').addEventListener('wheel',e=>{
 },{passive:false});
 function setAtlasMode(next){
  if(next==='comm'&&RankAtlasModel.moeLayer(relationRank??selectedRank,atlasConfig)===null){$('phase').textContent='当前 Rank 所属 stage 没有 MoE 层。';return;}
- if(next===mode){if(next==='comm'){viewMode='Top';epIncidentActive=false;epRouteStyle='arc';commCamera=null;syncViewDial();render();}return;}
+ if(next===mode){if(next==='comm'){viewMode='2.5D';epIncidentActive=false;epRouteStyle='arc';commCamera=null;syncViewDial();render();}return;}
  epIncidentActive=false;
  if(next==='comm'){
   commSaved={mode,scope,viewMode,selectedRank,relationRank,simTime,playing,zoom,pan:[...pan],relation:$('relations').value};
-  mode='comm';scope='all';viewMode='Top';relationRank=selectedRank=relationRank===null?(RankAtlasModel.moeLayer(Math.min(23,worldSize-1),atlasConfig)===null?selectedRank:Math.min(23,worldSize-1)):relationRank;
+  mode='comm';scope='all';viewMode='2.5D';relationRank=selectedRank=relationRank===null?(RankAtlasModel.moeLayer(Math.min(23,worldSize-1),atlasConfig)===null?selectedRank:Math.min(23,worldSize-1)):relationRank;
   $('relations').value='ep';simTime=epEventAt(0,relationRank).start;zoom=1;pan=[0,0];commCamera=null;
   playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;
   $('timeline').max='1000';$('timeline').setAttribute('aria-label','通信事件进度');
@@ -1232,6 +1293,22 @@ function syncViewDial(){
  $('dial-marker').setAttribute('transform',`rotate(${[-35,0,90,180][index]} 74 74)`);
  [...$('dial-cube').children].forEach((p,i)=>{p.setAttribute('d',index===0?dialFaces[i]:'M49 49H99V99H49Z');p.setAttribute('fill',index===0?['#353535','#202020','#515151'][i]:['','#353535','#292929','#222222'][index]);});
 }
+$('ep-apply-physical').onclick=()=>{
+ const n=Number($('ep-cabinet-ranks').value);
+ if(!Number.isInteger(n)||n<1||n>32){$('ep-physical-status').textContent='每柜 Rank 数请输入 1–32 的整数。';return;}
+ physicalRanksPerCabinet=n;setRankLayout('physical');$('ep-physical-status').textContent=`${worldSize} Rank · ${Math.ceil(worldSize/n)} 柜 · 每柜至多 ${n} Rank`;
+};
+function setRankLayout(value){
+ rankLayout=value;
+ $('parallel-config').hidden=value==='physical';$('ep-physical-config').hidden=value!=='physical';$('ep-physical-total').textContent=worldSize;$('ep-cabinet-count').textContent=Math.ceil(worldSize/physicalRanksPerCabinet);
+ document.querySelectorAll('[data-layout]').forEach(b=>{const active=b.dataset.layout===value;b.setAttribute('aria-selected',String(active));b.setAttribute('tabindex',active?'0':'-1');});
+ $('ep-layout-note').textContent=rankLayout==='physical'?`每柜至多 ${physicalRanksPerCabinet} Rank · 两列 × ${Math.ceil(physicalRanksPerCabinet/2)} 行 · 纵深一层`:'X · DP / Y · TP / Z · PP';
+ commCamera=null;fitCanvas();
+}
+document.querySelectorAll('[data-layout]').forEach(b=>{
+ b.onclick=()=>setRankLayout(b.dataset.layout);
+ b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const value=e.key==='Home'?'physical':e.key==='End'?'parallel':rankLayout==='physical'?'parallel':'physical';setRankLayout(value);document.querySelector(`[data-layout="${value}"]`).focus();};
+});
 const settingsToggle=$('rank-settings-toggle'),settingsPanel=$('rank-settings-panel');
 function setSettingsOpen(open){settingsPanel.hidden=!open;settingsToggle.setAttribute('aria-expanded',String(open));}
 settingsToggle.onclick=()=>{const open=settingsPanel.hidden;if(open){shardInfoOpen=false;renderShardInspector();}setSettingsOpen(open);};
@@ -1267,13 +1344,6 @@ for(const k of ['tp','pp','dp'])$('cfg-'+k).oninput=()=>{const c=configValues();
 $('config').setAttribute('role','button');$('config').setAttribute('tabindex','0');
 $('config').onclick=()=>setSettingsOpen(true);
 $('config').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setSettingsOpen(true);}};
-$('label-mode').onchange=e=>{labelMode=e.target.value;render();};
-for(const axis of ['x','y','z']){
- const input=$('rank-spacing-'+axis);
- input.oninput=()=>{const value=Number(input.value);if(input.value.trim()===''||!Number.isFinite(value)||value<0||value>3000)return;rankSpacing[axis]=value;commCamera=null;render();};
- input.onchange=()=>{input.value=rankSpacing[axis];};
-}
-$('rank-ratio').onchange=e=>{rankRatio=e.target.value.split(':').map(Number);commCamera=null;render();};
 document.addEventListener('click',e=>{if(!e.target.closest('.rank-settings')&&!e.target.closest('#config'))setSettingsOpen(false);});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!settingsPanel.hidden){setSettingsOpen(false);settingsToggle.focus();}});
 $('relations').innerHTML='<option value="all">XYZ · 全部三轴</option><option value="dp">X · DP</option><option value="tp">Y · TP</option><option value="pp">Z · PP</option><option value="ep">EP · Dispatch / Combine</option><option value="none">隐藏三轴关系</option>';$('relations').value='all';
@@ -1350,7 +1420,7 @@ function tick(now){if(lastFrame!==null&&playing&&!document.hidden){
  }else{simTime+=(now-lastFrame)*(window.rankAtlasPlaybackRate?.()??1);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}
 }lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 if(!window.RankAtlasModel){render();if(!ATLAS_EMBED)requestAnimationFrame(tick);}
-</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="index_comm/rank-workbench.js?v=d0161aaa4829"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
+</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="index_comm/rank-workbench.js?v=4999ac6ea437"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
 // Readability profiles: subtle refraction on controls, opaque frost on reading panels.
 // Keep the third-party implementation scoped and usable directly over file://.
 (() => {

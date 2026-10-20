@@ -40,8 +40,10 @@ dom('query-op').value='';dom('query-op').oninput();
 W.setLayout('flat');const flat=W.snapshot();clickNode('tp-attn');assert.equal(W.snapshot().layout,flat.layout);assert.deepEqual(W.snapshot().flat,flat.flat);
 assert(W.applyConfig({dense:12},true));W.select(0,0);vm.runInContext("setAtlasMode('comm')",ctx);assert.notEqual(read('mode'),'comm');
 W.select(32,12);vm.runInContext("setAtlasMode('comm');seekEPStage(.3)",ctx);
-assert.equal(W.snapshot().memory.communication,read('epEventAt(simTime,selectedRank).rank.bufferBytes/1e9'));
-console.log('PASS: full adapter mount, exact tensor allocation, Shared nodes, state cleanup, projection preservation and event buffer ledger');
+assert.notEqual(read('mode'),'comm');
+const handoff=new URLSearchParams(ctx.window.location.href.split('#')[1]);assert.equal(handoff.get('rank'),'32');assert.equal(JSON.parse(handoff.get('config')).dense,12);
+assert.equal(read('playing'),false);
+console.log('PASS: full adapter mount, exact tensor allocation, Shared nodes, state cleanup, projection preservation and standalone communication handoff');
 
 const graphHost=dom('operator-path'),surface=graphHost.querySelector('.cg-viewport > svg');
 const box=()=>surface.getAttribute('viewBox').split(' ').map(Number);

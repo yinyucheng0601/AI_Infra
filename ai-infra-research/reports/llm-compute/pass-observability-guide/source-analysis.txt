@@ -1,0 +1,165 @@
+PyPTO / TileLang / Triton / cuTile：Pass 可观测性模型修订版
+我核对了你提供的《四框架编译 Pass 对比》（2026-10-19）。这份研究对我们之前讨论的 Pass 可视化有很大帮助，因为它不再简单按照编译阶段分类，而是提出了五类编译决策：规范化、降级、硬件映射、正确性保障、组织与交付，并将硬件映射进一步拆为空间、时间、并行单元、融合与调度。
+
+
+GitHub
++1
+
+
+
+但我认为，这五类适合作为编译器能力分类，不应该原样变成开发者工具的导航结构。
+
+原因在于编译器的职责与开发者的诊断任务不是一一对应的：例如 Buffer 复用涉及空间规划，也会影响 Pipeline；同步插入属于正确性保障，同时直接影响并行执行效率。如果按 Pass 的内部分类设计工具，开发者要跨多个分类才能查清一个问题。
+
+我的建议是采用双层模型：
+- 底层保留编译器分类：记录每个 Pass 的实际名称、顺序、输入输出、职责、参数及其所属工具链。
+- 上层按照开发者诊断对象组织：将计算、Layout、Memory、Pipeline、Sync、Instruction、Runtime 等跨 Pass 的对象串联起来。
+一、核对文档后，需要修正的几个认识
+原有认识或文档结论	核对结果	对可视化设计的影响
+Triton 和 PTO 可以按同一条编译阶段顺序比较	必须区分。文档中的 Triton 指 NVIDIA 后端，不是 Triton-Ascend；PyPTO 与 PTOAS 也分属不同编译层	支持不同工具链的阶段映射，而非强制一一对齐
+内存规划可视为一个阶段	不够准确。PyPTO 可以在前端规划，也可以交由 PTOAS 规划，具体取决于 memory_planner 配置	需要记录每次资源规划的决策者及版本
+同步插入只是流水线的一部分	需要独立观察。PTOInsertSync、ascend_sync_insert 等承担不同层面的同步职责	独立展示依赖、同步及等待关系
+计算映射可以归为 Layout 转换	需要分开。Layout、内存空间、Tile 切分、矩阵计算映射是相互影响但不同的决策	区分数据布局、计算资源绑定与执行单元选择
+目标 Codegen 是最后一个有意义的阶段	不成立。PTOAS 中还存在融合、Layout、调度、指令级优化和校验相关 Pass	允许跨越 PyPTO → PTOAS 追踪对象
+Pass 数量能表征编译器优化能力	不能。注册 Pass 数、实际运行次数、源文件数的统计口径不同	展示真实执行轨迹，而不是用 Pass 数量作为能力评分
+以上与文档中的统计边界及 PyPTO 默认策略基本一致，但涉及具体版本的默认顺序仍需要在真实编译记录中确认。
+
+
+GitHub
++2
+
+
+
+另外，文档中有几处表达值得收紧：Passes.td 的声明顺序不等于实际 Pipeline 执行顺序；规范化 Pass 不一定只是性能变化，错误的转换也会破坏语义；Triton NVIDIA 后端的 warp、TMA、tmem 不能直接当作昇腾上的对应对象；autotune 不能替代正确性验证，但可以搜索影响同步结构的合法参数组合。
+
+二、优化后的 Pass × 观测对象 × 诊断问题
+我建议用 12 类可观测对象，覆盖五类编译职责，同时满足 PyPTO / TileLang-Ascend / Triton / cuTile 的横向比较需求。
+
+这张表按开发者排查问题时的典型逻辑排列，不代表 Pass 的实际执行顺序。
+#	可观测对象	关联 Pass / 行为举例	应当展示的关键变化	开发者的诊断问题
+01	IR Structure 计算与控制流结构	simplify、convert_to_ssa、canonicalizer、lower_tile_op	Operation、Loop、Branch、SSA 值、依赖边的增删和重写	计算语义是否保持？有没有引入多余操作或循环？
+02	Lowering 抽象降级	convert_tensor_to_tile_ops、flatten_tile_nd_to_2d、convert_to_ttgpuir、PTOLowerGenericOps	IR Dialect、Operation 类型、抽象层级、Source Mapping	高层操作降级成了什么？是否丢失可优化的计算结构？
+03	Tile & Parallelism 分块与并行映射	auto_tile_matmul_l0、cluster_planning、expand_mixed_kernel、warp_specialize	Tile 形状、分片方式、迭代空间、执行单元分工	分块是否合理？是否存在并行不足、负载不均或资源闲置？
+04	Data Layout 数据布局	layout_inference、resolve_backend_op_layouts、InferPTOLayout、coalesce	逻辑坐标到物理布局的映射、Stride、Layout Conversion	数据如何排列？是否发生不必要的重排或非连续访问？
+05	Memory & Buffer 存储与生命周期	infer_tile_memory_space、ascend_memory_planning、memory_reuse、PlanMemory	Memory Space、Buffer 大小、Live Range、复用与地址关系	数据放在哪里？是否超出容量？有无多余分配、搬运或复用冲突？
+06	Data Movement 数据搬运	cross_core_pipeline、PTORemoveIdentityTMov、tma_lowering	数据源/目的地、搬运方向、字节量、访问模式、生产消费关系	数据为什么要移动？是否存在冗余搬运、访问效率低下或搬运瓶颈？
+07	Pipeline & Schedule 执行时间组织	inject_pipeline、lower_pipeline_loops、schedule_loops、OpScheduling	Stage、软件流水深度、Buffer Version、操作顺序与可重叠区间	搬运与计算能否重叠？流水空泡从哪里产生？
+08	Synchronization 依赖与同步	PTOInsertSync、ascend_sync_insert、fence_insertion、PTOBufidSync	RAW/WAR/WAW 依赖、Barrier、Signal/Wait 配对、同步作用域	为什么要等待？是否缺少同步、存在死锁风险或过度同步？
+09	Instruction Mapping 硬件操作映射	ascend_vector_instruction_selection、lower_mma、ExpandTileOp	高层 Op 到目标操作的对应关系、指令类别、执行单元	有没有用到预期的计算能力？为何出现标量化或额外指令？
+10	Fusion & Optimization 融合与局部优化	FusionPlan、PTOFusionRegionGen、VPTOStatefulStreamFusion、combine	Fusion Group、被消除的中间结果、Load/Store、指令数变化	为什么融合或没有融合？融合是否减少了流量，还是增加资源压力？
+11	Task & Communication 任务编排与跨核通信	outline_cluster_scopes、auto_derive_task_dependencies、synthesize_allreduce_signals	Task DAG、函数/Kernel 边界、通信域、通信与计算依赖	谁负责执行？数据如何跨任务或核传递？哪里存在跨域等待？
+12	Validation & Runtime 正确性与执行验证	PTOValidateVPTOIR、concurrency_sanitizer、IRProperty、Profiler	编译不变量、合法性诊断、数值误差、运行时延、执行轨迹	编译是否正确？实际执行是否符合编译预期？性能瓶颈是否得到证实？
+表中 Pass 是根据所提供文档选取的代表性实例，并非宣称它们在四条编译链中直接对应，或在每个版本、每种配置下都会执行。
+
+GitHub
++1
+
+
+这版相比之前最大的改变，是把几个以前混在一起的对象拆开：
+- Data Layout 与 Memory：前者回答数据怎么组织，后者回答数据占据什么存储资源。
+- Data Movement 与 Pipeline：前者描述移动了什么，后者描述何时移动、能否重叠。
+- Pipeline 与 Synchronization：前者追求有效执行，后者负责维持必要的依赖约束。
+- Tile & Parallelism 与 Instruction Mapping：前者决定如何分工，后者决定最终使用哪类目标操作。
+- Validation 与编译过程：验证不是单个末尾 Pass，而是一套贯穿编译前后、并连接运行时的证据机制。
+三、从 12 类观测对象进一步归纳成 5 种可视化
+12 类对象不意味着需要 12 种图表。我建议将它们组织成五种相互关联的视图，让用户从宏观编译流程逐步进入具体问题。
+
+01 / Pass Timeline — 编译演化视图
+
+按真实执行顺序排列 Pass，并在 IR 表示发生变化的位置设置明确的阶段边界。点击一个 Pass，展示 Before/After IR、对象增删、编译耗时和所触发的诊断信息。
+
+覆盖：IR Structure、Lowering，以及全部 Pass 的时间顺序。
+
+
+
+
+02 / Mapping View — 空间与硬件映射视图
+
+展示逻辑 Tile 如何被划分并分配到执行单元、数据采用什么 Layout、位于哪个 Memory Space，最终映射到哪些目标操作。允许在不同 Pass 之间对照同一 Tile 的变化。
+
+覆盖：Tile & Parallelism、Data Layout、Memory、Instruction Mapping。
+
+
+
+
+03 / Execution View — 执行流水与同步视图
+
+使用泳道区分计算、数据搬运和同步。为 Memory 的申请、释放、读、写提供独立语义，并区分 AIC、AIV 以及相关流水的不同执行角色。静态编译调度和实测执行时间应使用明确的模式区分。
+
+覆盖：Data Movement、Pipeline、Synchronization、Instruction Scheduling。
+
+
+
+
+04 / Dependency View — 任务与通信依赖视图
+
+以 DAG 呈现 Task、Kernel、数据生产者与消费者，以及跨核或跨任务通信。区分数据依赖、控制依赖和同步依赖，不把所有关系画成同一种箭头。
+
+覆盖：Task & Communication，以及跨范围的 Synchronization。
+
+
+
+
+05 / Diagnostics View — 编译与运行诊断视图
+
+将 IR 校验、Pass 前后差异、异常诊断和运行时性能证据关联到具体对象。优先显示异常由哪个 Pass 首次引入、在哪个阶段被发现，以及哪些结论已有证据支持。
+
+覆盖：Validation & Runtime，并支持对其他四种视图进行定位。
+
+
+
+四、面向 PyPTO 的优先级
+根据文档中 PyPTO 与 PTOAS 的职责分工，我会进一步调整实现优先级。尤其是 PyPTO 已有逐 Pass IR 快照、IRProperty 校验等基础，前端观测可以利用这些能力；但涉及 PTOAS 内部决策时，仍需要相应的 Pass 输出、诊断或调度信息，不能仅靠解析最终 PTO 代码还原全部中间过程。
+
+
+GitHub
++1
+
+
+
+优先级	先做什么	为什么
+P0	Pass Timeline + IR Diff	建立全部调试信息的统一入口及对象追溯基础
+P0	Memory / Layout Mapping	直接对应 Tile 算子开发中的资源、切片和布局问题
+P0	Pipeline / Sync Execution View	覆盖搬运、计算、等待及其依赖关系，是昇腾硬件执行分析的重点
+P1	Instruction Mapping	建立高层 Tile Op 到 PTO 目标操作的可追溯关系
+P1	Task & Communication DAG	体现 PyPTO 任务编排及通信相关编译能力
+P2	跨框架对照	在观测对象及语义已经稳定后，再比较不同编译链的实现差异
+这里的 P0/P1/P2 是建议的产品实施顺序，不是对框架技术成熟度的评价。
+五、我建议保留的一个重要设计原则
+Pass 是变化发生的位置，Object 是变化的主体，Diagnostic 是开发者对变化的解释。
+
+三者应有明确的数据关系：
+Pass
+
+谁改变了它？
+
+memory_reuse
+
+
+Object
+
+改变了什么？
+
+Buffer / Live Range
+
+
+Diagnostic
+
+有什么影响？
+
+复用是否合法？
+
+
+
+证据层连接原始 IR、转换日志、校验结果与硬件性能数据。
+例如，在 memory_reuse 之后，同一个 Buffer 的生命周期发生变化，UI 不应该只高亮 IR 文本中的几行差异，而应能定位到这个 Buffer，展示复用前后的 Live Range、共享的存储空间，以及是否存在潜在的读写冲突。如果存在风险，再关联到具体的同步 Pass 及其处理结果。
+
+还有一个容易遗漏的技术前提：跨 Pass 对象身份不能完全依赖 IR 的 SSA 名称或行号。 Lowering、融合、切片和代码生成可能使一个对象拆成多个或多个合并成一个，因此应支持一对多、多对一和无法确定来源的映射关系，避免制造虚假的完整追溯。
+
+从产品设计角度，我认为最终应该建立的是：
+
+Object-centric Compilation Observability（以对象为中心的编译可观测性）。
+
+Pass Timeline 用来说明编译过程；Mapping、Execution 和 Dependency View 用来解释具体发生了什么；Diagnostics 则将这些变化与正确性、性能问题联系起来。
+
+这样既能保留专业开发者需要的逐 Pass 精确性，也能把 PyPTO、TileLang、Triton 和 cuTile 的差异统一到有意义的用户问题上。尤其对于昇腾算子开发，它能够清楚分辨：哪些是上层编译器作出的规划，哪些是在 PTOAS 等下游工具链中决定的，以及哪些结论已经获得实际硬件执行数据的验证。

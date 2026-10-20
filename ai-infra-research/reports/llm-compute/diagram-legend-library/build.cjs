@@ -71,10 +71,11 @@ for(const [id,label] of [['instruction','DataCopy'],['task','任务 0 → projec
  row.svg=V.wrap(V.node(id,id+'-example',label,30,60),320,180);
  row.desc=id==='instruction'?'亮绿色实心条与终端图标表示设备执行动作。DataCopy 为搬运指令的示意名称，不代表某个 ISA 的具体操作码。':'亮绿色实心条与调度图标表示一次核函数调度，任务 0 是示例中的第 0 个任务实例，projection 是目标核函数。与设备指令共用样式，但语义层级不同。';
 }
+if(training.run('rankBoard.toString()')!==V.rankBoard.toString())throw Error('Rank renderer drift: sync report and visual-system.js');
 const rankRow=rows.find(r=>r.id==='rank-training');
 const compactRank=rows.find(r=>r.id==='rank-inference');
-// Both representations share the exact same board, pins, scale and label style.
-rankRow.svg=compactRank.svg.replace('aria-label="Rank 标识 · 推理图"','aria-label="Rank 容器 · 训练图"').replace('class="rank-label" x="160" y="90"','class="rank-label" x="160" y="65"').replace('</svg>',inference.run("tensor(160,94,'W₀',126,G)")+'</svg>');
+// Extract the report's actual Rank renderer; never replace it with another report's SVG.
+rankRow.svg=(()=>{const body=training.run("frame(70,30,180,120,'Rank 0')");return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" role="img" aria-label="Rank 容器 · 训练图"><style>${training.css()}</style>${body}</svg>`;})();
 const system=require("./system-catalog.cjs").filter(e=>!['system-multiply','system-communication','system-function'].includes(e.id));
 Object.assign(system.find(e=>e.id==='system-add'),{title:'逐元素加／乘',legacy:['add','multiply']});
 Object.assign(system.find(e=>e.id==='system-op'),{title:'计算与通信操作'});

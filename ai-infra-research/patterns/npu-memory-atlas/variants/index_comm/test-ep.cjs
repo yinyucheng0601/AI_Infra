@@ -152,7 +152,7 @@ console.log('PASS: baseline CSS, original scene, EP group/model conservation, sh
 const crypto=require('node:crypto');
 assert.equal(crypto.createHash('sha256').update(baseline).digest('hex'),'d28e3af6146092c1c65b9cbcbc9de3b2515ac6ceaf68592d00b44393936fb32d');
 const ids=s=>[...s.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]).filter(id=>!id.startsWith('ep-')).sort();
-assert.deepEqual(ids(html),ids(baseline),'original UI IDs retained');
+assert.deepEqual(ids(html),ids(baseline).filter(id=>!['label-mode','rank-ratio','rank-spacing-x','rank-spacing-y','rank-spacing-z'].includes(id)),'UI IDs retained except removed display settings');
 for(const [t,id] of [[90,23],[390,55],[690,87],[990,119]])assert.equal(read(`epEventAt(${t},${id}).frame.phase.id`),'dispatch');
 assert.equal(read('epEventAt(3590,23).active'),false,'only first microbatch event');
 
@@ -193,7 +193,7 @@ console.log('PASS: source-scoped token overlays, integer conservation, local out
 vm.runInContext("mode='explode';scope='all';viewMode='2.5D';relationRank=null;selectedRank=2;simTime=12000;zoom=1.5;pan=[12,34]",ctx);
 const prior=read('({scope,viewMode,simTime,zoom,pan,selectedRank})');
 vm.runInContext("setAtlasMode('comm')",ctx);
-assert.equal(read('relationRank'),23);assert.equal(read('viewMode'),'Top');
+assert.equal(read('relationRank'),23);assert.equal(read('viewMode'),'2.5D');
 assert.equal(element('timeline').max,'1000');
 assert.equal((element('ep-navigation').innerHTML.match(/data-ep-step=/g)||[]).length,0);
 assert.equal((html.match(/<button data-ep-step=/g)||[]).length,5);
@@ -221,7 +221,7 @@ assert(!element('world').innerHTML.includes('paint-order="stroke"'));
 console.log('PASS: complete-and-stop playback, reduced-motion entry and source switching');
 
 // Route ablation: same accounting and parcels; only network geometry changes.
-vm.runInContext("setAtlasMode('comm');seekEPStage(.3)",ctx);
+vm.runInContext("setAtlasMode('comm');viewMode='Top';seekEPStage(.3)",ctx);
 const signatures=[];
 for(const style of ['arc','lanes','particles']){
  vm.runInContext(`epRouteStyle='${style}';render()`,ctx);
@@ -346,9 +346,41 @@ console.log('PASS: OOM confined to Front; front memory accounting retains failed
 
 element('ep-oom-mode').onclick();
 assert.equal(read('viewMode'),'Front');assert.equal(read('epIncidentActive'),true);assert.equal(read('playing'),true);
-vm.runInContext("setAtlasMode('comm')",ctx);assert.equal(read('viewMode'),'Top');assert.equal(read('epIncidentActive'),false);
+vm.runInContext("setAtlasMode('comm')",ctx);assert.equal(read('viewMode'),'2.5D');assert.equal(read('epIncidentActive'),false);
 assert(!html.includes('<select id="ep-route-style"'));
 console.log('PASS: explicit OOM entry opens Front, communication restores Top, route selector removed');
 
 assert(html.includes('data-oom-annotation='));
 module.exports={ctx,element,read,nodes};
+
+vm.runInContext("setAtlasMode('comm');viewMode='2.5D';seekEPStage(.4)",ctx);
+let spatial=element('world').innerHTML;
+assert(spatial.includes('data-ep-spatial-sankey="dispatch"'));
+assert.equal((spatial.match(/data-spatial-flow=/g)||[]).length,7);
+assert.equal((spatial.match(/data-spatial-port=/g)||[]).length,8);
+assert(!/NaN|Infinity/.test(spatial));
+vm.runInContext('seekEPStage(.85)',ctx);
+spatial=element('world').innerHTML;
+assert(spatial.includes('data-ep-spatial-sankey="combine"'));
+assert(/data-spatial-flow="\d+-23"/.test(spatial));
+console.log('PASS: spatial Sankey ports, route count, finite projection and Combine reversal');
+
+vm.runInContext("rankLayout='physical';viewMode='2.5D';scope='all';render()",ctx);
+const coords=read('ranks.map(physicalCoordinates)');
+assert.equal(new Set(coords.slice(0,32).map(c=>`${c.x},${c.y},${c.z}`)).size,32);
+assert(coords.slice(0,32).every(c=>c.group===0&&c.x<2&&c.y===0&&c.z<16));
+for(const view of ['2.5D','Top','Front','Side']){
+ vm.runInContext(`viewMode='${view}';render()`,ctx);
+ const positions=read('ranks.map(rankPosition)');
+ assert(positions.flat().every(Number.isFinite));
+ assert.equal(new Set(positions.map(p=>p.join(','))).size,positions.length);
+}
+vm.runInContext("viewMode='2.5D';rankLayout='parallel';render()",ctx);
+console.log('PASS: physical 2x1x16 cabinets, unique Rank positions in every view, logical layout restoration');
+
+vm.runInContext("rankLayout='physical';physicalRanksPerCabinet=15;viewMode='Front';render()",ctx);
+assert.equal(read('physicalCoordinates(ranks[15]).group'),1);
+assert.equal((element('world').innerHTML.match(/data-physical-frame=/g)||[]).length,9);
+assert(element('world').innerHTML.includes('R120–R127 · 8 Rank'));
+assert(!/NaN|Infinity/.test(element('world').innerHTML));
+console.log('PASS: partially populated cabinets and odd per-cabinet Rank counts');

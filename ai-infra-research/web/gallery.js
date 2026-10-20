@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'pass-observability-guide':{src:'__PASS_OBSERVABILITY_COVER__',alt:'六环节编译流程、观测对象与视图关系总览'},
     'memory-inspector':{src:'__MEMORY_INSPECTOR_COVER__',alt:'Memory Inspector：函数内存地址与静态生命周期图'},
     'pass-error-cases':{src:'__PASS_ERROR_CASES_COVER__',alt:'Pass Error Cases：UB 共址告警与内存绑定修复案例'},
     'csa-pass-field':{src:'__CSA_PASS_FIELD_COVER__',alt:'CSA Pass Field：qk_pv 核心 DAG、控制作用域、内存绑定与 PTO-ISA 指令'},

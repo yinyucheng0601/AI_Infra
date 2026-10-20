@@ -2,6 +2,58 @@
   "version": 1,
   "assets": [
     {
+      "id": "pass-observability-guide",
+      "title": "编译 Pass 流程与可观测对象图解",
+      "form": "交互图解",
+      "type": "knowledge",
+      "domains": [
+        "Compiler",
+        "PyPTO",
+        "TileLang",
+        "Triton",
+        "cuTile"
+      ],
+      "summary": "以同一个 MatMul 案例贯穿六个编译环节，关联十二类观测对象、五种视图与四框架对照。",
+      "designValue": "用统一对象图元、分块动画和 ND/NZ 地址映射连接 Pass 决策、对象变化与观测视图。",
+      "outline": [
+        "六环节抽象 Pass Pipeline",
+        "同一 MatMul 的降级、分块、存储与目标映射",
+        "十二类对象与五种观测视图",
+        "PyPTO、TileLang、Triton、cuTile 横向对照",
+        "官方来源与固定版本源码依据"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "reports/llm-compute/pass-observability-guide/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/reports/llm-compute/pass-observability-guide/index.html",
+          "url": null,
+          "revision": null,
+          "sha256": "f1b48a2f461723676a2a67e7a6a5613a2e7c4a652fea6e2631e7f7a387f9692f"
+        }
+      ],
+      "validation": [
+        "2026-10-20：用户要求收录到 Library；报告已完成多轮交互与布局检查，保存来源依据与验证记录。",
+        "代码依据来自固定版本 PyPTO3 测试及实现，未执行编译器或 NPU 验证。"
+      ],
+      "related": [
+        "pypto-compilation-guide",
+        "diagram-legend-library",
+        "llm-compute-diagrams"
+      ],
+      "reviewedAt": "2026-10-20",
+      "topics": [
+        "operators",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "memory-inspector",
       "title": "Memory Inspector · 函数内存图",
       "form": "交互 Pattern",
@@ -586,7 +638,7 @@
           "url": null,
           "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html",
           "revision": null,
-          "sha256": "29bc6877ddd9975c9245a64e3a53954ace55ec743c68d50802ea07a186f1e72a"
+          "sha256": "0608e8786ec0e0c4263b01ca05a15b0dc812d74134d7acfe21d0d1421553c704"
         }
       ],
       "validation": [

@@ -300,3 +300,6 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
 .card-visual:has(.document-figure-pass-error-cases){height:100%}.card-visual .document-figure-pass-error-cases{object-fit:cover;object-position:center;transform:none;filter:none}
 
 .card-visual:has(.document-figure-memory-inspector){height:100%}.card-visual .document-figure-memory-inspector{object-fit:cover;object-position:center;transform:none;filter:none}
+
+.card-visual:has(.document-figure-pass-observability-guide){height:100%}
+.card-visual .document-figure-pass-observability-guide{object-fit:contain;transform:none;filter:none;background:#fff}

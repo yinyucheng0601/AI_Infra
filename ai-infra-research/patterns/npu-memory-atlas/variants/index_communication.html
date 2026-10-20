@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>EP 通信 · Rank 双排</title><link rel="stylesheet" href="index_comm/communication.css"><script src="index_comm/rank-model.js"></script><script src="index_comm/ep-model.js"></script><script defer src="index_comm/communication.js"></script></head>
+<body><header><div><small>RANK COMMUNICATION</small><h1>EP 通信</h1><p id="context"></p></div><a id="back" href="index_comm.html">返回显存视图 ↗</a></header>
+<main><svg id="traffic" viewBox="0 0 1400 850" aria-label="双排 Rank 通信流量"><g id="deck"></g><g id="flows"></g><g id="ports"></g></svg><p id="notice" role="status">正在计算当前 EP 组的路由…</p><aside id="detail" aria-live="polite"></aside></main>
+<footer><label>来源 Rank <select id="source"></select></label><button id="incident" aria-pressed="false">OOM 申请</button><button id="all" aria-pressed="false">全组流量</button><button id="play" aria-label="播放">播放</button><button id="restart">重播</button><input id="progress" type="range" min="0" max="1000" value="0" aria-label="通信进度"><output id="phase">分桶</output><span id="amount"></span></footer>
+<script id="communication-worker" type="text/plain">
+self.onmessage=({data})=>{try{const c=data.config,e=EPTeachingModel.event({pp:0,edp:0,tp:0,layer:data.layer,config:{...c,tp:1,pp:1,dp:c.ep,seq:c.seq/c.cp,hidden:4096}});self.postMessage({flows:e.flows.map(f=>({...f,source:data.ids[f.source],target:data.ids[f.target]})),total:e.totalTokens,local:e.localTokens,incidents:data.ids.map((id,i)=>({...EPTeachingModel.allocationIncident(e,i,.44),id}))});}catch(e){self.postMessage({error:e.message});}};
+</script></body></html>

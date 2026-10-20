@@ -1,5 +1,5 @@
 /* Deterministic teaching events, not an HCCL trace or throughput estimate. */
-(function(root){
+(function createEPModel(root){
   'use strict';
   const baseline=Object.freeze({tp:2,pp:4,dp:16,ep:8,etp:1,cp:1,layers:48,experts:64,topk:8,hidden:4096,ffn:2048,seq:8192,mbs:1,microbatches:8,hbm:64});
   const phases=Object.freeze([
@@ -140,6 +140,7 @@
       phase:failed?'failed':t>=rootAt?'retained':'pending'};
   }
   const api={baseline,phases,coordinates,members,expertReplicas,allocate,event,frame,trace,parcel,mapping,reconstruction,allocationIncident};
+  Object.defineProperty(api,'workerSource',{value:'('+createEPModel.toString()+')(self);'});
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.EPTeachingModel=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

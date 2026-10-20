@@ -126,3 +126,11 @@ body #flat-stage,body[data-query=true] #flat-stage{inset:0;z-index:0}
 .graph-resize:after{content:'';position:absolute;right:2px;top:calc(50% - 24px);width:3px;height:48px;border-radius:2px;background:#666}
 .graph-resize:hover,.graph-resize:focus-visible{background:#ffffff18;outline:none}
 .graph-resize:hover:after,.graph-resize:focus-visible:after{background:#ddd}
+
+/* Editable numbers have a visible field; read-only totals retain plain typography. */
+:root .rank-settings-panel input[type="number"]{box-sizing:border-box;min-height:38px;padding:8px 10px;border:1px solid rgb(255 255 255 / 22%);border-radius:8px;background:rgb(255 255 255 / 7%);color:var(--ui-text);font:inherit;font-variant-numeric:tabular-nums;box-shadow:none}
+:root .rank-settings-panel input[type="number"]:hover{border-color:rgb(255 255 255 / 40%)}
+:root .rank-settings-panel input[type="number"]:focus-visible{outline:2px solid var(--ui-text);outline-offset:2px}
+:root[data-theme="light"] .rank-settings-panel input[type="number"]{background:#fff;border-color:rgb(0 0 0 / 22%)}
+#ep-apply-physical{width:100%;min-height:38px;margin-top:16px;border:0;border-radius:10px;background:var(--ui-text);color:#181818;font:inherit;cursor:pointer}
+:root[data-theme="light"] #ep-apply-physical{color:#fff}

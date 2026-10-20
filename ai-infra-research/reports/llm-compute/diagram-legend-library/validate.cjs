@@ -58,9 +58,9 @@ console.log('PASS: merged cards, kernel fill, green task/instruction glyphs, pat
 
 const rankCard=data.items.find(e=>e.id==='system-rank');
 const rankSvgs=[...rankCard.svg.matchAll(/href="data:image\/svg\+xml;base64,([^"]+)"/g)].map(m=>Buffer.from(m[1],'base64').toString());
-const board=s=>s.match(/<rect class="rank-outline"[^>]*>/)[0];
+const board=s=>(()=>{const tag=s.match(/<rect class="rank-outline(?: outline)?"[^>]*>/)[0];return Object.fromEntries(['x','y','width','height','rx','fill'].map(k=>[k,tag.match(new RegExp(k+'="([^" ]+)"'))?.[1]]));})();
 const pins=s=>s.match(/<circle class="rank-pin"[^>]*>/g);
-assert.equal(rankSvgs.length,2);assert.equal(board(rankSvgs[0]),board(rankSvgs[1]));assert.deepEqual(pins(rankSvgs[0]),pins(rankSvgs[1]));
+assert.equal(rankSvgs.length,2);assert.deepEqual(board(rankSvgs[0]),board(rankSvgs[1]));assert.deepEqual(pins(rankSvgs[0]),pins(rankSvgs[1]));
 console.log('PASS: Rank representations share identical board geometry, fill, corner radius and four pins.');
 
 assert(!data.items.some(e=>e.id==='container'));assert(data.excluded.container);assert(!data.coverage.container);

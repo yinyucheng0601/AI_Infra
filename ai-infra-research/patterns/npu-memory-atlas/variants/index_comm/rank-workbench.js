@@ -109,12 +109,12 @@
   return {index,id,local:rankGroups(id)[index][2],owner,rule:`FFN 三矩阵 · TP${TP} 分片`,axis:'columns',parts:TP,part:ranks[id].tp,full:`3 × ${H} × ${I}`,shape:`3 × ${H} × ${I/TP}`,copies,unit:index===9?'层 × 共享专家':'Dense 层',fraction:1/TP,identity:owner.identity,replicas:M.dpReplica(atlasConfig)*atlasConfig.cp,scope:'共享 / Dense FFN 按 TP 分片，ETP 仅作用于 routed experts。'};
  };
 
- // Extend the original configuration popover; preserve its display controls.
+ // Extend model configuration and retain only the flat-view display toggles.
  const configHost=$('parallel-config');
  const fields=(items)=>'<div class="config-grid">'+items.map(([k,label,min,max])=>`<div class="rank-spacing-row"><label for="cfg-${k}">${label}</label><input id="cfg-${k}" type="number" min="${min}" max="${max}" step="1" value="${atlasConfig[k]}"></div>`).join('')+'</div>';
  configHost.innerHTML='<legend>配置 · 模型与训练</legend><span id="config" class="readout"></span><div class="config-section"><h3>并行与集群</h3>'+fields([['tp','TP',1,8],['pp','PP',1,128],['dp','DP',1,2048],['ep','EP',1,128],['cp','CP',1,128],['node','每节点卡数',1,64]])+'<div class="config-grid"><div><label for="cfg-mode">EP 口径</label><select id="cfg-mode"><option value="split">切出 · EP 折入 DP</option><option value="ortho">正交 · EP 独立</option></select></div><div><label for="cfg-world">World Size</label><output id="cfg-world"></output></div></div></div><div class="config-section"><h3>模型结构 · H4096 / FFN2048 / ETP1</h3>'+fields([['layers','总层数',1,128],['dense','前置 Dense 层',0,128],['experts','路由专家数',1,128],['shared','共享专家数',0,16],['topk','Top-K',1,128]])+'</div><div class="config-section"><h3>训练与容量</h3>'+fields([['mbs','Micro Batch',1,32],['seq','Sequence Length',1,262144],['ga','梯度累积',1,64]])+'<div class="config-grid"><div><label for="cfg-hbm">卡型号 / 容量</label><select id="cfg-hbm"><option value="32">昇腾 910 · 32 GB</option><option value="64" selected>昇腾 910B · 64 GB</option><option value="128">昇腾 950PR · 128 GB</option></select></div><div><label for="cfg-batch">Global Batch</label><output id="cfg-batch"></output></div></div></div><p class="config-note">GB = 10⁹ bytes。ETP=1，ZeRO 关闭。</p><button id="apply-config" type="button">应用配置</button><p id="config-status" role="status" aria-live="polite"></p><div class="config-actions"><button id="config-repair" type="button" hidden>应用联动方案</button><button id="config-allow-oom" type="button" hidden>应用并观察超容量</button><button id="config-cancel" type="button">取消修改</button></div>';
  const spatialSettings=document.createElement('section');spatialSettings.id='spatial-settings';while(configHost.nextSibling)spatialSettings.append(configHost.nextSibling);configHost.after(spatialSettings);
- const display=document.createElement('section');display.className='config-section';display.innerHTML='<div id="flat-display-settings"><h3>展平显示</h3><div class="config-checks"><label><input id="flat-tp" type="checkbox" checked>TP 标注</label><label><input id="flat-layer-label" type="checkbox" checked>Layer 标注</label><label><input id="flat-heat" type="checkbox">内存观测</label></div></div><h3>定位</h3><div class="query-locations"><div><label for="locate-rank">Rank</label><input id="locate-rank" type="number" min="0" value="23"></div><div><label for="locate-layer">Layer</label><input id="locate-layer" type="number" min="0" value="7"></div></div><button id="locate-apply" type="button">定位 Rank × Layer</button>';$('rank-settings-panel').append(display);
+ const display=document.createElement('section');display.className='config-section';display.innerHTML='<div id="flat-display-settings"><h3>展平显示</h3><div class="config-checks"><label><input id="flat-tp" type="checkbox" checked>TP 标注</label><label><input id="flat-layer-label" type="checkbox" checked>Layer 标注</label><label><input id="flat-heat" type="checkbox">内存观测</label></div></div>';$('rank-settings-panel').append(display);
  configValues=()=>{const c={};for(const k of Object.keys(M.baseline))c[k]=k==='mode'?$('cfg-'+k).value:Number($('cfg-'+k).value);return c;};
  function syncDraft(){const c=configValues();$('cfg-world').textContent=Number.isFinite(M.world(c))?M.world(c):'—';$('cfg-batch').textContent=Number.isFinite(c.mbs*M.dpReplica(c)*c.ga)?c.mbs*M.dpReplica(c)*c.ga:'—';state.draft=c;state.repair=null;$('config-repair').hidden=true;$('config-allow-oom').hidden=true;}
  function fillConfig(){for(const [k,v] of Object.entries(atlasConfig))$('cfg-'+k).value=String(v);syncDraft();$('config').textContent=`${worldSize} Rank · TP${TP} / PP${PP} / DP${atlasConfig.dp} / EP${EP} / CP${atlasConfig.cp}`;$('config-status').textContent='';$('config-status').dataset.state='';configHost.querySelectorAll('[aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));}
@@ -129,11 +129,10 @@
   atlasConfig={...c};({tp:TP,pp:PP,ep:EP,layers:L,experts:EXPERTS,ga:MICROBATCHES,hbm:HBM,node:cardsPerNode}=c);DP=M.lanes(c);worldSize=M.world(c);PEAK_ACT=M.activation(c);CYCLE_MS=c.ga*3500+3000;
   ranks=makeRanks();params=ranks.map(r=>M.parameters(r.id,c));rankReserved=params.map(n=>n*16/1e9+PEAK_ACT+BASE_RESERVE);epEventCache.clear();selectedRank=Math.min(selectedRank,worldSize-1);relationRank=relationRank===null?null:Math.min(relationRank,worldSize-1);state.layer=null;state.op=null;state.expert=null;state.graphComm=null;state.space=null;simTime=0;lastFrame=null;
   $('rank').innerHTML=ranks.map(r=>`<option value="${r.id}">R${r.id}</option>`).join('');$('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="false">${esc(g[0])}</button>`).join('');
-  $('timeline').max=String(CYCLE_MS);$('locate-rank').max=String(worldSize-1);$('locate-layer').max=String(L-1);document.title=worldSize+' Rank · 内存与通信';fillConfig();setSettingsOpen(false);rebuildQuery();fitCanvas();return true;
+  $('timeline').max=String(CYCLE_MS);document.title=worldSize+' Rank · 内存与通信';fillConfig();setSettingsOpen(false);rebuildQuery();fitCanvas();return true;
  }
  applyParallelConfig=()=>commit(configValues());$('apply-config').onclick=applyParallelConfig;$('config-repair').onclick=()=>{if(state.repair)commit(state.repair);};$('config-allow-oom').onclick=()=>commit(configValues(),true);$('config-cancel').onclick=fillConfig;
  $('flat-tp').onchange=e=>{state.showTP=e.target.checked;render();};$('flat-layer-label').onchange=e=>{state.showLayer=e.target.checked;render();};$('flat-heat').onchange=e=>{state.heat=e.target.checked;render();};
- $('locate-apply').onclick=()=>{const r=Number($('locate-rank').value),l=Number($('locate-layer').value);if(!Number.isInteger(r)||!ranks[r]||!Number.isInteger(l)||l<0||l>=L){$('config-status').textContent='请输入范围内的 Rank 与 Layer。';return;}const [lo,hi]=M.bounds(r,atlasConfig);if(l<lo||l>=hi){$('config-status').textContent=`R${r} 只持有 L${lo}–L${hi-1}，请调整 Layer。`;return;}selectedRank=r;relationRank=r;state.layer=l;state.op=null;state.expert=null;state.inspect=true;setSettingsOpen(false);setLayout('flat');render();};
  fillConfig();
  const originalSettings=setSettingsOpen;setSettingsOpen=function(open){if(open){state.query=false;state.inspect=false;shardInfoOpen=false;syncShell();renderInspector();}originalSettings(open);};
 
@@ -155,10 +154,15 @@
   document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(!oom&&b.dataset.mode===mode)));
   $('ep-oom-mode').setAttribute('aria-pressed',String(oom));
  }
- setAtlasMode=function(next){if(next==='comm'){if(state.layout==='flat')setLayout('space');state.inspect=false;if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}if(atlasConfig.seq/atlasConfig.cp*atlasConfig.mbs*EXPERTS*EP>16777216){setSettingsOpen(true);$('config-status').textContent='当前精确 token 路由规模过大。请缩小 Sequence / Micro Batch / EP 后查看逐 token 动画；配置与显存视图不受影响。';return;}}
-  if(state.layout==='flat'&&next!=='comm'){setLayout('space');}legacy.setAtlasMode(next);syncShell();};
- document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setAtlasMode(b.dataset.mode));
- const oomClick=$('ep-oom-mode').onclick;$('ep-oom-mode').onclick=()=>{setAtlasMode('comm');if(mode!=='comm')return;state.inspect=false;oomClick();dial();};
+ function openCommunication(fault=false){
+  if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}
+  playing=false;lastFrame=null;
+  const transfer=new URLSearchParams({config:JSON.stringify(atlasConfig),rank:String(selectedRank),t:'0',layer:String(state.layer??Math.max(atlasConfig.dense,selectedRank>=0?M.bounds(selectedRank,atlasConfig)[0]:0)),fault:fault?'1':'0'});
+  window.location.href='index_communication.html#'+transfer.toString();
+ }
+ setAtlasMode=function(next){if(next==='comm'){openCommunication();return;}if(state.layout==='flat')setLayout('space');legacy.setAtlasMode(next);syncShell();};
+ document.querySelectorAll('[data-mode]').forEach(b=>{if(b.dataset.mode==='comm'){b.textContent='通信 ↗';b.title='打开独立通信 demo';}b.onclick=()=>setAtlasMode(b.dataset.mode);});
+ $('ep-oom-mode').onclick=()=>openCommunication(true);
  switchScope=function(next){if(state.layout==='flat'){scope=next;render();}else legacy.switchScope(next);};$('single').onclick=()=>switchScope('single');$('all').onclick=()=>switchScope('all');
  transform=function(){if(state.layout==='flat')drawFlat();else legacy.transform();};
  changeZoom=function(factor){if(state.layout==='flat'){zoomFlat(factor);}else legacy.changeZoom(factor);};
@@ -493,5 +497,6 @@
  new ResizeObserver(()=>{if(state.layout==='flat')drawFlat();}).observe(stage);
  window.addEventListener('keydown',e=>{if(e.key==='Escape'){tooltip.hidden=true;hover.hidden=true;if(state.query){state.graphScene=false;state.query=false;syncShell();render();}}});
  window.RankWorkbench={setLayout,applyConfig:(c,allowOverflow=false)=>commit({...atlasConfig,...c},allowOverflow),select:(rank,layer=null)=>{if(!ranks[rank])return false;const [lo,hi]=M.bounds(rank,atlasConfig);if(layer!==null&&(layer<lo||layer>=hi))return false;selectCell({id:rank,layer});return true;},snapshot:()=>({config:{...atlasConfig},layout:state.layout,view:viewMode,grain:state.grain,rank:selectedRank,layer:state.layer,op:state.op,query:state.query,world:worldSize,memory:sceneMemory(selectedRank,simTime),flat:{...state.flat}})};
+ if(window.location?.hash){try{const transfer=new URLSearchParams(window.location.hash.slice(1));if(transfer.has('config')){const c=JSON.parse(transfer.get('config'));if(M.validate(c).ok)commit(c,true);}const id=Number(transfer.get('rank'));if(transfer.has('rank')&&ranks[id])selectedRank=relationRank=id;playing=false;}catch{}}
  rebuildQuery();syncShell();dial();render();if(!ATLAS_EMBED)requestAnimationFrame(tick);
 })();

@@ -77,6 +77,7 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '__HW_NATIVE_LINGQU_THUMBNAIL__': f'data:image/svg+xml;base64,{hw_native_lingqu}',
         '__TRANSFORMER_LAYER_COVER__': f'data:image/svg+xml;base64,{transformer_layer_cover}',
     }
+    replacements.update({'__PASS_OBSERVABILITY_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/pass-observability-cover.svg').read_bytes()).decode('ascii'),})
     for marker, value in replacements.items():
         assert template.count(marker) == 1, f'missing or duplicate marker: {marker}'
         template = template.replace(marker, value)

@@ -1,0 +1,373 @@
+{
+  "sections": [
+    "封面",
+    "对象关系",
+    "通用流程",
+    "环节展开",
+    "切片规范化",
+    "12 类对象",
+    "对象追溯",
+    "五种视图",
+    "框架适配",
+    "完整总览",
+    "来源与依据"
+  ],
+  "ordered_states": [
+    1,
+    1,
+    1,
+    6,
+    3,
+    12,
+    3,
+    5,
+    4,
+    1,
+    1
+  ],
+  "sources": [
+    [
+      "S01",
+      "MLIR · Pass Infrastructure",
+      "https://mlir.llvm.org/docs/PassManagement/",
+      "Pass 管理、动态 pipeline、分析缓存与插桩。分析事件须独立建模。"
+    ],
+    [
+      "S02",
+      "PyPTO · Pass / PassPipeline / PassManager",
+      "https://www.pypto.ai/pypto/zh/dev/passes/00-pass_manager/",
+      "有序 Pass、前后回调、required / produced / invalidated 性质与实际校验。"
+    ],
+    [
+      "S03",
+      "PyPTO · Memory Map",
+      "https://www.pypto.ai/pypto/user/tools/02-memory-map/",
+      "静态地址与生命周期；PTOAS 规划模式下 dump 缺少已分配偏移。"
+    ],
+    [
+      "S04",
+      "Triton · NVIDIA backend / compiler.py",
+      "https://github.com/triton-lang/triton/blob/main/third_party/nvidia/backend/compiler.py",
+      "make_ttir、make_ttgir、make_llir 与目标相关分支；TTGIR 内重复布局清理。"
+    ],
+    [
+      "S05",
+      "TileLang-Ascend · engine/phase.py",
+      "https://github.com/tile-ai/tilelang-ascend/blob/ascendc_pto/tilelang/engine/phase.py",
+      "LowerAndLegalize / OptimizeForTarget：布局、流水、内存规划、同步与指令选择。"
+    ],
+    [
+      "S06",
+      "NVIDIA · cuTile Python Compilation and Export",
+      "https://docs.nvidia.com/cuda/cutile-python/compilation.html",
+      "JIT 特化与 AOT 导出；Tile IR bytecode 与 cubin 产物边界。"
+    ],
+    [
+      "S07",
+      "NVIDIA · Tile IR Programming Model",
+      "https://docs.nvidia.com/cuda/tile-ir/latest/sections/prog_model.html",
+      "逻辑 tile thread 的硬件线程映射由编译器处理。"
+    ],
+    [
+      "S08",
+      "NVIDIA · Tile IR Optimization Guide",
+      "https://docs.nvidia.com/cuda/tile-ir/latest/sections/optimization_guide.html",
+      "Tile IR 优化、目标 lowering、提示与 remarks 的职责边界。"
+    ],
+    [
+      "S09",
+      "TileLang-Ascend · 官方仓库说明",
+      "https://github.com/tile-ai/tilelang-ascend/tree/ascendc_pto",
+      "Ascend C / PTO 与 AscendNPU IR 路线应分别记录。"
+    ],
+    [
+      "S10",
+      "PTOAS · 官方只读镜像",
+      "https://github.com/hw-native-sys/PTOAS",
+      "仓库说明其为 GitCode cann/pto-as 的只读镜像；内部 pipeline 仍需独立采集。"
+    ],
+    [
+      "R01",
+      "PyPTO3 · BF16 K 分块单测",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/tests/ut/ir/transforms/test_auto_tile_matmul_l0.py#L49",
+      "test_skinny_gemm_pipelined：16×2048 @ 2048×64；k=256，8 次迭代，stage=2。"
+    ],
+    [
+      "R02",
+      "PyPTO3 · TileView 与 NZ 布局",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/include/pypto/ir/tile_view_semantics.h#L58",
+      "Mat/Left：col_major / row_major；Right：row_major / col_major；Acc fractal=1024。"
+    ],
+    [
+      "R03",
+      "PyPTO3 · AutoTileMatmulL0 实现",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/src/ir/transforms/auto_tile_matmul_l0_pass.cpp#L345",
+      "读取目标容量，tile.extract 到 Left/Right；首次 matmul、后续 matmul_acc。"
+    ],
+    [
+      "R04",
+      "PyPTO3 · MatMul 消费位置 case",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/examples/kernels/11_auto_tile_matmul.py#L55",
+      "DDR direct-store 与链式 Mat/L1 scratch；full-K 和 split-K 为独立维度。"
+    ],
+    [
+      "R05",
+      "PyPTO3 · 切片规范化单测",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/tests/ut/ir/transforms/test_canonicalize_tile_slice.py#L58",
+      "slice 消费者重写为直接 extract，零偏移、常量偏移和动态索引分别覆盖。"
+    ],
+    [
+      "R06",
+      "PyPTO3 · 默认 Pipeline 代码",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/python/pypto/ir/pass_manager.py#L120",
+      "tensor prefix 与 tile PTO Pass 有具体顺序；Simplify 在前后两个位置运行。"
+    ],
+    [
+      "R07",
+      "PyPTO3 · NZ 装载与物理 box",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/src/backend/common/pto_ops_datamove.cpp#L347",
+      "M0=16；C0=fractal_bytes/dtype_bytes/16。512 B、BF16 对应16×16。"
+    ],
+    [
+      "R08",
+      "PyPTO3 · INT64 索引化简单测",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/tests/ut/ir/transforms/test_simplify_pass.py#L58",
+      "for i in range(8)：i+0 → i；out 为 INT64[8]。"
+    ],
+    [
+      "R09",
+      "PyPTO3 · PTO 目标操作映射",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/src/backend/common/pto_ops_elementwise.cpp#L427",
+      "tile.matmul → pto.tmatmul；tile.matmul_acc → pto.tmatmul.acc。"
+    ],
+    [
+      "R10",
+      "PyPTO3 · Tensor 到 Tile 显式装载",
+      "https://github.com/yinyucheng0601/PyPTO3/blob/87b129aaf31a1c3748d4dd8a485c74f3465ed692/repo/pto/src/ir/transforms/convert_tensor_to_tile_ops_pass.cpp#L650",
+      "BridgeInputSpaces 为 Tensor 操作数生成指向所需存储空间的 tile.load；返回值转为 tile.store。"
+    ]
+  ],
+  "objects": [
+    [
+      "计算与控制流结构",
+      "IR Structure",
+      [
+        0,
+        1,
+        4
+      ],
+      "Operation、Loop、Branch、SSA 值、依赖边",
+      "计算语义是否保持？是否引入多余操作或循环？",
+      "Simplify / canonicalizer",
+      "S02"
+    ],
+    [
+      "抽象降级",
+      "Lowering",
+      [
+        1,
+        5
+      ],
+      "IR dialect、操作类型、抽象层级、来源映射",
+      "高层操作变成什么？可优化结构是否仍然可见？",
+      "ConvertTensorToTileOps / LowerTileOp",
+      "S02"
+    ],
+    [
+      "分块与并行映射",
+      "Tile & Parallelism",
+      [
+        2,
+        4
+      ],
+      "Tile 形状、迭代空间、分片、执行角色",
+      "分块是否合理？是否存在并行不足或负载不均？",
+      "AutoTileMatmulL0 / warp_specialize",
+      "S04"
+    ],
+    [
+      "数据布局",
+      "Data Layout",
+      [
+        2,
+        3,
+        5
+      ],
+      "逻辑坐标到物理布局、Stride、Layout Conversion",
+      "数据如何排列？是否存在多余重排或非连续访问？",
+      "LayoutInference / remove_layout_conversions",
+      "S05"
+    ],
+    [
+      "存储与生命周期",
+      "Memory & Buffer",
+      [
+        3,
+        4
+      ],
+      "Memory Space、Buffer 大小、Live Range、地址与复用",
+      "容量是否足够？复用是否受别名或并发约束？",
+      "AscendMemoryPlanning / MemoryReuse",
+      "S03"
+    ],
+    [
+      "数据搬运",
+      "Data Movement",
+      [
+        3,
+        4,
+        5
+      ],
+      "源、目的地、字节量、访问模式、生产消费关系",
+      "数据为何移动？冗余搬运与访问瓶颈在哪里？",
+      "CrossCorePipeline / tma_lowering",
+      "S04"
+    ],
+    [
+      "执行时间组织",
+      "Pipeline & Schedule",
+      [
+        2,
+        3,
+        4
+      ],
+      "Stage、流水深度、Buffer Version、操作顺序",
+      "搬运与计算能否重叠？哪些约束限制重叠？",
+      "PipelinePlanning / schedule_loops",
+      "S05"
+    ],
+    [
+      "依赖与同步",
+      "Synchronization",
+      [
+        3,
+        4,
+        5
+      ],
+      "RAW / WAR / WAW、Barrier、Signal / Wait、作用域",
+      "为什么等待？同步是否缺失或过度？",
+      "AscendSyncInsert / fence_insertion",
+      "S05"
+    ],
+    [
+      "硬件操作映射",
+      "Instruction Mapping",
+      [
+        2,
+        4,
+        5
+      ],
+      "高层 Op 到目标操作的对应、指令类别与执行单元",
+      "是否使用预期硬件能力？标量化或额外指令为何出现？",
+      "AscendVectorInstructionSelection / lower_mma",
+      "S04"
+    ],
+    [
+      "融合与局部优化",
+      "Fusion & Optimization",
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "融合组、被消除的中间值、访存与资源压力",
+      "为何融合或未融合？流量减少是否增加资源压力？",
+      "combine / CombineCV",
+      "S04"
+    ],
+    [
+      "任务编排与跨核通信",
+      "Task & Communication",
+      [
+        2,
+        4,
+        5
+      ],
+      "Task DAG、Kernel 边界、通信域、跨域依赖",
+      "谁负责执行？数据如何跨任务传递？",
+      "AutoDeriveTaskDependencies / CrossCorePipeline",
+      "S02"
+    ],
+    [
+      "正确性与执行验证",
+      "Validation & Runtime",
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "编译不变量、合法性、数值误差、运行轨迹与时延",
+      "编译是否正确？哪些执行及性能结论已有证据？",
+      "VerificationInstrument / concurrency_sanitizer",
+      "S01"
+    ]
+  ],
+  "stages": [
+    [
+      "语义表达与规范化",
+      "Semantics & Normalization",
+      "源程序、类型与作用域",
+      "整理控制流、SSA 与表达式，显式记录语义约束。",
+      "规范化 IR；类型及控制流约束",
+      "Simplify / Canonicalizer",
+      "语义等价与数值约定",
+      "规范化"
+    ],
+    [
+      "计算分解与抽象降级",
+      "Decomposition & Lowering",
+      "高层操作与抽象类型",
+      "分解复合操作，转换 dialect / 操作集，保留可用的来源关系。",
+      "更低层 IR；源操作到目标操作映射",
+      "ConvertTensorToTileOps / LowerTileOp",
+      "目标操作合法性与形状约束",
+      "降级"
+    ],
+    [
+      "分块及并行映射",
+      "Tiling & Parallel Mapping",
+      "迭代空间与目标能力",
+      "选择 Tile 形状、切分方式、执行角色和资源绑定。",
+      "Tile / 分片 / 并行单元映射",
+      "AutoTileMatmulL0 / warp_specialize",
+      "覆盖完整性与资源适配",
+      "硬件映射"
+    ],
+    [
+      "存储与数据组织",
+      "Storage & Data Organization",
+      "逻辑值、访问和存储资源",
+      "落实布局、内存空间、生命周期、复用和数据搬运方案。",
+      "Layout / Buffer / 搬运关系",
+      "LayoutInference / AscendMemoryPlanning",
+      "容量、别名与访问约束",
+      "硬件映射"
+    ],
+    [
+      "执行组织与依赖落实",
+      "Execution & Dependency Realization",
+      "操作依赖与资源约束",
+      "组织软件流水、调度及任务边界，落实必要同步。",
+      "Schedule / Signal–Wait / Task DAG",
+      "InjectSoftwarePipeline / AscendSyncInsert",
+      "依赖顺序、同步作用域与并发安全",
+      "硬件映射、正确性保障、组织与交付"
+    ],
+    [
+      "目标操作与产物交付",
+      "Target Operations & Artifacts",
+      "目标相关 IR 与调用约定",
+      "选择或展开目标操作，生成代码、二进制及元数据。",
+      "目标操作 / 代码 / 二进制 / 元数据",
+      "lower_mma / Codegen / export_kernel",
+      "目标合法性与产物可加载性",
+      "降级、组织与交付"
+    ]
+  ]
+}
