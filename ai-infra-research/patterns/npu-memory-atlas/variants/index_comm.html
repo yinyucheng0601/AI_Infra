@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>128 Rank · 显存与排布</title><script src="index_comm/ep-model.js?v=76d62c124772"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>128 Rank · 显存与排布</title><script src="index_comm/physical-layout.js?v=d7ef3b8a42de"></script><script src="index_comm/ep-model.js?v=393bbe969cc8"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#e8e8e8;font:14px/1.5 Arial,"PingFang SC",sans-serif}svg{display:block;width:100%;height:100%;touch-action:none}svg text{font-variant-numeric:tabular-nums}svg text{font-family:Arial,"PingFang SC",sans-serif}.bar{position:fixed;bottom:28px;left:28px;max-width:calc(100vw - 56px);display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:7px;background:#202020;border:1px solid #505050;border-radius:4px}button,select{font:inherit;color:#b0b0b0;background:transparent;border:0;border-radius:2px;padding:9px 12px;cursor:pointer;min-height:38px}button:hover{background:#333;color:#fff}button[aria-pressed=true]{background:#e8e8e8;color:#111}button:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}select{max-width:200px;background:#202020;color:#e8e8e8}.sep{height:22px;width:1px;background:#505050;margin:0 6px}.readout{padding:0 12px;color:#e8e8e8;font-family:ui-monospace,monospace;font-size:13px}.hidden{display:none}#scene{cursor:grab}#scene:active{cursor:grabbing}@media(max-width:600px){.bar{bottom:14px;left:14px;max-width:calc(100vw - 28px);gap:0;padding:4px}button,select{padding:7px 9px;font-size:13px}.readout{font-size:12px;padding:0 8px}.sep{margin:0 3px}}
 .transport{flex-basis:100%;display:flex;align-items:center;gap:8px;border-top:1px solid #383838;padding-top:6px;margin-top:3px;flex-wrap:wrap}.transport input{width:210px;accent-color:#e8e8e8;cursor:pointer}.status{min-width:260px;color:#e8e8e8;font-size:13px;font-family:ui-monospace,monospace}.simtag{font-size:12px;color:#ababab;padding:0 8px}.bar{max-width:min(1100px,calc(100vw - 56px))}.transport button{min-width:48px}.transport select{max-width:80px}.transport input:focus-visible{outline:2px solid white}@media(max-width:600px){.transport input{width:140px}.status{min-width:220px}.bar{max-width:calc(100vw - 28px)}}
 .bar.scope-switch{top:28px;bottom:auto;left:50%;transform:translateX(-50%);flex-wrap:nowrap;max-width:calc(100vw - 28px)}@media(max-width:600px){.bar.scope-switch{top:14px}}
@@ -863,14 +863,10 @@ const rankSpacing={x:560,y:800,z:1500};
 // Each cabinet has two columns and sixteen rows, numbered from top to bottom.
 function physicalCoordinates(r){const local=r.id%physicalRanksPerCabinet;return {group:Math.floor(r.id/physicalRanksPerCabinet),x:local%2,y:0,z:Math.ceil(physicalRanksPerCabinet/2)-1-Math.floor(local/2)};}
 function physicalRankPosition(r){
- const c=physicalCoordinates(r),w=245,d=245*rankRatio[1]/rankRatio[0],h=245*rankRatio[2]/rankRatio[0];
- const sx=w+Math.max(40,rankSpacing.x*.25),sy=d+Math.max(40,rankSpacing.y*.15),sz=h+Math.max(30,rankSpacing.z*.05);
- const row=Math.ceil(physicalRanksPerCabinet/2)-1-c.z,midGap=row>=8?sz*.5:0,x=c.group*(2*sx+220)+c.x*sx,y=0,z=-(row*sz+midGap);
- if(viewMode==='2.5D')return [537+(x-y)*Math.sqrt(3)/2*RANK_SCALE,325+((x+y)*.5-z)*RANK_SCALE];
- // Orthographic views unfold the hidden axis to keep every Rank selectable.
- if(viewMode==='Top')return [537+x*RANK_SCALE,325+(row*sy+(row>=8?sy*.5:0))*RANK_SCALE];
- if(viewMode==='Front')return [537+x*RANK_SCALE,325-z*RANK_SCALE];
- return [537+(c.group*(2*sy+220)+c.x*sy)*RANK_SCALE,325-z*RANK_SCALE];
+ const w=245,d=245*rankRatio[1]/rankRatio[0],h=245*rankRatio[2]/rankRatio[0];
+ const p=RankPhysicalLayout.position(r.id,{world:worldSize,capacity:physicalRanksPerCabinet,w,d,h,sx:w+Math.max(40,rankSpacing.x*.25),sy:d+Math.max(40,rankSpacing.y*.15),sz:h+Math.max(30,rankSpacing.z*.05),view:viewMode});
+ if(Array.isArray(p))return [537+p[0]*RANK_SCALE,325+p[1]*RANK_SCALE];
+ return [537+(p.x-p.y)*Math.sqrt(3)/2*RANK_SCALE,325+((p.x+p.y)*.5-p.z)*RANK_SCALE];
 }
 function rackShape(){
  const gcd=(a,b)=>b?gcd(b,a%b):a;
@@ -899,7 +895,7 @@ function rankPosition(r){
  return [537+(x-y)*Math.sqrt(3)/2*RANK_SCALE,325+((x+y)*.5-z)*RANK_SCALE];
 }
 // Paint back to front, lower floor first, so foreground ranks occlude correctly.
-function rankPaintOrder(){if(rankLayout==='physical')return [...ranks].sort((a,b)=>{const aa=physicalCoordinates(a),bb=physicalCoordinates(b);return aa.z-bb.z||((aa.group*2+aa.x)*rankSpacing.x+aa.y*rankSpacing.y)-((bb.group*2+bb.x)*rankSpacing.x+bb.y*rankSpacing.y);});return [...ranks].sort((a,b)=>a.pp-b.pp||(a.dp*rankSpacing.x+a.tp*rankSpacing.y)-(b.dp*rankSpacing.x+b.tp*rankSpacing.y));}
+function rankPaintOrder(){if(rankLayout==='physical')return [...ranks].sort((a,b)=>{const aa=RankPhysicalLayout.position(a.id,{world:worldSize,capacity:physicalRanksPerCabinet}),bb=RankPhysicalLayout.position(b.id,{world:worldSize,capacity:physicalRanksPerCabinet});return aa.z-bb.z||(aa.x+aa.y)-(bb.x+bb.y);});return [...ranks].sort((a,b)=>a.pp-b.pp||(a.dp*rankSpacing.x+a.tp*rankSpacing.y)-(b.dp*rankSpacing.x+b.tp*rankSpacing.y));}
 // Adapted from parallel-topology/demo.html: coordsOf/rankOf/groupMembers/epMembers.
 // CP1 / TP2 / PP4 / DP16 / EP8 / ETP1, with EP folded into DP.
 function parallelMembers(dim,id){
@@ -1420,7 +1416,7 @@ function tick(now){if(lastFrame!==null&&playing&&!document.hidden){
  }else{simTime+=(now-lastFrame)*(window.rankAtlasPlaybackRate?.()??1);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}
 }lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 if(!window.RankAtlasModel){render();if(!ATLAS_EMBED)requestAnimationFrame(tick);}
-</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="index_comm/rank-workbench.js?v=4999ac6ea437"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
+</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="index_comm/rank-workbench.js?v=4ee3fec74ce2"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
 // Readability profiles: subtle refraction on controls, opaque frost on reading panels.
 // Keep the third-party implementation scoped and usable directly over file://.
 (() => {

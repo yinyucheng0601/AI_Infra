@@ -157,7 +157,7 @@
  function openCommunication(fault=false){
   if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}
   playing=false;lastFrame=null;
-  const transfer=new URLSearchParams({config:JSON.stringify(atlasConfig),rank:String(selectedRank),t:'0',layer:String(state.layer??Math.max(atlasConfig.dense,selectedRank>=0?M.bounds(selectedRank,atlasConfig)[0]:0)),fault:fault?'1':'0'});
+  const transfer=new URLSearchParams({config:JSON.stringify(atlasConfig),rank:String(selectedRank),t:'0',capacity:String(physicalRanksPerCabinet),layout:rankLayout,view:viewMode,layer:String(state.layer??Math.max(atlasConfig.dense,selectedRank>=0?M.bounds(selectedRank,atlasConfig)[0]:0)),fault:fault?'1':'0'});
   window.location.href='index_communication.html#'+transfer.toString();
  }
  setAtlasMode=function(next){if(next==='comm'){openCommunication();return;}if(state.layout==='flat')setLayout('space');legacy.setAtlasMode(next);syncShell();};
@@ -497,6 +497,6 @@
  new ResizeObserver(()=>{if(state.layout==='flat')drawFlat();}).observe(stage);
  window.addEventListener('keydown',e=>{if(e.key==='Escape'){tooltip.hidden=true;hover.hidden=true;if(state.query){state.graphScene=false;state.query=false;syncShell();render();}}});
  window.RankWorkbench={setLayout,applyConfig:(c,allowOverflow=false)=>commit({...atlasConfig,...c},allowOverflow),select:(rank,layer=null)=>{if(!ranks[rank])return false;const [lo,hi]=M.bounds(rank,atlasConfig);if(layer!==null&&(layer<lo||layer>=hi))return false;selectCell({id:rank,layer});return true;},snapshot:()=>({config:{...atlasConfig},layout:state.layout,view:viewMode,grain:state.grain,rank:selectedRank,layer:state.layer,op:state.op,query:state.query,world:worldSize,memory:sceneMemory(selectedRank,simTime),flat:{...state.flat}})};
- if(window.location?.hash){try{const transfer=new URLSearchParams(window.location.hash.slice(1));if(transfer.has('config')){const c=JSON.parse(transfer.get('config'));if(M.validate(c).ok)commit(c,true);}const id=Number(transfer.get('rank'));if(transfer.has('rank')&&ranks[id])selectedRank=relationRank=id;playing=false;}catch{}}
+ if(window.location?.hash){try{const transfer=new URLSearchParams(window.location.hash.slice(1));if(transfer.has('config')){const c=JSON.parse(transfer.get('config'));if(M.validate(c).ok)commit(c,true);}const id=Number(transfer.get('rank'));if(transfer.has('rank')&&ranks[id])selectedRank=relationRank=id;if(transfer.has('capacity')){const n=Number(transfer.get('capacity'));if(Number.isInteger(n)&&n>=1&&n<=32)physicalRanksPerCabinet=n;}if(transfer.get('layout')==='physical')setRankLayout('physical');playing=false;}catch{}}
  rebuildQuery();syncShell();dial();render();if(!ATLAS_EMBED)requestAnimationFrame(tick);
 })();

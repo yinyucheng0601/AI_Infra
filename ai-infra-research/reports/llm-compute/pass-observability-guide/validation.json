@@ -3,24 +3,21 @@
   "format": "llm-compute-diagrams",
   "reference_shell": "pypto-compilation-guide/index.html",
   "chapters": 11,
-  "ordered_reading_states": 38,
+  "ordered_reading_states": 39,
   "checks": {
     "javascript_syntax": "pass",
     "single_file_offline": "index.html and offline file byte-identical",
     "external_runtime_resources": 0,
     "approved_glyphs": "Task, Instruction, MemRef, Memory Space embedded; grid, OP and orthogonal relationships reuse CompilerPrimitives",
-    "browser_forward_states": 38,
-    "browser_reverse_states": 38,
-    "reverse_matches_forward": true,
+    "browser_forward_states": 39,
+    "browser_reverse_states": "38-state preceding revision; not repeated after alias addition",
+    "reverse_matches_forward": "preceding revision only",
     "first_and_last_boundary": "no wrap",
     "desktop_viewport": [
       1440,
       900
     ],
-    "narrow_viewport": [
-      390,
-      844
-    ],
+    "narrow_viewport": "preceding revision only",
     "svg_text_overflow": 0,
     "svg_text_collisions": 0,
     "page_horizontal_overflow": false,
@@ -32,9 +29,9 @@
     "single_navigation": "one bottom chapter/reading navigation; diagram-native selection; no toolbar state buttons",
     "explanation_panel": "closed by default; opens from stage, object or toggle; closes via close button, toggle or Escape",
     "svg_choice_pointer_target": "Explicit transparent SVG hit rectangles; pointer and Enter verified",
-    "changed_chapters": "02 and 09 cross-cutting bars removed; 03 proportional outputs; 05 all facets drill down, NZ address raster",
+    "changed_chapters": "02 decision flow vs responsibility vs invocation; 03 storage/pipeline constraints; 06 required alias; 07 compile/runtime evidence; 08 compiler ownership and public CUDA Tile IR tools",
     "framework_selected": "All four frameworks compared simultaneously; mapping dimension selection verified",
-    "catalog_validation": "Catalog OK: 36 curated assets",
+    "catalog_validation": "Catalog OK: 38 curated assets",
     "pan": "unchanged implementation; verified in preceding revision, not repeated in this revision",
     "zoom_fit": "Unchanged implementation; verified in preceding revision, not repeated here",
     "local_repo_evidence": "Pinned commit, file hashes and unit-test excerpts saved; no compiler/device tests run",
@@ -42,7 +39,7 @@
       "official": 10,
       "local_repository": 10
     },
-    "draft_caption_audit": "Generic normalization caption replaced with INT64 index rewrite; exact shape/offset/mapping captions added",
+    "draft_caption_audit": "Removed stale LowerPipelineToSlots; no new INT64 example",
     "same_case_across_six_steps": "BF16 A[16,2048], B[2048,64], FP32 C[16,64]; semantic contract, explicit lowering, K tiling, storage, dependencies, PTO operations",
     "k_animation": "Full 8-iteration playback reached 8/8 and stopped; pause, manual next and reset verified",
     "k_animation_continuity": "Step to K block 3 produced A[:,512:768] and B[512:768,:]; storage step preserved ko=512 and A2/B2",
@@ -51,28 +48,33 @@
     "view_labels": "Five bilingual view selectors and bilingual synthesis labels",
     "all_twelve_drilldowns": "All 12 opened full diagrams and returned successfully",
     "shape_encoding": "DOM verified A 2 rows x32 cols, B 32x4, C 2x8; true shape labels retained; no literal element count implied",
-    "nz_encoding": "1024 element positions per panel; same logical element (17,2) outlined at ND 546 and NZ 274"
+    "nz_encoding": "1024 element positions per panel; same logical element (17,2) outlined at ND 546 and NZ 274",
+    "current_browser_smoke": "39 states, no SVG text overflow/collisions or horizontal page overflow at current viewport",
+    "canonical_viewport_smoke": "1440x900 diagnostics: no text overflow/collision or page overflow",
+    "canvas_size_contract": "980x650 standard cap;1260x650 wide cap; removed 1.8x facet enlargement; 1440x900 all39 states no collisions/overflow; 2560x1440 standard SVG stays980x650"
   },
   "limitations": [
     "No compiler run, hardware trace or performance experiment.",
     "Reading states and geometry were browser-tested; final user visual acceptance remains pending."
   ],
   "files": {
-    "README.md": "92f1e3debe32db8a2af1d226d0e03ca65ba29f42749e5db9858f369e7d66b76d",
-    "frameworks-preview.jpg": "35be2b5cc287067330913b23a66e7ad8419568e55522d50555355cc239e7d493",
-    "index.html": "f1b48a2f461723676a2a67e7a6a5613a2e7c4a652fea6e2631e7f7a387f9692f",
-    "lowering-preview.jpg": "89cc84f00686831ff1d77fdf7ffd3e752c58a47da90e6a1fe291eac26aa3983d",
-    "nz-layout-preview.jpg": "04750cb9d69f02acd715fc0b1e9d49119519173acba8382f8c6c8601f767360b",
-    "objects-preview.jpg": "6fc7925623dd1ec50fce609adec2f6fedcfca41487661b19b27faf36a196cde5",
-    "pages.json": "70cd9a04b2fe1b2037ed2d96e2a991422bb70f4d974014b56b28796ba5ff679d",
-    "pass-observability-offline.html": "f1b48a2f461723676a2a67e7a6a5613a2e7c4a652fea6e2631e7f7a387f9692f",
-    "pipeline-preview.jpg": "b5850c3741f14626ec609954464b1d8cd4e30c9c868a6aff4c76c53eb1ddd43b",
+    "pass-observability-offline.html": "457a6cef2befde44cb9bc0b5f3a66f0d3444db9d9a786e69dbf32a03a3c4585d",
+    "source-evidence.md": "53a53b496719741ee599621126097e2ec608210798833566c7ffaef635cb132d",
     "preview.jpg": "404932793a9b91ee0a68bd81d01bc18776d251cf1f981c1e9405896573dfe971",
+    "index.html": "457a6cef2befde44cb9bc0b5f3a66f0d3444db9d9a786e69dbf32a03a3c4585d",
     "repository-evidence.json": "d45f277532a80cf3ade25783f069ddd1239f20af0e748d5cb86d375a8d10ac3c",
-    "source-analysis.txt": "6cb794a8846a580404348ccf5fc2dba26721adbb1dd37025a33dffd8ae7f4a34",
-    "source-evidence.md": "a42866ad8bcee5cb4223325914013ffbad7a8d7f2fc601f3ad46bd4ed93bd209",
+    "frameworks-preview.jpg": "35be2b5cc287067330913b23a66e7ad8419568e55522d50555355cc239e7d493",
+    "lowering-preview.jpg": "89cc84f00686831ff1d77fdf7ffd3e752c58a47da90e6a1fe291eac26aa3983d",
+    "size-system-preview.jpg": "8287e32165274caa78e8834aa7e00e08fbfc8710c430caaa444836a4236c81ce",
+    "README.md": "95d3ea1b5b0d4a93dcb840c56ea7f8ec41f28e8cbf863fb7e9cfa8664826edc2",
+    "views-preview.jpg": "a14886c244275268ae9a19bf06d2c2bb5ba28f67dec6b061e558422fc6aef7bc",
     "tiling-preview.jpg": "fa29b9c322a0755918aefb0312f839dfdad1947d4d27d44ab3dba10cff93f1f6",
-    "views-preview.jpg": "a14886c244275268ae9a19bf06d2c2bb5ba28f67dec6b061e558422fc6aef7bc"
+    "objects-preview.jpg": "6fc7925623dd1ec50fce609adec2f6fedcfca41487661b19b27faf36a196cde5",
+    "source-analysis.txt": "6cb794a8846a580404348ccf5fc2dba26721adbb1dd37025a33dffd8ae7f4a34",
+    "pipeline-preview.jpg": "b5850c3741f14626ec609954464b1d8cd4e30c9c868a6aff4c76c53eb1ddd43b",
+    "verification-preview.jpg": "95b3f68da2f6f93b347c75082e4391cb5c64a016cf4195bbadb55594c22b3652",
+    "pages.json": "70cd9a04b2fe1b2037ed2d96e2a991422bb70f4d974014b56b28796ba5ff679d",
+    "nz-layout-preview.jpg": "04750cb9d69f02acd715fc0b1e9d49119519173acba8382f8c6c8601f767360b"
   },
-  "revision": "sparse-shape-sampling"
+  "revision": "canvas-size-contract"
 }

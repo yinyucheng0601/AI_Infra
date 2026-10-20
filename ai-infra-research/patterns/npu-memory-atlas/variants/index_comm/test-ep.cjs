@@ -57,6 +57,7 @@ function element(id){
 }
 const ctx={MutationObserver:class{observe(){}},console,URLSearchParams,location:{search:''},localStorage:{getItem(){return null;}},matchMedia:()=>({matches:true}),requestAnimationFrame(){},getComputedStyle:()=>({getPropertyValue(){return '';}}),document:{createElementNS:(_,tag)=>element(tag),getElementById:element,documentElement:{dataset:{},classList:{add(){}}},body:{appendChild(){},dataset:{},classList:{toggle(){}}},activeElement:null,querySelectorAll:()=>[],querySelector:()=>element('nav'),addEventListener(){}},window:{location:{search:''},addEventListener(){}}};
 ctx.EPTeachingModel=M;
+ctx.RankPhysicalLayout=require("./physical-layout.js");
 ctx.RankAtlasModel=require("./rank-model.js");
 vm.createContext(ctx);
 const legacy=[...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]).find(s=>s.includes('function makeRanks'));

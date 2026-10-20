@@ -2,6 +2,65 @@
   "version": 1,
   "assets": [
     {
+      "id": "critical-path-swimlane",
+      "title": "Critical Path Swimlane · 关键路径泳道",
+      "form": "交互 Pattern",
+      "type": "pattern",
+      "domains": [
+        "AI Infra",
+        "Serving",
+        "Profiling"
+      ],
+      "summary": "将单请求执行收敛为三层共享时间轴，以细线与按需配对突出最晚进入路径。",
+      "designValue": "保留真实时长、并行与间隙，以稀疏标签和渐进检查替代满屏任务标签。",
+      "outline": [
+        "三层共享时间轴与 16 lane 配对",
+        "悬停预览、固定选择与检查器",
+        "54 step 真实周期导航、缩放与平移",
+        "原始 STRACE 来源与数据口径"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "patterns/critical-path-swimlane/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/critical-path-swimlane/pattern.js",
+          "url": null,
+          "revision": null,
+          "sha256": "ed2e8cb7fc72df695f2bbd796b43f9bd67b31a7d9094082f55b0c2572210219b"
+        },
+        {
+          "repository": "PyPTO3-main",
+          "path": "Data/serving-strace-swimlane(2).json",
+          "sha256": "6216131acbd07fbe453279e729296e88276efcdf690b31d4d6d9d1ea36aebb60",
+          "url": "https://github.com/yinyucheng0601/PyPTO3/blob/5547283136bca92467a9b02dd0a02697e39fc4d4/Data/serving-strace-swimlane(2).json",
+          "revision": "5547283136bca92467a9b02dd0a02697e39fc4d4"
+        },
+        {
+          "repository": "PyPTO3-main",
+          "path": "Design/execution-triage-workbench/home.js",
+          "sha256": "dd3ced4ca616b8577a216e8eaea6e3f26d524c7a6494bd3c1badee6d419b2add",
+          "url": "https://github.com/yinyucheng0601/PyPTO3/blob/5547283136bca92467a9b02dd0a02697e39fc4d4/Design/execution-triage-workbench/home.js",
+          "revision": "5547283136bca92467a9b02dd0a02697e39fc4d4"
+        }
+      ],
+      "validation": [
+        "2026-10-20：54 step / 864 lane 字段与原始 STRACE 回查通过。",
+        "D09 数值、窗口约束、关键 lane 与范围边界检查通过；浏览器与视觉验收待完成。"
+      ],
+      "related": [],
+      "reviewedAt": "2026-10-20",
+      "topics": [
+        "inference",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "pass-observability-guide",
       "title": "编译 Pass 流程与可观测对象图解",
       "form": "交互图解",
@@ -34,12 +93,13 @@
           "path": "ai-infra-research/reports/llm-compute/pass-observability-guide/index.html",
           "url": null,
           "revision": null,
-          "sha256": "f1b48a2f461723676a2a67e7a6a5613a2e7c4a652fea6e2631e7f7a387f9692f"
+          "sha256": "457a6cef2befde44cb9bc0b5f3a66f0d3444db9d9a786e69dbf32a03a3c4585d"
         }
       ],
       "validation": [
         "2026-10-20：用户要求收录到 Library；报告已完成多轮交互与布局检查，保存来源依据与验证记录。",
-        "代码依据来自固定版本 PyPTO3 测试及实现，未执行编译器或 NPU 验证。"
+        "代码依据来自固定版本 PyPTO3 测试及实现，未执行编译器或 NPU 验证。",
+        "2026-10-20：对照远端四框架分析修订决策流程、职责交接、语义别名及验证视图。"
       ],
       "related": [
         "pypto-compilation-guide",
@@ -638,7 +698,7 @@
           "url": null,
           "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html",
           "revision": null,
-          "sha256": "0608e8786ec0e0c4263b01ca05a15b0dc812d74134d7acfe21d0d1421553c704"
+          "sha256": "505da4d0988181ff59d1b4ed8fa4da8d9920bfba60143e38302023a663ba8434"
         }
       ],
       "validation": [

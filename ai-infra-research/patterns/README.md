@@ -7,3 +7,5 @@
 ## Pattern 目录
 
 - [NPU Memory Atlas](npu-memory-atlas/README.md)：[基准 v10](npu-memory-atlas/index.html) 与独立衍生方案。
+
+- [Critical Path Swimlane](critical-path-swimlane/README.md)：[三层关键路径泳道](critical-path-swimlane/index.html)，含共享 renderer、数据契约与来源指纹；视觉验收待完成。
