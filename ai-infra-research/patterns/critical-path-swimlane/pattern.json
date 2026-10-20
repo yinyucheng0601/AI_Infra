@@ -6,7 +6,8 @@
   "renderer": "pattern.js",
   "styles": [
     "tokens.css",
-    "pattern.css"
+    "pattern.css",
+    "liquid-glass/liquid-glass.css"
   ],
   "data": "data.js",
   "provenance": "provenance.json",
@@ -19,9 +20,13 @@
     ]
   },
   "sourceParity": "semantic extraction; source module unchanged; shared scale and lane identities retained",
-  "status": "draft",
+  "status": "reviewed",
   "validation": {
     "data": "54 steps / 864 lanes checked against raw STRACE",
-    "browser": "pending user acceptance"
-  }
+    "browser": "pending user acceptance",
+    "review": "2026-10-20 user requested Library / Pattern inclusion after screenshot review"
+  },
+  "dependencies": [
+    "liquid-glass/liquid-glass.js"
+  ]
 }

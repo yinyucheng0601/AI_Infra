@@ -11,18 +11,19 @@
         "Serving",
         "Profiling"
       ],
-      "summary": "将单请求执行收敛为三层共享时间轴，以细线与按需配对突出最晚进入路径。",
+      "summary": "以三层共享时间轴呈现完整请求与单步执行，通过行列聚焦和 lane 分析定位持续偏斜。",
       "designValue": "保留真实时长、并行与间隙，以稀疏标签和渐进检查替代满屏任务标签。",
       "outline": [
-        "三层共享时间轴与 16 lane 配对",
-        "悬停预览、固定选择与检查器",
-        "54 step 真实周期导航、缩放与平移",
-        "原始 STRACE 来源与数据口径"
+        "All Steps 总览与单步泳道",
+        "Serving / Host Worker / 16 lane 调用窗",
+        "行列交叉定位、固定 lane 与专项分析",
+        "稀疏表头、阶段导航与缩放 Fit",
+        "原始 STRACE 来源、指纹与数据边界"
       ],
       "media": [
         "web"
       ],
-      "status": "draft",
+      "status": "reviewed",
       "visibility": "internal",
       "content": "patterns/critical-path-swimlane/index.html",
       "sources": [
@@ -31,7 +32,7 @@
           "path": "ai-infra-research/patterns/critical-path-swimlane/pattern.js",
           "url": null,
           "revision": null,
-          "sha256": "ed2e8cb7fc72df695f2bbd796b43f9bd67b31a7d9094082f55b0c2572210219b"
+          "sha256": "9bc7b9b3be02accba5d7eba01dcae4dae2db63d9372a16dcf59f07a41ab339b0"
         },
         {
           "repository": "PyPTO3-main",
@@ -49,8 +50,9 @@
         }
       ],
       "validation": [
-        "2026-10-20：54 step / 864 lane 字段与原始 STRACE 回查通过。",
-        "D09 数值、窗口约束、关键 lane 与范围边界检查通过；浏览器与视觉验收待完成。"
+        "2026-10-20：用户多轮截图评审及迭代后明确要求收录 Library / Pattern。",
+        "54 step / 864 lane 与原始 STRACE 回查通过；D09 指标、时间窗约束与范围边界检查通过。",
+        "代码与目录校验通过；未执行浏览器自动化及完整交互回归。"
       ],
       "related": [],
       "reviewedAt": "2026-10-20",
