@@ -132,7 +132,7 @@ function ascend950Detail(){
 diagramFns.ascend950=ascend950Diagram;
 
 function ascend950Diagram(){
- let b=band(30,'同一计算语义 · 两种执行实现',['mHC 归约与 KV 数据契约','专家放置与迁移能力','专家通信路径','跨轮执行与设备元数据'][substate]);
+ let b=band(30,'差异定位 · 白色外框标记平台特有实现',['mHC 归约与 KV 数据契约','专家放置与迁移能力','专家通信路径','跨轮执行与设备元数据'][substate]);
  b+=txt(250,82,'NVIDIA GPU',23,C.ink,'middle',600)+txt(730,82,'ASCEND 950',23,C.ink,'middle',600);
  b+='<path d="M490 105V607" stroke="#383838" stroke-dasharray="4 6"/>';
  const box=(x,y,w,h,label,key,body,source,color='#888')=>hit(key,label,body,rect(x,y,w,h,'#222',color,7)+txt(x+w/2,y+h/2+5,label,15,C.ink,'middle'),source);
@@ -141,7 +141,10 @@ function ascend950Diagram(){
   b+=wire('M250 185V218')+wire('M730 185V218');
   for(let i=0;i<16;i++){let x=65+(i%8)*46,y=220+Math.floor(i/8)*38;b+=rect(x,y,38,29,'#444','#888',3)+txt(x+19,y+20,String(i),12,C.ink,'middle');}
   b+=txt(250,315,'16 splits → partial results',16,C.ink,'middle')+wire('M250 327V349')+box(100,349,300,46,'归约 partials','ac-partials','CUDA prenorm 默认 n_splits=16，产生 partials 供后续处理。','ascMhc');
-  b+=box(565,220,330,175,'单个 split · 内部归约','ac-inside','Ascend 默认 n_splits=1，由内核内部完成归约。矩形表示归约范围，不表示单个硬件核。','ascMhc');
+  b+=box(565,220,330,175,'','ac-inside','Ascend 默认 n_splits=1，由内核内部完成归约。矩形表示归约范围，不表示单个硬件核。','ascMhc');
+  b+=txt(730,250,'内核内完成',18,C.ink,'middle',600);
+  for(let i=0;i<4;i++)b+=rect(590+i*72,273,54,28,'#666','#aaa',3)+`<path d="M${617+i*72} 301L730 336" fill="none" stroke="#eee"/>`;
+  b+=rect(670,336,120,35,'#ddd','none',4)+txt(730,360,'归约结果',16,'#111','middle',600);
   b+=txt(65,438,'KV 调用侧：两个参数',15,C.muted)+box(65,463,180,56,'cache_quant','ac-quant','GPU 调用分别传入 cache_quant 和 cache_sf；参数数量不等于 DMA 次数。','ascFusion',C.i)+box(265,463,180,56,'cache_sf','ac-sf','独立 scale 参数；不能仅由接口推断底层访存次数。','ascFusion',C.a);
   b+=txt(545,438,'Ascend：同一 UB 行',15,C.muted);
   b+=hit('ac-row','values + scales → 单次 DMA','Ascend 主 KV 数值与 scale 在同一 UB 行组织，精确长度 DMA 写出有效载荷。',''+rect(545,463,370,56,'#222','#888',5)+rect(557,475,260,32,C.i,'none',2)+rect(823,475,80,32,C.a,'none',2),'ascStore');
@@ -156,6 +159,7 @@ function ascend950Diagram(){
   }
   b+=wire('M250 455V488')+box(65,488,380,65,'shuffle → 权重搬运路径','ac-gshuffle','专家重排实际搬运由框架 shuffle 路径组织；不能只看布局策略。','shuffle');
   b+=wire('M730 455V488')+hit('ac-unimplemented','权重预取接口尚未实现','DeepEP-Ascend 的 lb_prefetch_weights 与 lb_reduce_grads 通信内核尚未实现。这不是整个 EPLB 不可用的结论。',rect(545,488,370,65,'#222','#aaa',7,'stroke-dasharray="5 5"')+txt(730,515,'lb_prefetch_weights',16,C.ink,'middle')+txt(730,539,'Ascend 通信内核未实现',14,C.muted,'middle'),'ascEp');
+  b+='<path d="M885 497L907 519M907 497L885 519" stroke="#fff" stroke-width="3"/>';
   b+=txt(250,592,'布局策略与搬运机制分别分析',14,C.muted,'middle')+txt(730,592,'虚线框：能力边界，非执行步骤',14,C.muted,'middle');
  }else if(substate===2){
   for(const x of [55,535])b+=tensor(x,112,'Token + top-k','route to expert rank','ac-token'+x,'相同专家交换语义：发送 token，执行专家，再返回来源 rank。','comm','i',390);
@@ -163,6 +167,9 @@ function ascend950Diagram(){
   b+=comm(65,226,380,'DeepEP / 条件式 Mega MoE','ac-gcomm','NVIDIA 路径按条件使用显式 DeepEP 或 Mega MoE；SymmBuffer 路径有域与格式条件。','comm');
   b+=comm(545,226,370,'DeepEP-Ascend','ac-ncomm','Ascend EP 提供 FP8 Dispatch、BF16 Combine 与延迟 epilogue。','ascEp');
   for(const x of [65,545]){b+=wire(`M${x+185} 274V310`);for(let r=0;r<3;r++){let xx=x+r*127;b+=frame(xx,310,115,110,'R'+r,C.ep)+matrix(xx+15,359,7,3,'w',12);}}
+  b+='<path d="M122 300H376M122 300V310M249 300V310M376 300V310" stroke="#ddd" stroke-width="3" fill="none"/>';
+  b+=rect(584,283,285,24,'#ddd','none',3)+txt(726,300,'UBMEM / URMA fabric',13,'#111','middle',600);
+  for(let i=0;i<3;i++)b+=`<path d="M${602+i*127} 307V330" stroke="#fff" stroke-width="3"/>`;
   b+=txt(250,454,'NVLink 域 / SymmBuffer 条件',16,C.ink,'middle')+txt(730,454,'UBMEM / UBC_CTP / URMA',16,C.ink,'middle');
   b+=wire('M250 470V499')+wire('M730 470V499')+comm(65,499,380,'Combine → 原 token','ac-greturn','结果归并回来源 token。','comm')+comm(545,499,370,'BF16 Combine → 原 token','ac-nreturn','包含本地归约，并受 URMA 与 HBM 争用影响。','ascEp');
   b+=txt(250,585,'无同口径 GPU 带宽对照',14,C.muted,'middle')+txt(730,583,'950DT EP64：D 323–327 / C 294–298 GB/s',13,C.muted,'middle');
@@ -174,9 +181,19 @@ function ascend950Diagram(){
    b+=wire(`M${x+190} 321V373`);
   }
   b+=box(65,373,375,95,'GPU metadata kernels','ac-gmeta','GPU 主线处理输入索引、序列长度和预算元数据。','worker');
-  b+=hit('ac-nmeta','Ascend metadata kernels','独立 Ascend gather_input_ids_zos、compute_seqlens_k_zos 和变长验证预算实现；预算内核包含 MTE3/MTE2 核间同步。',rect(545,373,375,95,'#222','#888',7)+txt(732,400,'Ascend metadata kernels',16,C.ink,'middle')+txt(732,433,'MTE3 → 核间同步 → MTE2',15,C.ink,'middle'),'ascSchedule');
+  b+=hit('ac-nmeta','Ascend metadata kernels','独立 Ascend gather_input_ids_zos、compute_seqlens_k_zos 和变长验证预算实现；预算内核包含 MTE3/MTE2 核间同步。',rect(545,373,375,95,'#222','#888',7)+txt(732,400,'Ascend metadata kernels',16,C.ink,'middle')+rect(558,417,90,31,'#555','#ddd',4)+txt(603,438,'MTE3',14,C.ink,'middle')+rect(678,417,105,31,'#eee','none',4)+txt(730,438,'核间同步',14,'#111','middle',600)+rect(813,417,90,31,'#555','#ddd',4)+txt(858,438,'MTE2',14,C.ink,'middle')+wire('M648 432H678')+wire('M783 432H813'),'ascSchedule');
   for(const x of [65,545])b+=wire(`M${x+187} 468V509`)+tensor(x,509,'state(N) → 下一轮','accepted / draft / metadata','ac-state'+x,'当前轮状态进入下一轮消费，依赖仍被保留。','worker','i',375);
  }
- return base(b);
+
+ const focusKeys=[
+ ['ac-partials','ac-inside','ac-quant','ac-sf','ac-row','ac-hbm'],
+ ['ac-gshuffle','ac-unimplemented'],
+ ['ac-gcomm','ac-ncomm'],
+ ['ac-gmeta','ac-nmeta']
+ ][substate];
+ b=b.replace(/<g class="hit ([^"]*)" role="button" tabindex="0" data-key="([^"]+)"/g,(m,cls,key)=>`<g class="hit ${cls} ${focusKeys.includes(key)?'platform-difference':'platform-common'}" role="button" tabindex="0" data-key="${key}"`);
+ const notes=[['16 路 partials → 后续归约','1 路 → 内核内归约'],['框架权重搬运路径','接口存在 · 通信内核缺失'],['域内融合路径受条件约束','950 专用互联通道'],['GPU 元数据执行','NPU 显式 MTE 核间同步']][substate];
+ b+=rect(40,607,425,32,'#272727','#aaa',4)+rect(515,607,425,32,'#272727','#aaa',4)+txt(252,629,notes[0],14,C.ink,'middle',600)+txt(727,629,notes[1],14,C.ink,'middle',600);
+ return base(b).replace('</defs>','</defs><style>.platform-common{opacity:.27}.platform-difference>rect:first-child{stroke:#fff;stroke-width:2.5}</style>');
 }
 diagramFns.ascend950=ascend950Diagram;
