@@ -1,0 +1,19 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),path=require('path');
+const dir=__dirname,html=fs.readFileSync(path.join(dir,'../llm-compute/deepinfer-performance-atlas-v2.html'),'utf8');
+const script=html.match(/<script>([\s\S]*?)<\/script>/)[1];new vm.Script(script);
+const elements=new Map(),handlers={};
+const svg={setAttribute(){},getBoundingClientRect(){return{width:980,height:650}},viewBox:{baseVal:{width:980,height:650}}};
+function el(id){if(!elements.has(id))elements.set(id,{innerHTML:'',hidden:false,scrollTop:0,scrollLeft:0,offsetLeft:0,clientWidth:600,attrs:{},classList:{toggle(){},add(){},remove(){}},setAttribute(k,v){this.attrs[k]=v},getBoundingClientRect(){return{width:980,height:650}},querySelector(s){return s==='svg'&&this.innerHTML.includes('<svg')?svg:null},addEventListener(){},setPointerCapture(){}});return elements.get(id);}
+const ctx={document:{getElementById:el,querySelectorAll:()=>[],addEventListener(k,v){handlers[k]=v}},window:{addEventListener(){}},history:{replaceState(){}},location:{hash:''},console};vm.createContext(ctx);vm.runInContext(script,ctx);
+let snapshots=vm.runInContext(`(()=>{let out=[];for(let i=0;i<chapters.length;i++){for(let s=0;s<(chapters[i].states?.length||1);s++){go(i,s);out.push({id:chapters[i].id,state:s,svg:i===0?document.getElementById('covergraph').innerHTML:document.getElementById('canvas').innerHTML});for(const key of Object.keys(objects))inspect(key);if(i>0){zoom(1.2);fit();}}}return out;})()`,ctx);
+for(const s of snapshots){assert(s.svg.includes('<svg'),s.id);assert(!/NaN|undefined/.test(s.svg),s.id);const keys=[...s.svg.matchAll(/data-key="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(keys).size,keys.length,`duplicate keys in ${s.id}`);}
+vm.runInContext(`go(0);for(let i=0;i<80;i++)stepReading(1);if(current!==chapters.length-1||substate!==2)throw Error('end boundary');for(let i=0;i<80;i++)stepReading(-1);if(current!==0||substate!==0)throw Error('start boundary');go(3,2);stepReading(1);stepReading(-1);if(current!==3||substate!==2)throw Error('cross-page state');`,ctx);
+handlers.keydown({key:'ArrowRight',target:{closest:()=>true},preventDefault(){throw Error('input key intercepted')}});
+const data=vm.runInContext(`({before:beforeRanks,after:afterRanks,bl:rankLoads(beforeRanks),al:rankLoads(afterRanks),refs,perf})`,ctx);
+assert.equal(data.after.flat().length,12);assert(data.after.every(r=>r.length===3));assert.equal(new Set(data.after.flat()).size,8);assert(Math.abs(data.bl.reduce((s,v)=>s+v)-80)<1e-9);assert(Math.abs(data.al.reduce((s,v)=>s+v)-80)<1e-9);assert(Math.max(...data.al)<Math.max(...data.bl));
+for(const [k,r]of Object.entries(data.refs)){const p='/private/tmp/deepinfer-research-20261021/'+r[1];assert(fs.existsSync(p),k);const lines=fs.readFileSync(p,'utf8').split('\n').length;assert(r[2]>=1&&r[3]<=lines,`${k}: range ${r[3]} > ${lines}`);}
+assert.equal(data.perf[3].d,14466);assert.equal(data.perf[0].g,-1.5);assert(!/<script[^>]+src=|<link[^>]+stylesheet/i.test(html));assert(!/教学模拟|教学纹理|仅作教学示意/.test(html));
+fs.writeFileSync('/private/tmp/deepinfer-v2-static-snapshots.json',JSON.stringify(snapshots));
+fs.writeFileSync(path.join(dir,'v2-verification.json'),JSON.stringify({chapters:12,states:snapshots.length,checks:['JS syntax','all states render to SVG','all node definitions','unique object keys','forward/backward state sequence','first/last boundary','input keyboard protection','source paths and line ranges','EPLB capacity and work conservation','official table values','offline dependency check'],placement:data,browser:'not run: file URL denied by policy'},null,2));
+console.log(`PASS: 12 chapters, ${snapshots.length} states, official source anchors, EPLB conservation, keyboard/state/zoom logic. Static checks only.`);
+console.log(JSON.stringify({before:data.before,after:data.after,loadBefore:data.bl,loadAfter:data.al}));

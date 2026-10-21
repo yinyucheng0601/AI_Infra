@@ -1,6 +1,18 @@
 {
   "sources": [
     {
+      "id": "deepinfer-performance-atlas",
+      "title": "DeepInfer · deepseek最新开源高性能推理系统",
+      "file": "reports/llm-compute/deepinfer-performance-atlas-v2.html",
+      "sha256": "83c89c1872113031e6daaf9c4155568cc6a1e5f06e6fba9123b49d27bccb2cd5"
+    },
+    {
+      "id": "pass-observability-guide",
+      "title": "编译 Pass 流程与可观测对象图解",
+      "file": "reports/llm-compute/pass-observability-guide/index.html",
+      "sha256": "457a6cef2befde44cb9bc0b5f3a66f0d3444db9d9a786e69dbf32a03a3c4585d"
+    },
+    {
       "id": "pypto-compilation-guide",
       "title": "PyPTO 编译流水线图解",
       "file": "reports/llm-compute/pypto-compilation-guide/index.html",
@@ -1600,6 +1612,26 @@
           "sha256": "72d0b8db3e78f24c820e361bfe7fdc12a03e78a0a10429ae34b6116bf074ac03"
         }
       ]
+    },
+    {
+      "id": "pattern-pass-observation-facets",
+      "title": "编译 Pass · 12 类观测对象",
+      "cat": "组合模式",
+      "layer": "pattern",
+      "desc": "从程序结构、抽象降级、分块与布局，到存储、搬运、流水、同步、目标映射、融合、任务通信与验证，组合展示十二种观测分面。每个分面复用来源报告的对象和关系图元。",
+      "note": "直接执行来源报告 P05 的 objects() renderer；静态组合保留十二项内容，展开与动画请进入来源报告。",
+      "refs": [
+        {
+          "id": "pass-observability-guide",
+          "anchor": "objects"
+        }
+      ],
+      "legacy": [],
+      "provenance": {
+        "file": "reports/llm-compute/pass-observability-guide/index.html",
+        "renderer": "objects()",
+        "sha256": "457a6cef2befde44cb9bc0b5f3a66f0d3444db9d9a786e69dbf32a03a3c4585d"
+      }
     }
   ]
 }

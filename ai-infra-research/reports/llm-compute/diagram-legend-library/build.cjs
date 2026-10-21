@@ -156,6 +156,23 @@ dataCard.note='同一数据对象的表示与角色集中展示；Tile 的形状
 dataCard.incorporated=samples.map(e=>({id:e.id,svg:e.svg,provenance:e.provenance}));
 for(const e of samples)system.splice(system.findIndex(x=>x.id===e.id),1);
 
+// P05 observation facets: execute the source renderer, preserving its visual grammar.
+const passFile=path.join(reports,'pass-observability-guide/index.html');
+const passHtml=fs.readFileSync(passFile,'utf8');
+const passScripts=[...passHtml.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
+const passContext=vm.createContext({document:{head:{insertAdjacentHTML(){}},getElementById(){return {}}},window:{}});
+vm.runInContext(passScripts[0],passContext);
+const passMain=passScripts.slice(1).join('\n');
+const passStop=passMain.indexOf("$('start').onclick");
+if(passStop<0)throw Error('Pass report renderer boundary missing');
+vm.runInContext(passMain.slice(0,passStop),passContext);
+let passSvg=vm.runInContext("page=5;state=0;facetsOpen=false;wrap('legend',980,650,passive(objects()))",passContext);
+const passCss=[...passHtml.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map(m=>m[1]).join('\n').replaceAll('.canvas svg','svg');
+passSvg=passSvg.replace('><defs>','><style>'+passCss+'</style><defs>');
+// Static composition preview; drilldown remains available in the linked source report.
+passSvg=passSvg.replace(/<text[^>]*class="facet-action"[^>]*>[\s\S]*?<\/text>/g,'');
+system.push({id:'pattern-pass-observation-facets',title:'编译 Pass · 12 类观测对象',cat:'组合模式',layer:'pattern',desc:'从程序结构、抽象降级、分块与布局，到存储、搬运、流水、同步、目标映射、融合、任务通信与验证，组合展示十二种观测分面。每个分面复用来源报告的对象和关系图元。',note:'直接执行来源报告 P05 的 objects() renderer；静态组合保留十二项内容，展开与动画请进入来源报告。',refs:[{id:'pass-observability-guide',anchor:'objects'}],legacy:[],svg:passSvg,provenance:{file:'reports/llm-compute/pass-observability-guide/index.html',renderer:'objects()',sha256:crypto.createHash('sha256').update(passHtml).digest('hex')}});
+
 const out={sources,items:system,coverage,excluded};
 fs.writeFileSync(path.join(__dirname,'coverage.json'),JSON.stringify(coverage,null,2));
 fs.writeFileSync(path.join(__dirname,'inventory.json'),JSON.stringify({sources,items:out.items.map(({svg,...r})=>r)},null,2));

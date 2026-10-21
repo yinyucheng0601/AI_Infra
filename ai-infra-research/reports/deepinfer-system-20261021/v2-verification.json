@@ -1,0 +1,266 @@
+{
+  "chapters": 12,
+  "states": 31,
+  "checks": [
+    "JS syntax",
+    "all states render to SVG",
+    "all node definitions",
+    "unique object keys",
+    "forward/backward state sequence",
+    "first/last boundary",
+    "input keyboard protection",
+    "source paths and line ranges",
+    "EPLB capacity and work conservation",
+    "official table values",
+    "offline dependency check"
+  ],
+  "placement": {
+    "before": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        3,
+        4,
+        5
+      ],
+      [
+        6,
+        7,
+        0
+      ],
+      [
+        1,
+        2,
+        3
+      ]
+    ],
+    "after": [
+      [
+        3,
+        1,
+        5
+      ],
+      [
+        7,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        6
+      ],
+      [
+        0,
+        0,
+        4
+      ]
+    ],
+    "bl": [
+      23.166666666666668,
+      15,
+      31.5,
+      10.333333333333334
+    ],
+    "al": [
+      20,
+      19.666666666666668,
+      20.333333333333332,
+      20
+    ],
+    "refs": {
+      "readme": [
+        "开源范围与默认开关",
+        "README.md",
+        1,
+        48
+      ],
+      "background": [
+        "开源背景与系统范围",
+        "doc/inference_deployment_qa.md",
+        1,
+        23
+      ],
+      "architecture": [
+        "生产系统与并行部署",
+        "doc/inference_deployment_qa.md",
+        25,
+        70
+      ],
+      "eplbdoc": [
+        "EPLB 的生产参数与负载比",
+        "doc/inference_deployment_qa.md",
+        92,
+        106
+      ],
+      "precision": [
+        "FP4 的实际存储对象",
+        "doc/inference_deployment_qa.md",
+        212,
+        234
+      ],
+      "dsparkdoc": [
+        "DSpark：负载与收益数据",
+        "doc/inference_deployment_qa.md",
+        239,
+        264
+      ],
+      "zosdoc": [
+        "异步调度设计",
+        "doc/inference_deployment_qa.md",
+        266,
+        276
+      ],
+      "engine": [
+        "LLMEngine.step",
+        "deepinfer/engine/llm_engine.py",
+        860,
+        983
+      ],
+      "worker": [
+        "Worker.execute_model_step",
+        "deepinfer/worker/worker.py",
+        89,
+        187
+      ],
+      "hc": [
+        "HC 融合条件与 Mega mHC",
+        "deepinfer/model_executor/models/v4_modules/hc.py",
+        174,
+        315
+      ],
+      "attn": [
+        "Prefill / Decode Attention",
+        "deepinfer/model_executor/models/v4_modules/attn.py",
+        589,
+        670
+      ],
+      "backend": [
+        "FlashMLA 调用与融合接口",
+        "deepinfer/model_executor/layers/attention_backend.py",
+        1,
+        146
+      ],
+      "index": [
+        "稀疏 logits 与候选选择",
+        "deepinfer/model_executor/models/v4_modules/index_attn.py",
+        284,
+        376
+      ],
+      "gate": [
+        "逻辑专家与物理槽位映射",
+        "deepinfer/model_executor/models/v4_modules/mlp.py",
+        174,
+        255
+      ],
+      "route": [
+        "Gate 与 grouped GEMM",
+        "deepinfer/model_executor/models/v4_modules/mlp.py",
+        359,
+        459
+      ],
+      "comm": [
+        "Dispatch / Combine 与 Mega MoE",
+        "deepinfer/model_executor/models/v4_modules/mlp.py",
+        461,
+        616
+      ],
+      "policy": [
+        "复制与放置算法",
+        "deepinfer/model_executor/eplb/policy.py",
+        12,
+        140
+      ],
+      "shuffle": [
+        "专家权重搬运",
+        "deepinfer/model_executor/eplb/shuffle.py",
+        1,
+        160
+      ],
+      "balance": [
+        "统计窗口与周期重排",
+        "deepinfer/model_executor/eplb/__init__.py",
+        131,
+        289
+      ],
+      "mtp": [
+        "MTPVarlen::schedule",
+        "csrc/engine/mtp_varlen.hpp",
+        150,
+        275
+      ],
+      "bench": [
+        "官方 benchmark 扫描配置",
+        "examples/sweep/run_sweep.sh",
+        1,
+        90
+      ],
+      "cp": [
+        "CPManager 的 token 轴 gather",
+        "deepinfer/model_executor/parallel_utils/cp.py",
+        1,
+        54
+      ]
+    },
+    "perf": [
+      {
+        "c": 16,
+        "v": 4.44,
+        "a": 3.24,
+        "fa": 3.32,
+        "f": 4891,
+        "d": 4816,
+        "g": -1.5
+      },
+      {
+        "c": 32,
+        "v": 3.65,
+        "a": 3.17,
+        "fa": 3.25,
+        "f": 8964,
+        "d": 9111,
+        "g": 1.6
+      },
+      {
+        "c": 48,
+        "v": 3.94,
+        "a": 3.26,
+        "fa": 3.3,
+        "f": 12032,
+        "d": 12467,
+        "g": 3.6
+      },
+      {
+        "c": 60,
+        "v": 3.58,
+        "a": 3.21,
+        "fa": 3.3,
+        "f": 13730,
+        "d": 14466,
+        "g": 5.4
+      },
+      {
+        "c": 72,
+        "v": 3.24,
+        "a": 3.12,
+        "fa": 3.29,
+        "f": 14962,
+        "d": 15961,
+        "g": 6.7
+      },
+      {
+        "c": 96,
+        "v": 3.24,
+        "a": 3.15,
+        "fa": 3.3,
+        "f": 16817,
+        "d": 18660,
+        "g": 11
+      }
+    ]
+  },
+  "browser": "not run: file URL denied by policy"
+}

@@ -2,6 +2,59 @@
   "version": 1,
   "assets": [
     {
+      "id": "deepinfer-performance-atlas",
+      "title": "DeepInfer · deepseek最新开源高性能推理系统",
+      "type": "knowledge",
+      "form": "交互图解",
+      "summary": "从系统结构和一次推理执行出发，解析算子效率、专家分布、通信与调度的实现及性能取舍。",
+      "designValue": "以渐进式系统图、专家布局和执行泳道连接官方源码与性能机制，最终汇合为完整执行图。",
+      "outline": [
+        "DeepInfer 在整体推理系统中的定位",
+        "追踪一次 Decode 执行",
+        "算子融合与 Attention 效率",
+        "专家分布、EPLB 与 Wide-EP",
+        "通信组织、DSpark 与 ZOS 调度",
+        "官方性能证据与完整执行图"
+      ],
+      "domains": [
+        "DeepSeek",
+        "Inference",
+        "MoE",
+        "AI Infra"
+      ],
+      "topics": [
+        "inference",
+        "operators",
+        "visual"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "reports/llm-compute/deepinfer-performance-atlas-v2.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/reports/llm-compute/deepinfer-performance-atlas-v2.html",
+          "url": null,
+          "revision": null,
+          "sha256": "83c89c1872113031e6daaf9c4155568cc6a1e5f06e6fba9123b49d27bccb2cd5"
+        }
+      ],
+      "validation": [
+        "2026-10-21：按用户要求收录当前 v2 报告；用户已反馈并迭代系统结构、文案、配色和图例。",
+        "12 章、31 个状态通过静态与模拟 DOM 检查，包含源码锚点、EPLB 守恒与导航逻辑；未完成自动浏览器视觉验收。",
+        "官方文档与源码证据固定到 DeepInfer commit 9bd9cf243fc53ef9afbf8f04d391d989117d6ab9。"
+      ],
+      "related": [
+        "llm-compute-diagrams",
+        "diagram-legend-library"
+      ],
+      "reviewedAt": "2026-10-21",
+      "author": "Yucheng"
+    },
+    {
       "id": "critical-path-swimlane",
       "title": "Critical Path Swimlane · 关键路径泳道",
       "form": "交互 Pattern",
@@ -68,7 +121,7 @@
         "inference",
         "visual"
       ],
-      "author": "Yucheng"
+      "author": "Yuanfeng，Yucheng"
     },
     {
       "id": "pass-observability-guide",
@@ -177,7 +230,7 @@
         "operators",
         "visual"
       ],
-      "author": "Yucheng"
+      "author": "Yuanfeng，Yucheng"
     },
     {
       "id": "pass-error-cases",

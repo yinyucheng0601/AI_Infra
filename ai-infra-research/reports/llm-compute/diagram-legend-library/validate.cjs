@@ -93,6 +93,7 @@ console.log('PASS: prior snapshots preserved except user-requested memory replac
 
 const extraction=JSON.parse(fs.readFileSync(path.join(__dirname,'layer-extract.json'),'utf8'));
 for(const e of extraction.extracts){if(['sample','sample-gray'].includes(e.id)){assert.equal(data.items.find(x=>x.id==='system-value').incorporated.find(x=>x.id==='layer-'+e.id).svg,e.svg);continue;}const item=data.items.find(x=>x.id==='layer-'+e.id);assert(item);assert.equal(item.svg,e.svg);run('show('+JSON.stringify(item.id)+')');assert.equal(get('variantControls').innerHTML,'');assert.equal(get('detailImg').src,get('download').href);}
-assert.equal(data.items.length,34);
+assert.equal(data.items.length,35);
+const passPattern=data.items.find(e=>e.id==='pattern-pass-observation-facets');assert(passPattern&&passPattern.layer==='pattern');assert.equal((passPattern.svg.match(/class="micro"/g)||[]).length,12);
 assert.equal(run("href('layer-stack-demo')"),'../../../../layer_stack/pangu-layer-stack_2.html');
 console.log('PASS: all 9 approved Layer Stack snapshots, pattern grouping, source link and exact SVG export.');

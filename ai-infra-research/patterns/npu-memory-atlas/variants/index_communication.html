@@ -1,5 +1,5 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rank 通信 · Sankey</title><script src="index_comm/physical-layout.js?v=d7ef3b8a42de"></script><script src="index_comm/ep-model.js?v=393bbe969cc8"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#e8e8e8;font:14px/1.5 Arial,"PingFang SC",sans-serif}svg{display:block;width:100%;height:100%;touch-action:none}svg text{font-variant-numeric:tabular-nums}svg text{font-family:Arial,"PingFang SC",sans-serif}.bar{position:fixed;bottom:28px;left:28px;max-width:calc(100vw - 56px);display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:7px;background:#202020;border:1px solid #505050;border-radius:4px}button,select{font:inherit;color:#b0b0b0;background:transparent;border:0;border-radius:2px;padding:9px 12px;cursor:pointer;min-height:38px}button:hover{background:#333;color:#fff}button[aria-pressed=true]{background:#e8e8e8;color:#111}button:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}select{max-width:200px;background:#202020;color:#e8e8e8}.sep{height:22px;width:1px;background:#505050;margin:0 6px}.readout{padding:0 12px;color:#e8e8e8;font-family:ui-monospace,monospace;font-size:13px}.hidden{display:none}#scene{cursor:grab}#scene:active{cursor:grabbing}@media(max-width:600px){.bar{bottom:14px;left:14px;max-width:calc(100vw - 28px);gap:0;padding:4px}button,select{padding:7px 9px;font-size:13px}.readout{font-size:12px;padding:0 8px}.sep{margin:0 3px}}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#e8e8e8;font:14px/1.5 Arial,"PingFang SC",sans-serif}svg{display:block;width:100%;height:100%;touch-action:none}svg text{font-variant-numeric:tabular-nums}svg text{font-family:Arial,"PingFang SC",sans-serif}.bar{position:fixed;bottom:28px;left:28px;max-width:calc(100vw - 56px);display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:7px;background:#202020;border:1px solid #505050;border-radius:4px}button,select{font:inherit;color:#b0b0b0;background:transparent;border:0;border-radius:2px;padding:9px 12px;cursor:pointer;min-height:38px}button:hover{background:#333;color:#fff}button[aria-pressed=true]{background:#e8e8e8;color:#111}button:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}select{max-width:200px;background:#202020;color:#e8e8e8}.sep{height:22px;width:1px;background:#505050;margin:0 6px}.readout{padding:0 12px;color:#e8e8e8;font-family:ui-monospace,monospace;font-size:13px}.hidden{display:none}#scene{cursor:grab}#scene:active{cursor:grabbing}#scene [data-rank],#scene [data-rank]:active{cursor:pointer}@media(max-width:600px){.bar{bottom:14px;left:14px;max-width:calc(100vw - 28px);gap:0;padding:4px}button,select{padding:7px 9px;font-size:13px}.readout{font-size:12px;padding:0 8px}.sep{margin:0 3px}}
 .transport{flex-basis:100%;display:flex;align-items:center;gap:8px;border-top:1px solid #383838;padding-top:6px;margin-top:3px;flex-wrap:wrap}.transport input{width:210px;accent-color:#e8e8e8;cursor:pointer}.status{min-width:260px;color:#e8e8e8;font-size:13px;font-family:ui-monospace,monospace}.simtag{font-size:12px;color:#ababab;padding:0 8px}.bar{max-width:min(1100px,calc(100vw - 56px))}.transport button{min-width:48px}.transport select{max-width:80px}.transport input:focus-visible{outline:2px solid white}@media(max-width:600px){.transport input{width:140px}.status{min-width:220px}.bar{max-width:calc(100vw - 28px)}}
 .bar.scope-switch{top:28px;bottom:auto;left:50%;transform:translateX(-50%);flex-wrap:nowrap;max-width:calc(100vw - 28px)}@media(max-width:600px){.bar.scope-switch{top:14px}}
 #tensor.hidden{display:inline-block;visibility:hidden}
@@ -648,11 +648,11 @@ function drawEPSpatialSankey(){
  const colors=['#28bea6','#4e83e6','#cc79a2','#d5b75e','#a18aee','#ed9366','#6ac5de','#a6ca72'];
  const color=id=>{const index=ids.indexOf(id);return index<colors.length?colors[index]:`hsl(${(index*137.508)%360} 62% 64%)`;};
  // Rotate the reference traffic plane: ports run across X, transfer lanes run along Z.
- const point=(id,x,z=0)=>{const [rx,ry]=rankPosition(ranks[id]),p=P(x,0,HBM*6.7*.48+z);return [rx+RANK_SCALE*(p[0]-440),ry+RANK_SCALE*p[1]];};
+ const point=(id,x,z=0)=>{const [rx,ry]=rankPosition(ranks[id]),p=P(x,155,z);return [rx+RANK_SCALE*(p[0]-440),ry+RANK_SCALE*p[1]];};
  // One affine X-Z projection for positions, bends and ribbon cross-sections.
  const origin=point(ids[0],0),px=point(ids[0],1),pz=point(ids[0],0,1);
  const ux=px[0]-origin[0],uy=px[1]-origin[1],vx=pz[0]-origin[0],vy=pz[1]-origin[1],det=ux*vy-uy*vx;
- const planar=(id,x)=>{const p=point(id,x),dx=p[0]-origin[0],dy=p[1]-origin[1];return [(dx*vy-dy*vx)/det,(ux*dy-uy*dx)/det];};
+ const planar=(id,x)=>{const p=point(id,x,68),dx=p[0]-origin[0],dy=p[1]-origin[1];return [(dx*vy-dy*vx)/det,(ux*dy-uy*dx)/det];};
  const fixture=e.event;
  const contacts=trafficWindowFlows(fixture,relationRank,trafficWindow);
  const flows=contacts.filter(f=>trafficWindow.all||trafficWindow.peer===null||f.source===trafficWindow.peer||f.target===trafficWindow.peer);
@@ -668,21 +668,21 @@ function drawEPSpatialSankey(){
   if(!trafficWindow.all&&!(trafficWindow.direction==='out'?source===relationRank:trafficWindow.direction==='in'?target===relationRank:source===relationRank||target===relationRank))continue;
   fullTotals.get(source).out+=f.tokens;fullTotals.get(target).in+=f.tokens;
  }
- const max=Math.max(1,...[...fullTotals.values()].flatMap(v=>[v.out,v.in])),scale=110/max;
+ const max=Math.max(1,...[...fullTotals.values()].flatMap(v=>[v.out,v.in])),scale=60/max;
  const offsets=new Map(ids.map(id=>[id,{out:0,in:0}]));
  let defs='',ribbons='',ports='';
  for(const [flowIndex,f] of flows.entries()){
  const source=f.source,target=f.target,width=f.tokens*scale,so=offsets.get(source),to=offsets.get(target);
- const x0=30+so.out,x1=30+to.in;so.out+=width;to.in+=width;
+ const x0=12+so.out,x1=132+to.in;so.out+=width+5;to.in+=width+5;
  const a=planar(source,x0),aa=planar(source,x0+width),b=planar(target,x1),bb=planar(target,x1+width);
- const z=(a[1]+b[1])/2+(flowIndex-(flows.length-1)/2)*(trafficWindow.all?2:10),gid=`physical-flow-${source}-${target}`;
+ const z=(a[1]+b[1])/2+(flowIndex-(flows.length-1)/2)*(trafficWindow.all?18:24),gid=`physical-flow-${source}-${target}`;
  defs+=`<marker id="arrow-${gid}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="20" markerHeight="20" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="${color(target)}"/></marker>`;
  // Keep arrowheads in the same projected plane as their flow.
  defs+=`<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"><stop stop-color="${color(source)}"/><stop offset="1" stop-color="${color(target)}"/></linearGradient>`;
- ribbons+=`<path data-spatial-flow="${source}-${target}" data-assignments="${f.tokens}" d="M${(a[0]+aa[0])/2} ${(a[1]+aa[1])/2} L${(a[0]+aa[0])/2} ${z} L${(b[0]+bb[0])/2} ${z} L${(b[0]+bb[0])/2} ${(b[1]+bb[1])/2}" fill="none" stroke="url(#${gid})" stroke-width="${width}" stroke-linejoin="round" marker-end="url(#arrow-${gid})" opacity="${trafficWindow.all?.52:.95}" pointer-events="none"><title>R${source} → R${target} · ${f.tokens} assignments</title></path>`;
+ ribbons+=`<path data-spatial-flow="${source}-${target}" data-assignments="${f.tokens}" d="M${(a[0]+aa[0])/2} ${(a[1]+aa[1])/2} L${(a[0]+aa[0])/2} ${z} L${(b[0]+bb[0])/2} ${z} L${(b[0]+bb[0])/2} ${(b[1]+bb[1])/2}" fill="none" stroke="url(#${gid})" stroke-width="${width}" stroke-linejoin="round" marker-end="url(#arrow-${gid})" opacity="1" pointer-events="none"><title>R${source} → R${target} · ${f.tokens} assignments</title></path>`;
  }
- for(const id of ids){const a=point(id,24),b=point(id,216),local=fixture.flows.find(f=>f.source===id&&f.local)?.tokens??0;
- ports+=`<g data-spatial-port="${id}" data-rank="${id}" role="button" tabindex="0" aria-label="选择 Rank ${id} 查看通信" aria-pressed="${id===relationRank}"><path d="M${a}L${b}" stroke="${color(id)}" stroke-width="${id===relationRank?5:3}" stroke-linecap="round"/><text x="${a[0]}" y="${a[1]-7}" fill="#dedede" font-size="8">R${id}${!trafficWindow.all&&id===relationRank?(trafficWindow.direction==='both'?' · IN / OUT':trafficWindow.direction==='out'?' · 发出 →':' · ← 接收'):''}</text><title>EP${EP} 通信组 · ${ids.map(v=>"R"+v).join("、")} · LOCAL ${local}</title></g>`;}
+ for(const id of ids){const a=point(id,0),b=point(id,245),c=point(id,245,64),d=point(id,0,64),label=point(id,12,22),local=fixture.flows.find(f=>f.source===id&&f.local)?.tokens??0;
+ ports+=`<g data-spatial-port="${id}" data-rank="${id}" role="button" tabindex="0" aria-label="选择 Rank ${id} 查看通信" aria-pressed="${id===relationRank}"><path d="M${point(id,0,0)}L${point(id,245,0)}L${point(id,245,HBM*6.7)}L${point(id,0,HBM*6.7)}Z" fill="none" stroke="#dedede" stroke-width=".8"/><polygon points="${[a,b,c,d].map(p=>p.join(',')).join(' ')}" fill="${color(id)}"/><text x="${label[0]}" y="${label[1]}" fill="#111" font-size="12" font-weight="600">R${id}${!trafficWindow.all&&id===relationRank?(trafficWindow.direction==='both'?' · IN / OUT':trafficWindow.direction==='out'?' · 发出 →':' · ← 接收'):''}</text><title>EP${EP} 通信组 · ${ids.map(v=>"R"+v).join("、")} · LOCAL ${local}</title></g>`;}
  return `<g data-ep-spatial-sankey="${returning?'combine':'dispatch'}" data-physical-communication-group="${ids.join(',')}"><g data-traffic-plane="xz" transform="matrix(${ux} ${uy} ${vx} ${vy} ${origin[0]} ${origin[1]})"><defs>${defs}</defs>${ribbons}</g>${ports}</g>`;
 }
 
@@ -832,7 +832,7 @@ function block(x,y,z,w,d,h,c,top=true){let a='';const stroke='none';
 
 function text(x,y,s,size=16,c='#e8e8e8',extra=''){return `<text x="${x}" y="${y}" fill="${c}" font-size="${size-2}" ${extra}>${s}</text>`}function label(p,y,title,sub,c='#e8e8e8'){const x=p[0]+18;return `<circle cx="${p[0]}" cy="${p[1]}" r="2" fill="#FFFFFF"/>`+text(x,y,title,17,c)+text(x,y+24,sub,14,'#ababab')}
 
-function backFaces(){const h=HBM*6.7;return `<g class="rank-back-faces" fill="#000" fill-opacity=".8"><polygon points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}"/><polygon points="${pts([[0,0,0],[245,0,0],[245,0,h],[0,0,h]])}"/><polygon points="${pts([[0,0,0],[0,155,0],[0,155,h],[0,0,h]])}"/></g>`;}
+function backFaces(){const h=HBM*6.7;return `<g class="rank-back-faces" fill="#000" fill-opacity=".8"><polygon points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}"/><polygon points="${pts([[0,155,0],[245,155,0],[245,155,h],[0,155,h]])}"/><polygon points="${pts([[245,0,0],[245,155,0],[245,155,h],[245,0,h]])}"/></g>`;}
 function surfaceValue(i,z,h,free=false,a=cats[i]){
  if(!memoryCategoryVisible(i))return '';
  const x=free?245:239,y=free?155:149;
@@ -871,7 +871,11 @@ function rankContentLayout(values,exploded=true){
  const scale=ortho?Math.max(0,frame-2*iz-gap*Math.max(0,count-1))/(Math.max(HBM,values.reduce((a,b)=>a+b,0))*6.7):1;
  return {ix,iy,iz,gap,scale};
 }
-function drawRank(){if(mode==='comm')return `<polygon data-ep-rank-hit="${renderRank}" points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}" fill="transparent" pointer-events="all"/>`+rankWallLabel()+outline(0,HBM*6.7)+outerRankBorder();applySimulation();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=HBM*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
+function drawRank(){if(mode==='comm'){
+ const h=HBM*6.7;
+ const volume=viewMode==='2.5D'?`<polygon points="${pts([[245,0,0],[245,155,0],[245,155,h],[245,0,h]])}" fill="#1c1c1c" stroke="#777" stroke-width="1.5"/><polygon points="${pts([[0,0,h],[245,0,h],[245,155,h],[0,155,h]])}" fill="#333" stroke="#999" stroke-width="1.5"/>`:'';
+ return volume+`<polygon data-ep-rank-hit="${renderRank}" points="${pts([[0,155,0],[245,155,0],[245,155,h],[0,155,h]])}" fill="#262626" stroke="#999" stroke-width="1.5" pointer-events="all"/>`;
+}applySimulation();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=HBM*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
 // Fixed separation uses part of free capacity; the remainder stays above the stack.
 const gap=layout.gap;
 let drawn=0,anchors=[],labelBands=[],surfaceLabels='';
@@ -1032,7 +1036,7 @@ function neutralRankGeometry(geometry,context=false,transparent=false){
 }
 function focusedRankGeometry(geometry,id,focus){
  // Flat projections retain their category colors, including unrelated ranks.
- if(mode==='comm')return `<g class="communication-memory-transparent">${neutralRankGeometry(geometry)}</g>`;
+ if(mode==='comm')return geometry;
  if(viewMode!=='2.5D')return geometry;
  if(!focus&&id!==relationRank)return neutralRankGeometry(geometry);
  if(focus&&!focus.members.has(id))return neutralRankGeometry(geometry,true,focus.transparent.has(id));
