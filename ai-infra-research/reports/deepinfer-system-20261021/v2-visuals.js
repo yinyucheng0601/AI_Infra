@@ -98,3 +98,85 @@ b+=weak(deep)+tensor(360,213,'Expert weights','physical replicas','all-weights',
 b+=frame(692,65,260,550,'OUTPUT / NEXT STEP');b+=op(752,128,'Head','all-head','模型输出用于验证草稿前缀并生成采样分布。','mtp',140)+op(752,239,'Sampler','all-sampler','采样产生接受 token、草稿与 confidence；结果进入在途 state。','worker',140)+wire('M258 510H680V152H752')+wire('M822 176V239')+tensor(722,333,'Accepted / draft','state(N)','all-state','当前轮采样输出由 ZOS 保存，供下一轮消费与修正。','worker','i',200)+wire('M822 287V333');
 b+=weak(feedback)+op(752,456,'DSpark','all-dspark','total_q 由 confidence 与硬件曲线选择；GPU 修正每请求 seqlen_q 和 remap。','mtp',140)+wire('M822 406V456')+tag(719,552,'ZOS：post(N−1) 与 forward(N)')+tag(719,578,'交错；更新下轮预算与状态')+wire('M752 480H674V635H18V145H58','feedback')+'</g>';return base(b);}
 const diagramFns={system:systemDiagram,execution:executionDiagram,fusion:fusionDiagram,attention:attentionDiagram,experts:expertsDiagram,wideep:wideepDiagram,communication:communicationDiagram,dspark:dsparkDiagram,zos:zosDiagram,evidence:evidenceDiagram,complete:completeDiagram};
+
+function ascend950Detail(){
+ let b=band(32,'ASCEND 950 · 专用后端执行路径',['片上融合与数据布局','放置策略与迁移能力','950DT · 专家交换','跨轮状态与验证预算'][substate]);
+ if(substate===0){
+ b+=tensor(40,85,'Hidden / KV','BF16 input','a-input','输入进入 Ascend 专用融合变换。','ascFusion','i',230)+wire('M270 120H340')+op(340,96,'Norm / RoPE / Cast','a-fuse','Ascend SIMD 寄存器流水覆盖 Norm、RoPE、Hadamard 与量化，减少中间数据落存。','ascFusion',300)+wire('M640 120H710')+tensor(710,85,'KV cache','values + scales','a-cache','数值与 scale 写入同一对齐 UB 行，再按有效长度 DMA 写出。','ascStore','i',230);
+ b+=frame(40,220,900,160,'UB → GM / HBM · 一行合并写入');
+ for(let i=0;i<16;i++)b+=rect(70+i*34,278,29,34,C.i,'none',2);
+ for(let i=0;i<6;i++)b+=rect(640+i*34,278,29,34,C.a,'none',2);
+ b+=txt(70,345,'量化 KV values',15,C.i)+txt(640,345,'scales',15,C.a);
+ b+=op(50,439,'Scale packing','a-scale','GEMM 的两个 UE8M0 scale 打包为 int16，按 MN-major 排列；与上方 KV 行格式是不同数据契约。','ascGemm',260)+op(360,439,'mHC reduce inside','a-mhc','Ascend prenorm 默认 n_splits=1；CUDA 默认为 16。GPU Mega mHC 条件不适用于本分支。','ascMhc',270);
+ b+=txt(50,548,'寄存器链 / 流水深度增加 → 并行性提高，也可能产生 spill',16)+txt(50,586,'形状与格式约束决定融合适用范围。',15,C.muted);
+ }else if(substate===1){
+ b+=txt(45,92,'逻辑专家 → 物理副本 → 设备执行',21);
+ for(let r=0;r<3;r++){let x=45+r*310;b+=frame(x,145,270,230,'NPU RANK '+r,C.ep);for(let j=0;j<3;j++)b+=expertSlot(x+45,196+j*55,r*3+j,'a-slot'+r+j);}
+ b+=comm(70,431,330,'权重搬运路径','a-migrate','不能仅凭 EPBuffer 接口同名认定权重预取迁移已实现。需单独追踪主框架采用的搬运后端。','shuffle')+wire('M400 455H490')+hit('a-limit','配套库能力边界','DeepEP-Ascend 官方说明：lb_prefetch_weights 与 lb_reduce_grads 的 Ascend 通信内核尚未实现；不能据此否定全部 EPLB，也不能宣称完整迁移重叠已落地。',rect(490,419,430,100,'#222','#aaa',8)+txt(510,454,'lb_prefetch_weights',18)+txt(510,487,'Ascend 通信内核尚未实现',16,C.muted),'ascEp');
+ b+=txt(50,576,'布局策略可复用；权重迁移与计算重叠需独立确认。',18);
+ }else if(substate===2){
+ b+=tensor(45,92,'Token / top-k','FP8 dispatch','a-dispatch-in','FP8 激活按路由进入 EP all-to-all。','ascEp','i',240)+wire('M285 128H350')+comm(350,103,270,'UBMEM / URMA','a-fabric','950/A5 专用互联路径使用 UBMEM 与 UBC_CTP/URMA 通道。','ascEp')+wire('M620 128H700')+op(700,103,'Experts','a-experts','接收激活后执行本地专家计算；Combine 使用 BF16 返回并归约。','ascEp',230);
+ b+=frame(45,224,885,237,'950DT · EP64 · 官方通信微基准');
+ b+=txt(75,290,'Dispatch · FP8',18,C.i)+rect(75,310,600*325/400,23,C.i,'none',3)+txt(740,328,'323–327 GB/s',19);
+ b+=txt(75,382,'Combine · BF16',18)+rect(75,402,600*296/400,23,'#aaa','none',3)+txt(740,420,'294–298 GB/s',19);
+ b+=txt(50,510,'16,384 tokens/rank 容量 · H=7168 · top-6 / 256 experts',15,C.muted)+txt(50,544,'计时含 issue / drain，不含最终 epilogue；PoC HDK 手工配置。',15,C.muted)+txt(50,591,'Combine 受本地归约与 URMA / HBM 争用影响。',18);
+ }else{
+ b+=txt(40,115,'CPU',18)+txt(40,275,'NPU',18)+txt(40,435,'STATE',18);
+ b+=event(155,86,200,'提交 forward N','a-submit','先提交当前轮主模型，再处理前一轮结果。','cpu')+event(420,86,260,'post N−1','a-post','跨轮流水仍须满足前一轮采样完成依赖。','cpu');
+ b+=event(155,246,525,'forward N','a-forward','当前 NPU 执行期间可组织上一轮后处理；是否充分覆盖依赖实际工作负载。')+event(725,246,200,'sample N','a-sample','采样结果进入下一轮的状态处理。');
+ b+=wire('M255 128V246')+wire('M680 267H725')+tensor(155,396,'state / input ids','ZOS metadata','a-meta','Ascend 目录提供 gather_input_ids_zos 与 compute_seqlens_k_zos 等设备侧元数据内核。','ascSchedule','i',250)+wire('M405 432H475')+op(475,408,'变长验证预算','a-budget','Ascend schedule_mtp_varlen 使用 MTE3/MTE2 核间同步组织预算相关数据依赖。','ascSchedule',310);
+ b+=txt(155,535,'专用元数据内核 + 通用跨轮执行策略',20)+txt(155,578,'源码确认实现路径；暂无此处可引用的 950 端到端加速比例。',15,C.muted);
+ }
+ return base(b);
+}
+diagramFns.ascend950=ascend950Diagram;
+
+function ascend950Diagram(){
+ let b=band(30,'同一计算语义 · 两种执行实现',['mHC 归约与 KV 数据契约','专家放置与迁移能力','专家通信路径','跨轮执行与设备元数据'][substate]);
+ b+=txt(250,82,'NVIDIA GPU',23,C.ink,'middle',600)+txt(730,82,'ASCEND 950',23,C.ink,'middle',600);
+ b+='<path d="M490 105V607" stroke="#383838" stroke-dasharray="4 6"/>';
+ const box=(x,y,w,h,label,key,body,source,color='#888')=>hit(key,label,body,rect(x,y,w,h,'#222',color,7)+txt(x+w/2,y+h/2+5,label,15,C.ink,'middle'),source);
+ if(substate===0){
+  for(const x of [55,535])b+=tensor(x,112,'mHC input','same model semantics','ac-input'+x,'两侧输入计算语义相同，但 prenorm 的归约分解不同。','ascMhc','i',390);
+  b+=wire('M250 185V218')+wire('M730 185V218');
+  for(let i=0;i<16;i++){let x=65+(i%8)*46,y=220+Math.floor(i/8)*38;b+=rect(x,y,38,29,'#444','#888',3)+txt(x+19,y+20,String(i),12,C.ink,'middle');}
+  b+=txt(250,315,'16 splits → partial results',16,C.ink,'middle')+wire('M250 327V349')+box(100,349,300,46,'归约 partials','ac-partials','CUDA prenorm 默认 n_splits=16，产生 partials 供后续处理。','ascMhc');
+  b+=box(565,220,330,175,'单个 split · 内部归约','ac-inside','Ascend 默认 n_splits=1，由内核内部完成归约。矩形表示归约范围，不表示单个硬件核。','ascMhc');
+  b+=txt(65,438,'KV 调用侧：两个参数',15,C.muted)+box(65,463,180,56,'cache_quant','ac-quant','GPU 调用分别传入 cache_quant 和 cache_sf；参数数量不等于 DMA 次数。','ascFusion',C.i)+box(265,463,180,56,'cache_sf','ac-sf','独立 scale 参数；不能仅由接口推断底层访存次数。','ascFusion',C.a);
+  b+=txt(545,438,'Ascend：同一 UB 行',15,C.muted);
+  b+=hit('ac-row','values + scales → 单次 DMA','Ascend 主 KV 数值与 scale 在同一 UB 行组织，精确长度 DMA 写出有效载荷。',''+rect(545,463,370,56,'#222','#888',5)+rect(557,475,260,32,C.i,'none',2)+rect(823,475,80,32,C.a,'none',2),'ascStore');
+  b+=wire('M730 519V552')+box(610,552,240,42,'HBM · KV record','ac-hbm','写出有效 payload，不将 UB 对齐 padding 写入相邻 token。','ascStore');
+  b+=txt(65,566,'参数分离 ≠ 搬运次数结论',14,C.muted);
+ }else if(substate===1){
+  for(const x of [55,535]){
+   b+=txt(x,128,'逻辑专家',14,C.muted);
+   for(let e=0;e<4;e++)b+=rect(x+e*99,148,78,37,'#252326',C.ep,5)+txt(x+e*99+39,173,'E'+e,16,C.ink,'middle');
+   b+=wire(`M${x+180} 185V219`)+txt(x+195,246,'副本 / rank 映射',16,C.ink,'middle');
+   for(let r=0;r<2;r++){let xx=x+r*205;b+=frame(xx,275,190,180,'RANK '+r,C.ep);for(let e=0;e<2;e++)b+=expertSlot(xx+7,320+e*58,(r+e)%4,'ac-e'+x+r+e);}
+  }
+  b+=wire('M250 455V488')+box(65,488,380,65,'shuffle → 权重搬运路径','ac-gshuffle','专家重排实际搬运由框架 shuffle 路径组织；不能只看布局策略。','shuffle');
+  b+=wire('M730 455V488')+hit('ac-unimplemented','权重预取接口尚未实现','DeepEP-Ascend 的 lb_prefetch_weights 与 lb_reduce_grads 通信内核尚未实现。这不是整个 EPLB 不可用的结论。',rect(545,488,370,65,'#222','#aaa',7,'stroke-dasharray="5 5"')+txt(730,515,'lb_prefetch_weights',16,C.ink,'middle')+txt(730,539,'Ascend 通信内核未实现',14,C.muted,'middle'),'ascEp');
+  b+=txt(250,592,'布局策略与搬运机制分别分析',14,C.muted,'middle')+txt(730,592,'虚线框：能力边界，非执行步骤',14,C.muted,'middle');
+ }else if(substate===2){
+  for(const x of [55,535])b+=tensor(x,112,'Token + top-k','route to expert rank','ac-token'+x,'相同专家交换语义：发送 token，执行专家，再返回来源 rank。','comm','i',390);
+  b+=wire('M250 185V226')+wire('M730 185V226');
+  b+=comm(65,226,380,'DeepEP / 条件式 Mega MoE','ac-gcomm','NVIDIA 路径按条件使用显式 DeepEP 或 Mega MoE；SymmBuffer 路径有域与格式条件。','comm');
+  b+=comm(545,226,370,'DeepEP-Ascend','ac-ncomm','Ascend EP 提供 FP8 Dispatch、BF16 Combine 与延迟 epilogue。','ascEp');
+  for(const x of [65,545]){b+=wire(`M${x+185} 274V310`);for(let r=0;r<3;r++){let xx=x+r*127;b+=frame(xx,310,115,110,'R'+r,C.ep)+matrix(xx+15,359,7,3,'w',12);}}
+  b+=txt(250,454,'NVLink 域 / SymmBuffer 条件',16,C.ink,'middle')+txt(730,454,'UBMEM / UBC_CTP / URMA',16,C.ink,'middle');
+  b+=wire('M250 470V499')+wire('M730 470V499')+comm(65,499,380,'Combine → 原 token','ac-greturn','结果归并回来源 token。','comm')+comm(545,499,370,'BF16 Combine → 原 token','ac-nreturn','包含本地归约，并受 URMA 与 HBM 争用影响。','ascEp');
+  b+=txt(250,585,'无同口径 GPU 带宽对照',14,C.muted,'middle')+txt(730,583,'950DT EP64：D 323–327 / C 294–298 GB/s',13,C.muted,'middle');
+ }else{
+  for(const x of [55,535]){
+   b+=txt(x,131,'CPU',15,C.muted)+txt(x,258,x===55?'GPU':'NPU',15,C.muted);
+   b+=event(x+5,151,145,'submit N','ac-submit'+x,'提交当前 forward 后，再处理上一轮状态。','cpu')+event(x+180,151,200,'post N−1','ac-post'+x,'上一轮后处理仍依赖其 sample 完成。','cpu');
+   b+=wire(`M${x+76} 193V279`)+event(x+5,279,375,'forward N','ac-forward'+x,'同一跨轮策略：当前设备计算覆盖 CPU 后处理，不代表测量时间比例。');
+   b+=wire(`M${x+190} 321V373`);
+  }
+  b+=box(65,373,375,95,'GPU metadata kernels','ac-gmeta','GPU 主线处理输入索引、序列长度和预算元数据。','worker');
+  b+=hit('ac-nmeta','Ascend metadata kernels','独立 Ascend gather_input_ids_zos、compute_seqlens_k_zos 和变长验证预算实现；预算内核包含 MTE3/MTE2 核间同步。',rect(545,373,375,95,'#222','#888',7)+txt(732,400,'Ascend metadata kernels',16,C.ink,'middle')+txt(732,433,'MTE3 → 核间同步 → MTE2',15,C.ink,'middle'),'ascSchedule');
+  for(const x of [65,545])b+=wire(`M${x+187} 468V509`)+tensor(x,509,'state(N) → 下一轮','accepted / draft / metadata','ac-state'+x,'当前轮状态进入下一轮消费，依赖仍被保留。','worker','i',375);
+ }
+ return base(b);
+}
+diagramFns.ascend950=ascend950Diagram;

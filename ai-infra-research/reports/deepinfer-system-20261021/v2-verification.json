@@ -1,6 +1,6 @@
 {
-  "chapters": 12,
-  "states": 31,
+  "chapters": 13,
+  "states": 35,
   "checks": [
     "JS syntax",
     "all states render to SVG",
@@ -203,6 +203,42 @@
         "deepinfer/model_executor/parallel_utils/cp.py",
         1,
         54
+      ],
+      "ascStore": [
+        "Ascend KV 量化与 DMA 布局",
+        "deepinfer/model_executor/layers/tilelang_ops/asc/store_kv_cache.py",
+        1,
+        110
+      ],
+      "ascFusion": [
+        "Ascend 融合变换与寄存器流水",
+        "deepinfer/model_executor/layers/tilelang_ops/asc/fused_transform.py",
+        1,
+        110
+      ],
+      "ascMhc": [
+        "Ascend mHC 内部归约",
+        "deepinfer/model_executor/models/v4_modules/mhc_ops.py",
+        16,
+        22
+      ],
+      "ascHc": [
+        "Mega mHC 平台条件",
+        "deepinfer/model_executor/models/v4_modules/hc.py",
+        90,
+        105
+      ],
+      "ascSchedule": [
+        "Ascend 变长验证预算",
+        "deepinfer/model_executor/layers/tilelang_ops/asc/schedule_mtp_varlen.py",
+        1,
+        85
+      ],
+      "ascRuntime": [
+        "NPU 运行配置与能力边界",
+        "deepinfer/worker/runtime_config.py",
+        54,
+        69
       ]
     },
     "perf": [

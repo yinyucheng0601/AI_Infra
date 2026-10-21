@@ -66,3 +66,7 @@ Overview and step detail share one absolute time axis. Wheel zoom is anchored to
 ### Server outputs and slow steps
 
 Serving diamonds/ticks come from scheduler.process_step_output start timestamps inside http.completions. Times share the request origin with lane events; these are server processing events, not client delivery or token counts. Navigation dots mark Decode periods strictly above the empirical P90 (sorted index floor(0.9*(n-1))); hover compares to the same-scope median. Prefill and DI are excluded from this baseline.
+
+### Worker phase linkage
+
+Raw Worker intervals are preserved without merging. Phase membership uses Worker step_id. Cross-layer candidates use STRACE group start after dispatch start and latest completion before reclaim end, checked one-to-one across all 53 Worker groups. These are temporal candidates, not causal flow IDs. Prefill and Draft Init share a batch containment context. D53 is retained as an unshown boundary group. Hover links both directions; clicking a Worker event pins its group and opens a shared-axis phase chart.

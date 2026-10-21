@@ -43,7 +43,8 @@
     "waitEstimate"
   ],
   "adaptations": [
-    "rrEnd read directly from raw runner_run event; end remains outer simpler_run endpoint"
+    "rrEnd read directly from raw runner_run event; end remains outer simpler_run endpoint",
+    "Worker phases joined by step_id; STRACE candidates use latest completion before reclaim end and start after dispatch start, validated one-to-one; temporal association is not causal proof; Prefill uses batch containment; unshown D53 retained as boundary"
   ],
   "validation": {
     "rawLaneComparisons": 864,

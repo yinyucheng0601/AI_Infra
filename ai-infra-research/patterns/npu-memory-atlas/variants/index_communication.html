@@ -668,18 +668,34 @@ function drawEPSpatialSankey(){
   if(!trafficWindow.all&&!(trafficWindow.direction==='out'?source===relationRank:trafficWindow.direction==='in'?target===relationRank:source===relationRank||target===relationRank))continue;
   fullTotals.get(source).out+=f.tokens;fullTotals.get(target).in+=f.tokens;
  }
- const max=Math.max(1,...[...fullTotals.values()].flatMap(v=>[v.out,v.in])),scale=60/max;
+ // Overview aggregates the two physical ranks in each row, preserving every assignment.
+ const rows=[];for(let i=0;i<ids.length;i+=2)rows.push(ids.slice(i,i+2));
+ let displayFlows=flows;
+ if(trafficWindow.all){
+  const grouped=new Map();
+  for(const f of flows){const si=rows.findIndex(r=>r.includes(f.source)),ti=rows.findIndex(r=>r.includes(f.target)),key=si+':'+ti;
+   if(!grouped.has(key))grouped.set(key,{source:rows[si][0],target:rows[ti].at(-1),tokens:0,si,ti,links:0});
+   const g=grouped.get(key);g.tokens+=f.tokens;g.links++;
+  }
+  displayFlows=[...grouped.values()];
+ }
+ const largest=Math.max(1,...displayFlows.map(f=>f.tokens));
+ const laneWidth=trafficWindow.all?20:9,gap=trafficWindow.all?6:5;
  const offsets=new Map(ids.map(id=>[id,{out:0,in:0}]));
  let defs='',ribbons='',ports='';
- for(const [flowIndex,f] of flows.entries()){
- const source=f.source,target=f.target,width=f.tokens*scale,so=offsets.get(source),to=offsets.get(target);
- const x0=12+so.out,x1=132+to.in;so.out+=width+5;to.in+=width+5;
- const a=planar(source,x0),aa=planar(source,x0+width),b=planar(target,x1),bb=planar(target,x1+width);
- const z=(a[1]+b[1])/2+(flowIndex-(flows.length-1)/2)*(trafficWindow.all?18:24),gid=`physical-flow-${source}-${target}`;
- defs+=`<marker id="arrow-${gid}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="20" markerHeight="20" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="${color(target)}"/></marker>`;
- // Keep arrowheads in the same projected plane as their flow.
- defs+=`<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"><stop stop-color="${color(source)}"/><stop offset="1" stop-color="${color(target)}"/></linearGradient>`;
- ribbons+=`<path data-spatial-flow="${source}-${target}" data-assignments="${f.tokens}" d="M${(a[0]+aa[0])/2} ${(a[1]+aa[1])/2} L${(a[0]+aa[0])/2} ${z} L${(b[0]+bb[0])/2} ${z} L${(b[0]+bb[0])/2} ${(b[1]+bb[1])/2}" fill="none" stroke="url(#${gid})" stroke-width="${width}" stroke-linejoin="round" marker-end="url(#arrow-${gid})" opacity="1" pointer-events="none"><title>R${source} → R${target} · ${f.tokens} assignments</title></path>`;
+ for(const [i,f] of displayFlows.entries()){
+  const source=f.source,target=f.target,width=laneWidth*f.tokens/largest;
+  const so=offsets.get(source),to=offsets.get(target),sx=22+so.out,tx=132+to.in;
+  so.out+=width+gap;to.in+=width+gap;
+  const a=planar(source,sx+width/2),b=planar(target,tx+width/2),gid=`physical-flow-${source}-${target}`;
+  const z=(a[1]+b[1])/2+(i%4-1.5)*(laneWidth+gap);
+  const caption=trafficWindow.all?`${rows[f.si].map(r=>'R'+r).join(' / ')} → ${rows[f.ti].map(r=>'R'+r).join(' / ')} · ${f.links} 条连接合计`:`R${source} → R${target}`;
+  defs+=`<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"><stop stop-color="${color(source)}"/><stop offset="1" stop-color="${color(target)}"/></linearGradient>`;
+  ribbons+=`<path data-spatial-flow="${source}-${target}" data-assignments="${f.tokens}" data-aggregated-links="${f.links||1}" d="M${a[0]} ${a[1]} L${a[0]} ${z} L${b[0]} ${z} L${b[0]} ${b[1]}" fill="none" stroke="url(#${gid})" stroke-width="${width}" stroke-linejoin="round" opacity="1" pointer-events="none"><title>${caption} · ${f.tokens} assignments</title></path>`;
+ }
+ if(trafficWindow.all)for(const row of rows){
+  const a=point(row[0],0,HBM*6.7+24),b=point(row.at(-1),245,HBM*6.7+24);
+  ports+=`<g pointer-events="none"><path d="M${a}L${b}" fill="none" stroke="#777" stroke-width=".6"/><text x="${a[0]}" y="${a[1]-5}" fill="#aaa" font-size="7">${row.map(r=>'R'+r).join(' / ')} · 汇总</text></g>`;
  }
  for(const id of ids){const a=point(id,0),b=point(id,245),c=point(id,245,64),d=point(id,0,64),label=point(id,12,22),local=fixture.flows.find(f=>f.source===id&&f.local)?.tokens??0;
  ports+=`<g data-spatial-port="${id}" data-rank="${id}" role="button" tabindex="0" aria-label="选择 Rank ${id} 查看通信" aria-pressed="${id===relationRank}"><path d="M${point(id,0,0)}L${point(id,245,0)}L${point(id,245,HBM*6.7)}L${point(id,0,HBM*6.7)}Z" fill="none" stroke="#dedede" stroke-width=".8"/><polygon points="${[a,b,c,d].map(p=>p.join(',')).join(' ')}" fill="${color(id)}"/><text x="${label[0]}" y="${label[1]}" fill="#111" font-size="12" font-weight="600">R${id}${!trafficWindow.all&&id===relationRank?(trafficWindow.direction==='both'?' · IN / OUT':trafficWindow.direction==='out'?' · 发出 →':' · ← 接收'):''}</text><title>EP${EP} 通信组 · ${ids.map(v=>"R"+v).join("、")} · LOCAL ${local}</title></g>`;}

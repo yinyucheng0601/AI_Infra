@@ -68,7 +68,7 @@ const chapters=[
  '官方 Q&A 对照 fixed‑5 与动态验证。60 条序列/rank 时，平均验证长度由 5.00 降到 3.58，平均接受长度由 3.30 变为 3.21，估算吞吐从 13,730 升至 14,466 token/s/rank，提升 5.4%。',
  '16 条序列/rank 时收益为 −1.5%；96 条时为 +11.0%。这组变化支持“按负载决定验证预算”，也说明要把草稿接受质量、硬件利用率与调度附加工作放在同一个端到端指标中观察。'],
  take:'算子、专家、通信与调度的局部优化，最终都要回到满足延迟要求下的有效 token 吞吐。',trade:'这里复绘 Q&A 的估算吞吐表。README 的 prefill / decode 图分别使用 4 / 64 张 SM100，同属 scale-up 域，不能当作同资源规模的横向对照。',formula:'吞吐口径：token/s/rank\n并发口径：sequences/rank · EP64/DP64',sources:['dsparkdoc','readme','bench'],states:['16','32','48','60','72','96']},
- {id:'complete',nav:'完整执行图',group:'11 / INTEGRATED EXECUTION MAP',title:'DeepInfer 完整执行图与性能协同',sub:'汇合本地计算、专家并行、跨卡通信与跨轮调度。',h:'性能由计算、分布、数据就绪与工作预算共同决定。',p:[
+ {id:'complete',nav:'完整执行图',group:'12 / INTEGRATED EXECUTION MAP',title:'DeepInfer 完整执行图与性能协同',sub:'汇合本地计算、专家并行、跨卡通信与跨轮调度。',h:'性能由计算、分布、数据就绪与工作预算共同决定。',p:[
  '本地残差经 HC 进入 Attention，再经 HC 和 Gate 进入跨卡专家阶段；结果回到本地，经过后续层、输出头与采样。参数读取、KV 访问、专家映射与采样结果分别接入对应消费者。',
  'EPLB 从接收计数反馈到物理专家放置；DSpark 从 confidence 和执行曲线决定下一轮验证预算；ZOS 用在途状态把当前设备工作与前一轮 CPU 后处理连接起来。选择不同观察层，可逐项回看这些关系。'],
  take:'DeepInfer 的高性能来自边界之间的协同：更少的中间读写、更均衡的专家尾部、更紧密的通信计算组织，以及更合适的验证预算和提交顺序。',trade:'判断一次修改是否有效，应保持模型、精度、拓扑与流量口径一致，检查 TTFT/TBT、接受 token/s、MoE 负载比和暴露的通信/CPU 等待。',formula:'算子效率 · 专家分布 · 通信组织 · 调度策略\n→ 满足延迟约束下的有效推理吞吐',sources:['hc','attn','comm','balance','mtp','worker'],states:['计算主干','专家与通信','调度反馈']}
@@ -91,3 +91,35 @@ function placement(){let count=Array(8).fill(1),map=Array.from({length:8},(_,i)=
 }
 const beforeRanks=[[0,1,2],[3,4,5],[6,7,0],[1,2,3]],afterRanks=placement();
 function rankLoads(ranks){const counts=Array(8).fill(0);ranks.flat().forEach(e=>counts[e]++);return ranks.map(es=>inputHistory.reduce((sum,row)=>sum+es.reduce((s,e)=>s+row[e]/counts[e],0),0)/inputHistory.length);}
+
+Object.assign(refs,{
+ ascStore:['Ascend KV 量化与 DMA 布局','deepinfer/model_executor/layers/tilelang_ops/asc/store_kv_cache.py',1,110],
+ ascFusion:['Ascend 融合变换与寄存器流水','deepinfer/model_executor/layers/tilelang_ops/asc/fused_transform.py',1,110],
+ ascMhc:['Ascend mHC 内部归约',V4+'mhc_ops.py',16,22],
+ ascHc:['Mega mHC 平台条件',V4+'hc.py',90,105],
+ ascSchedule:['Ascend 变长验证预算','deepinfer/model_executor/layers/tilelang_ops/asc/schedule_mtp_varlen.py',1,85],
+ ascRuntime:['NPU 运行配置与能力边界','deepinfer/worker/runtime_config.py',54,69]
+});
+Object.assign(externalRefs,{
+ ascGemm:['DeepGEMM-Ascend · 官方布局与 950DT 算子测试','https://github.com/deepseek-ai/DeepGEMM-Ascend#readme'],
+ ascEp:['DeepEP-Ascend · 官方通信测试与能力状态','https://github.com/deepseek-ai/DeepEP-Ascend#readme']
+});
+chapters.splice(chapters.findIndex(p=>p.id==='complete'),0,{
+ id:'ascend950',nav:'Ascend 950',group:'ASCEND 950 / IMPLEMENTATION BRANCH',title:'Ascend 950 的专用实现与性能取舍',sub:'从低精度布局、片上融合到专家通信与异步调度。',
+ h:'950 优化落在数据布局、片上执行和互联通信。',
+ p:['DeepInfer 支持 Ascend 950 与 CANN 9.2，构建时选择 DeepGEMM-Ascend、DeepEP-Ascend，并提供独立的 Ascend TileLang 内核。专用后端与模型执行主线共同组成 NPU 路径。',
+ '算子层按 Ascend 格式打包 scale；融合 Norm、RoPE、Hadamard、量化和 KV 写入，减少中间搬运。mHC prenorm 在 Ascend 内核内部归约，默认 split 数为 1；GPU 的 Mega mHC 路径不能直接套用。',
+ '通信层以 FP8 Dispatch、BF16 Combine 和延迟 epilogue 组织专家交换。专家放置策略与权重迁移能力需分别确认：配套库的 lb_prefetch_weights、lb_reduce_grads 通信内核仍未实现。',
+ '调度层已有 Ascend 的 ZOS 元数据处理与变长验证预算内核。代码存在证明了执行路径，具体加速幅度仍需 NPU 端到端测试。'],
+ take:'将 NPU 专用实现、配套库微基准和整模型吞吐分开阅读，才能判断优化实际覆盖到哪一层。',
+ formula:'主仓证据：9bd9cf2\n配套库说明：2026-10-21 查阅的官方 README\n950DT 算子 / 通信测试 ≠ DeepInfer 端到端吞吐',
+ trade:'FP4/FP8 降低计算与传输成本，同时约束 scale 布局、对齐和数值路径；流水深度受 UB 与寄存器资源限制。DeepInfer 首页推理曲线测自 SM100，不能用作 950 性能结论。',
+ states:['算子与 KV','专家分布边界','950 专家通信','异步调度'],sources:['readme','ascFusion','ascStore','ascMhc','ascHc','ascGemm','ascEp','ascSchedule','ascRuntime']
+});
+
+const ascendStateCopy=[
+ {h:'Ascend 改变了归约位置与缓存写入契约。',p:['GPU 与 Ascend 沿用同一模型计算语义，但执行分解不同：mHC prenorm 的 CUDA 默认采用 16 个 split，Ascend 默认 1 个 split，并在内核内部完成归约。','Ascend 的主 KV 缓存把量化 values 与 scales 放入同一 UB 行，再以一次精确长度 DMA 写出。GPU 调用侧则分别传入 cache_quant 与 cache_sf；这说明数据接口不同，不能仅据此推断 GPU 实际发起多少次搬运。','GEMM 还有另一套独立的 scale 契约：Ascend 将 K 维两个 UE8M0 scale 打包为 int16，再按 MN-major 存储。不要将 GEMM scale 布局与图中的 KV 行布局混为一谈。'],take:'950 的特殊性是内部归约、UB 行组织和硬件要求的 scale 格式，而不只是换用 NPU API。',trade:'融合减少中间读写，但受 shape、量化格式、UB 与寄存器预算约束。Mega mHC 的 GPU 分支不能作为 Ascend 已启用的证据。'},
+ {h:'专家放置策略与平台迁移能力是两个层次。',p:['逻辑专家、物理副本和 rank 的映射关系在两个平台上仍然成立。负载均衡策略解决放在哪里、复制多少份；性能还取决于权重如何迁移以及能否与计算重叠。','GPU 主线中的专家重排需要结合 shuffle.py 和实际通信路径理解。Ascend 配套库虽然暴露 lb_prefetch_weights、lb_reduce_grads 接口，但官方说明相应通信内核尚未实现。','因此不能从 API 对齐推导出 GPU 与 NPU 的专家迁移能力完全相同，也不能据此认定整个 Ascend EPLB 不可用。需要独立追踪框架所用搬运路径。'],take:'本页对比的是能力证据：共同的专家布局模型，不等于相同的异步迁移实现。',trade:'更多副本可减轻热点，但增加权重容量与重排成本；当前没有可据此量化的 GPU / 950 EPLB 收益对照。'},
+ {h:'通信语义相同，硬件通道与成本结构不同。',p:['GPU 与 Ascend 都需要把 token 发往专家，再将结果归并回来源 rank。NVIDIA 主线在条件满足时选择 Mega MoE / SymmBuffer，或显式 DeepEP Dispatch / Combine。','950 的 DeepEP-Ascend 使用 UBMEM 与 UBC_CTP/URMA 通道，并支持 FP8 Dispatch、BF16 Combine 和延迟 epilogue。它的主要约束包括互联通道、局部归约与 HBM 争用。','下方数值仅为 950DT EP64 微基准：16,384 tokens/rank 容量、H=7168、top-6 / 256 experts，使用手工配置 PoC HDK；计时不含最终 epilogue。没有同口径 GPU 数据，因此不绘制速度胜负对比。'],take:'比较通道和执行组织；950 通信带宽不能直接换算为整模型吞吐优势。',trade:'FP8 降低分发流量；Combine 仍有 BF16 传输、本地归约及 URMA 与 HBM 争用成本。'},
+ {h:'跨轮调度策略共用，设备侧实现分别适配。',p:['ZOS 的主线是先提交 forward N，再处理上一轮结果，使 CPU 后处理尽可能被当前设备执行覆盖。该策略本身并非 950 独有。','Ascend 的差异落在设备侧元数据内核：gather_input_ids_zos、compute_seqlens_k_zos 与 schedule_mtp_varlen 等拥有独立实现；后者包含 MTE3 / MTE2 核间同步。','GPU 与 Ascend 是否达到相同重叠效果，取决于主模型执行时长、CPU 后处理、事件等待和元数据成本。源码确认实现路径，不证明相同的加速比例。'],take:'把共同的流水策略与 Ascend 专用元数据执行分开，才能看清平台特性。',trade:'异步流水隐藏部分开销，但不消除采样完成依赖。NPU 当前还禁止 batch-invariant 开关，运行配置启用确定性算法以控制数值稳定性。'}
+];

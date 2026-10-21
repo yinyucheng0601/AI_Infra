@@ -14,6 +14,7 @@
         "算子融合与 Attention 效率",
         "专家分布、EPLB 与 Wide-EP",
         "通信组织、DSpark 与 ZOS 调度",
+        "Ascend 950：专用算子、KV 布局、专家通信与异步调度",
         "官方性能证据与完整执行图"
       ],
       "domains": [
@@ -39,13 +40,14 @@
           "path": "ai-infra-research/reports/llm-compute/deepinfer-performance-atlas-v2.html",
           "url": null,
           "revision": null,
-          "sha256": "83c89c1872113031e6daaf9c4155568cc6a1e5f06e6fba9123b49d27bccb2cd5"
+          "sha256": "92053110bf8ce1a9ce550d5d047033a4099ab5201712c6695544ba5b724d3cec"
         }
       ],
       "validation": [
         "2026-10-21：按用户要求收录当前 v2 报告；用户已反馈并迭代系统结构、文案、配色和图例。",
         "12 章、31 个状态通过静态与模拟 DOM 检查，包含源码锚点、EPLB 守恒与导航逻辑；未完成自动浏览器视觉验收。",
-        "官方文档与源码证据固定到 DeepInfer commit 9bd9cf243fc53ef9afbf8f04d391d989117d6ab9。"
+        "官方文档与源码证据固定到 DeepInfer commit 9bd9cf243fc53ef9afbf8f04d391d989117d6ab9。",
+        "2026-10-21：新增 Ascend 950 专章；13 章、35 状态通过静态与模拟 DOM 检查，所有 SVG 可解析。配套库微基准与端到端性能明确区分；未运行 NPU 实测。"
       ],
       "related": [
         "llm-compute-diagrams",
@@ -471,7 +473,7 @@
           "path": "ai-infra-research/reports/llm-compute/diagram-legend-library/index.html",
           "url": null,
           "revision": null,
-          "sha256": "0609b8d0e11f3255d35162cbd1c0a03255e4c4c273c2485bdde276f873fc6196"
+          "sha256": "69860fd1f593fe3b876cb18bc4c52289da556160d0f38fd86b5eca01911b03a5"
         }
       ],
       "validation": [
