@@ -871,7 +871,7 @@ function rankContentLayout(values,exploded=true){
  const scale=ortho?Math.max(0,frame-2*iz-gap*Math.max(0,count-1))/(Math.max(HBM,values.reduce((a,b)=>a+b,0))*6.7):1;
  return {ix,iy,iz,gap,scale};
 }
-function drawRank(){applySimulation();if(false)return `<polygon data-ep-rank-hit="${renderRank}" points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}" fill="transparent" pointer-events="all"/>`+rankWallLabel()+outline(0,HBM*6.7)+outerRankBorder();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=HBM*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
+function drawRank(){if(mode==='comm')return `<polygon data-ep-rank-hit="${renderRank}" points="${pts([[0,0,0],[245,0,0],[245,155,0],[0,155,0]])}" fill="transparent" pointer-events="all"/>`+rankWallLabel()+outline(0,HBM*6.7)+outerRankBorder();applySimulation();let s='';if(mode==='shard'){s=drawShards()}else{const exploded=mode==='explode',frameHeight=HBM*6.7,layout=rankContentLayout(cats.slice(0,-1).map(a=>a.value),exploded);let z=layout.iz;
 // Fixed separation uses part of free capacity; the remainder stays above the stack.
 const gap=layout.gap;
 let drawn=0,anchors=[],labelBands=[],surfaceLabels='';
