@@ -29,6 +29,13 @@
       "sources": [
         {
           "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/critical-path-swimlane/index.html",
+          "url": null,
+          "revision": null,
+          "sha256": "0390fa9c2a36bc98e74e542a0637ab26b24010798da5b570f851825c6e9b2ba4"
+        },
+        {
+          "repository": "ai-infra",
           "path": "ai-infra-research/patterns/critical-path-swimlane/pattern.js",
           "url": null,
           "revision": null,
@@ -52,7 +59,8 @@
       "validation": [
         "2026-10-20：用户多轮截图评审及迭代后明确要求收录 Library / Pattern。",
         "54 step / 864 lane 与原始 STRACE 回查通过；D09 指标、时间窗约束与范围边界检查通过。",
-        "代码与目录校验通过；未执行浏览器自动化及完整交互回归。"
+        "代码与目录校验通过；未执行浏览器自动化及完整交互回归。",
+        "2026-10-21：采用用户指定截图作为卡片封面，修正卡片入口为 index.html，保留 pattern.js 来源指纹。"
       ],
       "related": [],
       "reviewedAt": "2026-10-20",
