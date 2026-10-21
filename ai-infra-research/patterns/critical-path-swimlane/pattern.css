@@ -29,3 +29,6 @@
 .cps .inspector .analysis-spark{width:100%;height:88px;cursor:default}.cps .analysis-rank{display:grid;grid-template-columns:48px 1fr 68px;gap:8px;align-items:center;font:12px/2 var(--ss-font-data)}.cps .analysis-rank meter{width:100%;height:8px}.cps .inspector h3{font:13px var(--ss-font);margin-top:24px}
 
 .cps .workspace{bottom:106px}.cps .analysis-rank{grid-template-columns:52px minmax(0,1fr) 72px}.cps .analysis-rank>span{white-space:nowrap}
+
+/* The canvas receives keyboard events without a perimeter focus frame. */
+.cps .canvas>svg:focus,.cps .canvas>svg:focus-visible{outline:none}

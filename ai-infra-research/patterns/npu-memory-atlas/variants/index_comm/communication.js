@@ -19,9 +19,10 @@ const project=(x,y,z)=>[(x-y)*Math.sqrt(3)/2,(x+y)*.5-z];
 const point=(id,x=0,y=0,z=0)=>{const p=physical[id];return project(p.x+x,p.y+y,p.z+z);};
 const polygon=pts=>pts.map(p=>p.join(',')).join(' '),h=245*4/3;
 const corners=id=>[[0,0,0],[245,0,0],[245,245,0],[0,245,0],[0,0,h],[245,0,h],[245,245,h],[0,245,h]].map(p=>point(id,...p));
+let focusing=true;
 let camera={x:0,y:0,w:1400,h:850};
 function setCamera(points){const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),x=Math.min(...xs)-180,y=Math.min(...ys)-180,w=Math.max(...xs)-x+180,height=Math.max(...ys)-y+180;camera={x,y,w,h:height};$('traffic').setAttribute('viewBox',`${x} ${y} ${w} ${height}`);}
-function fit(focus=false){setCamera((focus?focusIds:physical.map((_,id)=>id)).flatMap(corners));}
+function fit(focus=false){focusing=focus;setCamera((focus?focusIds:physical.map((_,id)=>id)).flatMap(corners));deck();}
 $('fit').onclick=()=>fit(false);$('focus').onclick=()=>fit(true);
 $('context').textContent=`${world} Rank · ${Math.ceil(world/capacity)} 柜 · 物理机柜 · 竖向 Sankey · 每柜至多 ${capacity} Rank · EP${config.ep} · L${layer}`;
 $('source').innerHTML=ids.map(id=>`<option value="${id}">R${id}</option>`).join('');$('source').value=rank;$('all').setAttribute('aria-pressed',String(all));
@@ -29,7 +30,7 @@ function backLink(){$('back').href='index_comm.html#'+new URLSearchParams({rank:
 function deck(){
  backLink();let markup='';
  const order=physical.map((p,id)=>({p,id})).sort((a,b)=>a.p.z-b.p.z||(a.p.x+a.p.y)-(b.p.x+b.p.y));
- for(const {p,id} of order){const c=corners(id),active=memberSet.has(id),top=[c[4],c[5],c[6],c[7]],left=[c[0],c[3],c[7],c[4]],right=[c[0],c[1],c[5],c[4]],label=point(id,122,122,h+65);
+ for(const {p,id} of order){if(focusing&&!focusIds.includes(id))continue;const c=corners(id),active=memberSet.has(id),top=[c[4],c[5],c[6],c[7]],left=[c[0],c[3],c[7],c[4]],right=[c[0],c[1],c[5],c[4]],label=point(id,122,122,h+65);
  markup+=`<g class="physical-rank ${active?'ep-member':''} ${id===rank?'rank-selected':''}" ${active?`data-rank="${id}" tabindex="0" role="button" aria-label="选择 Rank ${id}" aria-pressed="${id===rank}"`:''}><title>R${id} · 机柜 ${p.group} · 节点 ${p.node} · 槽位 ${p.slot%nodeSize}${active?' · 当前 EP 组':''}</title><polygon class="rank-shell" points="${polygon(top)}"/><polygon class="rank-shell" points="${polygon(left)}"/><polygon class="rank-shell" points="${polygon(right)}"/><path class="rank-shell" fill="none" d="M${c[1]}L${c[2]}L${c[3]} M${c[2]}L${c[6]}"/>${active||id%capacity<2?`<text class="rank-label" x="${label[0]}" y="${label[1]}" text-anchor="middle">R${id}</text>`:''}</g>`;
  }
  $('deck').innerHTML=markup;
@@ -48,7 +49,7 @@ function routes(){
  if(!ready)return;direction=t>=.7;deck();const visible=flows.filter(f=>!f.local&&(all||f.source===rank));let defs='',svg='',ports='';
  const totals=new Map(ids.map(id=>[id,{in:0,out:0}]));for(const f of visible){const s=direction?f.target:f.source,d=direction?f.source:f.target;totals.get(s).out+=f.tokens;totals.get(d).in+=f.tokens;}
  const offsets=new Map(ids.map(id=>[id,{in:0,out:0}])),max=Math.max(1,...[...totals.values()].flatMap(v=>[v.in,v.out])),scale=190/max;
- visible.forEach((f,i)=>{const source=direction?f.target:f.source,target=direction?f.source:f.target,s=physical[source],d=physical[target],width=f.tokens*scale,so=offsets.get(source),to=offsets.get(target),sa=28+so.out*scale+width/2,da=28+to.in*scale+width/2;so.out+=f.tokens;to.in+=f.tokens;
+ visible.forEach((f,i)=>{const source=direction?f.target:f.source,target=direction?f.source:f.target,s=physical[source],d=physical[target],width=f.tokens*scale,so=offsets.get(source),to=offsets.get(target),sa=20+so.out*scale+width/2,da=20+to.in*scale+width/2;so.out+=f.tokens;to.in+=f.tokens;
  // All route bends live on the cabinet front plane (Y=0). Endpoint
  // slots are vertical segments on the inward-facing edge of each Rank.
  const sx=s.x+(s.column===0?245:0),dx=d.x+(d.column===0?245:0),sz=s.z+45+sa,dz=d.z+45+da;
