@@ -58,3 +58,7 @@ Rendered pattern · 基于 Execution Triage 的单步路径视图；Spatial Syst
 右上 All Steps 切换完整请求泳道。按上一步外层结束累积绝对时间，共享轴保留流水重叠；每 step 展示 16 lane 的 bind 与 runner_run 窗口，红色为该步最晚进入 lane。Serving 只显示各步 own 事件，避免把前后上下文重复画入。悬停给 step 读数，点击或 Enter 进入单步；导航也可直接进入。全程支持缩放、平移和 Fit，hash view=all 可恢复。总览不拆分执行与等待。
 
 视觉密度调整：三层标题 23px、右对齐并配结构图标；移除横向分隔线和 step 竖向网格，改为交替 step 底色。底色只编码 step 分区，不编码性能或异常。hover 行列高亮在分区底色上叠加。
+
+### Continuous timeline
+
+Overview and step detail share one absolute time axis. Wheel zoom is anchored to the pointer; dragging pans. Step navigation animates to a local range and Fit returns to the full run. Critical and hovered lane connectors fade in as each step gains screen width. Device rows retain Host-observed runner_run windows.
