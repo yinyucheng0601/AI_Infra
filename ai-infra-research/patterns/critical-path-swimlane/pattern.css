@@ -32,3 +32,14 @@
 
 /* The canvas receives keyboard events without a perimeter focus frame. */
 .cps .canvas>svg:focus,.cps .canvas>svg:focus-visible{outline:none}
+
+/* Shared time rail keeps step positions fixed while the viewport moves. */
+.cps .navigator.sequence-nav{display:block;flex:1;margin:4px 0;height:36px;gap:0}
+.cps .navigator.sequence-nav button{flex:none!important;min-width:0;min-height:0;padding:0;height:20px}
+.cps .navigator.sequence-nav button span{display:block}
+.cps .navigator.sequence-nav button:not([aria-current=step]) .sequence-label{display:none}
+.cps .navigator.sequence-nav button:is(:hover,:focus-visible) .sequence-label{display:block}
+.cps .navigator.sequence-nav button::after{display:none!important}
+.cps .metric-comparison{margin:18px 0 24px}.cps .metric-comparison>div:first-child{display:flex;align-items:baseline;gap:8px;font-size:12px;flex-wrap:wrap}.cps .metric-comparison strong{margin-left:auto;font:15px var(--ss-font-data);color:#eee}.cps .metric-comparison small{font:11px var(--ss-font-data);color:#bbb}
+.cps .comparison-track{position:relative;height:6px;background:#333;margin-top:10px}.cps .comparison-track i{display:block;height:100%;background:#bbb}.cps .comparison-track b{position:absolute;top:-4px;height:14px;border-left:2px solid #eee}
+.cps .inspector .chart-caption{font-size:11px;line-height:1.7;color:#aaa;margin:8px 0 18px}.cps button.step-lane-rank{display:grid;grid-template-columns:52px minmax(0,1fr) 64px;gap:8px;align-items:center;width:100%;padding:6px 0;border-radius:3px;text-align:left;font:11px var(--ss-font-data);min-height:28px}.cps .rank-track{height:4px;background:#333}.cps .rank-track i{display:block;height:4px}

@@ -1,0 +1,150 @@
+{
+  "revision": "9bd9cf243fc53ef9afbf8f04d391d989117d6ab9",
+  "accessed": "2026-10-21",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "b55624158ada4dc21b882d24ded06bf82f65350b44d170877b68395712cd670d",
+      "lines": 107,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/README.md"
+    },
+    {
+      "path": "csrc/engine/mtp_varlen.hpp",
+      "sha256": "164f45db4cccd6d6909dd2846e7dfffb57754b108af679443bf4bd71ec33785a",
+      "lines": 275,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/csrc/engine/mtp_varlen.hpp"
+    },
+    {
+      "path": "csrc/engine/scheduler.hpp",
+      "sha256": "c14de4d5341170227b82ddf2d146d9c6a337937885a6886237aab5a7238da5db",
+      "lines": 1329,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/csrc/engine/scheduler.hpp"
+    },
+    {
+      "path": "deepinfer/engine/llm_engine.py",
+      "sha256": "a636d60ca5711f6b7c21e68370c3bd9c2de6fc3f4439a7429ca4f572f0edeebe",
+      "lines": 1029,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/engine/llm_engine.py"
+    },
+    {
+      "path": "deepinfer/entrypoints/llm.py",
+      "sha256": "069a5333d9f47047ccc87584792627dfa6eee9cf93bdc046107cbd0218a6bada",
+      "lines": 198,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/entrypoints/llm.py"
+    },
+    {
+      "path": "deepinfer/model_executor/eplb/__init__.py",
+      "sha256": "1b30c01b36cfc711281bd729ab5cbf09826b4ba22359573f46d96c10ea6e7260",
+      "lines": 434,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/eplb/__init__.py"
+    },
+    {
+      "path": "deepinfer/model_executor/eplb/policy.py",
+      "sha256": "52241603827a1a1d19a395d48f5d618a7336fd1ceee631127e6782c644f736dc",
+      "lines": 140,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/eplb/policy.py"
+    },
+    {
+      "path": "deepinfer/model_executor/eplb/shuffle.py",
+      "sha256": "e86dcd3a1b54678cb28d7910461c670e42c10c1d8cafe3e766afce0a640ee71f",
+      "lines": 218,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/eplb/shuffle.py"
+    },
+    {
+      "path": "deepinfer/model_executor/input_metadata/yoco.py",
+      "sha256": "882a33de3da0fba81644adde9e9e1a90ec3d3ff34a8f3ad4dda18faafebd6460",
+      "lines": 182,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/input_metadata/yoco.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/decoder_layer.py",
+      "sha256": "2189fa14c0665a3a211b47c5440748273fd92b39a68268a0080530d3c95b7297",
+      "lines": 239,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/decoder_layer.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/v4_modules/attn.py",
+      "sha256": "cb228c8fd4c76200e2ec266c51872107cfe7b384fdc88458b3d1c0ff101f3116",
+      "lines": 1008,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/attn.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/v4_modules/cross_layer.py",
+      "sha256": "5a01c6d3c1166c2724eac92ac5706fc838423d7ae6479785ceabfd46c81855ea",
+      "lines": 383,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/cross_layer.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/v4_modules/hc.py",
+      "sha256": "1dd2d2e880c28deaa77363f040c31b451d1aeedf4ea188ace6803798713e3701",
+      "lines": 397,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/hc.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/v4_modules/heads.py",
+      "sha256": "697439602617d53409fea41c8cc1d95b1002842823d7ccd824fb720b5111ae2e",
+      "lines": 108,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/heads.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/v4_modules/index_attn.py",
+      "sha256": "e269196c3c8d2db7041f7f1073597b8023dc4ecd58b40303ebf392171c02d462",
+      "lines": 575,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/index_attn.py"
+    },
+    {
+      "path": "deepinfer/model_executor/models/v4_modules/mlp.py",
+      "sha256": "2541bcc83b178a9e2f18b387b301d60111d6d603e18e2d31df38196b03d290dd",
+      "lines": 616,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/models/v4_modules/mlp.py"
+    },
+    {
+      "path": "deepinfer/model_executor/parallel_utils/cp.py",
+      "sha256": "beef76a3047051af30ba16d0c163fb0ca7793b86670492bd86b20e568f55af23",
+      "lines": 54,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/parallel_utils/cp.py"
+    },
+    {
+      "path": "deepinfer/model_executor/parallel_utils/parallel_state.py",
+      "sha256": "3565b2449abff4df0df2f979061a73364886c93602218b43c2f86c70f2629801",
+      "lines": 230,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/model_executor/parallel_utils/parallel_state.py"
+    },
+    {
+      "path": "deepinfer/worker/cache_engine.py",
+      "sha256": "ca3d80120fe6bc50971b180278dd575d585e1a6c7a3c2174a8a6fd6213454161",
+      "lines": 978,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/worker/cache_engine.py"
+    },
+    {
+      "path": "deepinfer/worker/worker.py",
+      "sha256": "ad32e595d9ab289dff1a7709136431ac60dae709e9e5123ae42eb0ebf7c30cbb",
+      "lines": 283,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/worker/worker.py"
+    },
+    {
+      "path": "deepinfer/worker/zos_status.py",
+      "sha256": "2acfc184627812ffb23d6b7f1b55d2261e8ff006043488594208a7e88fce1b39",
+      "lines": 40,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/deepinfer/worker/zos_status.py"
+    },
+    {
+      "path": "doc/inference_deployment_qa.md",
+      "sha256": "55d428d9958aa35ac863d7f5a2eb21528e683226784b1ac334e8068e21f2326f",
+      "lines": 312,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/doc/inference_deployment_qa.md"
+    },
+    {
+      "path": "examples/benchmark.py",
+      "sha256": "a4e0b114b4173b9d2124cdabfedc54d3dd5cd81d269d7054c48f9bac780eb9f2",
+      "lines": 588,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/examples/benchmark.py"
+    },
+    {
+      "path": "examples/sweep/run_sweep.sh",
+      "sha256": "bc15882ffef797e93b724233d71395f2b49973463572e797a2fff5148d50ca5c",
+      "lines": 90,
+      "url": "https://github.com/deepseek-ai/DeepInfer/blob/9bd9cf243fc53ef9afbf8f04d391d989117d6ab9/examples/sweep/run_sweep.sh"
+    }
+  ]
+}

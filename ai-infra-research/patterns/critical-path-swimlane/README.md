@@ -62,3 +62,7 @@ Rendered pattern · 基于 Execution Triage 的单步路径视图；Spatial Syst
 ### Continuous timeline
 
 Overview and step detail share one absolute time axis. Wheel zoom is anchored to the pointer; dragging pans. Step navigation animates to a local range and Fit returns to the full run. Critical and hovered lane connectors fade in as each step gains screen width. Device rows retain Host-observed runner_run windows.
+
+### Server outputs and slow steps
+
+Serving diamonds/ticks come from scheduler.process_step_output start timestamps inside http.completions. Times share the request origin with lane events; these are server processing events, not client delivery or token counts. Navigation dots mark Decode periods strictly above the empirical P90 (sorted index floor(0.9*(n-1))); hover compares to the same-scope median. Prefill and DI are excluded from this baseline.

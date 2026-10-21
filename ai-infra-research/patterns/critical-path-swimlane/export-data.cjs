@@ -21,7 +21,10 @@ const steps=window.TRIAGE_DATA.runs[0].steps.map(s=>{
   origin=Math.max(...spans.filter(e=>phase(e)==='simpler_run').map(end));
   return {id,...f,lanes};
 });
-const out={version:1,run:{title:r.title,sub:r.sub,workerRows:r.workerRows},steps};
+const request=events.find(e=>e.name==='http.completions');
+const outputs=events.filter(e=>e.name==='scheduler.process_step_output'&&e.ts>=request.ts&&e.ts<=end(request)).sort((a,b)=>a.ts-b.ts).map((e,i,all)=>({at:round((e.ts-request.ts)/1000),duration:round(e.dur/1000),gap:i?round((e.ts-all[i-1].ts)/1000):null}));
+assert.ok(outputs.length>0,'Request must contain server output events');
+const out={version:1,run:{title:r.title,sub:r.sub,workerRows:r.workerRows,request:{start:0,end:round(request.dur/1000),outputs}},steps};
 fs.writeFileSync(path.join(__dirname,'data.js'),'window.SWIMLANE_DATA = '+JSON.stringify(out)+';\n');
 const revision=cp.execFileSync('git',['-C',source,'rev-parse','HEAD'],{encoding:'utf8'}).trim();
 const sources=['Data/serving-strace-swimlane(2).json',...['build-data.cjs','build-home-data.cjs','data.js','home-data.js','home.js','home.css'].map(p=>modulePath+p)].map(p=>({path:p,sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(source,p))).digest('hex'),url:`https://github.com/yinyucheng0601/PyPTO3/blob/${revision}/${encodeURI(p)}`}));

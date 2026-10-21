@@ -32,14 +32,14 @@
           "path": "ai-infra-research/patterns/critical-path-swimlane/index.html",
           "url": null,
           "revision": null,
-          "sha256": "0390fa9c2a36bc98e74e542a0637ab26b24010798da5b570f851825c6e9b2ba4"
+          "sha256": "ef52b9fe734115f7bae7cb86555c591848bbc256dd5ac088828e17cc4645c3fc"
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/critical-path-swimlane/pattern.js",
           "url": null,
           "revision": null,
-          "sha256": "8833e69935df98abc57ce2044b3b68c824911866009aa50906515480cd6bd0b6"
+          "sha256": "09fbd3757e608d15903d6b6a50d9f33ef1f96b0a3c25d81d854dd3c0e8f778ce"
         },
         {
           "repository": "PyPTO3-main",
@@ -997,7 +997,7 @@
           "url": null,
           "path": "ai-infra-research/methods/llm-compute-diagrams/SKILL.md",
           "revision": null,
-          "sha256": "c20bf7b9c8fcd287033ca68c8b463e7c46b0531e88df6703f5911bd0ee93e6af"
+          "sha256": "23788c0bfc3c947271eef1c4141afa9d5c0b8c722860e55d9a2a8387c4150687"
         }
       ],
       "validation": [
