@@ -30,7 +30,16 @@
       const counts=Array(config.experts).fill(0),routes=[],gates=[];
       const weights=counts.map((_,j)=>(1+(j*13+layer)%11)*(hot&&Math.floor(j/localExperts)===3%n?12:1));
       for(let token=0;token<total;token++){
-        const chosen=weights.map((w,j)=>({j,key:-Math.log(random())/w})).sort((a,b)=>a.key-b.key).slice(0,topk).map(v=>v.j);
+        // Retain the same ordered weighted sample without allocating and sorting
+        // one object per expert for every token. Equal keys keep expert order.
+        const chosen=[],keys=[];
+        for(let j=0;j<weights.length;j++){
+          const key=-Math.log(random())/weights[j];
+          if(chosen.length===topk&&key>=keys[topk-1])continue;
+          let at=Math.min(chosen.length,topk-1);
+          while(at>0&&key<keys[at-1]){keys[at]=keys[at-1];chosen[at]=chosen[at-1];at--;}
+          keys[at]=key;chosen[at]=j;
+        }
         chosen.forEach(j=>counts[j]++);routes.push(chosen);
         const denominator=chosen.reduce((sum,j)=>sum+weights[j],0);
         gates.push(chosen.map(j=>weights[j]/denominator));

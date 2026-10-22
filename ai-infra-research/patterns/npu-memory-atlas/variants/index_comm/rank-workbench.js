@@ -6,7 +6,7 @@
  'use strict';
  const M=RankAtlasModel;
  const state={layout:'space',grain:'layer',layer:null,op:null,expert:null,graphComm:null,query:false,graphScene:false,inspect:false,showTP:true,showLayer:true,heat:false,space:null,flat:{zoom:1,x:0,y:0},hits:[],draft:null,repair:null};
- const legacy={render,transform,fitCanvas,changeZoom,setAtlasMode,switchScope,renderShardInspector,shardSpec,shardOwnership,simulationState};
+ const legacy={oom:$('ep-oom-mode').onclick,render,transform,fitCanvas,changeZoom,setAtlasMode,switchScope,renderShardInspector,shardSpec,shardOwnership,simulationState};
  const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const fmt=n=>n<.01?(n*1000).toFixed(2)+' MB':n.toFixed(2)+' GB';
  const icon=paths=>`<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round">${paths}</svg>`;
@@ -42,18 +42,14 @@
  for(const event of ['pointerup','pointercancel','lostpointercapture'])graphResize.addEventListener(event,()=>drawerDrag=null);
  graphResize.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();resizeDrawer(e.key==='Home'?360:e.key==='End'?innerWidth:query.getBoundingClientRect().width+(e.key==='ArrowLeft'?-32:32));});
  window.addEventListener('resize',()=>{if(drawerWidth!==null)resizeDrawer(drawerWidth);});
- const orbit=document.querySelector('.view-dial');orbit.id='rank-view-dial';orbit.innerHTML='<div class="view-orbit"></div><button id="cycle-view" type="button" aria-label="切换3D / 2D" data-wb-tip="切换3D / 2D"></button>'+[0,1,2,3].map(i=>`<button class="dial-port" type="button" data-slot="${i}"></button>`).join('')+'<span id="view-name" class="dial-name" aria-live="polite"></span>';
- function dial(){
-  orbit.dataset.layout=state.layout;const flat=state.layout==='flat';
-  const centerIcon=flat?'layer':'cube';
-  if($('cycle-view').dataset.icon!==centerIcon){$('cycle-view').innerHTML=icons[centerIcon];$('cycle-view').dataset.icon=centerIcon;}
-  $('cycle-view').setAttribute('aria-pressed',String(flat));
-  const names=flat?['PP Stage','Layer']:['立体视图','顶视图','正视图','侧视图'];
-  const keys=flat?['stage','layer']:[scope==='all'?'cubes':'cube','top','front','side'];
-  orbit.querySelectorAll('.dial-port').forEach((b,i)=>{b.hidden=i>=names.length;const key=keys[i]||'';if(b.dataset.icon!==key){b.innerHTML=icons[key]||'';b.dataset.icon=key;}b.setAttribute('aria-label',flat?(i?'展开 Layer':'聚合 PP Stage'):(names[i]||''));if(!flat&&i===0)b.setAttribute('aria-label',scope==='all'?'切换到单 Rank':'切换到全部 Rank');b.dataset.wbTip=!flat&&i===0?b.getAttribute('aria-label')+' · 立体视图':b.getAttribute('aria-label');b.setAttribute('aria-pressed',String(flat?(i===0?state.grain==='stage':state.grain==='layer'):viewMode===viewModes[i]));});
-  $('view-name').textContent=flat?(state.grain==='layer'?'Layer':'PP Stage'):viewMode;
- }
- const viewScope=add('div','view-scope',{'aria-label':'Cube 观察范围'});document.querySelector('.scope-switch').hidden=true;viewScope.append($('rank'));
+ const orbit=document.querySelector('.view-dial');
+ const viewControl=AtlasControls.mountDial(orbit,{center:true,onCenter:()=>setLayout(state.layout==='space'?'flat':'space'),onSelect:i=>{
+  if(state.layout==='flat'){state.grain=i===0?'stage':'layer';render();}
+  else{if(mode==='comm'&&i!==1&&i!==2)legacy.setAtlasMode('explode');viewMode=viewModes[i];epIncidentActive=false;dial();fitCanvas();}
+  tooltip.hidden=true;
+ }});
+ function dial(){const flat=state.layout==='flat';viewControl.update({flat,views:flat?['PP Stage','Layer']:['立体视图','顶视图','正视图','侧视图'],selected:flat?(state.grain==='stage'?0:1):viewModes.indexOf(viewMode),name:flat?(state.grain==='layer'?'Layer':'PP Stage'):viewMode});}
+ const viewScope=add('div','view-scope',{'aria-label':'Rank 选择'});viewScope.append($('rank'));
  syncViewDial=dial;
  function tip(e){
   const b=e.target.closest('[data-wb-tip]');if(!b)return;
@@ -72,42 +68,7 @@
  const sceneTips={'[data-mode=explode]':'显存构成 · 立体 / 展开','[data-mode=shard]':'参数分布 · 立体 / 展开','[data-mode=comm]':'Token 分发与回收 · 顶视图','#ep-oom-mode':'显存溢出 · 正视图','#graph-mode':'算子与专家 · 展开视图'};
  for(const [selector,text] of Object.entries(sceneTips))document.querySelector(selector).dataset.wbTip=text;
  for(const host of [document]){host.addEventListener('pointerover',tip);host.addEventListener('pointermove',tip);host.addEventListener('focusin',tip);host.addEventListener('pointerout',()=>tooltip.hidden=true);host.addEventListener('focusout',()=>tooltip.hidden=true);host.addEventListener('click',()=>tooltip.hidden=true);host.addEventListener('scroll',()=>tooltip.hidden=true,true);}
- $('cycle-view').onclick=()=>setLayout(state.layout==='space'?'flat':'space');
- orbit.querySelectorAll('.dial-port').forEach((b,i)=>b.onclick=()=>{if(state.layout==='flat'){state.grain=i===0?'stage':'layer';render();}else if(i===0){const next=scope==='all'?'single':'all';if(mode==='comm')setAtlasMode('explode');viewMode='2.5D';epIncidentActive=false;switchScope(next);fitCanvas();}else{if(mode==='comm'&&i!==1&&i!==2)legacy.setAtlasMode('explode');viewMode=viewModes[i];epIncidentActive=false;dial();fitCanvas();}tooltip.hidden=true;});
-
- // Single configuration ledger: all views read the same model and runtime state.
- baseGroups.splice(0,baseGroups.length,...M.groups(0,atlasConfig));
- makeRanks=()=>Array.from({length:worldSize},(_,i)=>M.rank(i,atlasConfig));
- rankGroups=id=>M.groups(id,atlasConfig);
- moduleOrder.splice(0,moduleOrder.length,5,7,0,1,2,7,8,3,4,9,10,7,6);
- ranks=makeRanks();params=ranks.map(r=>M.parameters(r.id,atlasConfig));rankReserved=params.map(n=>n*16/1e9+M.activation(atlasConfig)+BASE_RESERVE);
- function sceneMemory(id,t){
-  const mem=M.memory(id,atlasConfig,t);
-  if(mode==='comm'){
-   const event=M.moeLayer(id,atlasConfig)===null?null:epEventAt(t,id),bytes=event?.available&&event.active?event.rank.bufferBytes:0;
-   mem.communication=mem.values[5]=bytes/1e9;
-   mem.live=mem.values.slice(0,6).reduce((a,b)=>a+b,0);
-   mem.total=Math.max(mem.total,mem.live);mem.values[6]=mem.total-mem.live;mem.values[7]=Math.max(0,HBM-mem.total);mem.overflow=Math.max(0,mem.total-HBM);
-  }
-  return mem;
- }
- simulationState=(t,id=renderRank)=>ATLAS_EMBED&&atlasHostState?legacy.simulationState(t,id):sceneMemory(id,t);
- applySimulation=function(){
-  const st=simulationState(simTime),mem=sceneMemory(renderRank,simTime);
-  cats.forEach((c,i)=>{c.value=mem.values[i];});
-  if(ATLAS_EMBED&&atlasHostState){cats[1].value=st.gradient;cats[3].value=st.activation;cats[4].value=st.workspace;cats[5].value=st.communication;cats[6].value=Math.max(0,mem.total-cats.slice(0,6).reduce((a,c)=>a+c.value,0));cats[7].value=Math.max(0,HBM-cats.slice(0,7).reduce((a,c)=>a+c.value,0));}
-  cats[6].sub='进程预留；已释放空间可复用';cats[7].sub=mem.overflow?'容量不足 '+fmt(mem.overflow):'容量减去进程预留';
-  if(mode==='comm'&&viewMode==='Front'&&epIncidentActive&&renderRank===relationRank){const fault=incidentAt();cats[5].value=fault.usedBytes/1e9;const live=cats.slice(0,6).reduce((n,c)=>n+c.value,0);cats[6].value=Math.max(0,HBM-fault.freeBytes/1e9-live);cats[7].value=fault.freeBytes/1e9;}
-  $('phase').textContent=`Step ${step} · ${st.phase} · μb ${st.mb}/${MICROBATCHES}`+(st.layer===null?'':` · L${st.layer}`);
-  $('phase').dataset.wbTip=st.detail;$('timeline').value=mode==='comm'?Math.round(epEventAt(simTime,relationRank).frame.t*1000):Math.round(simTime);
-  $('play').dataset.playing=String(playing);$('play').setAttribute('aria-label',playing?'暂停':'播放');$('play').dataset.wbTip=playing?'暂停':'播放';
- };
- shardOwnership=function(index,id=renderRank){if(index<9)return legacy.shardOwnership(index,id);const r=ranks[id],[lo,hi]=M.bounds(id,atlasConfig);return {present:rankGroups(id)[index][2]>0,expert:false,layers:`L${lo}–${hi-1}`,axis:`TP${TP} 分片`,replica:`DP${r.dpIndex}`,identity:`L${lo}–${hi-1} · ${baseGroups[index][0]} · TP${r.tp}`,key:`${r.pp}:${index}:${r.tp}`};};
- shardSpec=function(index,id=renderRank){
-  if(index<9){const spec=legacy.shardSpec(index,id),[lo,hi]=M.bounds(id,atlasConfig),dense=Math.max(0,Math.min(hi,atlasConfig.dense)-lo),moe=hi-lo-dense;if(index===3||index===4)spec.copies=moe*EXPERTS/EP;if(index===8)spec.copies=moe;return spec;}
-  const owner=shardOwnership(index,id),[lo,hi]=M.bounds(id,atlasConfig),dense=Math.max(0,Math.min(hi,atlasConfig.dense)-lo),copies=index===9?(hi-lo-dense)*atlasConfig.shared:dense;
-  return {index,id,local:rankGroups(id)[index][2],owner,rule:`FFN 三矩阵 · TP${TP} 分片`,axis:'columns',parts:TP,part:ranks[id].tp,full:`3 × ${H} × ${I}`,shape:`3 × ${H} × ${I/TP}`,copies,unit:index===9?'层 × 共享专家':'Dense 层',fraction:1/TP,identity:owner.identity,replicas:M.dpReplica(atlasConfig)*atlasConfig.cp,scope:'共享 / Dense FFN 按 TP 分片，ETP 仅作用于 routed experts。'};
- };
+ const runtime=window.installRankAtlasRuntime(),sceneMemory=runtime.sceneMemory;
 
  // Extend model configuration and retain only the flat-view display toggles.
  const configHost=$('parallel-config');
@@ -126,8 +87,7 @@
   const check=M.validate(c);if(!check.ok||(!allowOverflow&&M.peak(c)>c.hbm)){reportConfig(c);return false;}
   clearGraphSelection();
   if(mode==='comm')legacy.setAtlasMode('explode');
-  atlasConfig={...c};({tp:TP,pp:PP,ep:EP,layers:L,experts:EXPERTS,ga:MICROBATCHES,hbm:HBM,node:cardsPerNode}=c);DP=M.lanes(c);worldSize=M.world(c);PEAK_ACT=M.activation(c);CYCLE_MS=c.ga*3500+3000;
-  ranks=makeRanks();params=ranks.map(r=>M.parameters(r.id,c));rankReserved=params.map(n=>n*16/1e9+PEAK_ACT+BASE_RESERVE);epEventCache.clear();selectedRank=Math.min(selectedRank,worldSize-1);relationRank=relationRank===null?null:Math.min(relationRank,worldSize-1);state.layer=null;state.op=null;state.expert=null;state.graphComm=null;state.space=null;simTime=0;lastFrame=null;
+  runtime.applyConfig(c);state.layer=null;state.op=null;state.expert=null;state.graphComm=null;state.space=null;
   $('rank').innerHTML=ranks.map(r=>`<option value="${r.id}">R${r.id}</option>`).join('');$('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="false">${esc(g[0])}</button>`).join('');
   $('timeline').max=String(CYCLE_MS);document.title=worldSize+' Rank · 内存与通信';fillConfig();setSettingsOpen(false);rebuildQuery();fitCanvas();return true;
  }
@@ -145,7 +105,7 @@
   tooltip.hidden=true;hover.hidden=true;flatHoverPoint=null;window.hideRankObjectHover?.();syncShell();dial();render();
   if(next==='flat'&&!matchMedia('(prefers-reduced-motion: reduce)').matches)canvas.animate([{transform:'translateY(14px) scale(.985)'},{transform:'translateY(0) scale(1)'}],{duration:280,easing:'ease-out'});
  }
- function syncShell(){const flat=state.layout==='flat';$('memory-legend').hidden=flat||!labels||(scope==='all'&&viewMode==='2.5D'&&mode!=='comm'&&relationRank===null);viewScope.hidden=flat;spatialSettings.hidden=flat;$('flat-display-settings').hidden=!flat;$('flat-heat').closest('label').hidden=true;document.body.dataset.layout=state.layout;document.body.dataset.query=String(state.query);stage.hidden=!flat;flatHelp.hidden=!flat;context.hidden=!flat;query.hidden=!state.query;syncSceneButtons();}
+ function syncShell(){const flat=state.layout==='flat';$('memory-legend').hidden=flat||!labels||(scope==='all'&&viewMode==='2.5D'&&mode!=='comm'&&relationRank===null);viewScope.hidden=flat||scope==='all';spatialSettings.hidden=flat;$('flat-display-settings').hidden=!flat;$('flat-heat').closest('label').hidden=true;document.body.dataset.layout=state.layout;document.body.dataset.query=String(state.query);stage.hidden=!flat;flatHelp.hidden=!flat;context.hidden=!flat;query.hidden=!state.query;syncSceneButtons();}
  function syncSceneButtons(){
   const oom=mode==='comm'&&viewMode==='Front'&&epIncidentActive;
   graphButton.setAttribute('aria-pressed',String(state.query));
@@ -162,7 +122,23 @@
  }
  setAtlasMode=function(next){if(next==='comm'){openCommunication();return;}if(state.layout==='flat')setLayout('space');legacy.setAtlasMode(next);syncShell();};
  document.querySelectorAll('[data-mode]').forEach(b=>{if(b.dataset.mode==='comm'){b.textContent='通信 ↗';b.title='打开独立通信 demo';}b.onclick=()=>setAtlasMode(b.dataset.mode);});
- $('ep-oom-mode').onclick=()=>openCommunication(true);
+ $('ep-oom-mode').onclick=()=>{
+  const entryStart=window.performance?.now();
+  if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}
+  if(state.layout==='flat')setLayout('space');
+  state.query=false;state.inspect=false;shardInfoOpen=false;clearGraphSelection();
+  // Enter the fault scene atomically; never render the intermediate EP route scene.
+  if(mode!=='comm')commSaved={mode,scope,viewMode,selectedRank,relationRank,simTime,playing,zoom,pan:[...pan],relation:$('relations').value};
+  const candidate=Math.min(23,worldSize-1);
+  const target=M.moeLayer(candidate,atlasConfig)===null?ranks.find(r=>M.moeLayer(r.id,atlasConfig)!==null)?.id:candidate;
+  if(target===undefined)return;
+  mode='comm';scope='all';viewMode='Front';selectedRank=relationRank=target;
+  epIncidentActive=true;epRouteStyle='arc';commCamera=null;zoom=1;pan=[0,0];
+  simTime=ranks[target].pp*1200/PP;playing=true;lastFrame=null;
+  $('relations').value='ep';$('timeline').max='1000';$('timeline').setAttribute('aria-label','通信事件进度');
+  syncShell();dial();render();
+  if(entryStart!==undefined)$('ep-oom-mode').dataset.entryMs=(window.performance.now()-entryStart).toFixed(1);
+ };
  switchScope=function(next){if(state.layout==='flat'){scope=next;render();}else legacy.switchScope(next);};$('single').onclick=()=>switchScope('single');$('all').onclick=()=>switchScope('all');
  transform=function(){if(state.layout==='flat')drawFlat();else legacy.transform();};
  changeZoom=function(factor){if(state.layout==='flat'){zoomFlat(factor);}else legacy.changeZoom(factor);};
@@ -484,13 +460,13 @@
   }else {graphRelation=null;state.graphComm=null;graphContext='';}
   showGraphRanks.hidden=!(state.query&&graphRelation&&scope==='single');
   syncShell();
-  if(state.layout==='space'){legacy.render();if(state.inspect)renderInspector();syncSceneButtons();dial();normalizeTips();return;}
+  if(state.layout==='space'){legacy.render();if(state.inspect)renderInspector();syncSceneButtons();dial();window.AtlasControls?.syncScope();normalizeTips();return;}
   setRankData(selectedRank);applySimulation();drawFlat();renderInspector();
   const r=ranks[selectedRank];context.innerHTML=`<strong>${state.heat?'Rank · HBM':'Rank × '+(state.grain==='layer'?'Layer':'PP Stage')}</strong>${worldSize} Rank · ${L} Layers<br>R${r.id}${state.layer===null?'':` × L${state.layer}`}`;
   $('ep-navigation').innerHTML='';$('ep-token-legend').hidden=true;$('ep-incident').hidden=true;document.body.dataset.epMode='false';$('ep-stops').classList.add('hidden');$('ep-markers').hidden=true;$('ep-oom-mode').setAttribute('aria-pressed','false');
   $('relations').classList.add('hidden');$('tensor').classList.toggle('hidden',mode!=='shard');$('single').setAttribute('aria-pressed',String(scope==='single'));$('all').setAttribute('aria-pressed',String(scope==='all'));$('rank').classList.toggle('hidden',scope==='all');$('rank').value=selectedRank;$('labels').setAttribute('aria-pressed',String(labels));document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
   const legend=$('memory-legend');legend.hidden=true;const indices=state.heat?[0,2,1,3,4,5,6]:mode==='shard'?[0,2]:state.grain==='layer'?[0,1,2,3,4,5,6,7]:[0,1,2];const markup=indices.map(i=>`<button type="button" data-memory-category="${i}" aria-pressed="${selectedMemoryCategory===i}"><i style="background:${cats[i].color}"></i>${cats[i].name}</button>`).join('');if(legend.innerHTML!==markup)legend.innerHTML=markup;
-  syncTensorMenu();$('tensor').classList.toggle('hidden',mode!=='shard');syncSceneButtons();dial();
+  syncTensorMenu();$('tensor').classList.toggle('hidden',mode!=='shard');syncSceneButtons();dial();window.AtlasControls?.syncScope();
  };
  // New parameter modules join the existing tensor menu, with its keyboard handling.
  $('tensor-list').innerHTML=baseGroups.map((g,i)=>`<button role="option" tabindex="-1" data-index="${i}" aria-selected="false">${esc(g[0])}</button>`).join('');

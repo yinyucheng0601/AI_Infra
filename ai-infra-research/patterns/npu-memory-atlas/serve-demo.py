@@ -7,7 +7,11 @@ import mimetypes
 ROOT = Path(__file__).resolve().parent
 FILES = {
     '/' + name: ROOT / name for name in (
-        'variants/index_comm.html', 'variants/index_comm/ep-model.js',
+        'variants/index_comm.html', 'variants/index_communication.html', 'variants/liquid-glass.html',
+        'variants/physical-rank-view.js', 'variants/atlas-controls.js', 'variants/atlas-controls.css', 'variants/atlas-runtime.js',
+        'variants/communication-controls.js', 'variants/liquid-glass-controls.js',
+        'variants/index_comm/physical-layout.js', 'variants/index_comm/approved-glyphs.js',
+        'variants/index_comm/compute-graph.js', 'variants/index_comm/ep-model.js',
         'variants/index_comm/rank-model.js', 'variants/index_comm/rank-workbench.js',
         'variants/index_comm/rank-workbench.css', 'npu-memory-atlas-embed.js',
     )

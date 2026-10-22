@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>128 Rank · 显存与排布</title><script src="index_comm/physical-layout.js?v=d7ef3b8a42de"></script><script src="index_comm/ep-model.js?v=393bbe969cc8"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>128 Rank · 显存与排布</title><script src="index_comm/physical-layout.js?v=8b64e6268dda"></script><script src="index_comm/ep-model.js?v=06689a880884"></script><script src="index_comm/rank-model.js?v=68854ed0b2b0"></script><style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;color:#e8e8e8;font:14px/1.5 Arial,"PingFang SC",sans-serif}svg{display:block;width:100%;height:100%;touch-action:none}svg text{font-variant-numeric:tabular-nums}svg text{font-family:Arial,"PingFang SC",sans-serif}.bar{position:fixed;bottom:28px;left:28px;max-width:calc(100vw - 56px);display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:7px;background:#202020;border:1px solid #505050;border-radius:4px}button,select{font:inherit;color:#b0b0b0;background:transparent;border:0;border-radius:2px;padding:9px 12px;cursor:pointer;min-height:38px}button:hover{background:#333;color:#fff}button[aria-pressed=true]{background:#e8e8e8;color:#111}button:focus-visible,select:focus-visible{outline:2px solid #fff;outline-offset:2px}select{max-width:200px;background:#202020;color:#e8e8e8}.sep{height:22px;width:1px;background:#505050;margin:0 6px}.readout{padding:0 12px;color:#e8e8e8;font-family:ui-monospace,monospace;font-size:13px}.hidden{display:none}#scene{cursor:grab}#scene:active{cursor:grabbing}@media(max-width:600px){.bar{bottom:14px;left:14px;max-width:calc(100vw - 28px);gap:0;padding:4px}button,select{padding:7px 9px;font-size:13px}.readout{font-size:12px;padding:0 8px}.sep{margin:0 3px}}
 .transport{flex-basis:100%;display:flex;align-items:center;gap:8px;border-top:1px solid #383838;padding-top:6px;margin-top:3px;flex-wrap:wrap}.transport input{width:210px;accent-color:#e8e8e8;cursor:pointer}.status{min-width:260px;color:#e8e8e8;font-size:13px;font-family:ui-monospace,monospace}.simtag{font-size:12px;color:#ababab;padding:0 8px}.bar{max-width:min(1100px,calc(100vw - 56px))}.transport button{min-width:48px}.transport select{max-width:80px}.transport input:focus-visible{outline:2px solid white}@media(max-width:600px){.transport input{width:140px}.status{min-width:220px}.bar{max-width:calc(100vw - 28px)}}
 .bar.scope-switch{top:28px;bottom:auto;left:50%;transform:translateX(-50%);flex-wrap:nowrap;max-width:calc(100vw - 28px)}@media(max-width:600px){.bar.scope-switch{top:14px}}
@@ -309,7 +309,7 @@ body[data-ep-mode="true"] #ep-playback #ep-stops button{min-height:14px;height:1
 /* End dark surface palette override. */
 [data-shard-detail]:focus-visible{outline:1px solid currentColor;outline-offset:3px}
 .layout-tabs{display:flex;gap:4px;padding:4px;background:var(--input-fill);border-radius:12px}.rank-settings-panel .layout-tabs button{flex:1;min-height:36px;border:0;border-radius:9px;background:transparent;color:var(--ui-muted);font:inherit;cursor:pointer}.rank-settings-panel .layout-tabs button[aria-selected="true"]{background:var(--ui-text);color:#181818}.rank-settings-panel .layout-tabs button:hover:not([aria-selected="true"]){background:var(--ui-hover)}.rank-settings-panel .layout-tabs button:focus-visible{outline:2px solid var(--ui-text);outline-offset:2px}:root[data-theme="light"] .rank-settings-panel .layout-tabs button[aria-selected="true"]{color:#fff}.physical-group-frame{fill:none;stroke:var(--ui-muted);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.55;pointer-events:none}
-</style><link rel="stylesheet" href="index_comm/rank-workbench.css?v=a223914cd194"></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
+</style><link rel="stylesheet" href="index_comm/rank-workbench.css?v=8a903e050bff"><link rel="stylesheet" href="atlas-controls.css?v=6c5577fffa48"><script src="atlas-controls.js?v=9e57fd6d6699"></script></head><body><details id="ep-token-legend" class="ep-token-legend" hidden><summary><span>Token · Expert</span><span class="info-icon" aria-hidden="true">i</span></summary><div class="legend-panel">本地专家与 token 分配</div></details><div class="view-dial" aria-label="Rank 视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Top" title="点击轮切：2.5D → Top → Front">
 <svg viewBox="0 0 148 148" aria-hidden="true">
 <path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
@@ -1416,7 +1416,7 @@ function tick(now){if(lastFrame!==null&&playing&&!document.hidden){
  }else{simTime+=(now-lastFrame)*(window.rankAtlasPlaybackRate?.()??1);while(simTime>=CYCLE_MS){simTime-=CYCLE_MS;step++;}}
 }lastFrame=now;if(playing&&now-lastPaint>32){render();lastPaint=now;}requestAnimationFrame(tick)}
 if(!window.RankAtlasModel){render();if(!ATLAS_EMBED)requestAnimationFrame(tick);}
-</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="index_comm/rank-workbench.js?v=4ee3fec74ce2"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
+</script><script src="index_comm/approved-glyphs.js?v=5514ace3b11f"></script><script src="index_comm/compute-graph.js?v=4e6d43206d18"></script><script src="physical-rank-view.js?v=ba1c3d3fe832"></script><script src="atlas-runtime.js?v=2236b740f14f"></script><script src="index_comm/rank-workbench.js?v=b4710b8b4a4c"></script><script src="../npu-memory-atlas-embed.js?v=64181fcfe92b"></script><script>
 // Readability profiles: subtle refraction on controls, opaque frost on reading panels.
 // Keep the third-party implementation scoped and usable directly over file://.
 (() => {
@@ -1687,21 +1687,4 @@ window.addEventListener('pagehide',()=>{
 },{once:true});
 })();
 
-</script><script>
-(() => {
- const root=document.documentElement,button=document.getElementById('theme-toggle');
- function syncThemeButton(){
-  const light=root.dataset.theme==='light',label=light?'切换到深色模式':'切换到浅色模式';
-  button.setAttribute('aria-pressed',String(light));
-  button.setAttribute('aria-label',label);
-  button.title=label;
- }
- button.addEventListener('click',()=>{
-  root.dataset.theme=root.dataset.theme==='light'?'dark':'light';
-  try{localStorage.setItem('npu-memory-atlas-theme',root.dataset.theme);}catch{}
-  syncThemeButton();
-  if(typeof render==='function')render();
- });
- syncThemeButton();
-})();
-</script></body></html>
+</script><script>AtlasControls.mountTheme();</script><script>AtlasControls.mountScope();</script></body></html>

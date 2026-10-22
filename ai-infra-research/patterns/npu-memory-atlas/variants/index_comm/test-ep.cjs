@@ -41,6 +41,14 @@ for(const hot of [false,true])for(const layer of [0,7,47])for(const microbatch o
   assert.equal(finished.ranks.reduce((a,r)=>a+r.received,0),e.networkTokens);
   if(hot){const input=M.frame(e,.44).ranks.map(r=>r.expertTokens);assert(input[3]>input[0]*2);}
 }
+// An independent full-sort reference guards the optimized Top-K router's identity.
+{
+ const layer=7,edp=1,c={...M.baseline,seq:64};let seed=12345+layer*101+edp*17;
+ const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return (seed+.5)/4294967296;};
+ const weights=Array.from({length:c.experts},(_,j)=>1+(j*13+layer)%11),expected=[];
+ for(let token=0;token<c.seq;token++)expected.push(weights.map((w,j)=>({j,key:-Math.log(random())/w})).sort((a,b)=>a.key-b.key).slice(0,c.topk).map(v=>v.j));
+ assert.deepEqual(M.event({layer,edp,config:c}).assignments[0],expected,'Top-K selection preserves the full-sort router order');
+}
 // Compile every inline script; verify external resources without fetching anything.
 const htmlPath=path.join(__dirname,'../index_comm.html'),html=fs.readFileSync(htmlPath,'utf8');
 for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){

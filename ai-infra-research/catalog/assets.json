@@ -2,6 +2,83 @@
   "version": 1,
   "assets": [
     {
+      "id": "csa-swimlane",
+      "title": "Swimlane View · 多核执行泳道",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "以多 Rank 核心泳道查看执行时长、任务依赖与跨核差异，支持语义染色和本地 Trace JSON。",
+      "designValue": "通过稀疏线条、语义色、可展开行高和聚焦检查，在全局执行结构与任务细节之间切换。",
+      "outline": [
+        "多 Rank AIC / AIV 执行泳道",
+        "Compact / Expand 行高与选中位置保持",
+        "Semantic / Diagnostic 配色与跨核耗时对比",
+        "任务依赖连线与 Inspector",
+        "时间范围导航、缩放与本地 JSON 导入"
+      ],
+      "domains": [
+        "AI Infra",
+        "Profiling",
+        "NPU"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/csa-swimlane/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/csa-swimlane/index.html",
+          "url": null,
+          "revision": null,
+          "sha256": "3f0be081e98f9c69ad39bfd5728a7b2b7605285246bd188b5cf4194a2cf66858"
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/csa-swimlane/view.js",
+          "url": null,
+          "revision": null,
+          "sha256": "4212b57121037e1e274eaa802cb37de25de4d8c5e3ee1ab14effa9cffc03b4dc"
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/csa-swimlane/analysis.js",
+          "url": null,
+          "revision": null,
+          "sha256": "b77c2c97a5cc9aed23c93d9c5ae73bbe33d7674b5296e4859a8c443991bd7d21"
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/csa-swimlane/import.js",
+          "url": null,
+          "revision": null,
+          "sha256": "6cc36e61d1cd04759616571a36b9a02f6f136b2d40cc25f647ddf1bc2f87c011"
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/csa-swimlane/data.js",
+          "url": null,
+          "revision": null,
+          "sha256": "0d69458d185687268b95b45d1b736ff0b79a496d1c9b2b2e97d669a8739243a6"
+        }
+      ],
+      "validation": [
+        "2026-10-22：用户多轮截图评审后要求收录 Library。",
+        "语法、默认数据与诊断阈值检查通过；本地 JSON 导入未完成浏览器验证。"
+      ],
+      "related": [
+        "critical-path-swimlane"
+      ],
+      "reviewedAt": "2026-10-22",
+      "author": "Yucheng"
+    },
+    {
       "id": "deepinfer-performance-atlas",
       "title": "DeepInfer · deepseek最新开源高性能推理系统",
       "type": "knowledge",
@@ -763,7 +840,7 @@
           "url": null,
           "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html",
           "revision": null,
-          "sha256": "505da4d0988181ff59d1b4ed8fa4da8d9920bfba60143e38302023a663ba8434"
+          "sha256": "a39927bbf2481bb2fee08a789c59ec9d76f5d5a7eeb34da2b018367c226946f6"
         }
       ],
       "validation": [

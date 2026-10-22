@@ -1,0 +1,140 @@
+/* Common chrome. Components are mounted by each demo as needed. */
+[hidden]{display:none!important}
+/* Theme overrides preserve category hues while adapting neutral surfaces. */
+#theme-toggle .moon-icon{display:none}
+:root[data-theme="light"] #theme-toggle .sun-icon{display:none}
+:root[data-theme="light"] #theme-toggle .moon-icon{display:block}
+:root[data-theme="light"]{color-scheme:light;--ui-fill:rgb(255 255 255 / 86%);--ui-border:rgb(0 0 0 / 16%);--ui-hover:rgb(0 0 0 / 7%);--ui-text:#25282d;--ui-muted:#555b64}
+:root[data-theme="light"],:root[data-theme="light"] body{background:#f3f4f6;color:var(--ui-text)}
+:root[data-theme="light"] .bar,:root[data-theme="light"] .rank-settings>button{background:rgb(255 255 255 / 78%);border-color:var(--ui-border);box-shadow:inset 0 1px 0 #fff,0 8px 24px rgb(0 0 0 / 8%)}
+:root[data-theme="light"] :is(.rank-settings-panel,.shard-inspector,#tensor-list){background:rgb(255 255 255 / 96%);border-color:var(--ui-border);color:var(--ui-text);box-shadow:0 12px 36px rgb(0 0 0 / 12%)}
+:root[data-theme="light"] :is(.bar button:not([aria-pressed=true]),.bar select,.bar .readout,.bar .status){color:var(--ui-text);text-shadow:none}
+:root[data-theme="light"] :is(button:hover,select:hover,.rank-settings>button:hover,.rank-settings>button[aria-expanded=true]){background-color:var(--ui-hover);color:var(--ui-text)}
+:root[data-theme="light"] :is(button[aria-pressed=true],button[aria-pressed=true]:hover,#tensor-list [aria-selected=true],#apply-config){background:#292d33;color:#fff;border-color:#292d33;text-shadow:none}
+:root[data-theme="light"] #apply-config:hover{background:#414750}
+:root[data-theme="light"] :is(button,select,input):focus-visible{outline-color:#303944}
+:root[data-theme="light"] :is(.rank-settings-panel label,#cfg-world,.shard-inspector a,#tensor-list [role=option]:not([aria-selected=true])){color:var(--ui-text)}
+:root[data-theme="light"] :is(.rank-settings-panel p,.rank-settings-panel #config,.rank-spacing legend,.shard-inspector p,.shard-inspector .eyebrow,.shard-inspector th,.shard-inspector td small,.memory-legend,.simtag){color:var(--ui-muted)}
+:root[data-theme="light"] :is(.rank-settings-panel select,.rank-spacing input,select option){background-color:#fff;color:var(--ui-text);border-color:var(--ui-border)}
+:root[data-theme="light"] select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='%23555b64' stroke-width='1.3'/%3E%3C/svg%3E")}
+:root[data-theme="light"] #config-status{background:#edf0f3;color:#353c45}
+:root[data-theme="light"] #config-status[data-state="error"]{background:#fff0ec;color:#992e20;border-color:#ce8274}
+:root[data-theme="light"] .transport input[type=range]::-webkit-slider-runnable-track{background:#b8bdc5}
+:root[data-theme="light"] .transport input[type=range]::-moz-range-track{background:#b8bdc5}
+:root[data-theme="light"] .transport input[type=range]::-webkit-slider-thumb{background:#303944}
+:root[data-theme="light"] .transport input[type=range]::-moz-range-thumb{background:#303944}
+:root[data-theme="light"] .dial-name{color:#353c45}
+:root[data-theme="light"] .dial-label{fill:#606875}
+:root[data-theme="light"] .dial-marker{fill:#353c45}
+:root[data-theme="light"] .cube-face{stroke:none}
+:root[data-theme="light"] .view-dial button:hover .dial-ring{stroke:#25282d}
+:root[data-theme="light"] #scene :is(.memory-label text,.rank-external-label text){fill:#25282d}
+:root[data-theme="light"] #scene :is(.memory-label tspan[fill],.rank-external-label text[fill],text[fill="#aaa"]){fill:#555b64}
+
+/* Borderless controls and theme-aware SVG geometry. */
+:root{--input-fill:rgb(255 255 255 / 7%);--input-hover:rgb(255 255 255 / 11%)}
+:root[data-theme="light"]{--input-fill:rgb(35 45 60 / 5%);--input-hover:rgb(35 45 60 / 9%)}
+:root input,:root[data-theme] .rank-spacing input,:root[data-theme] .rank-settings-panel select{border:0;box-shadow:none}
+:root[data-theme] .rank-spacing input,:root[data-theme] .rank-settings-panel select{background-color:var(--input-fill)}
+:root[data-theme] .rank-spacing input:hover,:root[data-theme] .rank-settings-panel select:hover{background-color:var(--input-hover)}
+:root[data-theme="light"] :is(.bar,.rank-settings>button,.rank-settings-panel,.shard-inspector,#tensor-list,button,select){border-color:transparent}
+:root[data-theme="light"] :is(.bar,.rank-settings>button){box-shadow:0 8px 24px rgb(0 0 0 / 7%)}
+:root[data-theme="light"] :is(.bar button[aria-pressed=true],.bar button[aria-pressed=true]:hover,.rank-settings>button[aria-pressed=true],.rank-settings>button[aria-expanded=true],#tensor-list [aria-selected=true],.memory-legend button[aria-pressed=true]){background:rgb(35 45 60 / 10%);color:var(--ui-text);border-color:transparent;box-shadow:none}
+:root[data-theme="light"] #theme-toggle{background:rgb(255 255 255 / 78%);color:var(--ui-text)}
+:root[data-theme="light"] #theme-toggle:hover{background:rgb(35 45 60 / 8%)}
+:root[data-theme="light"] #dial-cube .cube-face:nth-child(1){fill:#eee}
+:root[data-theme="light"] #dial-cube .cube-face:nth-child(2){fill:#d9d9d9}
+:root[data-theme="light"] #dial-cube .cube-face:nth-child(3){fill:#e2e2e2}
+:root[data-theme="light"] #scene .rank-back-faces{fill:#fff;fill-opacity:.8;filter:drop-shadow(0 8px 12px rgb(35 45 60 / 10%))}
+.rank-outer-border{display:none;pointer-events:none}
+:root[data-theme="light"] #scene .rank-outer-border{display:block;fill:none;stroke:#25282d;stroke-linejoin:round}
+:root[data-theme="light"] #scene :is(.rank-outline,.rank-back-edge){stroke:#fff}
+:root[data-theme="light"] #scene .rank-wall-label text{fill:#25282d}
+:root[data-theme="light"] #scene .rank-wall-label text[fill]{fill:#555b64}
+:root[data-theme="light"] #scene .surface-value text{fill:#20262d}
+:root[data-theme="light"] #scene .memory-neutral{--face-left:#bdc5cf;--face-right:#d3dae2;--face-top:#c9d1db}
+:root[data-theme="light"] #scene .memory-neutral-pool{--face-left:#d5dce4;--face-right:#e7ecf1;--face-top:#e0e6ed}
+:root[data-theme="light"] #scene .memory-neutral-workspace{--face-left:#d3dae1;--face-right:#e8ecf0;--face-top:#e0e5eb}
+:root[data-theme="light"] #scene .memory-neutral-communication{--face-left:#95a2b2;--face-right:#afbac7;--face-top:#a3afbe}
+:root[data-theme="light"] #scene .memory-neutral polygon:nth-child(1){fill:var(--face-left)}
+:root[data-theme="light"] #scene .memory-neutral polygon:nth-child(2){fill:var(--face-right)}
+:root[data-theme="light"] #scene .memory-neutral polygon:nth-child(3){fill:var(--face-top)}
+:root[data-theme="light"] #scene .rank-context-solid polygon:nth-child(1){fill:#d2d8df}
+:root[data-theme="light"] #scene .rank-context-solid polygon:nth-child(2){fill:#dce2e8}
+:root[data-theme="light"] #scene .rank-context-solid polygon:nth-child(3){fill:#e6ebf0}
+/* Match foreground 25% opacity over the canvas, but keep rear ranks opaque for occlusion. */
+:root[data-theme="light"] #scene .rank-context-solid[data-context-fill="solid"] polygon:nth-child(1){fill:#ebedf0}
+:root[data-theme="light"] #scene .rank-context-solid[data-context-fill="solid"] polygon:nth-child(2){fill:#edf0f2}
+:root[data-theme="light"] #scene .rank-context-solid[data-context-fill="solid"] polygon:nth-child(3){fill:#f0f2f4}
+:root[data-theme="light"] #scene :is([data-parallel-group],[data-rack-tag]) rect{fill:#f8f9fb}
+:root[data-theme="light"] #scene [data-rack-tag] text{fill:#555b64}
+:root[data-theme="light"] #scene [data-parallel-group="tp"] text{fill:#5955ac}
+:root[data-theme="light"] #scene [data-parallel-group="pp"] text{fill:#9146a7}
+:root[data-theme="light"] #scene [data-parallel-group="dp"] text{fill:#4b731d}
+:root[data-theme="light"] #scene [data-parallel-group="ep"] text{fill:#22667c}
+:root[data-theme="light"] #scene [data-parallel-group="edp"] text{fill:#555b64}
+
+
+:root{--wb-bg:#000;--wb-fg:#eee;--wb-muted:#aaa;--wb-line:#666;--wb-soft:#242424}
+:root[data-theme=light]{--wb-bg:#fff;--wb-fg:#222;--wb-muted:#666;--wb-line:#999;--wb-soft:#eee}
+.view-dial{width:200px;top:92px;right:28px;height:228px;z-index:2}
+.view-dial .view-orbit{position:absolute;inset:20px 20px 48px;border:1px solid var(--wb-line);border-radius:50%;pointer-events:none}
+.view-dial #cycle-view{position:absolute;left:60px;top:60px;width:80px;height:80px;padding:14px;border-radius:50%;background:transparent!important;color:var(--wb-fg)!important}
+.view-dial #cycle-view:hover{background:var(--wb-soft)!important}
+.view-dial #cycle-view>svg{width:100%;height:100%;stroke-width:1.5px}
+.view-dial #cycle-view>svg *{vector-effect:non-scaling-stroke}
+.view-dial .dial-port{position:absolute;display:grid;place-items:center;width:42px;height:42px;min-width:0;min-height:0;padding:9px;border-radius:50%;background:var(--wb-bg)!important;color:var(--wb-muted);border:0}
+.view-dial .dial-port svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.3}
+.view-dial .dial-port{color:var(--wb-muted)!important}
+:root #rank-view-dial button.dial-port[aria-pressed=true]{background:#fff!important;color:#000!important;outline:none;box-shadow:none}
+.view-dial .dial-port:hover{background:var(--wb-soft)!important;color:var(--wb-fg)}
+.view-dial .dial-port[data-slot="0"]{left:-1px;top:79px}.view-dial .dial-port[data-slot="1"]{left:79px;top:-1px}.view-dial .dial-port[data-slot="2"]{left:79px;top:159px}.view-dial .dial-port[data-slot="3"]{left:159px;top:79px}
+.view-dial .dial-name{position:absolute;top:248px;left:0;right:0;margin:0;font-size:11px;color:var(--wb-muted);letter-spacing:1px}
+.view-dial[data-layout=flat] .view-orbit{border-style:dashed}
+#rank-view-dial .view-orbit{background:rgb(45 45 45 / 22%);border:1px solid rgb(255 255 255 / 14%);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;filter:none}
+#rank-view-dial .dial-name{left:52px;right:52px;top:207px;padding:8px 0;border-radius:999px;background:rgb(45 45 45 / 26%);color:var(--wb-fg);box-shadow:inset 0 1px 0 rgb(255 255 255 / 12%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#rank-view-dial #cycle-view{background:rgb(0 0 0 / 76%)!important}
+#rank-view-dial .dial-port{background:rgb(0 0 0 / 76%)!important}
+
+:root[data-theme=light] #rank-view-dial :is(.view-orbit,.dial-name){background:rgb(255 255 255 / 32%);border-color:rgb(255 255 255 / 55%)}
+:root[data-theme=light] #rank-view-dial #cycle-view,:root[data-theme=light] #rank-view-dial .dial-port{background:rgb(255 255 255 / 76%)!important}
+
+#rank-view-dial[data-center=false] .view-orbit{background:transparent;border-color:var(--ui-border)}
+:root #rank-view-dial button.dial-port[aria-pressed=true]{background:#fff!important;color:#000!important;outline:none;box-shadow:none}
+body .bar.scope-switch{position:fixed;top:28px;left:50%!important;bottom:auto;transform:translateX(-50%)!important;z-index:3;display:flex;flex-wrap:nowrap}
+.scope-switch [role=tab][aria-selected=true]{background:var(--ui-text);color:#181818}
+:root[data-theme=light] .scope-switch [role=tab][aria-selected=true]{background:rgb(35 45 60 / 10%);color:var(--ui-text)}
+:root .rank-settings-panel :is(input[type=number],input[type=search],select),:root #graph-query :is(input,select){min-height:38px;padding:8px 10px;border:0;border-radius:8px;background:var(--input-fill,rgb(255 255 255 / 7%));color:var(--ui-text);font:inherit;box-shadow:none;font-variant-numeric:tabular-nums}
+:root .rank-settings-panel :is(input[type=number],input[type=search],select):hover,:root #graph-query :is(input,select):hover{background:var(--input-hover,rgb(255 255 255 / 11%))}
+:root .rank-settings-panel :is(input,select):focus-visible,:root #graph-query :is(input,select):focus-visible{outline:2px solid var(--ui-text);outline-offset:2px}
+body .memory-legend{position:fixed;top:50%;bottom:auto;left:28px;right:auto;max-width:260px;transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:10px;pointer-events:auto;font-size:11px;max-height:70vh;overflow:auto}
+.memory-legend button{display:flex;align-items:center;gap:9px;padding:6px 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:inherit;font:inherit;cursor:pointer;text-align:left}
+.memory-legend button:hover{background:var(--ui-hover);color:var(--ui-text)}
+.memory-legend button[aria-pressed=true]{background:var(--input-hover);border-color:var(--ui-border);color:var(--ui-text);box-shadow:none}
+.memory-legend i{width:12px;height:12px;display:inline-block;flex-shrink:0}
+#ep-dock{position:fixed;bottom:28px;left:28px;right:28px;display:flex;align-items:center;justify-content:center;gap:16px;z-index:4}
+#ep-dock>.bar{position:relative;left:auto;right:auto;top:auto;bottom:auto;transform:none;margin:0;flex-wrap:nowrap;max-width:none;flex-shrink:0}
+#ep-dock>#ep-playback{flex:1;min-width:200px;max-width:780px;width:auto}
+#ep-dock .zoom-controls{margin-left:0}
+@media(max-width:760px){#ep-dock{left:14px;right:14px;bottom:14px;gap:8px;overflow-x:auto;justify-content:flex-start}#ep-dock>#ep-playback{min-width:240px}#ep-dock>.bar{flex-shrink:0}}
+#ep-dock{align-items:center;justify-content:space-between}
+#ep-dock>nav[aria-label="视图操作"]{flex:0 0 auto;width:max-content}
+#ep-dock #tensor{width:auto;max-width:none}
+#ep-dock>#ep-playback{margin-inline:auto}
+#ep-dock>nav.bar{position:relative!important;inset:auto!important;transform:none!important;height:54px;min-height:54px;border-radius:999px!important;padding:8px;align-self:center}
+#ep-dock>#ep-playback{padding:8px 14px}
+@media(max-width:900px){.view-dial{transform:scale(.75);transform-origin:top right;right:18px;top:90px}}
+@media(max-width:600px){body .bar.scope-switch{top:14px!important}.view-dial{transform:scale(.64);transform-origin:top right;top:86px;right:14px}body .rank-settings{top:14px;right:14px}body .memory-legend{left:14px;font-size:10px;max-width:160px;gap:4px}.rank-settings-panel{max-height:calc(100dvh - 95px)}}
+@media(max-width:760px){body #ep-dock{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;overflow:visible;left:14px;right:14px;bottom:14px;max-width:calc(100vw - 28px)}#ep-dock>nav[aria-label="视图操作"]{grid-column:1/-1;width:100%;max-width:100%!important;justify-content:flex-start;overflow-x:auto}#ep-dock>#ep-playback{min-width:0;max-width:none;width:100%;margin:0;padding:6px}#ep-dock>.zoom-controls{padding:4px!important;gap:0;max-width:164px}#ep-dock .zoom-controls button{padding:5px;min-width:30px}#ep-dock #zoom{min-width:40px;font-size:10px;padding:0 3px}#ep-dock .transport .status{display:none}#ep-dock .transport{gap:0}#ep-playback .transport .icon-button{min-width:28px;width:28px;padding:5px}}
+
+#ep-apply-physical{width:100%;min-height:38px;margin-top:16px;border:0;border-radius:10px;background:var(--ui-text);color:#181818;font:inherit;cursor:pointer}
+:root[data-theme=light] #ep-apply-physical{color:#fff}
+
+/* Tabs use aria-selected, so the legacy aria-pressed glass rule must not add text shadows. */
+body .bar.scope-switch [role=tab]{text-shadow:none}
+
+body .communication-return{position:fixed;top:28px;left:28px;right:auto;bottom:auto;z-index:10;padding:5px 8px}
+.communication-return a{display:flex;align-items:center;min-height:36px;padding:6px 12px;color:var(--ui-text);font:inherit;text-decoration:none;border-radius:999px;text-shadow:none}
+.communication-return a:hover{background:var(--ui-hover)}
+.communication-return a:focus-visible{outline:2px solid var(--ui-text);outline-offset:2px}
+@media(max-width:600px){body .communication-return{top:14px;left:14px}}

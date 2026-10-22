@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'csa-swimlane':{src:'web/media/csa-swimlane-cover.png',alt:'Swimlane View 多 Rank 执行泳道'},
     'critical-path-swimlane':{src:'__CRITICAL_PATH_SWIMLANE_COVER__',alt:'Critical Path Swimlane：Host 与 Device 共享时间轴及最晚进入路径'},
     'pass-observability-guide':{src:'__PASS_OBSERVABILITY_COVER__',alt:'六环节编译流程、观测对象与视图关系总览'},
     'memory-inspector':{src:'__MEMORY_INSPECTOR_COVER__',alt:'Memory Inspector：函数内存地址与静态生命周期图'},
