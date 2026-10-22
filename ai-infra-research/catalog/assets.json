@@ -135,7 +135,7 @@
     },
     {
       "id": "critical-path-swimlane",
-      "title": "Critical Path Swimlane · 关键路径泳道",
+      "title": "Inference Request · 推理请求",
       "form": "交互 Pattern",
       "type": "pattern",
       "domains": [
@@ -143,10 +143,10 @@
         "Serving",
         "Profiling"
       ],
-      "summary": "以三层共享时间轴呈现完整请求与单步执行，通过行列聚焦和 lane 分析定位持续偏斜。",
+      "summary": "沿共享时间轴查看一次推理请求，从 Prefill 到 Decode 连续缩放，联动检查 Host 与 Device 的执行关系。",
       "designValue": "保留真实时长、并行与间隙，以稀疏标签和渐进检查替代满屏任务标签。",
       "outline": [
-        "All Steps 总览与单步泳道",
+        "完整请求时间轴与连续缩放",
         "Serving / Host Worker / 16 lane 调用窗",
         "行列交叉定位、固定 lane 与专项分析",
         "稀疏表头、阶段导航与缩放 Fit",
