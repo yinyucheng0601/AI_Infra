@@ -15,7 +15,8 @@ window.installRankAtlasRuntime=function(){
   if(memoryCache.has(id))return memoryCache.get(id);
   const mem=M.memory(id,atlasConfig,t);
   if(mode==='comm'){
-   const event=(epIncidentActive&&viewMode==='Front'&&id!==relationRank)||M.moeLayer(id,atlasConfig)===null?null:epEventAt(t,id),bytes=event?.available&&event.active?event.rank.bufferBytes:0;
+   const event=(epIncidentActive&&viewMode==='Front'&&id!==relationRank)||M.moeLayer(id,atlasConfig)===null?null:epEventAt(t,viewMode==='Top'?relationRank:id);
+   const eventRank=viewMode==='Top'?event?.frame.ranks.find(r=>r.id===id):event?.rank,bytes=event?.available&&event.active?(eventRank?.bufferBytes||0):0;
    mem.communication=mem.values[5]=bytes/1e9;
    mem.live=mem.values.slice(0,6).reduce((a,b)=>a+b,0);
    mem.total=Math.max(mem.total,mem.live);mem.values[6]=mem.total-mem.live;mem.values[7]=Math.max(0,HBM-mem.total);mem.overflow=Math.max(0,mem.total-HBM);

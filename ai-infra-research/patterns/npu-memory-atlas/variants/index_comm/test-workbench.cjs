@@ -39,8 +39,12 @@ dom('query-op').value='router';dom('query-op').oninput();assert(!dom('query-note
 dom('query-op').value='';dom('query-op').oninput();
 W.setLayout('flat');const flat=W.snapshot();clickNode('tp-attn');assert.equal(W.snapshot().layout,flat.layout);assert.deepEqual(W.snapshot().flat,flat.flat);
 assert(W.applyConfig({dense:12},true));W.select(0,0);vm.runInContext("setAtlasMode('comm')",ctx);assert.notEqual(read('mode'),'comm');
-W.select(32,12);vm.runInContext("setAtlasMode('comm');seekEPStage(.3)",ctx);
-assert.notEqual(read('mode'),'comm');
+W.select(32,12);vm.runInContext("setAtlasMode('explode');viewMode='Side';zoom=1.8;pan=[14,22];epEventCache.clear()",ctx);
+const tokenBefore=read('({viewMode,scope,rankLayout,zoom,pan})'),tokenUrl=ctx.window.location.href;
+dom('comm-token').onclick();assert.equal(ctx.window.location.href,tokenUrl);assert.equal(read('viewMode'),'Top');assert.equal(read('mode'),'comm');assert.equal(read('epEventCache.size'),1);
+vm.runInContext('seekEPStage(.3)',ctx);assert.equal(read('playing'),false);
+vm.runInContext("setAtlasMode('explode')",ctx);assert.deepEqual(read('({viewMode,scope,rankLayout,zoom,pan})'),tokenBefore);
+W.select(32,12);dom('comm-space').onclick();
 const handoff=new URLSearchParams(ctx.window.location.href.split('#')[1]);assert.equal(handoff.get('rank'),'32');assert.equal(JSON.parse(handoff.get('config')).dense,12);
 assert.equal(read('playing'),false);
 console.log('PASS: full adapter mount, exact tensor allocation, Shared nodes, state cleanup, projection preservation and standalone communication handoff');

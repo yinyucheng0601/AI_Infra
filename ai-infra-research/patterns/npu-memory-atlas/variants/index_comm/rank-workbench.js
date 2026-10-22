@@ -120,8 +120,51 @@
   const transfer=new URLSearchParams({config:JSON.stringify(atlasConfig),rank:String(selectedRank),t:'0',capacity:String(physicalRanksPerCabinet),layout:rankLayout,view:viewMode,layer:String(state.layer??Math.max(atlasConfig.dense,selectedRank>=0?M.bounds(selectedRank,atlasConfig)[0]:0)),fault:fault?'1':'0'});
   window.location.href='index_communication.html#'+transfer.toString();
  }
- setAtlasMode=function(next){if(next==='comm'){openCommunication();return;}if(state.layout==='flat')setLayout('space');legacy.setAtlasMode(next);syncShell();};
- document.querySelectorAll('[data-mode]').forEach(b=>{if(b.dataset.mode==='comm'){b.textContent='通信 ↗';b.title='打开独立通信 demo';}b.onclick=()=>setAtlasMode(b.dataset.mode);});
+ let tokenReturn=null;
+ function openTokenCommunication(){
+  if(M.moeLayer(selectedRank,atlasConfig)===null){$('phase').textContent='当前 Rank 所属 stage 没有 MoE 层。';return;}
+  if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}
+  if(!tokenReturn)tokenReturn={layout:state.layout,rankLayout};
+  if(state.layout==='flat')setLayout('space');
+  state.query=false;state.inspect=false;shardInfoOpen=false;clearGraphSelection();
+  if(mode!=='comm')commSaved={mode,scope,viewMode,selectedRank,relationRank,simTime,playing,zoom,pan:[...pan],relation:$('relations').value};
+  let target=selectedRank;
+  if(M.moeLayer(target,atlasConfig)===null)target=ranks.find(r=>M.moeLayer(r.id,atlasConfig)!==null)?.id;
+  if(target===undefined)return;
+  mode='comm';scope='all';viewMode='Top';rankLayout='parallel';selectedRank=relationRank=target;
+  epIncidentActive=false;epRouteStyle='arc';commCamera=null;zoom=1;pan=[0,0];
+  simTime=ranks[target].pp*1200/PP;playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;lastFrame=null;
+  $('relations').value='ep';$('timeline').max='1000';$('timeline').setAttribute('aria-label','通信事件进度');
+  syncShell();dial();render();
+ }
+ setAtlasMode=function(next){
+  if(next==='comm'){openTokenCommunication();return;}
+  if(state.layout==='flat')setLayout('space');
+  legacy.setAtlasMode(next);
+  if(tokenReturn){const restore=tokenReturn,camera={zoom,pan:[...pan]};tokenReturn=null;setRankLayout(restore.rankLayout);zoom=camera.zoom;pan=camera.pan;cameras[scope]={zoom,pan:[...pan]};if(restore.layout==='flat')setLayout('flat');else render();}
+  syncShell();
+ };
+ document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>setAtlasMode(b.dataset.mode));
+ const communicationButton=document.querySelector('[data-mode="comm"]');
+ communicationButton.textContent='通信 ▾';communicationButton.removeAttribute('title');communicationButton.dataset.wbTip='选择通信视图';
+ communicationButton.setAttribute('aria-haspopup','menu');communicationButton.setAttribute('aria-expanded','false');communicationButton.setAttribute('aria-controls','communication-menu');
+ const communicationMenu=add('nav','communication-menu',{role:'menu','aria-label':'通信视图',hidden:''});communicationMenu.className='bar';
+ const menuItems=[['comm-token','Token 流向','Top 视图 · 播放 Token 分发与回收',openTokenCommunication],['comm-space','空间通信图 ↗','独立页面 · 查看空间通信关系',openCommunication]].map(([id,label,hint,action])=>{
+  const button=document.createElement('button');button.id=id;button.type='button';button.setAttribute('role','menuitem');button.innerHTML='<span>'+label+'</span><small>'+hint+'</small>';button.onclick=()=>{setCommunicationMenu(false);action();};communicationMenu.append(button);return button;
+ });
+ function setCommunicationMenu(open,focus=false){
+  communicationMenu.hidden=!open;communicationButton.setAttribute('aria-expanded',String(open));
+  if(open){const box=communicationButton.getBoundingClientRect();communicationMenu.style.left=Math.max(14,Math.min(innerWidth-274,box.left))+'px';communicationMenu.style.bottom=Math.max(14,innerHeight-box.top+10)+'px';if(focus)menuItems[0].focus();}
+ }
+ communicationButton.onclick=()=>setCommunicationMenu(communicationMenu.hidden,true);
+ communicationButton.onkeydown=e=>{if(e.key==='ArrowDown'){e.preventDefault();setCommunicationMenu(true,true);}};
+ communicationMenu.onkeydown=e=>{
+  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();setCommunicationMenu(false);communicationButton.focus();return;}
+  const at=menuItems.indexOf(document.activeElement);
+  if(['ArrowUp','ArrowDown','Home','End'].includes(e.key)){e.preventDefault();menuItems[e.key==='Home'?0:e.key==='End'?1:(at+(e.key==='ArrowDown'?1:-1)+2)%2].focus();}
+ };
+ document.addEventListener('click',e=>{if(!communicationMenu.contains(e.target)&&!communicationButton.contains(e.target))setCommunicationMenu(false);});
+ window.addEventListener('resize',()=>setCommunicationMenu(false));
  $('ep-oom-mode').onclick=()=>{
   const entryStart=window.performance?.now();
   if(atlasConfig.layers===atlasConfig.dense){$('phase').textContent='当前为全 Dense 模型，没有 EP 专家通信。';return;}
