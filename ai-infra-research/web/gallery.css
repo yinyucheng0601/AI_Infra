@@ -303,3 +303,5 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
 
 .card-visual:has(.document-figure-pass-observability-guide){height:100%}
 .card-visual .document-figure-pass-observability-guide{object-fit:contain;transform:none;filter:none;background:#fff}
+
+.card-visual .document-figure-model-architecture-v41 { object-fit: contain; background: #101010; transform: none; filter: none; }

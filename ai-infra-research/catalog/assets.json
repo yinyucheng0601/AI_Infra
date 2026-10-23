@@ -2,53 +2,6 @@
   "version": 1,
   "assets": [
     {
-      "id": "op-icons",
-      "title": "OP 节点图标库",
-      "type": "pattern",
-      "form": "交互 Pattern",
-      "summary": "已确认的 24 个计算语义图标、节点底托与独立 Residual Add 图元。",
-      "designValue": "通过一致的算子图标与节点尺度建立跨模型架构的语义识别。",
-      "outline": [
-        "24 个算子语义图标",
-        "44 px 底托与 30 px 图标",
-        "独立圆形 Residual Add"
-      ],
-      "domains": [
-        "DeepSeek",
-        "AI Infra",
-        "Inference"
-      ],
-      "topics": [
-        "inference",
-        "visual",
-        "experience"
-      ],
-      "media": [
-        "web"
-      ],
-      "status": "reviewed",
-      "visibility": "internal",
-      "content": "patterns/op-icons/index.html",
-      "sources": [
-        {
-          "repository": "AI_Infra",
-          "path": "ai-infra-research/patterns/op-icons/index.html",
-          "url": null,
-          "revision": null,
-          "sha256": "eb7b897a496f1d0187905f8db69e87ea91391a7c7d185c9c767073c173740eee"
-        }
-      ],
-      "validation": [
-        "2026-10-23：按用户要求统一维护于 AI_Infra；复用已确认图标。"
-      ],
-      "related": [
-        "model-architecture-v4",
-        "model-architecture-v41"
-      ],
-      "reviewedAt": "2026-10-23",
-      "author": "Yucheng"
-    },
-    {
       "id": "model-architecture-v41",
       "title": "DeepSeek V4.1 · 模型架构",
       "type": "pattern",
