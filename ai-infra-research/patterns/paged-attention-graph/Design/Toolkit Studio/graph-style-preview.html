@@ -1,0 +1,43 @@
+<!doctype html><html lang="zh-CN" data-theme="dark"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Paged Attention · Graph 样式迁移</title>
+<link rel="stylesheet" href="../../vendor/pto-design-system/tokens/foundation.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/tokens/semantic.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/tokens/components.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/css/style.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/workbench-shell/pattern.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/ide-frame/pattern.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/pass-ir-graph-node/pattern.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/aic-core-object/pattern.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/aiv-core-object/pattern.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/memory-architecture/pattern.css" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/model-graphviz/pattern.css?v=20260813-2" />
+<link rel="stylesheet" href="./styles/demo.css?v=20260908-1" />
+<link rel="stylesheet" href="./styles/coding-v2.css?v=20260820-26" />
+<link rel="stylesheet" href="./styles/operator-inspector.css?v=20261022-storage-execution-1" />
+<link rel="stylesheet" href="./styles/paged-attention-intro.css?v=20261023-weight-instances-2" />
+<link rel="stylesheet" href="./styles/matmul-intro.css?v=20261019-model-graphviz-2" />
+<link rel="stylesheet" href="./styles/profiler.css?v=20260821-4" />
+<link rel="stylesheet" href="./styles/fusion.css?v=20260829-1" />
+<link rel="stylesheet" href="./styles/qwen3-performance-swimlane.css?v=20260907-5" />
+<link rel="stylesheet" href="./styles/fusion-catalog.css?v=20260828-1" />
+<link rel="stylesheet" href="./styles/fusion-hardware.css?v=20260829-2" />
+<link rel="stylesheet" href="./styles/ir-compile-guard.css?v=20260924-validation-flow-4" />
+<link rel="stylesheet" href="../../vendor/pto-design-system/patterns/investigation-map/pattern.css?v=20260923-1" />
+<link rel="stylesheet" href="./styles/task-history.css?v=20260924-compile-handoff-1" />
+<link rel="stylesheet" href="./styles/run-investigation.css?v=20260924-findings-1" />
+<link rel="stylesheet" href="./styles/diagnostic-semantic-trace.css?v=20260923-strip-2" />
+<link rel="stylesheet" href="./styles/ir-compilation-view.css?v=20260924-compilation-schema-2" />
+<link rel="stylesheet" href="./styles/run-fan.css?v=20260904-3" />
+<link rel="stylesheet" href="./styles/run-timeline.css?v=20260920-1" />
+<link rel="stylesheet" href="./styles/typography-responsive.css?v=20260904-3" />
+<link rel="stylesheet" href="./styles/visualization2.css" />
+<link rel="stylesheet" href="./styles/visualization2-assignment-morph.css?v=20261023-assignment-camera-2" />
+<link rel="stylesheet" href="./styles/visualization2-phase0-morph.css?v=20261023-assignment-camera-2" />
+<link rel="stylesheet" href="./styles/visualization2-pipeline.css" />
+<link rel="stylesheet" href="./styles/visualization2-graph.css?v=20261023-weight-instances-2" />
+<link rel="stylesheet" href="./styles/visualization2-anatomy.css?v=20261023-task-carousel-1" />
+<link rel="stylesheet" href="./styles/visualization2-pipeline-intra.css?v=ready-evidence-1" />
+<link rel="stylesheet" href="./styles/visualization2-graph-intra.css?v=20261022-inspector-ux-1" />
+<link rel="stylesheet" href="./styles/graph-style-preview.css">
+<body class="graph-preview"><header class="preview-toolbar"><b>Paged Attention · Graph</b><nav class="preview-camera"><button id="readable">阅读视图</button><button id="fit">适配整图</button><output id="zoom-status"></output></nav><details class="preview-layers"><summary>图层</summary><div class="preview-layer-menu"><label><input aria-label="Shape" data-layer="shape" type="checkbox" checked>Shape</label><label><input aria-label="精度" data-layer="precision" type="checkbox">精度</label><label><input aria-label="存储及执行" data-layer="memory" type="checkbox">存储及执行</label><label><input aria-label="状态 / 控制" data-layer="control" type="checkbox" checked>状态 / 控制</label><label><input aria-label="执行次数" data-layer="execution" type="checkbox">执行次数</label><label><input aria-label="同步" data-layer="sync" type="checkbox">同步</label></div></details><label id="scenario" hidden>Task <input id="task" type="number" min="0" max="127" value="87">seq_len <input id="seq" type="number" min="1" max="3584" value="2049"></label></header>
+<main id="viewport" class="kf-pypa-graph has-semantic-overlays"><div id="scene" class="kf-pypa-graph__scene"></div></main><aside id="detail" hidden></aside>
+<script src="./js/paged-attention-pypto-source.js"></script><script src="./js/semantic-computation-graph.js"></script><script src="./js/semantic-computation-presentation.js"></script><script src="./graph-preview-assets/architecture-routing.js"></script><script src="./js/semantic-computation-layout.js"></script><script src="./js/paged-attention-semantic-graph.js"></script><script src="./js/paged-attention-intro.js"></script><script src="./js/paged-attention-execution.js"></script><script src="./js/studio-graph-scene.js"></script><script src="./graph-preview-assets/op-icons.js"></script><script src="./graph-preview-assets/visual-system.js"></script><script src="./js/studio-graph-legend-skin.js"></script><script src="./js/graph-style-preview.js"></script></body></html>

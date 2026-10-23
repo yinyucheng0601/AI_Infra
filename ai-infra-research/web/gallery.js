@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'paged-attention-graph':{src:'web/media/paged-attention-graph-cover.png',alt:'Paged Attention 计算图与橙色同步卡片'},
     'model-architecture-v41':{src:'web/media/model-architecture-v41-cover.png',alt:'DeepSeek V4.1 L24 架构截图'},
     'model-architecture-v4':{src:'web/media/model-architecture-v4-cover.jpg',alt:'DeepSeek V4 模型架构与 mHC 残差路径'},
     'csa-swimlane':{src:'web/media/csa-swimlane-cover.png?v=20261022-1601',alt:'Swimlane View 多 Rank 执行泳道'},

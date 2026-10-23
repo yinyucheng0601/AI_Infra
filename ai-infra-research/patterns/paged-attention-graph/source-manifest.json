@@ -1,0 +1,233 @@
+{
+  "sourceRepository": "PyPTO3-main",
+  "files": [
+    {
+      "path": "Design/Toolkit Studio/graph-style-preview.html",
+      "sha256": "a95ee8fcdc6ba46c205ada322e322cb11d80aa62544057c64998fe7e6bc796a4"
+    },
+    {
+      "path": "vendor/pto-design-system/tokens/foundation.css",
+      "sha256": "4627f2807150c0eb23a7e5c99b4c15da1b72f4d476ce45fbddccb0d0f4fc439a"
+    },
+    {
+      "path": "vendor/pto-design-system/tokens/semantic.css",
+      "sha256": "d1a160a95ebed46997702ee556b34922afbea9b23527bf57171f5e682aacce90"
+    },
+    {
+      "path": "vendor/pto-design-system/tokens/components.css",
+      "sha256": "9ad87944b2a9338378ecb2b9161b8f5a332b7101492d7fe54d65fa25e94a319f"
+    },
+    {
+      "path": "vendor/pto-design-system/css/style.css",
+      "sha256": "9897d354b9155e8536b1f4dcc2133786fbb33cf93a8bf9cb7a0df3ad6c05d242"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/workbench-shell/pattern.css",
+      "sha256": "fae714c93cbe7725722b85c5d35d24483233409e758007cb0d892497187601ac"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/ide-frame/pattern.css",
+      "sha256": "8d5d1ebf147e298df62a52c2f779ab07b02549996a758e073241d7e4aa779f65"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/pass-ir-graph-node/pattern.css",
+      "sha256": "3b31062791145b3d7ec251d52a60789b8bff05c84b06f9b1c091cbacacc913ab"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/aic-core-object/pattern.css",
+      "sha256": "8bf3752d8a69970344ebd99c9dd364ddb830b0e1c2d467ed00997e66295d2114"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/aiv-core-object/pattern.css",
+      "sha256": "b679b0dbc3a66dab50cb9af51ae74836e28e99e85ce4b17953b2c11af22068c0"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/memory-architecture/pattern.css",
+      "sha256": "27d7af870ccb964c8154f78564f247a46d0e09111a302a540b1d09d3ed7a8f4d"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/model-graphviz/pattern.css",
+      "sha256": "68df75af089836e2288a1bd7840fcdd42e8c79cecc05e02446dde70ca422a520"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/demo.css",
+      "sha256": "03148c5881dcea0d8e32965b99146c04a3ab8f5aabaf0b7d8bd2402bf2480fe5"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/coding-v2.css",
+      "sha256": "c60a2e973c18f8906ccc18551bb4bf5ee4dbd955639f90c9b905a66e0ad415a4"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/operator-inspector.css",
+      "sha256": "846268359f0ecf012de91f773d79284d95cde458231071c1f0ceec3ebc583cae"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/paged-attention-intro.css",
+      "sha256": "4a2ec6f10888ff0f601a218464e9b4a030be0d7cb4108aa2787a23406c252881"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/matmul-intro.css",
+      "sha256": "ae0c333aefee3b64f4633864421516407ffbcb9cbb56ca56ad9094b48d52b773"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/profiler.css",
+      "sha256": "48cfb039790fe495b24f26ccfe34a8f4c8db47bb7e1b15ebb2ceefb6373d1022"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/fusion.css",
+      "sha256": "9b4f784730b58cbc5f3e382a8ad370114f44cb93490d4ea8babd641a78fa3807"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/qwen3-performance-swimlane.css",
+      "sha256": "a76d6539aa886588868f65a30ab060ec0233b5bb8e5715fe3e76c225b164f497"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/fusion-catalog.css",
+      "sha256": "2cfdef2ac1f69b1464802af4cf29031869461a531732e6bb51a70f26d4527a68"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/fusion-hardware.css",
+      "sha256": "a61a12a3cb611c6ca4160d539df250342f7fe92003f173311e014d67f415e5c2"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/ir-compile-guard.css",
+      "sha256": "b538897eaf4eada262d89159e4a42ba8e772fbbbdda76335c972044f79ea805c"
+    },
+    {
+      "path": "vendor/pto-design-system/patterns/investigation-map/pattern.css",
+      "sha256": "4e288a1bd1a162ea523bc5dd3de7b9431d9b26b394232cae338596f251a7bc9f"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/task-history.css",
+      "sha256": "87e29dee55b4d56aef42a36f541274fe6021e6674fad2ba19fddb97f22d7bedf"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/run-investigation.css",
+      "sha256": "3a644c94b31e2a72075f3823ae855618cb47e0cd6a1bf21665966114d6c8dfec"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/diagnostic-semantic-trace.css",
+      "sha256": "b97fcd57c179c591de0eb87cd5fd3e8d8a8bab31ad05591e92ce401d32b2b8e3"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/ir-compilation-view.css",
+      "sha256": "8f92a44b111e1db6b2eacf89c055741fcee3af4f42f7d4c39ee2a3ec74327946"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/run-fan.css",
+      "sha256": "c3a185ee654d81fb5c856096ba9d1de2fc6eec67af3b8348cccd94a819c413c4"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/run-timeline.css",
+      "sha256": "cce4fb3860a4c3ea9dc58558ac55ce30771d1fb530726b56b8221144bbc9f4d7"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/typography-responsive.css",
+      "sha256": "6f30d2036177bb16d0af1c7ed2403560fff1476fd58e160c445564f25b7fbab7"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2.css",
+      "sha256": "c13f04d1cb4e3c771f8377401cac675494b4705870c7249abbd501143aeec9ae"
+    },
+    {
+      "path": "Design/Toolkit Studio/assets/viz2-tabs/assignment.svg",
+      "sha256": "641c685f06480bbb41074f230b136d510d49f83c37387650407c091320677496"
+    },
+    {
+      "path": "Design/Toolkit Studio/assets/viz2-tabs/pipeline.svg",
+      "sha256": "f977561d914e6a610faeb119f532c69273fb5bbeb699d14178ab608a3e1a253e"
+    },
+    {
+      "path": "Design/Toolkit Studio/assets/viz2-tabs/graph.svg",
+      "sha256": "61b66c8957794fc12f848612118278b357ef19c366920cd774304f4c6d41d60f"
+    },
+    {
+      "path": "Design/Toolkit Studio/assets/viz2-tabs/block-scope.svg",
+      "sha256": "fe5e21d13a1a5ff9907a4cdc1ca84c9b8d037b726901356cfb5af53294944332"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-assignment-morph.css",
+      "sha256": "686089c30e926d6f85cdf700a2b21223a644cbaa0f478c8498ece91e09bd63a9"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-phase0-morph.css",
+      "sha256": "15166e54fc78fdc29ff41c72197bf92c2fd9e32daf87e1935ada18471d1b33b9"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-pipeline.css",
+      "sha256": "fed594b0484679a8e842b639ff3a866763ebc02419c0d75d8975de73886c50fa"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-graph.css",
+      "sha256": "330afaea75ec34e68332662991c5a6bcc8a146ee25082cee71c20ece9c4b4340"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-anatomy.css",
+      "sha256": "e82c9471bd86ad30404c0042fc000b22b75bb14a3e2466add0be09734a33fee1"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-pipeline-intra.css",
+      "sha256": "fa5d21949b91be7573830a90bb47d2b7bf022e3f79fb102fd02c045d2c417dc5"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/visualization2-graph-intra.css",
+      "sha256": "69dfa3e05b9ea57e896a831b8648a1ee871e95354a6654e0aa3c8baa359bf190"
+    },
+    {
+      "path": "Design/Toolkit Studio/styles/graph-style-preview.css",
+      "sha256": "e25c6b777380e9b0334732ffa8eaef26680bb0a3ac6c2ecf756469ec9fd103c2"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/paged-attention-pypto-source.js",
+      "sha256": "056f26a4c56e7d9f60ba2e3e85f0c869cd23a453765e00855dabfeaaf2a2f2a9"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/semantic-computation-graph.js",
+      "sha256": "0eabb16952acd75e2684e958a0b9526503adb442a45af6d86a2fa67905d1e722"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/semantic-computation-presentation.js",
+      "sha256": "c5b62bf59a275638724a05f37fb0a60efb45f664c73da35e40373d5d9669f920"
+    },
+    {
+      "path": "Design/Toolkit Studio/graph-preview-assets/architecture-routing.js",
+      "sha256": "ff4b13661a944ab0f1bd9e55f6b81fb7201c92ea62430a7b4c9212cecd8d8adc"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/semantic-computation-layout.js",
+      "sha256": "182b67fa4d7f4fa7d100a074b3716a289bf6fd508ba3f675bdd412be4e0af5ea"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/paged-attention-semantic-graph.js",
+      "sha256": "82fe3a13c38007561ce227c4e8469782c7ddfc8010598bb1a14fa9dbbfb40db0"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/paged-attention-intro.js",
+      "sha256": "314c0facd9639e4b5d443d0577308c0ab5760a72abb4554c9306e03fa3e22770"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/paged-attention-execution.js",
+      "sha256": "fade8eb748ccc352762c993b3ea58e5b602a654dd538fdf987d47d16033ac72c"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/studio-graph-scene.js",
+      "sha256": "338716b42d5ece389f78fa305a8c7d594f07df7c2b23527a30763c7c9cf6cf4b"
+    },
+    {
+      "path": "Design/Toolkit Studio/graph-preview-assets/op-icons.js",
+      "sha256": "508326e86ed8498840c2dff6ba875e262c69ad235c5d52fe004c556fd314184d"
+    },
+    {
+      "path": "Design/Toolkit Studio/graph-preview-assets/visual-system.js",
+      "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/studio-graph-legend-skin.js",
+      "sha256": "35762bc330ed96f60939d23280d3200d9ec58955e91363e133e586fff3c58dda"
+    },
+    {
+      "path": "Design/Toolkit Studio/js/graph-style-preview.js",
+      "sha256": "9b60bde5707df21e42b618aad7b47ddf0aea3e8e3d8d595105e842b7f59dcea0"
+    }
+  ]
+}

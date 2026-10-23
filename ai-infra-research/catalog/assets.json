@@ -2,6 +2,52 @@
   "version": 1,
   "assets": [
     {
+      "id": "paged-attention-graph",
+      "title": "Paged Attention · 计算图",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "渐进展开 Paged Attention 计算链，查看张量、存储、执行次数与跨核同步。",
+      "designValue": "以固定节点高度、侧边张量输入与局部同步通道保持计算链可读性。",
+      "outline": [
+        "QK Matmul、Softmax、PV Matmul 与 Online Update",
+        "固定高度 OP 图标与张量双行标签",
+        "橙色同步卡片与局部连线",
+        "图层切换、展开、拖拽与缩放"
+      ],
+      "domains": [
+        "AI Infra",
+        "PyPTO",
+        "Attention"
+      ],
+      "topics": [
+        "operators",
+        "inference",
+        "visual"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/paged-attention-graph/index.html",
+      "sources": [
+        {
+          "repository": "pypto",
+          "path": "Design/Toolkit Studio/graph-style-preview.html",
+          "sha256": "a95ee8fcdc6ba46c205ada322e322cb11d80aa62544057c64998fe7e6bc796a4",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-23：12 项布局和语义测试通过；用户要求收录并发布。",
+        "相对依赖闭包与文件哈希已检查。"
+      ],
+      "related": [],
+      "reviewedAt": "2026-10-23",
+      "author": "Yucheng"
+    },
+    {
       "id": "model-architecture-v41",
       "title": "DeepSeek V4.1 · 模型架构",
       "type": "pattern",
