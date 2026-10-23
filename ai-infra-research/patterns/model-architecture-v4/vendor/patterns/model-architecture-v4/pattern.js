@@ -1022,6 +1022,30 @@
         el.appendChild(label);
       }
       const rect = el.querySelector('rect');
+      if (rect && !isValue && !isParameter && node.role !== 'residual-annotation') {
+        const icon = global.PtoOpIconFor?.(node.label || '');
+        if (icon) {
+          const x = Number(rect.getAttribute('x')), y = Number(rect.getAttribute('y'));
+          const height = Number(rect.getAttribute('height')), width = Number(rect.getAttribute('width'));
+          const cy = y + height / 2, diameter = Math.min(44, height - 16), glyph = diameter * 30 / 44;
+          const cx = x + 16 + diameter / 2;
+          const badge = make('g', {'pointer-events':'none', 'aria-hidden':'true'});
+          badge.append(make('circle', {cx, cy, r:diameter/2, fill:'var(--background)'}));
+          badge.append(make('path', {d:icon.path, transform:`translate(${cx-glyph/2} ${cy-glyph/2}) scale(${glyph/24})`, fill:'none', stroke:'var(--foreground)', 'stroke-width':1.8, 'stroke-linecap':'round', 'stroke-linejoin':'round'}));
+          el.append(badge);
+          el.dataset.opIcon = icon.id;
+          const label = el.querySelector('.pto-model-graphviz-node-label');
+          if (label) {
+            // Keep the label centered on the whole pill, reserving equal room at both ends.
+            label.setAttribute('x', x + width / 2);
+            const available = width - 2 * (24 + diameter);
+            if (label.getComputedTextLength() > available && available > 0) {
+              label.setAttribute('textLength', available);
+              label.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+            }
+          }
+        }
+      }
       if (rect && (isValue || isParameter)) {
         rect.setAttribute('rx','6'); rect.setAttribute('ry','6');
         const grid = make('g', { class: 'v4-report-grid', 'pointer-events': 'none' });

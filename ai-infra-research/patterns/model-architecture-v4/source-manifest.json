@@ -1,30 +1,14 @@
 {
-  "capturedAt": "2026-10-22",
+  "capturedAt": "2026-10-23",
   "repository": "pto-design-system",
   "files": [
-    {
-      "path": "tokens/foundation.css",
-      "sha256": "4627f2807150c0eb23a7e5c99b4c15da1b72f4d476ce45fbddccb0d0f4fc439a"
-    },
-    {
-      "path": "tokens/semantic.css",
-      "sha256": "d1a160a95ebed46997702ee556b34922afbea9b23527bf57171f5e682aacce90"
-    },
-    {
-      "path": "tokens/components.css",
-      "sha256": "9ad87944b2a9338378ecb2b9161b8f5a332b7101492d7fe54d65fa25e94a319f"
-    },
     {
       "path": "css/style.css",
       "sha256": "9897d354b9155e8536b1f4dcc2133786fbb33cf93a8bf9cb7a0df3ad6c05d242"
     },
     {
-      "path": "patterns/model-graphviz/pattern.js",
-      "sha256": "41acf6cee95d2c09f66afb2c064ec04edae8e635f103595213b8bc29d57d8929"
-    },
-    {
-      "path": "patterns/model-graphviz/pattern.css",
-      "sha256": "808fd7dbcee73ec95686359d385a02d361ccd77b92c47eae40879149774c31f7"
+      "path": "patterns/model-architecture-training-sidecar/pattern.dv4-architecture-data.js",
+      "sha256": "3839e7f464c044c487db0d96504bcbb81621c50cede53efb1fd866d9f2ba7a04"
     },
     {
       "path": "patterns/model-architecture-training-sidecar/pattern.dv4.css",
@@ -35,16 +19,20 @@
       "sha256": "2da3683bb781ce35ae64279aee84499cc69f911361599050130168372a2ea587"
     },
     {
-      "path": "patterns/model-architecture-training-sidecar/pattern.dv4-architecture-data.js",
-      "sha256": "3839e7f464c044c487db0d96504bcbb81621c50cede53efb1fd866d9f2ba7a04"
+      "path": "patterns/model-architecture-v4/implementation-programs.js",
+      "sha256": "4add35dc2eb56cc839c30fc50341ceb7118c3803cb865db8892a013cb0dd06a2"
     },
     {
-      "path": "patterns/model-architecture-v4/pattern.js",
-      "sha256": "223c5940acfdd5d3e99ed785d5d0b95ad45605a7538131048226ae4ca7f546a0"
+      "path": "patterns/model-architecture-v4/mapping-registry.js",
+      "sha256": "a5134ef26d0a75b81fd9319f158e710c1570a1463d4675e777235043b9f51638"
     },
     {
       "path": "patterns/model-architecture-v4/pattern.css",
       "sha256": "889354268812028b196ba5134e35af1c8b74f88533c981c06232daa408b784f9"
+    },
+    {
+      "path": "patterns/model-architecture-v4/pattern.js",
+      "sha256": "259589933d8b241f123e521c253356bdaefca5f001a7b06ce803c7a837c0d81e"
     },
     {
       "path": "patterns/model-architecture-v4/preview.js",
@@ -55,12 +43,28 @@
       "sha256": "58fd2a6eae18242235cd467906663711759087c0ac33cdad111be0cd602b4e19"
     },
     {
-      "path": "patterns/model-architecture-v4/implementation-programs.js",
-      "sha256": "4add35dc2eb56cc839c30fc50341ceb7118c3803cb865db8892a013cb0dd06a2"
+      "path": "patterns/model-graphviz/pattern.css",
+      "sha256": "808fd7dbcee73ec95686359d385a02d361ccd77b92c47eae40879149774c31f7"
     },
     {
-      "path": "patterns/model-architecture-v4/mapping-registry.js",
-      "sha256": "a5134ef26d0a75b81fd9319f158e710c1570a1463d4675e777235043b9f51638"
+      "path": "patterns/model-graphviz/pattern.js",
+      "sha256": "41acf6cee95d2c09f66afb2c064ec04edae8e635f103595213b8bc29d57d8929"
+    },
+    {
+      "path": "patterns/op-icons/pattern.js",
+      "sha256": "508326e86ed8498840c2dff6ba875e262c69ad235c5d52fe004c556fd314184d"
+    },
+    {
+      "path": "tokens/components.css",
+      "sha256": "9ad87944b2a9338378ecb2b9161b8f5a332b7101492d7fe54d65fa25e94a319f"
+    },
+    {
+      "path": "tokens/foundation.css",
+      "sha256": "4627f2807150c0eb23a7e5c99b4c15da1b72f4d476ce45fbddccb0d0f4fc439a"
+    },
+    {
+      "path": "tokens/semantic.css",
+      "sha256": "d1a160a95ebed46997702ee556b34922afbea9b23527bf57171f5e682aacce90"
     }
   ]
 }

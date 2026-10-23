@@ -36,7 +36,7 @@
     },
     {
       "path": "patterns/model-architecture-v41/pattern.html",
-      "sha256": "beba84a2693ae9214a2fd32e2b71d08e61a30452ec3f5fba8f7eee0453014507"
+      "sha256": "9669da0e55bfce30423f730bbe3896a53542a0397d056cd1a3735a71707e5a5b"
     },
     {
       "path": "patterns/model-architecture-v41/pattern.css",
@@ -60,7 +60,7 @@
     },
     {
       "path": "patterns/model-architecture-v41/preview.js",
-      "sha256": "233d32c585a305ca7cf65cc7ef950b1162d1093f18e75371b15292e02c0b2a1f"
+      "sha256": "4e222566df2bc417a55b4f24cc426da2e116ba944eb5bc27514760c4ef9e2f8a"
     },
     {
       "path": "patterns/model-architecture-v41/model_architecture_graph.json",
@@ -186,5 +186,9 @@
       "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_1.json",
       "sha256": "6a5a86694e47169c8f0c9243a7e24cc5db05447be0d3d3a9891034e913c518de"
     }
+  ],
+  "maintenanceRepository": "AI_Infra",
+  "localAdaptations": [
+    "Relative analysis-report link maintained in AI_Infra"
   ]
 }
