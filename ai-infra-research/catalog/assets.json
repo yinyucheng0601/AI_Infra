@@ -2,6 +2,137 @@
   "version": 1,
   "assets": [
     {
+      "id": "model-architecture-v41",
+      "title": "DeepSeek V4.1 · 模型架构",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "逐层查看 V4.1 的 CSA2、跨层 KV / 索引复用、mHC、MoE，以及 Vision、Engram 和 DSpark 分支。",
+      "designValue": "用单层选择、侧边张量输入与渐进展开表达跨层依赖，统一 OP 图标、Residual Add 和张量语义。",
+      "outline": [
+        "Layer selector 单层浏览与 L0 / L1 / L2 展开",
+        "CSA2 Full / Reuse / Reindex 与跨层输入",
+        "Vision Encoder、Engram 与 DSpark 分支",
+        "OP 语义图标与独立 Residual Add",
+        "源码检查、路径高亮与拖拽缩放"
+      ],
+      "domains": [
+        "DeepSeek",
+        "AI Infra",
+        "Inference"
+      ],
+      "topics": [
+        "inference",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/model-architecture-v41/index.html",
+      "sources": [
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v41/pattern.html",
+          "url": null,
+          "revision": null,
+          "sha256": "beba84a2693ae9214a2fd32e2b71d08e61a30452ec3f5fba8f7eee0453014507"
+        },
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v41/adapter.js",
+          "url": null,
+          "revision": null,
+          "sha256": "2b2bb9e496b3b56efea125bda17063bb36ac87eb4898f57da08c469527ae4de6"
+        },
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v41/model_architecture_graph.json",
+          "url": null,
+          "revision": null,
+          "sha256": "0ac91a91527cb80dc4966c7e626cc9c479e1cbd70730a7650d5a37f09239f204"
+        }
+      ],
+      "validation": [
+        "2026-10-23：用户要求将当前 V4.1 架构图收录 Library / Pattern。",
+        "收录快照文件哈希、资源依赖和 JavaScript 语法检查通过；目录校验通过。"
+      ],
+      "related": [
+        "model-architecture-v4"
+      ],
+      "reviewedAt": "2026-10-23",
+      "author": "Yucheng"
+    },
+    {
+      "id": "model-architecture-v4",
+      "title": "DeepSeek V4 · 模型架构",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "从整网概览逐层展开 CSA 与 MoE，查看算子、张量、权重、KV 状态及 mHC 残差路径。",
+      "designValue": "以一致的图元、分层展开和关联路径高亮，在模型全局结构与局部计算关系之间保持连续阅读。",
+      "outline": [
+        "L0 / L1 / L2 渐进式架构浏览",
+        "mHC 残差旁路与整条路径联动高亮",
+        "CSA 计算分支与 KV 状态布局",
+        "统一算子、张量与权重图元",
+        "模块折叠、画布拖拽缩放与深浅主题"
+      ],
+      "domains": [
+        "DeepSeek",
+        "AI Infra",
+        "Inference"
+      ],
+      "topics": [
+        "inference",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/model-architecture-v4/index.html",
+      "sources": [
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v4/pattern.html",
+          "url": null,
+          "revision": null,
+          "sha256": "4e8545575c43c1ebf79fd4fd5b0ccc33e6dea655b2e727bace61a4e3dec70f70"
+        },
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v4/pattern.js",
+          "url": null,
+          "revision": null,
+          "sha256": "223c5940acfdd5d3e99ed785d5d0b95ad45605a7538131048226ae4ca7f546a0"
+        },
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v4/pattern.css",
+          "url": null,
+          "revision": null,
+          "sha256": "889354268812028b196ba5134e35af1c8b74f88533c981c06232daa408b784f9"
+        },
+        {
+          "repository": "pto-design-system",
+          "path": "patterns/model-architecture-v4/preview.js",
+          "url": null,
+          "revision": null,
+          "sha256": "c4a167ddf208937df911b31b27550d8f5beedccecebdf6b05d79f6dfac657fe3"
+        }
+      ],
+      "validation": [
+        "2026-10-22：用户多轮视觉与交互评审后明确确认 V4 定稿，并要求收录 Library / Patterns。",
+        "63 种 CSA 展开组合布局回归通过；收录快照与来源文件哈希核对、JS 语法和本地依赖闭包检查通过。"
+      ],
+      "related": [],
+      "reviewedAt": "2026-10-22",
+      "author": "Yucheng"
+    },
+    {
       "id": "csa-swimlane",
       "title": "Swimlane View · 多核执行泳道",
       "type": "pattern",

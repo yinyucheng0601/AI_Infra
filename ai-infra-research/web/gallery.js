@@ -10,6 +10,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'model-architecture-v4':{src:'web/media/model-architecture-v4-cover.jpg',alt:'DeepSeek V4 模型架构与 mHC 残差路径'},
     'csa-swimlane':{src:'web/media/csa-swimlane-cover.png?v=20261022-1601',alt:'Swimlane View 多 Rank 执行泳道'},
     'critical-path-swimlane':{src:'__CRITICAL_PATH_SWIMLANE_COVER__',alt:'Inference Request：Host 与 Device 共享时间轴及最晚进入路径'},
     'pass-observability-guide':{src:'__PASS_OBSERVABILITY_COVER__',alt:'六环节编译流程、观测对象与视图关系总览'},

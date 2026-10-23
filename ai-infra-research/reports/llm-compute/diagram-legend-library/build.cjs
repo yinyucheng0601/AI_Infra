@@ -173,6 +173,32 @@ passSvg=passSvg.replace('><defs>','><style><![CDATA['+passCss+']]></style><defs>
 passSvg=passSvg.replace(/<text[^>]*class="facet-action"[^>]*>[\s\S]*?<\/text>/g,'');
 system.push({id:'pattern-pass-observation-facets',title:'编译 Pass · 12 类观测对象',cat:'组合模式',layer:'pattern',desc:'从程序结构、抽象降级、分块与布局，到存储、搬运、流水、同步、目标映射、融合、任务通信与验证，组合展示十二种观测分面。每个分面复用来源报告的对象和关系图元。',note:'直接执行来源报告 P05 的 objects() renderer；静态组合保留十二项内容，展开与动画请进入来源报告。',refs:[{id:'pass-observability-guide',anchor:'objects'}],legacy:[],svg:passSvg,provenance:{file:'reports/llm-compute/pass-observability-guide/index.html',renderer:'objects()',sha256:crypto.createHash('sha256').update(passHtml).digest('hex')}});
 
+// Approved OP icon library: repository-local snapshot; no localhost dependency.
+const opContext=vm.createContext({window:{}});
+const opBytes=fs.readFileSync(path.join(__dirname,'op-icons.js'),'utf8');
+vm.runInContext(opBytes,opContext);
+const opIcons=opContext.window.PtoOpIcons;
+const opSource='reports/llm-compute/diagram-legend-library/op-icons.html';
+sources.push({id:'op-icons-approved',title:'OP 节点图标库 · 已确认',file:opSource,url:'./op-icons.html',kind:'demo',sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,opSource))).digest('hex')});
+const opGlyph=(i,x,y)=>`<path d="${i.path}" transform="translate(${x} ${y}) scale(1.25)" fill="none" stroke="#eee" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+const opNode=(i,x,y)=>i.id==='add'?`<circle cx="${x+180}" cy="${y+32}" r="30" fill="#101010" stroke="#aaa" stroke-width="2"/><path d="M${x+168} ${y+32}h24M${x+180} ${y+20}v24" stroke="#eee" stroke-width="2.5"/>`:`<rect x="${x}" y="${y}" width="360" height="64" rx="32" fill="#4f4f4f"/><circle cx="${x+38}" cy="${y+32}" r="22" fill="#101010"/>${opGlyph(i,x+23,y+17)}<text x="${x+180}" y="${y+33}" fill="#eee" font-size="20" text-anchor="middle" dominant-baseline="middle">${esc(i.name)}</text>`;
+const opWrap=(body,w,h)=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" style="font-family:system-ui,sans-serif">${body}</svg>`;
+const opCard=system.find(e=>e.id==='system-op');
+const catalogOpIcons=opIcons.filter(i=>i.id!=='add');
+const findIcon=id=>opIcons.find(i=>i.id===id);
+const examples=[{...findIcon('attention'),name:'Attention'}, {...findIcon('matmul'),name:'tile.matmul'}, {...findIcon('router'),name:'Router'}, {...findIcon('exchange'),name:'AllGather'}];
+const headings=['模型计算模块','IR 操作','Router','通信操作'];
+const exampleSvg=examples.map((i,k)=>{const x=220+(k%2)*400,y=55+Math.floor(k/2)*130;let node=opNode(i,x,y);if(k===1)node=node.replace('fill="#4f4f4f"','fill="#6955e8"');if(k===3)node=node.replace('fill="#4f4f4f"','fill="#292929" stroke="#eee" stroke-width="2" stroke-dasharray="6 5"');return `<text x="${x+180}" y="${y-16}" fill="#aaa" font-size="20" text-anchor="middle">${headings[k]}</text>`+node;}).join('');
+opCard.svg=opWrap(exampleSvg+`<text x="20" y="315" fill="#aaa" font-size="20">OP 语义图标</text>`+catalogOpIcons.map((i,k)=>opNode(i,20+(k%3)*400,345+Math.floor(k/3)*100)).join(''),1220,1155);
+opCard.icons=catalogOpIcons.map(({id,name,description})=>({id,name,description}));
+opCard.refs.push({id:'op-icons-approved'});
+opCard.desc+='\n\nOP 语义图标：23 个算子图标集中展示；图标 30 px、底托 44 px、节点高度 64 px。Residual Add 归入独立的加法图例。';
+opCard.note='模型计算、IR 操作与通信保留各自表达；语义图标统一放在算子左侧。';
+opCard.provenance={file:'reports/llm-compute/diagram-legend-library/op-icons.js',sha256:crypto.createHash('sha256').update(opBytes).digest('hex')};
+system.push({id:'pattern-op-icons',title:'OP 节点 · 图标与残差汇合',cat:'组合模式',layer:'pattern',desc:'算子名称左侧使用语义图标与圆形底托。残差相加是独立的圆形加号节点，主干和旁路直接汇合，不能用胶囊内文字加号替代。',note:'复用已确认 OP 图标路径与尺寸。',refs:[{id:'op-icons-approved'}],legacy:[],svg:opWrap(`<path d="M470 84V124M470 188V246M470 308V342M470 104H170V278H438" fill="none" stroke="#aaa" stroke-width="2"/>${opNode(opIcons.find(i=>i.id==='norm'),290,20)}${opNode(opIcons.find(i=>i.id==='attention'),290,124)}${opNode(opIcons[0],290,246)}`,900,370)});
+
+// Only list sources actually represented by collected legends.
+for(let i=sources.length-1;i>=0;i--)if(!system.some(e=>e.refs.some(r=>r.id===sources[i].id)))sources.splice(i,1);
 const out={sources,items:system,coverage,excluded};
 fs.writeFileSync(path.join(__dirname,'coverage.json'),JSON.stringify(coverage,null,2));
 fs.writeFileSync(path.join(__dirname,'inventory.json'),JSON.stringify({sources,items:out.items.map(({svg,...r})=>r)},null,2));

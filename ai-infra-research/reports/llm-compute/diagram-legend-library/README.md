@@ -44,3 +44,7 @@
 ### Pass 观测对象组合（2026-10-21）
 
 新增“编译 Pass · 12 类观测对象”组合卡片，直接执行来源 P05 objects() 总图，移除静态展开提示；来源链接定位 #objects，重建时刷新指纹。
+
+### OP 节点图标库（2026-10-23）
+
+收录已确认的 24 个 OP 图标与节点组合 Pattern。图标 30 px、底托 44 px、节点 64 px；Residual Add 使用独立圆形加法节点。源码快照为 `op-icons.js`，独立预览为 `op-icons.html`，不依赖 localhost。

@@ -1,0 +1,190 @@
+{
+  "capturedAt": "2026-10-23",
+  "repository": "pto-design-system",
+  "files": [
+    {
+      "path": "tokens/foundation.css",
+      "sha256": "4627f2807150c0eb23a7e5c99b4c15da1b72f4d476ce45fbddccb0d0f4fc439a"
+    },
+    {
+      "path": "tokens/semantic.css",
+      "sha256": "d1a160a95ebed46997702ee556b34922afbea9b23527bf57171f5e682aacce90"
+    },
+    {
+      "path": "tokens/components.css",
+      "sha256": "9ad87944b2a9338378ecb2b9161b8f5a332b7101492d7fe54d65fa25e94a319f"
+    },
+    {
+      "path": "css/style.css",
+      "sha256": "9897d354b9155e8536b1f4dcc2133786fbb33cf93a8bf9cb7a0df3ad6c05d242"
+    },
+    {
+      "path": "patterns/model-graphviz/pattern.js",
+      "sha256": "41acf6cee95d2c09f66afb2c064ec04edae8e635f103595213b8bc29d57d8929"
+    },
+    {
+      "path": "patterns/model-graphviz/pattern.css",
+      "sha256": "808fd7dbcee73ec95686359d385a02d361ccd77b92c47eae40879149774c31f7"
+    },
+    {
+      "path": "patterns/model-architecture-v4/pattern.css",
+      "sha256": "889354268812028b196ba5134e35af1c8b74f88533c981c06232daa408b784f9"
+    },
+    {
+      "path": "patterns/op-icons/pattern.js",
+      "sha256": "508326e86ed8498840c2dff6ba875e262c69ad235c5d52fe004c556fd314184d"
+    },
+    {
+      "path": "patterns/model-architecture-v41/pattern.html",
+      "sha256": "beba84a2693ae9214a2fd32e2b71d08e61a30452ec3f5fba8f7eee0453014507"
+    },
+    {
+      "path": "patterns/model-architecture-v41/pattern.css",
+      "sha256": "f112f981cf953930ace1725e9399932706601535258e85d9a2b5471052523a9c"
+    },
+    {
+      "path": "patterns/model-architecture-v41/pattern.json",
+      "sha256": "1d1749fc37f25884187fe09a113b99fa17be2c6144437cf66c7db91490baf6f5"
+    },
+    {
+      "path": "patterns/model-architecture-v41/adapter.js",
+      "sha256": "2b2bb9e496b3b56efea125bda17063bb36ac87eb4898f57da08c469527ae4de6"
+    },
+    {
+      "path": "patterns/model-architecture-v41/routing.js",
+      "sha256": "10d58ec0a7727a3152ce3d8ab6c2e02e150c6a2243796dc4ec46572771784acc"
+    },
+    {
+      "path": "patterns/model-architecture-v41/decorate.js",
+      "sha256": "4cd822d95e57e66a41576ab97104434da71f0177ded73e2ace6d2b61c5814e65"
+    },
+    {
+      "path": "patterns/model-architecture-v41/preview.js",
+      "sha256": "233d32c585a305ca7cf65cc7ef950b1162d1093f18e75371b15292e02c0b2a1f"
+    },
+    {
+      "path": "patterns/model-architecture-v41/model_architecture_graph.json",
+      "sha256": "0ac91a91527cb80dc4966c7e626cc9c479e1cbd70730a7650d5a37f09239f204"
+    },
+    {
+      "path": "patterns/model-architecture-v41/model_architecture_validation.md",
+      "sha256": "b1d69386f9234a008471fece024a706010b9184ee6d6630a1b401a72feab78dc"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/source-manifest.json",
+      "sha256": "3e8bda8648988b41c0f6352481a1feb535b48fef4b550599dbe733dbeee0e4b9"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/LICENSE",
+      "sha256": "f2c6c602815669d292889e5be8c802f2ed950653b77999b1584e8e6aed25d040"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/config.json",
+      "sha256": "8be45ce0476004a3f529fd896115a4a2e800a129ad2d3ec05b16050f52e21879"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/README.md",
+      "sha256": "b72b796e4f4c739eca5d0ad360a7679b39118ca7eb64891f7151a527b292c42a"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/encoding.py",
+      "sha256": "13231c592e958fb39e2af6001dae69d90e7a36b265702b9b390236fb387599e2"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/test_encoding.py",
+      "sha256": "288b79c9ea7d018ae03b0dd3e54a8220cc3a2df1ff97f59907e75ed8112765d6"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/README.md",
+      "sha256": "a34a5ca98c65e5b5b2bedd693cc2e18e732fe50192723fb6937ae07219c23739"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/image_processor.py",
+      "sha256": "482759e3bcc4e9bb5ee582b244cc563f5d0e163d8b48dda91ebb7106e62f9272"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/kernel.py",
+      "sha256": "1236c3507019ed176f5dba5e04bcea58867cf654818c6cf138ed4845398c2455"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/requirements.txt",
+      "sha256": "be82bcd5775ccf8361ddd22cac53ef7b3b83434697fc3c61c75870450fb9437e"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/engram.py",
+      "sha256": "11f35ecbead8150c35aa002b3d180ef290b05a25afe883a11884f94d476d3897"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/vision.py",
+      "sha256": "5d49edc196a4ef22384abe76d35a40098cbe1e74b586c8f66a2edff4f076b26c"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/generate.py",
+      "sha256": "8668d67f7d108e32b90d50cb0d8606889ceb2219bfe95741d84e22f70768e9f0"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/config.json",
+      "sha256": "2e84f45cf1dac8c7fcbb200e96667d4b913275690668ed496f24c7747207a809"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/convert.py",
+      "sha256": "035028340479145594a81d6084a8424e57363adf83c0d5983914783d95614d76"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/model.py",
+      "sha256": "e5decd76fe70fd56ef2f10124d245c6f64fb6a0003cc9068a1d3182a168b8d2d"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/README.md",
+      "sha256": "2834402823199ee24e9a42bdf36a0fc6daf94448f444cb062c042a057a798f1c"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/examples/example.txt",
+      "sha256": "8456a2f1d5a15b7aa1f697567e34f79af0522fb694df7ac789dae9853fff165d"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/inference/examples/example_harmony.json",
+      "sha256": "44ae84a3cbd360b1b8d303ed4006756afb77e5d014c4abb7c61ff9b9a094f6ea"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_3.json",
+      "sha256": "4207613f15c79b95ad92074bdb8b2b81c5ce9cfdf15b7a67f58ded6bb3ec4fa5"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_2.json",
+      "sha256": "fd985cda88e8640b8e2404d8e659f7006cad204eb41f73c9e6662b1f218c01aa"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_output_3.txt",
+      "sha256": "cf2b801d0738c88abb691bf4a096000c0e0737faab8a54a4ba5243c5513a3711"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_5.json",
+      "sha256": "88289b0aac8d650aa55c4ffeb392818fff3a0ac83c2293ddfd90546804d5e5c4"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_output_2.txt",
+      "sha256": "9fa162587b73ab9b315be5c88d433f9e0e681b4b36926952f289099ed9bc1dab"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_output_1.txt",
+      "sha256": "91f79aa955717b414a82aabfb38bcd83ab5a998bd47db89d2a26338e8d3de550"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_output_5.txt",
+      "sha256": "4d673091746553d1cb2e40a3fc01dc09a7c53c40627096a3e49c97a269a81f64"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_output_4.txt",
+      "sha256": "94433b68370dcc69fa61efc5011b5d0e28685e4716fee1ee77fbbfc0c9935b54"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_4.json",
+      "sha256": "4c3890a7bc042ec6396d98d024a39a73cdcffbe1d0253e852da0c35e65296f3e"
+    },
+    {
+      "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_1.json",
+      "sha256": "6a5a86694e47169c8f0c9243a7e24cc5db05447be0d3d3a9891034e913c518de"
+    }
+  ]
+}

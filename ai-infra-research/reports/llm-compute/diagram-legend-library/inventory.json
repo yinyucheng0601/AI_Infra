@@ -1,12 +1,6 @@
 {
   "sources": [
     {
-      "id": "deepinfer-performance-atlas",
-      "title": "DeepInfer · deepseek最新开源高性能推理系统",
-      "file": "reports/llm-compute/deepinfer-performance-atlas-v2.html",
-      "sha256": "83c89c1872113031e6daaf9c4155568cc6a1e5f06e6fba9123b49d27bccb2cd5"
-    },
-    {
       "id": "pass-observability-guide",
       "title": "编译 Pass 流程与可观测对象图解",
       "file": "reports/llm-compute/pass-observability-guide/index.html",
@@ -55,6 +49,14 @@
       "url": "../../../../layer_stack/pangu-layer-stack_2.html",
       "sha256": "4f67a132107c1eed53204b1ab7f17d97d00d53e3e414e1fe642cfc89b4fefdd2",
       "kind": "demo"
+    },
+    {
+      "id": "op-icons-approved",
+      "title": "OP 节点图标库 · 已确认",
+      "file": "reports/llm-compute/diagram-legend-library/op-icons.html",
+      "url": "./op-icons.html",
+      "kind": "demo",
+      "sha256": "eb7b897a496f1d0187905f8db69e87ea91391a7c7d185c9c767073c173740eee"
     }
   ],
   "items": [
@@ -341,7 +343,7 @@
       "id": "system-op",
       "cat": "对象",
       "title": "计算与通信操作",
-      "desc": "具名计算操作采用统一胶囊。模型层操作与 IR 操作通过名称、所属层级和来源区分，跨阶段对应需要变换证据。",
+      "desc": "具名计算操作采用统一胶囊。模型层操作与 IR 操作通过名称、所属层级和来源区分，跨阶段对应需要变换证据。\n\nOP 语义图标：23 个算子图标集中展示；图标 30 px、底托 44 px、节点高度 64 px。Residual Add 归入独立的加法图例。",
       "refs": [
         {
           "id": "pypto-compilation-guide"
@@ -372,6 +374,9 @@
         {
           "id": "pypto-guides",
           "anchor": "structure-tile"
+        },
+        {
+          "id": "op-icons-approved"
         }
       ],
       "legacy": [
@@ -381,7 +386,7 @@
         "communication"
       ],
       "layer": "system",
-      "note": "统一规则 v1 · 基于来源图元整理的设计规则与教学示例，并非来源报告的原始截图或实际运行记录。",
+      "note": "模型计算、IR 操作与通信保留各自表达；语义图标统一放在算子左侧。",
       "variants": [
         {
           "id": "model-op",
@@ -403,7 +408,128 @@
           "title": "通信操作",
           "desc": "深灰胶囊外的白色虚线轮廓表示通信操作。AllGather、AllReduce 等名称规定数据交换语义。"
         }
-      ]
+      ],
+      "icons": [
+        {
+          "id": "matmul",
+          "name": "MatMul",
+          "description": "矩阵乘法"
+        },
+        {
+          "id": "linear",
+          "name": "Linear Projection",
+          "description": "线性投影"
+        },
+        {
+          "id": "norm",
+          "name": "RMSNorm",
+          "description": "归一化"
+        },
+        {
+          "id": "embedding",
+          "name": "Embedding",
+          "description": "嵌入查表"
+        },
+        {
+          "id": "attention",
+          "name": "Attention",
+          "description": "注意力计算"
+        },
+        {
+          "id": "rope",
+          "name": "RoPE",
+          "description": "旋转位置编码"
+        },
+        {
+          "id": "compress",
+          "name": "Compress",
+          "description": "压缩聚合"
+        },
+        {
+          "id": "expand",
+          "name": "Expand",
+          "description": "展开广播"
+        },
+        {
+          "id": "mix",
+          "name": "HC Mix",
+          "description": "流间混合"
+        },
+        {
+          "id": "gate",
+          "name": "Gate / Multiply",
+          "description": "门控乘法"
+        },
+        {
+          "id": "activation",
+          "name": "SiLU",
+          "description": "激活函数"
+        },
+        {
+          "id": "softmax",
+          "name": "Softmax",
+          "description": "归一化概率"
+        },
+        {
+          "id": "topk",
+          "name": "Top-K",
+          "description": "候选选择"
+        },
+        {
+          "id": "router",
+          "name": "Router / MoE",
+          "description": "专家路由"
+        },
+        {
+          "id": "concat",
+          "name": "Concat",
+          "description": "拼接"
+        },
+        {
+          "id": "split",
+          "name": "Split",
+          "description": "分支拆分"
+        },
+        {
+          "id": "reshape",
+          "name": "Reshape",
+          "description": "形状变换"
+        },
+        {
+          "id": "transpose",
+          "name": "Transpose",
+          "description": "维度交换"
+        },
+        {
+          "id": "reduce",
+          "name": "Reduce / Pool",
+          "description": "规约汇聚"
+        },
+        {
+          "id": "cache",
+          "name": "KV Read / Write",
+          "description": "状态读写"
+        },
+        {
+          "id": "conv",
+          "name": "Conv / Patch",
+          "description": "卷积与分块"
+        },
+        {
+          "id": "exchange",
+          "name": "All-to-All",
+          "description": "通信交换"
+        },
+        {
+          "id": "sample",
+          "name": "Sampling",
+          "description": "采样选择"
+        }
+      ],
+      "provenance": {
+        "file": "reports/llm-compute/diagram-legend-library/op-icons.js",
+        "sha256": "508326e86ed8498840c2dff6ba875e262c69ad235c5d52fe004c556fd314184d"
+      }
     },
     {
       "id": "system-add",
@@ -1632,6 +1758,20 @@
         "renderer": "objects()",
         "sha256": "457a6cef2befde44cb9bc0b5f3a66f0d3444db9d9a786e69dbf32a03a3c4585d"
       }
+    },
+    {
+      "id": "pattern-op-icons",
+      "title": "OP 节点 · 图标与残差汇合",
+      "cat": "组合模式",
+      "layer": "pattern",
+      "desc": "算子名称左侧使用语义图标与圆形底托。残差相加是独立的圆形加号节点，主干和旁路直接汇合，不能用胶囊内文字加号替代。",
+      "note": "复用已确认 OP 图标路径与尺寸。",
+      "refs": [
+        {
+          "id": "op-icons-approved"
+        }
+      ],
+      "legacy": []
     }
   ]
 }
