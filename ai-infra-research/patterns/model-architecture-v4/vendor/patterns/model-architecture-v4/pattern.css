@@ -257,3 +257,38 @@
 :root[data-theme='dark'] .is-report-architecture .pto-model-graphviz-edge[data-report-residual='true']:not(.is-flow-hover) { stroke:#a0a0a0 !important; stroke-width:2px !important; }
 :root[data-theme='dark'] .is-report-architecture .v4-report-residual-label { fill:#a0a0a0; }
 .is-report-architecture .pto-model-graphviz-node.is-flow-hover .v4-report-residual-label { fill:var(--v4-report-value); }
+
+.v4-overlay-property{font-size:12px;fill:var(--foreground-secondary)}
+.v4-runtime-evidence{position:absolute;z-index:10;right:12px;top:12px;bottom:12px;width:min(440px,calc(100% - 24px));overflow:auto;padding:16px;box-sizing:border-box;background:var(--surface-1);border:1px solid var(--border-default);border-radius:var(--radius-lg);font:var(--type-body-sm);overflow-wrap:anywhere}
+.v4-runtime-evidence[hidden]{display:none}.v4-runtime-evidence>button{float:right}.v4-runtime-evidence pre{white-space:pre-wrap;font-size:11px}.v4-runtime-evidence dl{display:grid;grid-template-columns:1fr auto;gap:4px}.v4-runtime-evidence dd{margin:0}
+
+/* The canvas fills the space below the toolbar after footer removal. */
+.v4-preview{grid-template-rows:auto minmax(0,1fr)}
+
+#information-layers{position:relative;font-size:12px}
+#layers-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:180px;padding:6px;background:var(--surface-1);border:1px solid var(--border-default);border-radius:var(--radius-md)}
+#layers-menu[hidden]{display:none}
+.v4-layer-option{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;color:var(--foreground)}
+.v4-layer-option:hover,.v4-layer-option:focus-within{background:var(--surface-3)}
+.v4-layer-option input{margin:0;accent-color:var(--foreground);cursor:pointer}
+#layers-count{color:var(--foreground-secondary)}
+
+.v4-overlay-storage{font-size:12px;fill:var(--foreground-secondary)}
+/* Override shared node-rect rules; keep the outline readable during zoom. */
+.pto-dv4-architecture .pto-model-graphviz-node .v4-overlay-sync > .v4-overlay-sync-outline{
+ fill:none !important;fill-opacity:0 !important;
+ stroke:var(--foreground) !important;stroke-opacity:1 !important;
+ stroke-width:2.5px !important;stroke-dasharray:6 4 !important;
+ vector-effect:non-scaling-stroke;opacity:1 !important;
+}
+.v4-overlay-count-badge rect{fill:var(--foreground);stroke:none}
+.v4-overlay-count{font-size:13px;font-weight:700;fill:var(--background)}
+
+/* State reads/writes are typed relations, separate from sync node outlines. */
+.pto-dv4-architecture .v4-overlay-control-edge{stroke:var(--foreground) !important;stroke-width:var(--v4-edge-count-width,2px) !important;opacity:1 !important;vector-effect:non-scaling-stroke}
+.pto-dv4-architecture .v4-overlay-control-edge[data-control-kind="state-read"]{stroke-dasharray:7 4 !important}
+.pto-dv4-architecture .v4-overlay-control-edge[data-control-kind="state-write"]{stroke-dasharray:2 4 !important}
+.pto-dv4-architecture .v4-overlay-control-edge[data-control-kind="control"]{stroke-dasharray:9 5 !important}
+.pto-dv4-architecture .v4-overlay-control-edge[data-control-kind="feedback"],.pto-dv4-architecture .v4-overlay-control-edge[data-control-kind="state"]{stroke-dasharray:3 4 10 4 !important}
+.v4-overlay-control-label{font-size:12px;fill:var(--foreground);stroke:var(--background);stroke-width:4px;paint-order:stroke fill;pointer-events:none}
+.v4-overlay-state-marker{font-size:12px;fill:var(--foreground);stroke:var(--background);stroke-width:5px;paint-order:stroke fill;pointer-events:none}

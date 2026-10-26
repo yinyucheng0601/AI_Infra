@@ -10,3 +10,24 @@ button[aria-pressed=true]{background:var(--surface-3)}
 
 #legend a,#legend a:visited{color:var(--foreground);text-decoration:underline;text-underline-offset:3px}
 #legend a:hover{color:var(--foreground);text-decoration-thickness:2px}
+
+/* Information layers reuse the canonical graph and existing source inspector. */
+.v41-information-label{font-size:12px;fill:var(--foreground-secondary)}
+.v41-information-details{border-bottom:1px solid var(--border-default);padding-bottom:12px;margin-bottom:12px}
+.v41-information-details small,.v41-evidence-gap{color:var(--foreground-secondary);font-size:12px}
+.v4-preview__toolbar{flex-wrap:wrap}
+
+#info-layers{display:flex;align-items:center;flex-wrap:wrap;gap:4px;border-left:1px solid var(--border-default);padding-left:8px;font-size:12px}
+#info-layers>span{color:var(--foreground-secondary);margin-right:4px}
+#info-layers button{display:inline-flex;align-items:center;gap:5px}
+#info-layers button i{width:7px;height:7px;border:1px solid var(--foreground-secondary);border-radius:50%}
+#info-layers button.is-on{background:var(--surface-3)}
+#info-layers button.is-on i{background:var(--foreground);border-color:var(--foreground)}
+
+#info-layers button:disabled{opacity:.45;cursor:not-allowed}
+.v41-execution-deck{fill:var(--surface-2);stroke:var(--foreground-secondary);stroke-width:1;opacity:.5}
+.v41-execution-count{font-size:13px;fill:var(--foreground);font-weight:600}
+.v41-control-object rect:first-child{stroke:var(--foreground-secondary)}
+
+.v41-sync-bridge{stroke:var(--foreground-secondary);stroke-width:2;stroke-dasharray:5 5}
+.v41-sync-marker{fill:var(--foreground-secondary);font-size:12px}

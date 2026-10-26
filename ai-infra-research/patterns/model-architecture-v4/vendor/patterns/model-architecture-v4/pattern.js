@@ -256,6 +256,10 @@
       }],
       edges: canonical.summaryEdges.map(edge => ({
         ...edge,
+        semanticEdgeTypes: [...new Set(canonical.expandedEdges.filter(e =>
+          (registry.compoundFor(e.source)?.id || e.source) === edge.source &&
+          (registry.compoundFor(e.target)?.id || e.target) === edge.target
+        ).map(e => e.semanticEdgeType))],
         sourceAnchor: 'bottom',
         targetAnchor: 'top',
         curve: 'vertical',
@@ -364,8 +368,9 @@
       const target = visibleEndpoint(edge.target);
       if (source === target) return;
       const key = `${source}::${target}`;
-      const group = edgeGroups.get(key) || { source, target, count: 0, semanticEdgeType: edge.semanticEdgeType };
+      const group = edgeGroups.get(key) || { source, target, count: 0, semanticEdgeType: edge.semanticEdgeType, semanticEdgeTypes: [] };
       group.count += 1;
+      if (!group.semanticEdgeTypes.includes(edge.semanticEdgeType)) group.semanticEdgeTypes.push(edge.semanticEdgeType);
       edgeGroups.set(key, group);
     });
     const edges = [...edgeGroups.values()].map((edge, index) => ({
@@ -376,6 +381,7 @@
       targetAnchor: 'top',
       curve: 'vertical',
       semanticEdgeType: edge.semanticEdgeType,
+      semanticEdgeTypes: edge.semanticEdgeTypes,
       tensor: edge.count > 1 ? { name: `${edge.count} semantic paths` } : undefined
     }));
     clusters.unshift({
@@ -1022,7 +1028,7 @@
         el.appendChild(label);
       }
       const rect = el.querySelector('rect');
-      if (rect && !isValue && !isParameter && node.role !== 'residual-annotation') {
+      if (rect && !isValue && !isParameter && node.role !== 'residual-annotation' && !node.id.endsWith('/expert_ellipsis')) {
         const icon = global.PtoOpIconFor?.(node.label || '');
         if (icon) {
           const x = Number(rect.getAttribute('x')), y = Number(rect.getAttribute('y'));
@@ -1297,6 +1303,7 @@
       state.graphController = svg?.ptoModelGraphvizController || null;
       if (wholeModel) global.PtoDv4ArchitecturePattern.decorateFrontGraph(host, graph);
       if (wholeModel && !proModel) decorateReportGraph(host, graph);
+      options.onRender?.(host, graph);
       // The shared title defaults to pointer-events:none for pan-only diagrams.
       // Here a selectable scope is an explicit navigation anchor (no visual change).
       host.querySelectorAll('[data-cluster-id][role="button"] > .pto-model-graphviz-cluster-label').forEach(label => {
@@ -1539,6 +1546,7 @@
     return {
       root,
       get graph() { return graph; },
+      refresh() { renderScene({ notifyParent: false }); },
       fit,
       setTheme,
       setMappingDiff,

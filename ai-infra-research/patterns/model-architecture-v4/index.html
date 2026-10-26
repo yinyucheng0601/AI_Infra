@@ -6,10 +6,7 @@
 <link rel="stylesheet" href="vendor/patterns/model-graphviz/pattern.css"><link rel="stylesheet" href="vendor/patterns/model-architecture-training-sidecar/pattern.dv4.css"><link rel="stylesheet" href="vendor/patterns/model-architecture-v4/pattern.css?v=20261023-op-icons">
 </head><body><main class="v4-preview">
 <header class="v4-preview__toolbar"><strong>DeepSeek V4 · 整网架构</strong>
-<button class="btn btn-ghost btn-sm" data-level="l0" aria-pressed="false">L0 整网概览</button>
-<button class="btn btn-ghost btn-sm" data-level="l1" aria-pressed="true">L1 模型架构</button>
-<button class="btn btn-ghost btn-sm" data-level="l2" aria-pressed="false">L2 CSA 计算语义</button>
-<button class="btn btn-ghost btn-sm" id="fit">适配整图</button><button class="btn btn-ghost btn-sm" id="theme">浅色模式</button></header>
+<button class="btn btn-ghost btn-sm" id="theme">浅色模式</button><div id="information-layers" role="group" aria-label="信息叠加"></div></header>
 <section class="v4-preview__stage"><div id="v4Graph" style="height:100%" aria-label="DeepSeek V4 整网架构图"></div>
 <button id="legend-toggle" class="btn btn-ghost v4-preview__info" aria-label="图例与源码" title="图例与源码" aria-expanded="false" aria-controls="legend-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7"/><circle cx="12" cy="7" r=".75" fill="currentColor" stroke="none"/></svg></button>
 <aside id="legend-panel" class="v4-preview__legend" aria-label="图例与源码" hidden><strong>图例与源码</strong>
@@ -21,12 +18,12 @@
 <p>单线表示张量流；四路维度由 shape 标注。＋ ×4：四路逐元素合并。Mix B 对残差流混合，HC Post 对分支输出加权。</p>
 <p>依据 model.py 与 inference-config.json；B、T 为动态维度。网格仅区分张量类型，格数不表示 shape 或实测数值。</p>
 <p>源码返回 Logits；Token 选择与回送由调用方处理。点击节点查看来源位置。</p>
-</aside></section>
-<footer class="v4-preview__footer"><output id="selection" aria-live="polite">点击节点查看名称和来源位置</output><span>源码架构 · Layer 2 · mHC ×4 · CSA ratio 4</span></footer>
+</aside><aside id="runtime-evidence" class="v4-runtime-evidence" hidden><button id="close-evidence" class="btn btn-ghost btn-sm" aria-label="关闭运行证据">×</button><div id="runtime-evidence-content"></div></aside></section>
 </main>
 <script src="vendor/patterns/op-icons/pattern.js"></script>
 <script src="vendor/patterns/model-graphviz/pattern.js"></script>
 <script src="vendor/patterns/model-architecture-v4/source-manifest.js"></script><script src="vendor/patterns/model-architecture-v4/implementation-programs.js"></script><script src="vendor/patterns/model-architecture-v4/mapping-registry.js"></script>
 <script src="vendor/patterns/model-architecture-training-sidecar/pattern.dv4-architecture-data.js"></script><script src="vendor/patterns/model-architecture-training-sidecar/pattern.dv4.js"></script>
-<script src="vendor/patterns/model-architecture-v4/pattern.js?v=20261023-op-icons"></script><script src="vendor/patterns/model-architecture-v4/preview.js?v=20261022-refine3"></script>
+<script src="vendor/patterns/model-architecture-v4/pattern.js?v=20261023-op-icons"></script><script src="vendor/patterns/model-architecture-v4/information-layers.js"></script>
+<script src="vendor/patterns/model-architecture-v4/preview.js?v=20261022-refine3"></script>
 </body></html>

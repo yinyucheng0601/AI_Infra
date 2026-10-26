@@ -79,6 +79,13 @@
       "content": "patterns/model-architecture-v41/index.html",
       "sources": [
         {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/model-architecture-v41/index.html",
+          "url": null,
+          "revision": null,
+          "sha256": "1548c4200fa93dedd9a749e0f3f2d7da927de4db42d44cf947953af9bbdbebc5"
+        },
+        {
           "repository": "pto-design-system",
           "path": "patterns/model-architecture-v41/pattern.html",
           "url": null,
@@ -102,7 +109,8 @@
       ],
       "validation": [
         "2026-10-23：用户要求将当前 V4.1 架构图收录 Library / Pattern。",
-        "收录快照文件哈希、资源依赖和 JavaScript 语法检查通过；目录校验通过。"
+        "收录快照文件哈希、资源依赖和 JavaScript 语法检查通过；目录校验通过。",
+        "2026-10-23：Library 卡片主链接已切换到 AI_Infra 当前维护的 Pattern 入口。"
       ],
       "related": [
         "model-architecture-v4"
@@ -142,6 +150,13 @@
       "content": "patterns/model-architecture-v4/index.html",
       "sources": [
         {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/model-architecture-v4/index.html",
+          "url": null,
+          "revision": null,
+          "sha256": "8c2e613ab418071800fb58c7255a44ad51ccfd2523989a3f206961f80be69804"
+        },
+        {
           "repository": "pto-design-system",
           "path": "patterns/model-architecture-v4/pattern.html",
           "url": null,
@@ -173,7 +188,8 @@
       "validation": [
         "2026-10-22：用户多轮视觉与交互评审后明确确认 V4 定稿，并要求收录 Library / Patterns。",
         "63 种 CSA 展开组合布局回归通过；收录快照与来源文件哈希核对、JS 语法和本地依赖闭包检查通过。",
-        "2026-10-23：同步已确认的 OP 语义图标；保留节点高度、整体居中文字与展开按钮。"
+        "2026-10-23：同步已确认的 OP 语义图标；保留节点高度、整体居中文字与展开按钮。",
+        "2026-10-23：Library 卡片主链接已切换到 AI_Infra 当前维护的 Pattern 入口。"
       ],
       "related": [],
       "reviewedAt": "2026-10-22",

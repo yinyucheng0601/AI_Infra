@@ -24,7 +24,7 @@
         el.querySelectorAll('rect, text').forEach(child => child.remove());
         const label = make('text', { x: -18, y: 0, transform: 'rotate(-90 -18 0)',
           class: 'v4-report-residual-label', 'text-anchor': 'middle', 'dominant-baseline': 'middle' });
-        label.textContent = 'Mix B · 4→4';
+        label.textContent = 'Residual';
         el.appendChild(label);
       }
       const rect = el.querySelector('rect');
@@ -97,7 +97,7 @@
           ids.add(edge.dataset.source); ids.add(edge.dataset.target);
         }
       });
-      // Both segments around the Mix B annotation are one visual residual path.
+      // Residual segments share one hover group.
       const residualGroups = new Set(visibleEdges.filter(edge => edge.classList.contains('is-flow-hover') && edge.dataset.residualGroup).map(edge => edge.dataset.residualGroup));
       visibleEdges.forEach(edge => {
         if (!residualGroups.has(edge.dataset.residualGroup)) return;

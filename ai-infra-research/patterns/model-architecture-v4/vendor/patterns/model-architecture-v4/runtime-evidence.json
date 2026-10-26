@@ -1,0 +1,924 @@
+{
+  "schema": "v4_csa_evidence.v1",
+  "scope": {
+    "program": "decode_csa_test",
+    "capture": "20260903_010617",
+    "rank": 0,
+    "device": 0,
+    "model": "DeepSeek V4 Flash · CSA ratio 4",
+    "countMeaning": "Chrome Trace Worker View 中含 taskId 的完整事件数（去除 alloc / dummy），与 chip_swimlane_records 的核任务实例总量交叉核对",
+    "edgeWidthMeaning": "连线源节点映射的核任务实例量；不表示张量传输次数",
+    "coreTaskRecords": 4038,
+    "staticTasks": 86
+  },
+  "sources": [
+    {
+      "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/dfx_outputs/rank0/d0/merged_swimlane_20260903_010746.json",
+      "sha256": "b611c34b57f6b5a4a7ee10b7fe8fb437ae03fcc4ad62fd0aed0c337249644008"
+    },
+    {
+      "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+      "sha256": "15c9daa23820893052e748cc1e93c3d73e63073ce9798cfc2c3ad7236eb8faa6"
+    },
+    {
+      "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/next_levels/decode_csa_test/kernels/aic/qk_pv_aic.cpp",
+      "sha256": "df214915d4fe585247d34bf0b1bf595e4b2f33fc8140586c19b3a5d92e9bf1df"
+    },
+    {
+      "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/dfx_outputs/rank0/d0/deps.json",
+      "sha256": "5d8b3dd013572c9d478e9ce3017818ad6d7495b598cb1a3ee1705f258b4e7e09"
+    },
+    {
+      "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/dfx_outputs/rank0/d0/name_map.json",
+      "sha256": "d043f8e3f5349515643cd488964d7a5f93887292e9638bf2d223e85cd4c6368c"
+    }
+  ],
+  "nodes": {
+    "csa_query_projection": {
+      "count": 128,
+      "unit": "核任务实例",
+      "callables": {
+        "qr_proj_matmul": 16,
+        "qr_rms_norm_quant": 32,
+        "qproj_matmul": 64,
+        "qproj_dequant_rms_nope_rope": 16
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2007,
+          "symbol": "qr_proj_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2053,
+          "symbol": "qr_rms_norm_quant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1899,
+          "symbol": "qproj_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1785,
+          "symbol": "qproj_dequant_rms_nope_rope"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_q_lora_down": {
+      "count": 16,
+      "unit": "核任务实例",
+      "callables": {
+        "qr_proj_matmul": 16
+      },
+      "cores": [
+        "AIC"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2007,
+          "symbol": "qr_proj_matmul"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_q_normalization": {
+      "count": 32,
+      "unit": "核任务实例",
+      "callables": {
+        "qr_rms_norm_quant": 32
+      },
+      "cores": [
+        "AIV"
+      ],
+      "memory": [
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2053,
+          "symbol": "qr_rms_norm_quant"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_main_q_rope": {
+      "count": 80,
+      "unit": "核任务实例",
+      "callables": {
+        "qproj_matmul": 64,
+        "qproj_dequant_rms_nope_rope": 16
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1899,
+          "symbol": "qproj_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1785,
+          "symbol": "qproj_dequant_rms_nope_rope"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_recent_window_kv": {
+      "count": 128,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_proj_matmul": 32,
+        "kv_rms_norm_rope": 32,
+        "csa_cache_writeback": 64
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1073,
+          "symbol": "kv_proj_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1120,
+          "symbol": "kv_rms_norm_rope"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 253,
+          "symbol": "csa_cache_writeback"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_shared_kv_projection": {
+      "count": 32,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_proj_matmul": 32
+      },
+      "cores": [
+        "AIC"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1073,
+          "symbol": "kv_proj_matmul"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_kv_normalization": {
+      "count": 32,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_rms_norm_rope": 32
+      },
+      "cores": [
+        "AIV"
+      ],
+      "memory": [
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1120,
+          "symbol": "kv_rms_norm_rope"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_kv_rope": {
+      "count": 32,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_rms_norm_rope": 32
+      },
+      "cores": [
+        "AIV"
+      ],
+      "memory": [
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1120,
+          "symbol": "kv_rms_norm_rope"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_compressed_kv_path": {
+      "count": 672,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_score_proj": 512,
+        "scatter_softmax_pool": 64,
+        "compress_state_commit": 64,
+        "rmsnorm_rope_cache_write": 32
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1240,
+          "symbol": "kv_score_proj"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2463,
+          "symbol": "scatter_softmax_pool"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 147,
+          "symbol": "compress_state_commit"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2261,
+          "symbol": "rmsnorm_rope_cache_write"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_main_compressor_ratio4": {
+      "count": 672,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_score_proj": 512,
+        "scatter_softmax_pool": 64,
+        "compress_state_commit": 64,
+        "rmsnorm_rope_cache_write": 32
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1240,
+          "symbol": "kv_score_proj"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2463,
+          "symbol": "scatter_softmax_pool"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 147,
+          "symbol": "compress_state_commit"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2261,
+          "symbol": "rmsnorm_rope_cache_write"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_lightning_indexer": {
+      "count": 1616,
+      "unit": "核任务实例",
+      "callables": {
+        "idx_qr_proj_matmul": 128,
+        "idx_qr_proj_dequant": 8,
+        "qr_rope": 512,
+        "qr_hadamard_matmul": 256,
+        "qr_hadamard_quant": 256,
+        "weights_proj": 64,
+        "weights_proj_reduce": 16,
+        "indexer_score_leaf_wave_aic": 24,
+        "indexer_score_leaf_wave_aiv": 48,
+        "indexer_topk_group_wave": 48,
+        "indexer_topk_query_merge": 256
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 917,
+          "symbol": "idx_qr_proj_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 898,
+          "symbol": "idx_qr_proj_dequant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2126,
+          "symbol": "qr_rope"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1957,
+          "symbol": "qr_hadamard_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1972,
+          "symbol": "qr_hadamard_quant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2894,
+          "symbol": "weights_proj"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2873,
+          "symbol": "weights_proj_reduce"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 955,
+          "symbol": "indexer_score_leaf_wave"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 955,
+          "symbol": "indexer_score_leaf_wave"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 568,
+          "symbol": "indexer_topk_group_wave"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 658,
+          "symbol": "indexer_topk_query_merge"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_indexer_compressor_ratio4": {
+      "count": 480,
+      "unit": "核任务实例",
+      "callables": {
+        "kv_score_proj_0": 256,
+        "scatter_softmax_pool_0": 64,
+        "compress_state_commit_0": 64,
+        "rmsnorm_rope": 32,
+        "kv_hadamard": 32,
+        "kv_and_cache_write": 32
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1295,
+          "symbol": "kv_score_proj_0"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2545,
+          "symbol": "scatter_softmax_pool_0"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 168,
+          "symbol": "compress_state_commit_0"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2338,
+          "symbol": "rmsnorm_rope"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1056,
+          "symbol": "kv_hadamard"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1014,
+          "symbol": "kv_and_cache_write"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_indexer_q_rope": {
+      "count": 1160,
+      "unit": "核任务实例",
+      "callables": {
+        "idx_qr_proj_matmul": 128,
+        "idx_qr_proj_dequant": 8,
+        "qr_rope": 512,
+        "qr_hadamard_matmul": 256,
+        "qr_hadamard_quant": 256
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 917,
+          "symbol": "idx_qr_proj_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 898,
+          "symbol": "idx_qr_proj_dequant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2126,
+          "symbol": "qr_rope"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1957,
+          "symbol": "qr_hadamard_matmul"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1972,
+          "symbol": "qr_hadamard_quant"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_query_index_score": {
+      "count": 72,
+      "unit": "核任务实例",
+      "callables": {
+        "indexer_score_leaf_wave_aic": 24,
+        "indexer_score_leaf_wave_aiv": 48
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 955,
+          "symbol": "indexer_score_leaf_wave"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 955,
+          "symbol": "indexer_score_leaf_wave"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_score_weighting": {
+      "count": 80,
+      "unit": "核任务实例",
+      "callables": {
+        "weights_proj": 64,
+        "weights_proj_reduce": 16
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2894,
+          "symbol": "weights_proj"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2873,
+          "symbol": "weights_proj_reduce"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_topk_select": {
+      "count": 304,
+      "unit": "核任务实例",
+      "callables": {
+        "indexer_topk_group_wave": 48,
+        "indexer_topk_query_merge": 256
+      },
+      "cores": [
+        "AIV"
+      ],
+      "memory": [
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 568,
+          "symbol": "indexer_topk_group_wave"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 658,
+          "symbol": "indexer_topk_query_merge"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_sparse_shared_kv_attention": {
+      "count": 72,
+      "unit": "核任务实例",
+      "callables": {
+        "qk_pv_aic": 24,
+        "qk_pv_aiv": 48
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1614,
+          "symbol": "qk_pv"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1614,
+          "symbol": "qk_pv"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和",
+      "synchronization": {
+        "pipe": 0,
+        "direction": "AIC ⇄ AIV",
+        "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/next_levels/decode_csa_test/kernels/aic/qk_pv_aic.cpp",
+        "sites": [
+          {
+            "line": 535,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Acc, float, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 1024, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v207);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 626,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Acc, float, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 1024, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v227);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 636,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Mat, bfloat16_t, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v241);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 756,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Mat, bfloat16_t, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v273);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 986,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, float, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v83);",
+            "symbol": "qk_pv_aiv"
+          },
+          {
+            "line": 1055,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, bfloat16_t, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v100);",
+            "symbol": "qk_pv_aiv"
+          },
+          {
+            "line": 1275,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, float, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v186);",
+            "symbol": "qk_pv_aiv"
+          },
+          {
+            "line": 1342,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, bfloat16_t, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v203);",
+            "symbol": "qk_pv_aiv"
+          }
+        ]
+      }
+    },
+    "csa_sparse_attention_op": {
+      "count": 72,
+      "unit": "核任务实例",
+      "callables": {
+        "qk_pv_aic": 24,
+        "qk_pv_aiv": 48
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1614,
+          "symbol": "qk_pv"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 1614,
+          "symbol": "qk_pv"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和",
+      "synchronization": {
+        "pipe": 0,
+        "direction": "AIC ⇄ AIV",
+        "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/next_levels/decode_csa_test/kernels/aic/qk_pv_aic.cpp",
+        "sites": [
+          {
+            "line": 535,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Acc, float, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 1024, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v207);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 626,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Acc, float, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 1024, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v227);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 636,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Mat, bfloat16_t, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v241);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 756,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Mat, bfloat16_t, 32, 128, BLayout::ColMajor, -1, -1, SLayout::RowMajor, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v76, v273);",
+            "symbol": "qk_pv_aic"
+          },
+          {
+            "line": 986,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, float, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v83);",
+            "symbol": "qk_pv_aiv"
+          },
+          {
+            "line": 1055,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, bfloat16_t, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v100);",
+            "symbol": "qk_pv_aiv"
+          },
+          {
+            "line": 1275,
+            "code": "TPOP<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, float, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v186);",
+            "symbol": "qk_pv_aiv"
+          },
+          {
+            "line": 1342,
+            "code": "TPUSH<TPipe<0, Direction::DIR_BOTH, 16384, 2, 2, true>, Tile<TileType::Vec, bfloat16_t, 32, 128, BLayout::RowMajor, -1, -1, SLayout::NoneBox, 512, PadValue::Null, CompactMode::Null>, TileSplitAxis::TILE_NO_SPLIT>(v67, v203);",
+            "symbol": "qk_pv_aiv"
+          }
+        ]
+      }
+    },
+    "csa_grouped_output_projection": {
+      "count": 400,
+      "unit": "核任务实例",
+      "callables": {
+        "tp_o_a": 128,
+        "tp_o_a_quant": 48,
+        "tp_o_b": 128,
+        "tp_o_b_dequant": 24,
+        "tp_o_b_publish": 24,
+        "tp_o_rs_reduce": 48
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2709,
+          "symbol": "tp_o_a"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2675,
+          "symbol": "tp_o_a_quant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2798,
+          "symbol": "tp_o_b"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2746,
+          "symbol": "tp_o_b_dequant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2779,
+          "symbol": "tp_o_b_publish"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2846,
+          "symbol": "tp_o_rs_reduce"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_grouped_low_rank_projection": {
+      "count": 176,
+      "unit": "核任务实例",
+      "callables": {
+        "tp_o_a": 128,
+        "tp_o_a_quant": 48
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2709,
+          "symbol": "tp_o_a"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2675,
+          "symbol": "tp_o_a_quant"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    },
+    "csa_output_projection": {
+      "count": 224,
+      "unit": "核任务实例",
+      "callables": {
+        "tp_o_b": 128,
+        "tp_o_b_dequant": 24,
+        "tp_o_b_publish": 24,
+        "tp_o_rs_reduce": 48
+      },
+      "cores": [
+        "AIC",
+        "AIV"
+      ],
+      "memory": [
+        "L0A",
+        "L0B",
+        "L0C",
+        "L1",
+        "UB"
+      ],
+      "sourceRefs": [
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2798,
+          "symbol": "tp_o_b"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2746,
+          "symbol": "tp_o_b_dequant"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2779,
+          "symbol": "tp_o_b_publish"
+        },
+        {
+          "path": "Data/DeepseekV4/_jit_l3_decode_csa_20260903_010617/passes_dump/19_after_InferTileMemorySpace.py",
+          "line": 2846,
+          "symbol": "tp_o_rs_reduce"
+        }
+      ],
+      "mapping": "CSA 算子实现映射；多个语义阶段可能共享同一融合 kernel，不可跨节点求和"
+    }
+  }
+}

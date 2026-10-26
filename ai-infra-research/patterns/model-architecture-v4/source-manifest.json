@@ -28,15 +28,15 @@
     },
     {
       "path": "patterns/model-architecture-v4/pattern.css",
-      "sha256": "889354268812028b196ba5134e35af1c8b74f88533c981c06232daa408b784f9"
+      "sha256": "d01ad6859b06dc0af071b2aa2a964c252ccf74025d41411869004710d89f35e9"
     },
     {
       "path": "patterns/model-architecture-v4/pattern.js",
-      "sha256": "259589933d8b241f123e521c253356bdaefca5f001a7b06ce803c7a837c0d81e"
+      "sha256": "32a1977a7b376c19af0d253b305f59b4b3ce27f76cdde237c85fa861d2c12733"
     },
     {
       "path": "patterns/model-architecture-v4/preview.js",
-      "sha256": "c4a167ddf208937df911b31b27550d8f5beedccecebdf6b05d79f6dfac657fe3"
+      "sha256": "61e4ad7335f83c82524d1ad229e61fb73096c0e123f9c2c3af8a25672cf97222"
     },
     {
       "path": "patterns/model-architecture-v4/source-manifest.js",
@@ -65,6 +65,26 @@
     {
       "path": "tokens/semantic.css",
       "sha256": "d1a160a95ebed46997702ee556b34922afbea9b23527bf57171f5e682aacce90"
+    },
+    {
+      "path": "patterns/model-architecture-v4/runtime-evidence.json",
+      "sha256": "aad69eb315d5d312a35d953b3fecc6ad3b9d1ae7b01f58bb19e8c6a80986967e"
+    },
+    {
+      "path": "patterns/model-architecture-v4/information-layers.js",
+      "sha256": "0273ea898ed4c92e6c7043d3bde26e41a2792627e343e060e9c1fd4938dfb7a5"
     }
+  ],
+  "localAdaptations": [
+    "CSA rank0/d0 compiler/runtime overlays bound through existing canonical IDs; task-instance counts, core/memory tags and scoped TPipe synchronization evidence; independent switches; combined Shape/dtype line",
+    "Execution counts use numeric badges and edge widths; stacked-card decoration removed at user request",
+    "Removed level navigation, fit button and bottom status bar at user request; retained node expansion, graph gestures and evidence inspector",
+    "Information layers consolidated into one dropdown with independent native checkboxes, selected count, outside-click and Escape dismissal",
+    "Storage/core properties moved inside node below its name; synchronization uses a full dashed node outline with a centered top count capsule",
+    "Synchronization outline overrides shared SVG node-rect styles, uses 2.5px non-scaling stroke and a 9px outward gap",
+    "Node name and properties share a text column to the right of the op icon; expert ellipsis carries no icon or tensor properties",
+    "State/control overlays match canonical state-read and state-write edges, show distinct dashes and relation labels, mark LogicalState nodes and containing modules; frequency widths remain composable",
+    "Fixed node-title alignment by overriding shared CSS text-anchor:middle with inline start alignment; text width reserves collapsed expand control",
+    "Collapsed and partially expanded projections preserve all semantic edge types; state-read/write remains visible on summary edges; explicit persistent-state labels replace ambiguous arrow markers"
   ]
 }

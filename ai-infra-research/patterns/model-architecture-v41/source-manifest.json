@@ -36,11 +36,11 @@
     },
     {
       "path": "patterns/model-architecture-v41/pattern.html",
-      "sha256": "9669da0e55bfce30423f730bbe3896a53542a0397d056cd1a3735a71707e5a5b"
+      "sha256": "253f17b399a349e260d8ab92dd3a556df631a563494e4e3dfe768dd126d9b30a"
     },
     {
       "path": "patterns/model-architecture-v41/pattern.css",
-      "sha256": "f112f981cf953930ace1725e9399932706601535258e85d9a2b5471052523a9c"
+      "sha256": "324ee2fdf0b493d827a518f59c24f03ef0edca2685e7fb9453443cfcb2e852c1"
     },
     {
       "path": "patterns/model-architecture-v41/pattern.json",
@@ -60,7 +60,7 @@
     },
     {
       "path": "patterns/model-architecture-v41/preview.js",
-      "sha256": "4e222566df2bc417a55b4f24cc426da2e116ba944eb5bc27514760c4ef9e2f8a"
+      "sha256": "e32afe6fd0bdf6dae2e9f562fe2d3221584f9f94b5b7ac5b8a443660e388f728"
     },
     {
       "path": "patterns/model-architecture-v41/model_architecture_graph.json",
@@ -185,10 +185,17 @@
     {
       "path": "patterns/model-architecture-v41/sources/encoding/tests/test_input_1.json",
       "sha256": "6a5a86694e47169c8f0c9243a7e24cc5db05447be0d3d3a9891034e913c518de"
+    },
+    {
+      "path": "patterns/model-architecture-v41/information-layers.js",
+      "sha256": "74f0e9338350dd63ae2bf78179143eb0530f2a8309570e36b2a8541ac388d935"
     }
   ],
   "maintenanceRepository": "AI_Infra",
   "localAdaptations": [
-    "Relative analysis-report link maintained in AI_Infra"
+    "Relative analysis-report link maintained in AI_Infra",
+    "Six source-backed information layers added locally; canonical graph unchanged; no compiler/runtime measurements imported",
+    "Information layers use independent composable switches, compact joint node summaries, and combined inspector sections; URLs persist infoLayers and migrate legacy infoLayer",
+    "Toolkit Studio refreshed reference: Shape/dtype property strips; typed state/control edges; count decks and logarithmic edge widths require scoped evidence; cross-core synchronization bridges require explicit Event endpoints. Unsupported V4.1 controls disabled."
   ]
 }

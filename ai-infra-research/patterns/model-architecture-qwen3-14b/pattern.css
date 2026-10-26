@@ -10,3 +10,5 @@ button[aria-pressed=true]{background:var(--surface-3)}
 
 #legend a,#legend a:visited{color:var(--foreground);text-decoration:underline;text-underline-offset:3px}
 #legend a:hover{color:var(--foreground);text-decoration-thickness:2px}
+
+.v4-preview__toolbar{flex-wrap:wrap}.v4-preview__legend{max-height:calc(100% - 64px);overflow:auto} #canvas .pto-model-graphviz-node-label{font-size:16px}
