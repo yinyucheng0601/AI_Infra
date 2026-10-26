@@ -29,7 +29,7 @@
       ],
       "status": "reviewed",
       "visibility": "internal",
-      "content": "patterns/paged-attention-graph/index.html",
+      "content": "patterns/paged-attention-graph/Design/Toolkit Studio/graph-style-preview.html",
       "sources": [
         {
           "repository": "pypto",
