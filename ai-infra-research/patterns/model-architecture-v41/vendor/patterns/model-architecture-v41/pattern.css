@@ -31,3 +31,13 @@ button[aria-pressed=true]{background:var(--surface-3)}
 
 .v41-sync-bridge{stroke:var(--foreground-secondary);stroke-width:2;stroke-dasharray:5 5}
 .v41-sync-marker{fill:var(--foreground-secondary);font-size:12px}
+
+/* Shared toolbar rhythm with the Paged Attention pattern. */
+.v4-preview__toolbar{height:64px;min-height:64px;box-sizing:border-box;flex-wrap:nowrap;gap:12px;padding:0 24px;position:relative;z-index:30;font:14px system-ui,sans-serif}
+.v4-preview__toolbar strong{white-space:nowrap}.v4-preview__toolbar button,.v4-preview__toolbar select,.v41-toolbar-menu>summary{background:var(--surface-2);color:var(--foreground);border:0;border-radius:7px;padding:8px 12px;font:inherit;white-space:nowrap}
+.v41-camera{display:flex;align-items:center;gap:8px}#zoom-status{font-size:12px;color:var(--foreground-secondary);min-width:36px}
+.v41-toolbar-menu{position:relative}.v41-toolbar-menu>summary{list-style:none;cursor:pointer}.v41-toolbar-menu>summary::-webkit-details-marker{display:none}
+.v41-toolbar-popover,#info-layers{position:absolute;right:0;top:44px;width:210px;box-sizing:border-box;background:var(--surface-2);padding:12px;border:1px solid var(--border-default);border-radius:12px;box-shadow:0 12px 32px #0008;display:flex;flex-direction:column;align-items:stretch;gap:4px;flex-wrap:nowrap}
+#info-layers label{display:flex;align-items:center;gap:12px;padding:10px;font:14px system-ui;color:var(--foreground);cursor:pointer}#info-layers input{appearance:auto;width:16px;height:16px;accent-color:var(--foreground);margin:0}#info-layers label:has(input:disabled){opacity:.45;cursor:not-allowed}
+.v41-more{width:240px}.v41-more button,.v41-more a{text-align:left}.v41-more button[aria-pressed=true]{background:var(--surface-3)}
+@media(max-width:760px){.v4-preview__toolbar{gap:6px;padding:0 10px}.v4-preview__toolbar .version{display:none}.v4-preview__toolbar strong{font-size:12px}.v4-preview__toolbar select{max-width:115px}}
