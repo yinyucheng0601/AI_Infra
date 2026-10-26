@@ -101,3 +101,21 @@ test('generated page has every required DOM target once and valid inline JS',()=
  assert.ok(!doc.includes('<link rel="stylesheet"'));
  assert.ok(doc.includes('/* PTO design system · tokens/foundation.css */'));
 });
+
+test('every standalone pattern card resolves to an existing HTML page',()=>{
+ const {fileURLToPath}=require('node:url');
+ const base=new URL('file://'+path.join(root,'patterns.html'));
+ const patterns=JSON.parse(fs.readFileSync(path.join(root,'catalog/assets.json'))).assets.filter(a=>a.type==='pattern');
+ assert.ok(patterns.length>0);
+ for(const fileMode of [false,true]){
+  for(const a of patterns){
+   const href=C.sourceHref(a,{mode:'standalone',fileMode,fileRoots:{'ai-infra':'../'}});
+   const target=new URL(href,base);
+   assert.match(target.pathname,/\.html?$/,a.id+': '+href);
+   assert.ok(fs.existsSync(fileURLToPath(target)),a.id+': missing '+href);
+   if(a.content.endsWith('.md')){
+    assert.equal(fileURLToPath(target),path.resolve(root,'..',a.sources[0].path),a.id);
+   }
+  }
+ }
+});
