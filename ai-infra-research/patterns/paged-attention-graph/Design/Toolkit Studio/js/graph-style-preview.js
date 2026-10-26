@@ -1,6 +1,6 @@
 (function(){
 const model=window.PTO_PYPA_SEMANTIC_GRAPH,scene=document.querySelector('#scene'),viewport=document.querySelector('#viewport');
-const layers={shape:true,precision:false,memory:false,control:true,execution:false,sync:false};
+const layers={shape:true,precision:true,memory:true,control:true,execution:true,sync:true};
 const expanded=new Set();let graph,scale=1,x=0,y=0,selected=null;
 const transform=()=>{scene.style.transform=`translate(${x}px,${y}px) scale(${scale})`;document.querySelector("#zoom-status").textContent=Math.round(scale*100)+"%";};
 function readable(){scale=1;const n=graph.nodes.find(n=>n.id==="qk");x=viewport.clientWidth/2-(n.x+n.w/2);y=48-n.y;transform();}
@@ -40,5 +40,5 @@ scene.addEventListener('pointerover',e=>{const id=e.target.closest('[data-pypa-n
 scene.addEventListener('pointerleave',()=>scene.querySelectorAll('.is-related').forEach(el=>el.classList.remove('is-related')));
 viewport.addEventListener('wheel',e=>{e.preventDefault();const r=viewport.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,prev=scale;scale=Math.max(.08,Math.min(3,scale*Math.exp(-e.deltaY*.001)));x=mx-(mx-x)*scale/prev;y=my-(my-y)*scale/prev;transform();},{passive:false});
 let drag;viewport.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={px:e.clientX,py:e.clientY,x,y};viewport.setPointerCapture(e.pointerId);});viewport.addEventListener('pointermove',e=>{if(!drag)return;x=drag.x+e.clientX-drag.px;y=drag.y+e.clientY-drag.py;transform();});viewport.addEventListener('pointerup',()=>drag=null);
-document.querySelectorAll('[data-layer]').forEach(input=>input.onchange=()=>{layers[input.dataset.layer]=input.checked;render();});document.querySelector('#task').onchange=()=>render();document.querySelector('#seq').onchange=()=>render();document.querySelector("#fit").onclick=fit;document.querySelector("#readable").onclick=readable;window.addEventListener("resize",transform);render();readable();
+document.querySelectorAll('[data-layer]').forEach(input=>input.onchange=()=>{layers[input.dataset.layer]=input.checked;render();});document.querySelector('#task').onchange=()=>render();document.querySelector('#seq').onchange=()=>render();document.querySelector("#fit").onclick=fit;window.addEventListener("resize",transform);render();readable();
 })();

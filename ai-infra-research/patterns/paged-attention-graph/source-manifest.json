@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "Design/Toolkit Studio/graph-style-preview.html",
-      "sha256": "a95ee8fcdc6ba46c205ada322e322cb11d80aa62544057c64998fe7e6bc796a4"
+      "sha256": "bf0dce16a7cc59a4c4f1ca0df4e15c492be131534fa36cbf7e767139a0e940a5"
     },
     {
       "path": "vendor/pto-design-system/tokens/foundation.css",
@@ -227,7 +227,7 @@
     },
     {
       "path": "Design/Toolkit Studio/js/graph-style-preview.js",
-      "sha256": "9b60bde5707df21e42b618aad7b47ddf0aea3e8e3d8d595105e842b7f59dcea0"
+      "sha256": "16b5c8dc64746e93521d6bd57f97ac5e7ee23914e72ddf1c64a05159f1a93a40"
     }
   ]
 }
