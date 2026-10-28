@@ -9,7 +9,7 @@ window.PtoOpIcons = [
     "id": "matmul",
     "name": "MatMul",
     "description": "矩阵乘法",
-    "path": "M4 4h5M4 4v16h5M20 4h-5M20 4v16h-5M9 9l6 6M15 9l-6 6"
+    "path": "M3 4h4M3 4v16h4M21 4h-4M21 4v16h-4M8 7h3v3H8zM14 7h3v3h-3zM8 14h3v3H8zM14 14h3v3h-3z"
   },
   {
     "id": "linear",
@@ -63,7 +63,7 @@ window.PtoOpIcons = [
     "id": "gate",
     "name": "Gate / Multiply",
     "description": "门控乘法",
-    "path": "M6 6l12 12M18 6L6 18"
+    "path": "M3 7h6M3 17h6M9 5v14h4a7 7 0 0 0 0-14H9M20 12h3"
   },
   {
     "id": "activation",

@@ -1,16 +1,128 @@
+<!-- AI Infra: AI infrastructure visualization, LLM inference diagrams, compiler passes, memory analysis, Ascend hardware architecture. -->
+
 <div align="center">
 
 # AI Infra
 
-Explore AI infrastructure through interactive diagrams—from model computation and compilation to memory, communication, and hardware.
+**Explore AI infrastructure through interactive diagrams: LLM computation and inference, compiler passes, memory, communication, and Ascend hardware architecture.**
 
 [简体中文](README.md) · **English**
+
+[![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-555555)](COPYRIGHT.md)
+![Platform: Web Browser](https://img.shields.io/badge/Platform-Web_Browser-555555)
+![Online viewing: No Install](https://img.shields.io/badge/Online_View-No_Install-555555)
 
 [Explore the Library](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/index.html) · [Interactive Patterns](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns.html) · [Design Skills](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/skills.html)
 
 </div>
 
 [![Atlas 950 Anatomy: explore a cabinet array down to its NPU components](ai-infra-research/web/media/atlas-950-anatomy-cover.png)](https://yinyucheng0601.github.io/AI_Infra/atlas-950-anatomy/index.html)
+
+## Why AI Infra?
+
+Connect concepts across models, compilers, and hardware through explorable views for technical understanding, design reviews, and shared research.
+
+| Question | What to explore |
+| --- | --- |
+| How do models and operators organize computation? | Model architectures, Attention computation chains, and tensor relationships |
+| How does compilation transform a program? | Compiler passes, dataflow, control scopes, and memory bindings |
+| How does an inference request execute? | Prefill / Decode timelines and Host / Device relationships |
+| How are memory objects and hardware organized? | Address and lifetime views, plus cabinet-to-NPU exploration |
+| How can complex systems be represented in an interface? | Visual primitives, interaction patterns, and design skills |
+
+## Start with These Works
+
+| Work | What you can inspect |
+| --- | --- |
+| [Atlas 950 Anatomy](https://yinyucheng0601.github.io/AI_Infra/atlas-950-anatomy/index.html) | Continuous isometric exploration from cabinets to compute drawers, components, and the 950DT package |
+| [Paged Attention Graph](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/paged-attention-graph/Design/Toolkit%20Studio/graph-style-preview.html) | The computation chain through QK Matmul, Softmax, PV Matmul, and Online Update |
+| [Compiler Pass Observability](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/reports/llm-compute/pass-observability-guide/index.html) | Compilation stages, observable objects, and views connected through one MatMul example |
+| [Memory Inspector](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/memory-inspector/index.html) | Function memory allocations by address and static lifetime, linked to objects and source code |
+| [Inference Request](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/patterns/critical-path-swimlane/index.html) | A shared, zoomable request timeline connecting Host and Device execution |
+
+## Quick Start
+
+**Browse online:** Open the [Library](https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/index.html) and select a card. Online viewing requires no Python, Node, or local dependencies. Click the cover above to open Atlas 950 Anatomy directly.
+
+**Maintain locally:** With an existing checkout, run this command from the repository root to start the preview server (Python 3.10+, standard library only):
+
+```sh
+python3 ai-infra-research/scripts/serve.py
+```
+
+Open <http://127.0.0.1:8766/>. For full cross-repository source access, configure `ai-infra-research/.local/sources.json` using the [running guide](ai-infra-research/docs/running.md) (Chinese). Some pages have external resource dependencies. The preview server serves only allowlisted resources.
+
+## Repository Structure
+
+```text
+AI_Infra/
+├── ai-infra-research/
+│   ├── catalog/assets.json   # Canonical asset catalog
+│   ├── reports/             # Research reports and interactive diagrams
+│   ├── patterns/            # Visual and interactive works
+│   ├── methods/             # Design methods and skills
+│   ├── web/                 # Library page sources
+│   └── scripts/             # Build, validation, and local preview
+├── atlas-950-anatomy/       # Atlas 950 isometric diagrams
+└── atlas-950-explorer/      # Atlas 950 hardware exploration
+```
+
+Assets are curated for their design value. `catalog/assets.json` is the single source for the catalog; Library pages are generated from it and `web/`. Edit sources and rebuild when maintaining the site. Asset records retain source references and validation evidence.
+
+## Who It Is For
+
+- **AI infrastructure and developer-tool designers:** Explore computation graphs, timelines, memory views, and multilevel system interactions.
+- **Model, compiler, and performance engineers:** Use diagrams to discuss relationships between computation, execution, and storage.
+- **Technical leads and research teams:** Find representative work, design reasoning, and source evidence for reviews and discussions.
+
+## FAQ
+
+<details>
+<summary>What kind of repository is AI Infra?</summary>
+
+An AI infrastructure design research and interactive visualization collection, with diagrams, reports, patterns, and design methods. Individual design assets are the unit of curation.
+
+</details>
+
+<details>
+<summary>Should I start with Library, Patterns, or Skills?</summary>
+
+Use Library to explore content by topic, Patterns to browse interactive works, and Skills to find design methods, examples, and their workflows.
+
+</details>
+
+<details>
+<summary>Do I need dependencies or an NPU to browse online?</summary>
+
+No NPU or local development dependencies are required. Open the published pages in a browser. Some pages need network access for external fonts or other resources.
+
+</details>
+
+<details>
+<summary>How do I preview locally, and why are some sources unavailable?</summary>
+
+Start the preview server above with Python 3.10+. Cross-repository originals require source mappings; cloning this repository does not automatically provide those sources. See the running guide for configuration.
+
+</details>
+
+<details>
+<summary>Can I copy diagrams, reuse code, or use this in commercial work?</summary>
+
+Original content is all rights reserved; public access does not grant reuse permission. See the complete terms below and [COPYRIGHT.md](COPYRIGHT.md). Separately licensed third-party materials retain their own licenses.
+
+</details>
+
+## Feedback and Maintenance
+
+Report broken links, content issues, or interaction bugs through [GitHub Issues](https://github.com/yinyucheng0601/AI_Infra/issues), including the page URL, reproduction steps, and expected behavior. Maintainers should read the [scope rules](ai-infra-research/docs/scope.md) and [contribution workflow](ai-infra-research/docs/contributing.md) before adding assets (Chinese).
+
+Validate the catalog from the repository root:
+
+```sh
+python3 ai-infra-research/scripts/validate_catalog.py
+```
+
+**Make the connections between models, compilers, and hardware visible.**
 
 ## Credits
 

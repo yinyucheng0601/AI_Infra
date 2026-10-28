@@ -2,6 +2,55 @@
   "version": 1,
   "assets": [
     {
+      "id": "reduction-memory-inspector",
+      "title": "归约访存检查 · LogSumExp",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "从输出与逻辑输入联动追踪 GM、UB、计算布局和源码，核查非末轴归约的分组与边界。",
+      "designValue": "通过一致选择、布局映射、就近证据与调查上下文复制，让开发者和 agent 围绕同一对象核查假设。",
+      "outline": [
+        "输出与 189 项归约输入联动",
+        "GM → UB → work 地址与布局映射",
+        "完整组与尾组范围对照",
+        "悬浮源码、应用上下文与调查交接"
+      ],
+      "domains": [
+        "AI Infra",
+        "AscendC",
+        "Memory"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/reduction-memory-inspector/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/logsumexp-case5/index.html",
+          "sha256": "6d51a3cde5e9dcaa65dfccb04b66c3b4e670b92d2846902340b4daaa3f4e8093",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-28：用户多轮评审后要求收录 Library / Pattern；删除顶部坐标输入条，保留矩阵点选。",
+        "2067 个输出、390663 项输入映射与 12773 项上下文检查通过；图元契约检查通过。",
+        "固定版本的条件源码映射；未执行 CANN / NPU，未完成本轮浏览器验收。"
+      ],
+      "related": [
+        "diagram-legend-library"
+      ],
+      "reviewedAt": "2026-10-28",
+      "author": "Yucheng"
+    },
+    {
       "id": "paged-attention-graph",
       "title": "Paged Attention · 计算图",
       "type": "pattern",
@@ -688,7 +737,7 @@
           "path": "ai-infra-research/patterns/csa-pass-field/index.html",
           "url": null,
           "revision": null,
-          "sha256": "adbff6a865e8d34490f5a6f67acb226e752f8559c6d8696cd9bcbda19e21e141"
+          "sha256": "b166a67dd1148e16064bb09c5d329b342abcce1f47d6725438da4cd16e4dc6d2"
         }
       ],
       "validation": [
@@ -708,7 +757,7 @@
       "buildSource": {
         "repository": "PyPTO3-main",
         "path": "Design/csa-pass-field",
-        "fingerprint": "2b78ff57445ed07f679171091e976af9e377dfef097087df5604e05bbf7debea",
+        "fingerprint": "1e50459d7921b18b2d499a34f39bc9d21c142627b6d8cb49b0bbc2ca469dbab5",
         "policy": "sole-source; generated collection artifact"
       }
     },

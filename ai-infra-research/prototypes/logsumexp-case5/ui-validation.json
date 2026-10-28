@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-28",
+  "preview": "http://127.0.0.1:8796/",
+  "checks": {
+    "renderedTensorCount": 6,
+    "renderedOpCount": 3,
+    "allTensorTextBoundsInsideGrid": true,
+    "removedGuideAbsent": true,
+    "tailSelectionPreservesViewport": true,
+    "contextIncludesUserQuestion": true,
+    "clipboardEqualsVisiblePreview": true
+  },
+  "notRepeated": [
+    "panel drag and native resize, previously checked; unchanged in this revision"
+  ],
+  "limitations": [
+    "Browser check does not establish NPU execution correctness"
+  ]
+}
