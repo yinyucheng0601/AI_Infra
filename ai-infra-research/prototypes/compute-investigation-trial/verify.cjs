@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const M=require('./model.js');let checks=0;
+function coordinates(p,shape){const c=[];for(let i=shape.length-1;i>=0;i--){c.unshift(p%shape[i]);p=Math.floor(p/shape[i]);}return c;}
+function linear(c,shape){return c.reduce((p,v,i)=>p*shape[i]+v,0);}
+for(const config of M.configs){const m=M.unpack(config),seen=new Set();for(let o=0;o<m.num;o++)for(let p=0;p<m.size;p++){
+ const dstShape=m.shape.filter((_,i)=>i!==m.axis),c=coordinates(p,dstShape);c.splice(m.axis,0,o);const ref=linear(c,m.shape),actual=M.unpackElement(m,o,p);assert.equal(actual.src,ref);assert(actual.task);assert.equal(actual.srcBytes,ref*m.bytes);assert(!seen.has(ref));seen.add(ref);checks++;
+ }assert.equal(seen.size,M.product(m.shape));assert.equal(m.ranges.reduce((n,r)=>n+r.end-r.start,0),m.tasks.length);assert.equal(m.tasks.filter(t=>!Number.isInteger(t.core)).length,0);}
+for(const config of M.expandConfigs){const m=M.expand(config);let stageValues=Array.from({length:m.inputSize},(_,i)=>i);for(const s of m.stages){const next=[];for(let o=0;o<s.outer;o++)for(let r=0;r<s.repeat;r++)next.push(...stageValues.slice(o*s.inner,(o+1)*s.inner));stageValues=next;}assert.equal(stageValues.length,m.size);for(let p=0;p<m.size;p++){const c=coordinates(p,m.target).map((v,i)=>m.shape[i]===1?0:v),ref=linear(c,m.shape);assert.equal(M.expandElement(m,p).src,ref);assert.equal(stageValues[p],ref);checks++;}}
+for(const name of ['unpack','expand']){const html=fs.readFileSync(__dirname+'/'+name+'.html','utf8');assert(!html.includes('/*__'));assert(!/src="https?:/.test(html));for(const [,script] of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(script);assert(html.includes('data-kind'))}
+const luminance=h=>{const v=h.match(/\w\w/g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return v[0]*.2126+v[1]*.7152+v[2]*.0722};const contrast=(a,b)=>{let x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};for(const [a,b] of [['aaaaaa','111111'],['bbbbbb','242424'],['d1f4a8','24301c']])assert(contrast(a,b)>=4.5);
+console.log(JSON.stringify({mappingElementsChecked:checks,syntax:'2 offline files pass',contrast:'text pairs >=4.5:1'},null,2));

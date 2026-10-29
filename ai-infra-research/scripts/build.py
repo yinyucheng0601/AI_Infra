@@ -41,6 +41,8 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
     config = {'mode': mode, 'serviceBase': service if mode == 'pto' else './', 'ptoBase': './' if mode == 'pto' else None}
     config['collection'] = collection
     if collection == 'skills':
+        from skill_readme import render as render_skill_readme
+        config['skillReadmes'] = {a['id']: render_skill_readme((ROOT / a['readmePath']).read_text(), a['readmePath']) for a in data['assets'] if a['type'] == 'method' and a.get('readmePath')}
         config['skillTexts'] = {a['id']: (ROOT / a['content']).read_text() for a in data['assets'] if a['type'] == 'method'}
     if mode == 'standalone':
         repositories = json.loads((ROOT / '.local/sources.json').read_text())['repositories']
@@ -57,6 +59,8 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '/* CORE_JS */': (ROOT / 'web/catalog-core.js').read_text(),
         '/* APP_JS */': (ROOT / 'web/gallery.js').read_text(),
         '__CRITICAL_PATH_SWIMLANE_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/critical-path-swimlane-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
+        '__UNPACK_MAPPING_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/unpack-mapping-inspector-cover.svg').read_bytes()).decode('ascii'),
+        '__EXPAND_MAPPING_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/expand-mapping-inspector-cover.svg').read_bytes()).decode('ascii'),
         '__MEMORY_INSPECTOR_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/memory-inspector-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__PASS_ERROR_CASES_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/pass-error-cases-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__CSA_PASS_FIELD_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/csa-pass-field-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
@@ -91,6 +95,10 @@ if __name__ == '__main__':
     parser.add_argument('--service-url', default='http://127.0.0.1:8766/')
     args = parser.parse_args()
     collect()
+    from collect_operator_mapping import collect as collect_operator_mapping
+    collect_operator_mapping()
+    from package_investigation import package as package_investigation
+    package_investigation()
     packages = [('methods/llm-compute-diagrams', 'methods/llm-compute-diagrams.zip')]
     data = json.loads((ROOT / 'catalog/assets.json').read_text())
     validate(data)

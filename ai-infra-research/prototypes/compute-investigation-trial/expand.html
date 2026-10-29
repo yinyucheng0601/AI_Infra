@@ -1,0 +1,559 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>算子映射调查</title><style>
+:root{color-scheme:dark;--bg:#111;--fg:#e8e8e8;--muted:#aaa;--input:#b1ef6b}*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font:13px -apple-system,BlinkMacSystemFont,"PingFang SC",Arial,sans-serif}button,input,select,textarea{font:inherit;color:inherit}button{border:0;background:none;border-radius:6px;min-height:36px;padding:8px 11px;cursor:pointer}button:hover{background:#ffffff12}button[aria-pressed=true]{background:#eee;color:#111}button:disabled{opacity:.35;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid #fff;outline-offset:3px}a{color:inherit;text-underline-offset:3px}.mono,code,pre,input,select{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.identity{position:absolute;left:30px;top:24px;z-index:2;pointer-events:none}.identity h1{font-size:22px;font-weight:450;margin:0 0 7px}.identity a{font:11px ui-monospace;color:#aaa;pointer-events:auto}.identity p{margin:6px 0 0;font:11px ui-monospace;color:#aaa}.top-actions{position:absolute;right:26px;top:24px;display:flex;gap:8px;z-index:4}.icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.icon{width:38px;height:38px;border-radius:50%;padding:0;display:grid;place-items:center;font-size:18px}.configuration{position:absolute;left:50%;top:24px;transform:translateX(-50%);padding:5px 10px;border-radius:24px;z-index:3}.configuration select{background:transparent;border:0;padding:6px;font-size:12px;max-width:340px}.configuration option{background:#222}.canvas{position:absolute;inset:0;touch-action:none;cursor:grab}.canvas.dragging{cursor:grabbing}.canvas svg{width:100%;height:100%;display:block}.scene text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;pointer-events:none}.scene .name{font-size:23px;fill:#eee}.scene .shape{font-size:12px;fill:#aaa}.scene .address{font-size:11px;fill:#ccc}.scene .cell rect{fill:#26321e;stroke:#78935d;stroke-width:1}.scene .cell.related rect{fill:#42572e;stroke:#b1ef6b}.scene .cell.selected rect{stroke:#fff;stroke-width:2}.scene .cell text{fill:#d4efbb;font-size:11px;text-anchor:middle;dominant-baseline:middle}.scene .cell{cursor:pointer}.scene [role=button]:focus-visible{outline:none}.scene [role=button]:focus-visible rect{stroke:#fff;stroke-width:2.5}.scene .wire{fill:none;stroke:#aaa;stroke-width:1.2}.scene .selected-wire{fill:none;stroke:#ddd;stroke-width:1.4}.scene .core rect{fill:#222;stroke:#666;stroke-width:1}.scene .core.empty rect{fill:#191919;stroke:#555;stroke-dasharray:3 3}.scene .core.active rect{fill:#ddd;stroke:#eee}.scene .core.active text{fill:#111}.scene .core{cursor:pointer}.scene .core text{font-size:11px}.scene .core.empty text{fill:#aaa}.bottom-actions{position:absolute;left:26px;bottom:24px;padding:4px;display:flex;gap:4px;border-radius:24px;z-index:4}.bottom-actions a{font-size:12px;text-decoration:none;padding:8px 13px;border-radius:20px;min-height:36px;display:flex;align-items:center}.bottom-actions a.active{background:#eee;color:#111}.coordinates{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:4px 10px;border-radius:24px;z-index:4}.coordinates label{display:flex;align-items:center;gap:5px;font:12px ui-monospace;color:#aaa}.coordinates input{width:58px;background:transparent;border:0;font-size:14px;padding:5px 0}.coordinates input::-webkit-inner-spin-button{display:none}.coordinates button{width:30px;padding:4px}.range{font:10px ui-monospace;color:#bbb;white-space:nowrap}.zoom-controls{position:absolute;right:26px;bottom:24px;display:flex;align-items:center;padding:4px;border-radius:24px;z-index:4}.zoom-controls button{width:34px;padding:4px;font-size:18px}.zoom-controls .fit{width:auto;font-size:12px}.zoom-controls output{font:11px ui-monospace;min-width:42px;text-align:center;color:#bbb}.panel{position:absolute;right:26px;top:86px;width:320px;max-height:calc(100vh - 180px);overflow:auto;border-radius:16px;z-index:6;padding:16px;height:auto;resize:horizontal;min-width:280px;min-height:0}.panel[hidden],.source-window[hidden],.tooltip[hidden]{display:none}.panel-head{display:flex;align-items:center;gap:8px;cursor:move;margin-bottom:12px;touch-action:none}.panel-head h2{font:15px ui-monospace;font-weight:450;margin:0 auto 0 0}.panel-head button{width:26px;min-height:26px;padding:0;font-size:19px}.readouts{display:grid;grid-template-columns:1fr 1fr;gap:16px 10px;margin:16px 0}.readouts small{font-size:10px;color:#aaa;display:block;margin-bottom:5px}.readouts strong{font:15px ui-monospace;font-weight:400}.panel p{font-size:12px;color:#bbb;line-height:1.7}.panel details{margin-top:15px}.panel summary{font-size:12px;cursor:pointer;padding:5px 0}.panel textarea{background:#151515;border:1px solid #555;border-radius:5px;width:100%;padding:8px;min-height:68px;resize:vertical}.panel pre{background:#151515;padding:10px;font:10px/1.8 ui-monospace;white-space:pre;overflow:auto;max-height:260px}.panel .source-open{padding:8px 0;text-align:left;color:#ddd;font-size:12px;text-decoration:underline;text-underline-offset:4px}.handoff-actions{display:flex;gap:7px;margin-top:8px}.handoff-actions button{background:#292929;font-size:12px}.status{font-size:11px;color:#bbb;min-height:15px;margin-top:6px}.source-window{position:absolute;right:26px;top:86px;left:auto;bottom:auto;width:530px;height:auto;min-width:300px;min-height:0;max-width:calc(100vw - 40px);max-height:calc(100vh - 150px);resize:horizontal;overflow:hidden;border-radius:14px;z-index:7;display:flex;flex-direction:column}.source-window .panel-head{padding:10px 13px;margin:0;flex-shrink:0}.source-meta{padding:0 13px 10px;font:10px ui-monospace;color:#bbb;overflow-wrap:anywhere}.source-tabs{display:flex;gap:4px;padding:0 8px 6px;flex-shrink:0;overflow:auto}.source-tabs button{font:10px ui-monospace;min-height:28px;white-space:nowrap;padding:5px 8px}.source-code{margin:0;background:#141414;padding:10px 13px;flex:0 1 auto;min-height:0;overflow:auto;font:11px/1.9 ui-monospace;white-space:pre;color:#ccc}.tooltip{position:absolute;pointer-events:none;z-index:9;background:#242424;border:1px solid #666;padding:8px 10px;border-radius:6px;font:11px/1.6 ui-monospace;white-space:pre}.info-list{font:11px/1.8 ui-monospace;color:#bbb}.info-list a{display:block;margin:10px 0;overflow-wrap:anywhere}@media(max-width:1000px){.configuration{top:82px}.coordinates{bottom:77px}.panel{top:132px;max-height:calc(100vh - 260px)}}@media(max-width:600px){.identity{left:18px;top:20px}.identity h1{font-size:20px}.identity a{display:none}.top-actions{right:16px;top:20px;gap:4px}.configuration{top:82px;width:max-content;max-width:calc(100vw - 36px)}.configuration select{max-width:calc(100vw - 65px);font-size:11px}.bottom-actions{left:16px;bottom:20px}.bottom-actions a{padding:8px 10px;font-size:11px}.zoom-controls{right:16px;bottom:20px}.zoom-controls output{display:none}.zoom-controls button{width:30px}.zoom-controls .fit{font-size:11px}.coordinates{bottom:76px;gap:5px;max-width:calc(100vw - 32px)}.coordinates input{width:48px;font-size:12px}.coordinates .range{font-size:9px}.panel{right:16px;top:135px;width:min(320px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100vh - 280px);min-width:260px}.source-window{right:16px;left:auto;top:135px;bottom:auto;width:calc(100vw - 32px);min-width:260px;max-height:calc(100vh - 270px)}}
+
+:root{--dropdown-open-dur:250ms;--dropdown-close-dur:150ms;--dropdown-pre-scale:.97;--dropdown-closing-scale:.99;--dropdown-ease:cubic-bezier(.22,1,.36,1)}
+.config-trigger{display:flex;align-items:center;gap:16px;font:12px ui-monospace;border:0;outline:0!important;border-radius:20px;padding:7px 12px;min-height:34px}.config-trigger:focus-visible{box-shadow:inset 0 0 0 1px #888}.config-trigger svg{width:14px;height:14px;stroke:#bbb;fill:none}.config-menu{position:absolute;left:0;top:calc(100% + 9px);min-width:100%;width:max-content;max-width:calc(100vw - 36px);padding:5px;background:#242424;border:1px solid #484848;border-radius:14px;box-shadow:0 12px 32px #0005;visibility:hidden}.config-menu.is-open,.config-menu.is-closing{visibility:visible}.config-menu button{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;font:12px ui-monospace;text-align:left;padding:10px 13px;border-radius:9px;white-space:nowrap;background:transparent;color:#ddd;outline:0!important;border:0}.config-menu button[aria-selected=true]{background:#343434;color:#eee}.config-menu button:hover,.config-menu button:focus-visible{background:#414141}.config-menu .check{color:#b1ef6b;width:14px}.audit-toggle{position:relative}.audit-count{position:absolute;right:-3px;top:-4px;font:10px ui-monospace;background:#d5ae75;color:#151515;border-radius:9px;padding:1px 4px;min-width:16px}.audit-results{padding:12px 0;border-top:1px solid #444;margin-top:16px}.audit-results h3{font-size:12px;font-weight:450;margin:0 0 8px}.audit-summary{font:11px ui-monospace;color:#b1ef6b;margin:8px 0 12px}.audit-item{display:block;width:100%;text-align:left;border-left:2px solid #c99e65;border-radius:0;padding:9px 10px;margin:7px 0;font:11px/1.7 ui-monospace;background:#ffffff04}.audit-item small{display:block;color:#bbb;font:10px/1.7 ui-monospace}.scene .candidate{fill:none;stroke:#d5ae75;stroke-width:1.5;stroke-dasharray:4 3}.scene .candidate-label{fill:#d5ae75;font-size:11px}.value-copy{font-size:13px!important;color:#ddd!important}.info-value{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid #444}
+.t-dropdown {
+  transform-origin: top left;
+  transform: scale(var(--dropdown-pre-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-open-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-open-dur) var(--dropdown-ease);
+  will-change: transform, opacity;
+}
+.t-dropdown[data-origin="top-right"]     { transform-origin: top right; }
+.t-dropdown[data-origin="top-center"]    { transform-origin: top center; }
+.t-dropdown[data-origin="bottom-left"]   { transform-origin: bottom left; }
+.t-dropdown[data-origin="bottom-center"] { transform-origin: bottom center; }
+.t-dropdown[data-origin="bottom-right"]  { transform-origin: bottom right; }
+.t-dropdown.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-dropdown.is-closing {
+  transform: scale(var(--dropdown-closing-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-close-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-close-dur) var(--dropdown-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-dropdown { transition: none !important; }
+}
+
+.configuration{display:flex;align-items:center;gap:7px;width:max-content;max-width:calc(100vw - 60px)}.configuration .coordinates{position:static;left:auto;bottom:auto;transform:none;padding:0 0 0 10px;border-left:1px solid #444;border-radius:0;max-width:none}.configuration .coordinates input{width:54px}.audit-results{border-top:0;border-bottom:1px solid #444;margin:0 0 16px;padding:0 0 14px}.audit-item[aria-current=true]{background:#ffffff0d;border-left-color:#edc995}.scene .stage-link{cursor:pointer}.scene .stage-link rect{fill:#202020;stroke:#777;stroke-width:1}.scene .stage-link text{font-size:13px;fill:#ddd}.scene .stage-link:focus-visible rect{stroke:#eee}.tooltip{max-width:300px;white-space:normal}
+@media(max-width:600px){.configuration{flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100vw - 36px);gap:4px;padding:5px 9px}.configuration .coordinates{border-left:0;padding:0;justify-content:center;gap:5px}.configuration .coordinates input{width:43px}.panel,.source-window{top:180px;max-height:calc(100dvh - 320px)}}
+/*
+MIT License
+
+Copyright (c) 2026 Riz Roze
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+/* Material only: host page owns layout, spacing, typography and radius.
+   Load after the host stylesheet. Dark-canvas presets from the approved atlas. */
+[data-liquid-glass="control"],[data-liquid-glass="icon"],[data-liquid-glass="panel"]{
+ color:#eee;border:1px solid rgb(255 255 255 / 18%);
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+[data-liquid-glass="control"]{
+ background:rgb(26 26 26 / 28%);border-color:rgb(255 255 255 / 28%);
+ box-shadow:inset 0 1px 0 rgb(255 255 255 / 22%),inset 0 -1px 0 rgb(255 255 255 / 7%),0 8px 24px rgb(0 0 0 / 22%);
+}
+[data-liquid-glass="control"] :is(button:not([aria-pressed="true"]),select,[data-liquid-readout]){color:#eee;text-shadow:0 1px 3px rgb(0 0 0 / 90%)}
+[data-liquid-glass="icon"]{background:rgb(26 26 26 / 72%);box-shadow:inset 0 1px 0 rgb(255 255 255 / 8%),0 8px 24px rgb(0 0 0 / 18%)}
+[data-liquid-glass="icon"]:is(:hover,[aria-expanded="true"],[aria-pressed="true"]){background:rgb(58 58 58 / 92%)}
+[data-liquid-glass="panel"]{
+ background:rgb(26 26 26 / 94%);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ box-shadow:inset 0 1px 0 rgb(255 255 255 / 6%),0 12px 36px rgb(0 0 0 / 30%);
+}
+[data-liquid-glass="panel"] :is(p,legend,[data-liquid-muted]){color:#c4c4c4}
+[data-liquid-glass="panel"] :is(select,input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea){background-color:rgb(12 12 12 / 65%);border:1px solid rgb(255 255 255 / 22%);color:#eee}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ [data-liquid-glass="control"],[data-liquid-glass="panel"],[data-liquid-glass="icon"]{background:#242424}
+}
+
+</style></head><body>
+<div class="identity"><h1 id="title"></h1><a id="repository" target="_blank" rel="noopener"></a><p id="identityShape"></p></div>
+<div class="configuration" data-liquid-glass="control"><input id="config" type="hidden"><button id="configTrigger" data-tip="切换输入 shape 与广播配置" class="config-trigger" aria-label="验证配置" aria-haspopup="listbox" aria-expanded="false" aria-controls="configMenu"><span id="configText"></span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 6 5 5 5-5" stroke-width="1.4"/></svg></button><div class="coordinates"><label id="outputLabel">Y<input id="out" type="number" min="0" aria-label="选择 Unpack 输出张量编号" data-tip="选择要查看的输出张量 Y"></label><label data-tip="输出张量中的线性元素偏移">i<input id="pos" type="number" min="0" aria-label="定位输出元素的线性偏移" data-tip="输入线性偏移，定位对应输出元素"></label><button id="previous" data-tip="查看前 32 个输出元素" aria-label="上一窗口">‹</button><span id="range" class="range" data-tip="当前画布显示的输出元素范围"></span><button id="next" data-tip="查看后 32 个输出元素" aria-label="下一窗口">›</button></div><div id="configMenu" class="config-menu t-dropdown" data-origin="top-center" role="listbox" aria-label="验证配置" aria-hidden="true"></div></div>
+<div class="top-actions"><button class="icon audit-toggle" id="auditToggle" data-liquid-glass="icon" data-tip="自动核查" aria-label="自动核查"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 1.5 1.5L7 5M10 6h11M3 12l1.5 1.5L7 11M10 12h11M3 18l1.5 1.5L7 17M10 18h11"/></svg><span class="audit-count" id="auditCount"></span></button><button class="icon" id="evidenceToggle" data-liquid-glass="icon" data-tip="当前选择" aria-label="查看当前选择" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg></button><button class="icon" id="sourceToggle" data-liquid-glass="icon" data-tip="源码" aria-label="查看源码" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-14-2 16"/></svg></button><button class="icon" id="infoToggle" data-liquid-glass="icon" data-tip="来源与前提" aria-label="来源与前提" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></svg></button></div>
+<div id="canvas" class="canvas" aria-label="映射画布，可拖动、滚轮缩放，点选元素"><svg><g id="world" class="scene"></g></svg></div>
+<nav class="bottom-actions" data-liquid-glass="control" aria-label="案例"><a data-tip="打开 Unpack 布局与任务调查" href="unpack.html" id="unpackLink">Unpack</a><a data-tip="打开 Expand 广播与搬运调查" href="expand.html" id="expandLink">Expand</a></nav>
+
+<div class="zoom-controls" data-liquid-glass="control"><button id="minus" aria-label="缩小" data-tip="缩小">−</button><output id="zoom"></output><button id="plus" aria-label="放大" data-tip="放大">＋</button><button id="fit" class="fit" data-tip="适配整体" aria-label="适配整体">Fit</button></div>
+<aside id="inspector" class="panel" data-liquid-glass="panel" aria-label="当前选择" hidden><div class="panel-head" id="inspectorHead"><h2 id="selectedTitle"></h2><button id="closeInspector" aria-label="关闭检查器">×</button></div><div id="readouts" class="readouts"></div><button id="openSelectedSource" data-tip="打开当前选择对应的固定版本源码" class="source-open">源码 ↗</button><details id="mappingDisclosure"><summary>映射依据</summary><div id="mappingDetail"></div></details><details id="handoff"><summary>继续调查</summary><textarea id="question" data-tip="编辑交给开发者或 Coding Agent 的调查问题" aria-label="调查问题">请核对当前选择的索引、地址与源码依据。</textarea><div class="handoff-actions"><button id="copy" data-tip="复制当前问题、参数与源码证据">复制上下文</button><button id="download" data-tip="下载当前调查上下文 JSON">下载 JSON</button></div><div id="status" class="status" aria-live="polite"></div><details><summary>上下文</summary><pre id="contextPreview"></pre></details></details></aside>
+<aside id="sourceWindow" class="source-window" data-liquid-glass="panel" aria-label="源码窗口" hidden><div class="panel-head" id="sourceHead"><h2>源码</h2><button id="sourceFollow" data-tip="随当前元素切换源码依据；关闭后固定源码" aria-label="跟随选择" aria-pressed="true" style="width:auto;font-size:11px">跟随</button><button id="closeSource" aria-label="关闭源码">×</button></div><div id="sourceMeta" class="source-meta"></div><div id="sourceTabs" class="source-tabs"></div><pre id="sourceCode" class="source-code"></pre></aside>
+<aside id="info" class="panel" data-liquid-glass="panel" aria-label="来源与前提" hidden><div class="panel-head" id="infoHead"><h2>来源与前提</h2><button id="closeInfo" aria-label="关闭来源与前提">×</button></div><div id="infoBody"></div></aside>
+<div id="tooltip" class="tooltip" hidden></div>
+<script>(function(root){
+'use strict';
+const product=a=>a.reduce((x,y)=>x*y,1),ceil=(a,b)=>Math.ceil(a/b);
+const configs=[
+ {id:'matrix-tail',shape:[17,19],axis:1,bytes:2,dtype:'FP16'},
+ {id:'matrix-compact',shape:[33,3],axis:1,bytes:2,dtype:'FP16'},
+ {id:'row-burst',shape:[5,3,7],axis:1,bytes:2,dtype:'FP16'},
+ {id:'row-boundary',shape:[1030,3,17],axis:1,bytes:2,dtype:'FP16'},
+ {id:'copy-chunk',shape:[1,4,17001],axis:1,bytes:2,dtype:'FP16'},
+ {id:'copy-boundary',shape:[2,3,17000],axis:1,bytes:2,dtype:'FP16'}
+];
+function unpack(c){
+ const axis=(c.axis+c.shape.length)%c.shape.length,num=c.shape[axis],inner=product(c.shape.slice(axis+1)),outer=product(c.shape.slice(0,axis)),size=inner*outer,max=size>=4096?50:8;
+ let cores,split=1;
+ if(inner<=1){if(num<max&&size>=4096){split=Math.min(Math.floor(max/num),size);cores=num*split}else cores=Math.min(num,max)}else cores=Math.min(size*num||1,max);
+ let path,tasks=[],rowsPerTask=0;
+ if(inner>1){const padded=ceil(inner*c.bytes,32)*32;
+  if(outer>1&&inner*c.bytes<=32768&&(padded-inner*c.bytes)/c.bytes<=255){path='Row burst';rowsPerTask=Math.min(outer,Math.max(1,Math.floor(32768/padded)));for(let o=0;o<num;o++)for(let r=0;r<outer;r+=rowsPerTask)tasks.push({o,row:r,rows:Math.min(rowsPerTask,outer-r),start:r*inner,count:Math.min(rowsPerTask,outer-r)*inner});}
+  else{path='Copy chunk';const tile=32768/c.bytes;for(let o=0;o<num;o++)for(let r=0;r<outer;r++)for(let i=0;i<inner;i+=tile)tasks.push({o,row:r,rows:1,start:r*inner+i,count:Math.min(tile,inner-i)});}
+ }else{path='Matrix deinterleave';rowsPerTask=49152/(16*c.bytes);if((c.bytes===2||c.bytes===4)&&num<16)rowsPerTask=Math.floor(Math.min(2048,Math.floor(30720/(num*c.bytes)))/16)*16||rowsPerTask;for(let r=0;r<size;r+=rowsPerTask)for(let o=0;o<num;o+=16)tasks.push({o,cols:Math.min(16,num-o),row:r,rows:Math.min(rowsPerTask,size-r),start:r,count:Math.min(rowsPerTask,size-r)});}
+ const ranges=Array.from({length:cores},(_,core)=>({core,start:Math.floor(core*tasks.length/cores),end:Math.floor((core+1)*tasks.length/cores)}));
+ tasks=tasks.map((t,id)=>({...t,id:'task-'+id,index:id,core:ranges.find(r=>id>=r.start&&id<r.end).core}));
+ return {...c,axis,num,inner,outer,size,cores,path,rowsPerTask,tasks,ranges};
+}
+function unpackElement(m,o,p){const outer=Math.floor(p/m.inner),i=p%m.inner,src=(outer*m.num+o)*m.inner+i;const task=m.tasks.find(t=>o>=t.o&&o<t.o+(t.cols||1)&&p>=t.start&&p<t.start+t.count);return {id:`y${o}-${p}`,output:o,position:p,src,srcBytes:src*m.bytes,dstBytes:p*m.bytes,outer,inner:i,task};}
+const expandConfigs=[{id:'broadcast-columns',shape:[2,1,3],target:[2,4,3],bytes:4,dtype:'INT32'},{id:'broadcast-two-stages',shape:[1,3,1],target:[2,3,5],bytes:4,dtype:'INT32'},{id:'broadcast-wide',shape:[2,1,9],target:[2,3,9],bytes:4,dtype:'INT32'}];
+function expand(c){let out=product(c.shape),inner=1,repeat=1,stages=[];for(let i=c.shape.length-1;i>=0;i--){if(c.shape[i]===1)repeat*=c.target[i];else{if(repeat!==1){stages.push({outer:out,inner,repeat});inner*=repeat;}repeat=1;out/=c.shape[i];inner*=c.shape[i];}}if(repeat!==1)stages.push({outer:out,inner,repeat});stages=stages.map((s,i)=>({...s,id:'stage-'+i,index:i,source:i===0?'X':((stages.length&1)===((i+1)&1)?'Workspace':'Y'),destination:(stages.length&1)===((i+1)&1)?'Y':'Workspace',step:s.inner*c.bytes>=32?Math.max(1,Math.min(s.outer,Math.floor((240*1024/2/c.bytes)/s.inner))):1}));return {...c,size:product(c.target),inputSize:product(c.shape),stages,cores:1};}
+function expandElement(m,p){let rem=p,coords=Array(m.target.length);for(let i=coords.length-1;i>=0;i--){coords[i]=rem%m.target[i];rem=Math.floor(rem/m.target[i]);}let src=0;for(let i=0;i<coords.length;i++)src=src*m.shape[i]+(m.shape[i]===1?0:coords[i]);return {id:'out-'+p,position:p,coords,src,srcBytes:src*m.bytes,dstBytes:p*m.bytes};}
+// Fixed-revision source adapter. DataCopy count-argument envelopes are NOT device accesses.
+function auditExpand(m){
+ let values=Array.from({length:m.inputSize},(_,i)=>i),findings=[],stages=[];
+ for(const s of m.stages){const inputSize=s.outer*s.inner,next=[];let candidates=[];
+  for(let o=0;o<s.outer;o+=s.step){const step=Math.min(s.step,s.outer-o);if(step===1){const chunk=Math.min(122880/m.bytes,s.inner);for(let offset=0;offset<s.inner;offset+=chunk){const cur=Math.min(chunk,s.inner-offset),base=o*s.inner+offset,count=cur+32/m.bytes-1;if(base+count>inputSize)candidates.push({outer:o,offset,start:base,end:base+count,logicalEnd:base+cur,sourceSize:inputSize,extra:base+count-inputSize});}}}
+  for(let o=0;o<s.outer;o++)for(let r=0;r<s.repeat;r++)next.push(...values.slice(o*s.inner,(o+1)*s.inner));values=next;
+  stages.push({stage:s.index,inputSize,outputSize:next.length,branch:s.step>1?'DataCopyPad/step':'copyIn/count',candidates});
+  for(const c of candidates){let p=c.outer*s.inner*s.repeat+c.offset;for(const later of m.stages.slice(s.index+1))p=Math.floor(p/later.inner)*(later.inner*later.repeat)+p%later.inner;findings.push({id:`request-s${s.index}-o${c.outer}-${c.offset}`,type:'count-envelope',status:'investigate',stage:s.index,position:p,source:s.source,...c,title:`S${s.index} · 请求参数超出逻辑输入 ${c.extra*m.bytes} B`,evidence:'copy-request',expression:'count = cur_elems + align_elems - 1',boundary:'count-argument envelope only; CANN version and device access not verified'});}
+ }
+ let mismatches=[];for(let p=0;p<m.size;p++)if(values[p]!==expandElement(m,p).src)mismatches.push(p);
+ return {logical:{checked:m.size,mismatches:mismatches.length,first:mismatches[0]??null},stages,findings,deviceAccess:'unknown'};
+}
+function context(kind,m,item,evidence,question){return {kind,configuration:m,selection:item,question,evidence,units:{address:'B',time:'ms'},deviceValidation:'not-run-in-this-task'};}
+const api={product,configs,expandConfigs,unpack,unpackElement,expand,expandElement,auditExpand,context};if(typeof module!=='undefined')module.exports=api;root.TrialModel=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+</script><script>/* Reusable SVG grammar. No DOM or report runtime dependency. */
+(function(root){
+'use strict';
+const tokens=Object.freeze({font:14,gap:24,dataWidth:160,dataHeight:64,opWidth:260,opHeight:48,cell:24,role:{activation:'#B1EF6B',weight:'#BCA0F3',aggregate:'#F2C45F',gradient:'#79D4F2',optimizer:'#B0B0B0'},parallel:{DP:'#8CE580',TP:'#B58AF7',SP:'#80B7F7',CP:'#80E5D3',PP:'#E580CF',EP:'#F7B080'}});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const text=(x,y,s,size=14,color='#E8E8E8',anchor='start')=>`<text x="${x}" y="${y}" font-size="${size}" fill="${color}" text-anchor="${anchor}" dominant-baseline="middle">${esc(s)}</text>`;
+const rect=(x,y,w,h,rx=4,stroke='#888',fill='#202020',extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" stroke="${stroke}" fill="${fill}" ${extra}/>`;
+function rankBoard(x,y,w,h,fill='#393939'){
+const compact=h<64,inset=compact?9:16,r=compact?3:5;
+let body=`<rect class="rank-outline outline" x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}"/>`;
+for(const px of [x+inset,x+w-inset])for(const py of [y+inset,y+h-inset])body+=`<circle class="rank-pin" cx="${px}" cy="${py}" r="${r}" fill="#2b2b2b"/>`;
+return body;
+}
+function data(o,x,y,opts={}){
+ const expanded=opts.expanded,shape=o.shape||[2,4],rows=shape.length===1?1:shape[0],cols=shape.length===1?shape[0]:shape[1],w=expanded?cols*tokens.cell:tokens.dataWidth,h=expanded?rows*tokens.cell:tokens.dataHeight,color=tokens.role[o.role]||'#B0B0B0';
+ let body=expanded?'':rect(x,y,w,h,6,'none','#2d2d2d');
+ if(expanded){for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){body+=rect(x+c*24+2,y+r*24+2,20,20,1,'none',color,'fill-opacity=".18" data-element="true"');if(o.values)body+=text(x+c*24+12,y+r*24+12,o.values[r*cols+c],11,color,'middle')}body+=text(x,y-14,`${o.label} · [${shape}]`,14)}
+ else {
+  for(let i=0;i<4;i++)body+=rect(x+8,y+8+i*12,10,10,0,'none',color,`fill-opacity="${[1,.8,.6,.4][i]}"`);
+  body+=text(x+27,y+22,o.label,16,'#fff')+text(x+27,y+46,`${shape.join(' × ')}  ${o.dtype||'FP16'}`,12,'#ccc');
+ }
+ if(opts.parallel&&opts.parallel!=='none'){let pc=tokens.parallel[opts.parallel];body+=`<path data-decoration="distribution" d="M${x},${y+h+8}v6h${w}v-6" stroke="${pc}" fill="none"/>`+text(x+w/2,y+h+30,`${opts.parallel} · ${opts.placement||'分片'}`,12,pc,'middle')}
+ return `<g data-object="${esc(o.id)}" data-kind="${o.kind||'value'}" data-role="${esc(o.role||'activation')}" data-representation="${expanded?'expanded':'collapsed'}">${body}</g>`;
+}
+// Memory grid is a surface texture, not an element or capacity scale.
+function memory(id,label,detail,x,y,w=300,h=106,physical=false){
+ let b=rect(x,y,w,h,12,'none',physical?'#087CFA':'#2d2d2d');
+ const cols=17,rows=5,gap=3,pad=9,cw=(w-pad*2-gap*(cols-1))/cols,ch=(h-pad*2-gap*(rows-1))/rows;
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=rect(x+pad+c*(cw+gap),y+pad+r*(ch+gap),cw,ch,1.5,physical?'#B3D7FF':'#aaa','#000','fill-opacity=".10" style="stroke-width:.65;stroke-opacity:.30"');
+ b+=text(x+24,y+h*.36,label,Math.min(32,w*.09),'#fff')+text(x+24,y+h*.74,detail,Math.min(18,w*.047),'#eee');
+ return `<g data-object="${esc(id)}" data-kind="${physical?'storage':'memref'}">${b}</g>`;
+}
+function node(kind,id,label,x,y){let w=180,h=64,b='';
+ if(kind==='op'||kind==='communication'){w=tokens.opWidth;h=tokens.opHeight;b=rect(x,y,w,h,24,'#858585','#505050',kind==='communication'?'stroke-dasharray="5 4"':'')+`<g font-weight="650">${text(x+w/2,y+24,label,18,'#fff','middle')}</g>`}
+ else if(kind==='add'||kind==='multiply'){w=h=48;const cx=x+24,cy=y+24;b=`<circle cx="${cx}" cy="${cy}" r="24" stroke="#ddd" fill="#111" style="stroke-width:1.5"/><path d="${kind==='add'?`M${cx-8} ${cy}H${cx+8} M${cx} ${cy-8}V${cy+8}`:`M${cx-6} ${cy-6}L${cx+6} ${cy+6} M${cx-6} ${cy+6}L${cx+6} ${cy-6}`}" stroke="#eee" fill="none" style="stroke-width:2" stroke-linecap="round"/>`}
+ else if(kind==='memref'||kind==='storage'){return memory(id,label,kind==='memref'?'MemRef':'内存分配',x,y,w,h,kind==='storage')}
+ else if(kind==='instruction'||kind==='task'){
+ w=260;h=60;const green='#9EF04B';
+ b=rect(x,y,w,h,0,'none',green)+rect(x+10,y+12,36,36,3,'none','#080b05');
+ const icon=kind==='instruction'?'M9 9 L16 17 L9 25 M20 25 H29':'M9 10 H27 M9 18 H20 M9 26 H16 M23 22 L28 26 L23 30';
+ b+=`<path data-icon="${kind}" transform="translate(${x+10} ${y+12})" d="${icon}" fill="none" stroke="${green}" style="stroke-width:2.6"/>`;
+ b+=`<g font-weight="650">${text(x+62,y+30,label,20,'#080b05')}</g>`;
+ }
+ else if(kind==='rank'){b=rankBoard(x,y,w,h)+text(x+24,y+27,label,14)}
+ else if(kind==='pass'){h=32;b=rect(x,y,w,h,0,'#aaa')+text(x+w/2,y+16,label,14,'#eee','middle')}
+ else {const purple=['kernel','task','function','loop'].includes(kind),color=purple?'#9B91FF':'#999';b=rect(x,y,w,h,kind==='task'?8:2,color,'#202020',kind==='loop'?'stroke-dasharray="5 4"':'')+text(x+12,y+17,kind.toUpperCase(),10,color)+text(x+12,y+43,label);if(['kernel','function','rank','storage'].includes(kind))b+=`<path d="M${x},${y+28}h${w}" stroke="${color}"/>`;if(kind==='loop')b+=`<path d="M${x},${y}v${h}" stroke="${color}" stroke-width="3"/>`}
+ return `<g data-object="${esc(id)}" data-kind="${kind}">${b}</g>`;
+}
+function edge(x1,y1,x2,y2,kind='data',label=''){let binding=kind==='binding',mapping=kind==='mapping',dash=kind==='call'?'8 5':mapping?'2 5':'';return `<path data-relation="${kind}" d="M${x1} ${y1} H${(x1+x2)/2} V${y2} H${x2}" fill="none" stroke="#aaa" ${dash?`stroke-dasharray="${dash}"`:''} marker-end="url(#${binding?'bind':mapping?'map':'arrow'})"/>`+(label?text((x1+x2)/2,(y1+y2)/2-12,label,12,'#aaa','middle'):'')}
+function wrap(body,w=900,h=340){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="对象与关系示例"><style>text{font-family:Inter,'PingFang SC',system-ui,sans-serif}path,rect,circle{stroke-width:1.5}</style><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" stroke="#aaa" fill="none"/></marker><marker id="bind" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3" stroke="#aaa" fill="#202020"/></marker><marker id="map" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8"><path d="M1 5L5 1L9 5L5 9Z" stroke="#aaa" fill="#202020"/></marker></defs>${body}</svg>`}
+function render(id,o={}){let b='',ex=!!o.expanded;const v=(id,label,role,shape,values)=>({id,label,role,shape,values});
+ if(id==='pattern-compute'){
+ // Expanded dimensions: X 2x4, W 4x3, Y 2x3. Fixed cell pitch throughout.
+ b=edge(ex?136:200,190,350,190)+edge(480,ex?126:94,480,166,'data','参数输入')+edge(610,190,680,190)+data(v('X','X','activation',[2,4]),40,166,{expanded:ex})+data(v('W','W','weight',[4,3]),ex?444:400,30,{expanded:ex})+node('op','matmul','MatMul',350,166)+data(v('Y','Y','activation',[2,3]),680,166,{expanded:ex})+text(40,290,'X [2,4] × W [4,3] → Y [2,3]；示例尺寸，格子不编码数值。',14);
+ }else if(id==='pattern-distribution'){
+ const mode=o.mode||'shard',lab={shard:'分片',replica:'复制',partial:'部分结果'}[mode];
+ b=text(40,26,mode==='shard'?'按列切分 W：局部 [4,2]，全局 [4,4]':mode==='replica'?'每个 Rank 保存完整 W [4,4] 的副本':'沿 K 维切分 MatMul：Y = Y₀ + Y₁，各部分结果均为 [2,4]',16);
+ for(let i=0;i<2;i++){let x=40+i*440;b+=rankBoard(x,55,390,235)+text(x+24,82,'Rank '+i,14)+data(v(mode==='replica'?'W':mode==='partial'?'Y'+i:'W'+i,mode==='replica'?'W · 副本 '+i:mode==='partial'?'Y'+i+' · 待求和':'W'+i+' · 列 '+(i===0?'[0,2)':'[2,4)'),mode==='partial'?'activation':'weight',mode==='shard'?[4,2]:mode==='partial'?[2,4]:[4,4]),x+45,110,{expanded:ex,parallel:'TP',placement:lab})}b+=text(40,320,mode==='partial'?'部分结果不是输出的互斥分片；求和归约后得到完整输出。':'角色色位于数据内部；TP 标记位于对象外侧。Rank 表示进程身份。',13);
+ }else if(id==='pattern-storage'){
+ b=data(v('V','V','activation',[4,4]),40,70,{expanded:ex})+data({...v('view','V 的视图','activation',[2,4]),kind:'view'},40,225,{expanded:ex})+node('memref','M0','M0 · offset 0 B',345,70)+node('memref','M1','M1 · offset 16 B',345,225)+node('storage','B0','B0 · 32 B',660,135)+edge(ex?136:200,102,345,102,'binding')+edge(ex?136:200,257,345,257,'binding')+edge(525,102,660,167,'binding')+edge(525,257,660,183,'binding')+text(660,240,'FP16 · 连续行布局',13)+text(660,265,'视图引用 [16,32) B',13)+text(40,335,'同一底层分配 B0；视图改变索引范围，不创建新的数据副本。示例偏移以字节计。',13);
+ return wrap(b,900,375);
+ }else if(id==='system-value') b=data(v(o.vector?'vector-0':'value-0',o.vector?'v':'X',o.role||'activation',o.vector?[6]:[2,4],o.vector?[1,2,3,4,5,6]:undefined),80,65,{...o,expanded:ex});
+ else if(id.startsWith('relation-')) b=edge(60,100,330,100,id.slice(9))+text(195,155,{data:'生产者 → 消费者',call:'调用方 → 被调用函数',binding:'值 / 视图 — 存储引用',mapping:'跨阶段对应（需要证据）'}[id.slice(9)],13,'#aaa','middle');
+ else b=node(id.replace('system-',''),id,'示例 '+id.replace('system-',''),85,75);
+ return wrap(b,id.startsWith('pattern-')?900:420,id.startsWith('pattern-')?350:280);
+}
+const api={tokens,rankBoard,data,memory,node,edge,wrap,render};if(typeof module!=='undefined')module.exports=api;root.VisualSystem=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+</script><script>const DATA={"sources": {"unpack": {"repo": "heiheiha798/Ascend-Kernels-S8", "revision": "13baf5274751fcf46aa04905c53ad285d656ac74", "evidence": [{"id": "host", "file": "op/Unpack/op_host/unpack.cpp", "start": 25, "end": 86, "text": "  25      const auto& shape = inputShape->GetStorageShape();\n  26      const int64_t dimNum = shape.GetDimNum();\n  27      int64_t num = GetIntAttr(context, 0, 1);\n  28      int64_t axis = GetIntAttr(context, 1, 0);\n  29      if (axis < 0) {\n  30          axis += dimNum;\n  31      }\n  32  \n  33      uint64_t totalSize = 1;\n  34      for (int i = 0; i < dimNum; ++i) {\n  35          totalSize *= static_cast<uint64_t>(shape.GetDim(i));\n  36      }\n  37      uint64_t innerSize = 1;\n  38      for (int i = static_cast<int>(axis) + 1; i < dimNum; ++i) {\n  39          innerSize *= static_cast<uint64_t>(shape.GetDim(i));\n  40      }\n  41      if (num <= 0 && axis >= 0 && axis < dimNum) {\n  42          num = shape.GetDim(axis);\n  43      }\n  44      const uint64_t outputSize = num == 0 ? 0 : totalSize / static_cast<uint64_t>(num);\n  45      const uint64_t numU = static_cast<uint64_t>(num);\n  46      uint32_t blockDim = 1;\n  47      uint64_t perCoreSize = outputSize;\n  48      if (innerSize <= 1) {\n  49          const uint32_t maxBlockDim = outputSize >= kLargeScalarOutputThreshold ? kMaxBlockDim : kSmallBlockDim;\n  50          uint64_t rowSplit = 1;\n  51          if (numU > 0 && numU < maxBlockDim && outputSize >= kLargeScalarOutputThreshold) {\n  52              rowSplit = maxBlockDim / numU;\n  53              rowSplit = rowSplit > outputSize ? outputSize : rowSplit;\n  54              blockDim = static_cast<uint32_t>(numU * rowSplit);\n  55          } else {\n  56              const uint64_t parallelSize = numU == 0 ? 1 : numU;\n  57              blockDim = static_cast<uint32_t>(parallelSize < maxBlockDim ? parallelSize : maxBlockDim);\n  58          }\n  59          perCoreSize = rowSplit == 0 ? outputSize : (outputSize + rowSplit - 1) / rowSplit;\n  60      } else {\n  61          constexpr uint64_t kLargeCopyOutputThreshold = 4096;\n  62          const uint64_t parallelSize = outputSize == 0 ? 1 : outputSize * (numU == 0 ? 1 : numU);\n  63          const uint32_t maxBlockDim = outputSize >= kLargeCopyOutputThreshold ? kMaxBlockDim : kSmallBlockDim;\n  64          blockDim = static_cast<uint32_t>(parallelSize < maxBlockDim ? parallelSize : maxBlockDim);\n  65          perCoreSize = (outputSize + blockDim - 1) / blockDim;\n  66      }\n  67  \n  68      UnpackTilingData tiling;\n  69      tiling.set_totalSize(outputSize);\n  70      tiling.set_perCoreSize(perCoreSize);\n  71      tiling.set_num(static_cast<uint64_t>(num));\n  72      tiling.set_outerSize(innerSize == 0 ? 0 : outputSize / innerSize);\n  73      tiling.set_innerSize(innerSize);\n  74      context->SetBlockDim(blockDim);\n  75      tiling.SaveToBuffer(context->GetRawTilingData()->GetData(), context->GetRawTilingData()->GetCapacity());\n  76      context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());\n  77      return ge::GRAPH_SUCCESS;\n  78  }\n  79  }\n  80  \n  81  namespace ge {\n  82  static ge::graphStatus InferShape(gert::InferShapeContext* context)\n  83  {\n  84      return GRAPH_SUCCESS;\n  85  }\n  86  ", "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_host/unpack.cpp#L25-L86", "sha256": "acc6f0dec0e4534b41994382826c19edcef822f231b2efa13c841dc7a328f1a5"}, {"id": "schedule", "file": "op/Unpack/op_kernel/unpack.cpp", "start": 95, "end": 162, "text": "  95      plan.totalTasks += count;\n  96  }\n  97  \n  98  __aicore__ inline UnpackTaskRange GetUnpackTaskRange(uint64_t totalTasks)\n  99  {\n 100      const uint64_t blockNum = GetBlockNum();\n 101      return {GetBlockIdx() * totalTasks / blockNum, (GetBlockIdx() + 1) * totalTasks / blockNum};\n 102  }\n 103  \n 104  __aicore__ inline bool GetUnpackLocalTaskRange(\n 105      const UnpackTaskRange& assignedRange, const UnpackTaskSpan& span, UnpackTaskRange& localRange)\n 106  {\n 107      if (span.count == 0) {\n 108          return false;\n 109      }\n 110      const uint64_t spanEnd = span.start + span.count;\n 111      const uint64_t start = assignedRange.start > span.start ? assignedRange.start : span.start;\n 112      const uint64_t end = assignedRange.end < spanEnd ? assignedRange.end : spanEnd;\n 113      if (start >= end) {\n 114          return false;\n 115      }\n 116      localRange.start = start - span.start;\n 117      localRange.end = end - span.start;\n 118      return true;\n 119  }\n 120  \n 121  template <typename T>\n 122  __aicore__ inline UnpackSchedulePlan BuildUnpackSchedulePlan(const UnpackTilingData& tilingData)\n 123  {\n 124      UnpackSchedulePlan plan{0, {0, 0}, {0, 0}, {0, 0}, 0, 0, 0, 0, 0, 0, kUnpackCopyTileBytes / sizeof(T)};\n 125      if (tilingData.totalSize == 0 || tilingData.num == 0) {\n 126          return plan;\n 127      }\n 128  \n 129      if (tilingData.innerSize > 1) {\n 130          const uint64_t rowBytes = tilingData.innerSize * sizeof(T);\n 131          const uint64_t paddedRowBytes = AlignUp32(static_cast<uint32_t>(rowBytes));\n 132          const uint64_t rightPadding = (paddedRowBytes - rowBytes) / sizeof(T);\n 133          if (tilingData.outerSize > 1 && rowBytes > 0 && rowBytes <= kUnpackRowBurstMaxBytes &&\n 134              rightPadding <= 255) {\n 135              uint64_t rowsPerTask = kUnpackRowBurstMaxBytes / paddedRowBytes;\n 136              rowsPerTask = rowsPerTask == 0 ? 1 : rowsPerTask;\n 137              rowsPerTask = rowsPerTask > tilingData.outerSize ? tilingData.outerSize : rowsPerTask;\n 138              plan.rowBurstRowsPerTask = rowsPerTask;\n 139              plan.rowBurstRowBlocks = CeilDivU64(tilingData.outerSize, plan.rowBurstRowsPerTask);\n 140              AppendUnpackTaskSpan(plan, plan.rowBurstCopyTasks, tilingData.num * plan.rowBurstRowBlocks);\n 141              return plan;\n 142          }\n 143          plan.chunksPerOutput = CeilDivU64(tilingData.innerSize, plan.copyTileSize);\n 144          AppendUnpackTaskSpan(plan, plan.copyChunkTasks, tilingData.num * tilingData.outerSize * plan.chunksPerOutput);\n 145          return plan;\n 146      }\n 147  \n 148      plan.matrixRowsPerTask = GetUnpackMatrixRowsPerTask<T>();\n 149      if constexpr (sizeof(T) == 2 || sizeof(T) == 4) {\n 150          if (tilingData.num < kUnpackMatrixCols) {\n 151              const uint64_t compactRows = GetUnpackCompactMatrixRowsPerTask<T>(tilingData.num);\n 152              plan.matrixRowsPerTask = compactRows == 0 ? plan.matrixRowsPerTask : compactRows;\n 153          }\n 154      }\n 155      plan.matrixRowBlocks = CeilDivU64(tilingData.totalSize, plan.matrixRowsPerTask);\n 156      plan.matrixColBlocks = CeilDivU64(tilingData.num, kUnpackMatrixCols);\n 157      AppendUnpackTaskSpan(plan, plan.matrixDeinterleaveTasks, plan.matrixRowBlocks * plan.matrixColBlocks);\n 158      return plan;\n 159  }\n 160  \n 161  __aicore__ inline void SetUnpackCopyMte2Mte3(uint32_t bufferIndex)\n 162  {", "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L95-L162", "sha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1"}, {"id": "copy", "file": "op/Unpack/op_kernel/unpack.cpp", "start": 271, "end": 312, "text": " 271  template <typename T>\n 272  __aicore__ inline UnpackCopyTaskDesc GetUnpackCopyTask(\n 273      uint64_t task, const UnpackTilingData& tilingData, const UnpackSchedulePlan& plan)\n 274  {\n 275      const uint64_t tasksPerOutput = tilingData.outerSize * plan.chunksPerOutput;\n 276      const uint64_t outputIndex = tasksPerOutput == 0 ? 0 : task / tasksPerOutput;\n 277      const uint64_t localTask = tasksPerOutput == 0 ? 0 : task - outputIndex * tasksPerOutput;\n 278      const uint64_t outer = plan.chunksPerOutput == 0 ? 0 : localTask / plan.chunksPerOutput;\n 279      const uint64_t chunk = plan.chunksPerOutput == 0 ? 0 : localTask - outer * plan.chunksPerOutput;\n 280      const uint64_t innerOffset = chunk * plan.copyTileSize;\n 281      const uint32_t tile = static_cast<uint32_t>(\n 282          MinU64(static_cast<uint64_t>(plan.copyTileSize), tilingData.innerSize - innerOffset));\n 283  \n 284      return {\n 285          static_cast<uint32_t>(outputIndex),\n 286          (outer * tilingData.num + outputIndex) * tilingData.innerSize + innerOffset,\n 287          outer * tilingData.innerSize + innerOffset,\n 288          tile};\n 289  }\n 290  \n 291  template <typename T>\n 292  __aicore__ inline UnpackRowBurstTaskDesc GetUnpackRowBurstTask(\n 293      uint64_t task, const UnpackTilingData& tilingData, const UnpackSchedulePlan& plan)\n 294  {\n 295      const uint64_t outputIndex = plan.rowBurstRowBlocks == 0 ? 0 : task / plan.rowBurstRowBlocks;\n 296      const uint64_t rowBlock = plan.rowBurstRowBlocks == 0 ? 0 : task - outputIndex * plan.rowBurstRowBlocks;\n 297      const uint64_t rowStart = rowBlock * plan.rowBurstRowsPerTask;\n 298      const uint32_t rows = static_cast<uint32_t>(\n 299          MinU64(plan.rowBurstRowsPerTask, tilingData.outerSize - rowStart));\n 300      const uint32_t rowBytes = static_cast<uint32_t>(tilingData.innerSize * sizeof(T));\n 301      const uint32_t paddedRowBytes = AlignUp32(rowBytes);\n 302      const uint32_t rightPadding = (paddedRowBytes - rowBytes) / sizeof(T);\n 303      const uint32_t srcStrideBytes = static_cast<uint32_t>((tilingData.num - 1) * tilingData.innerSize * sizeof(T));\n 304  \n 305      return {\n 306          static_cast<uint32_t>(outputIndex),\n 307          (rowStart * tilingData.num + outputIndex) * tilingData.innerSize,\n 308          rowStart * tilingData.innerSize,\n 309          rows,\n 310          rowBytes,\n 311          paddedRowBytes,\n 312          rightPadding,", "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L271-L312", "sha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1"}, {"id": "matrix", "file": "op/Unpack/op_kernel/unpack.cpp", "start": 317, "end": 392, "text": " 317  __aicore__ inline void StoreUnpackMatrixScalar(GlobalTensor<T>& xGm, GlobalTensor<T>& yGm,\n 318      ListTensorDesc& yDesc, const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t rowCount,\n 319      uint64_t colBase, uint64_t validCols)\n 320  {\n 321      for (uint64_t colOffset = 0; colOffset < validCols; ++colOffset) {\n 322          const uint64_t outputIndex = colBase + colOffset;\n 323          yGm.SetGlobalBuffer(\n 324              yDesc.GetDataPtr<__gm__ T>(static_cast<uint32_t>(outputIndex)), tilingData.totalSize);\n 325          for (uint64_t rowOffset = 0; rowOffset < rowCount; ++rowOffset) {\n 326              const uint64_t row = rowStart + rowOffset;\n 327              yGm.SetValue(row, xGm.GetValue(row * tilingData.num + outputIndex));\n 328          }\n 329          SetFlag<HardEvent::S_MTE3>(EVENT_ID0);\n 330          WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);\n 331      }\n 332  }\n 333  \n 334  template <typename T>\n 335  __aicore__ inline void PrepareUnpackGatherOffsets(\n 336      const LocalTensor<uint32_t>& offsetLocal, uint64_t rows, uint64_t rowStrideBytes)\n 337  {\n 338      ArithProgression<int32_t>(\n 339          offsetLocal.ReinterpretCast<int32_t>(),\n 340          static_cast<int32_t>(0),\n 341          static_cast<int32_t>(rowStrideBytes),\n 342          static_cast<uint32_t>(rows));\n 343  }\n 344  \n 345  template <typename T>\n 346  __aicore__ inline void RunUnpackCompactMatrixTask(GlobalTensor<T>& xGm, GlobalTensor<T>& yGm,\n 347      ListTensorDesc& yDesc, const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t rowCount,\n 348      uint64_t colBase, uint64_t validCols, const LocalTensor<T>& srcLocal, const LocalTensor<T>& dstLocal,\n 349      const LocalTensor<uint32_t>& offsetLocal)\n 350  {\n 351      if constexpr (sizeof(T) == 2 || sizeof(T) == 4) {\n 352          const uint64_t vectorRows = rowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n 353          if (vectorRows == 0) {\n 354              StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n 355              return;\n 356          }\n 357  \n 358          DataCopyExtParams inCopyParams{\n 359              1,\n 360              static_cast<uint32_t>(vectorRows * tilingData.num * sizeof(T)),\n 361              0,\n 362              0,\n 363              0};\n 364          DataCopyPadExtParams<T> padParams{false, 0, 0, 0};\n 365          DataCopyPad(srcLocal, xGm[rowStart * tilingData.num], inCopyParams, padParams);\n 366          SetFlag<HardEvent::MTE2_V>(EVENT_ID0);\n 367          WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);\n 368  \n 369          for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n 370              const uint32_t srcBaseAddr = static_cast<uint32_t>((colBase + colOffset) * sizeof(T));\n 371              Gather(dstLocal[colOffset * vectorRows], srcLocal, offsetLocal, srcBaseAddr,\n 372                  static_cast<uint32_t>(vectorRows));\n 373          }\n 374          SetFlag<HardEvent::V_MTE3>(EVENT_ID0);\n 375          WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);\n 376  \n 377          DataCopyExtParams outCopyParams{1, static_cast<uint32_t>(vectorRows * sizeof(T)), 0, 0, 0};\n 378          for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n 379              yGm.SetGlobalBuffer(\n 380                  yDesc.GetDataPtr<__gm__ T>(static_cast<uint32_t>(colBase + colOffset)), tilingData.totalSize);\n 381              DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);\n 382          }\n 383          SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n 384          WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n 385  \n 386          if (vectorRows < rowCount) {\n 387              StoreUnpackMatrixScalar<T>(\n 388                  xGm, yGm, yDesc, tilingData, rowStart + vectorRows, rowCount - vectorRows, colBase, validCols);\n 389          }\n 390      } else {\n 391          StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n 392      }", "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L317-L392", "sha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1"}]}, "expand": {"repo": "wybxw/Ascend_ops_Base_S6", "revision": "d5e06fa213468ad4f61f1151d37668f3fc5b9ce9", "evidence": [{"id": "host", "file": "Expand/op_host/expand.cpp", "start": 14, "end": 64, "text": "  14    int32_t data_sz = 1;\n  15    int dim = x1_shape->GetStorageShape().GetDimNum();\n  16    const long int* y_dim = context->GetAttrs()->GetListInt(0)->GetData();\n  17    int32_t outer[3]={0};\n  18    int32_t inner[3]={0};\n  19    int32_t repeater[3]={0};\n  20    int64_t output_size = 1;\n  21    for (int i = 0; i < x1_shape->GetStorageShape().GetDimNum(); i++)\n  22      data_sz *= x1_shape->GetStorageShape().GetDim(i),\n  23      output_size *= y_dim[i];\n  24    tiling.set_size(data_sz);\n  25    context->SetBlockDim(1);\n  26    int out=data_sz;\n  27    int in=1;\n  28    int repeat=1;\n  29    int i=0;\n  30    int j=0;\n  31    while(dim-i-1>=0){\n  32      \n  33          \n  34      if(x1_shape->GetStorageShape().GetDim(dim-1-i)==1){\n  35          repeat*=y_dim[dim-1-i];\n  36      }else{\n  37          if(repeat!=1){\n  38              outer[j]=out;\n  39              inner[j]=in;\n  40              repeater[j]=repeat;\n  41              in*=repeater[j];\n  42              j++;\n  43          }\n  44          repeat=1;\n  45          out/=x1_shape->GetStorageShape().GetDim(dim-1-i);\n  46          in*=x1_shape->GetStorageShape().GetDim(dim-1-i);\n  47      }\n  48      ++i;\n  49    }\n  50    if(repeat!=1){\n  51        outer[j]=out;\n  52        inner[j]=in;\n  53        repeater[j]=repeat;\n  54        j++;\n  55    }\n  56    ge::DataType inputDataType = context->GetInputDesc(0)->GetDataType();\n  57    tiling.set_Expandsize(j);\n  58    tiling.set_outer(outer);\n  59    tiling.set_inner(inner);\n  60    tiling.set_repeater(repeater);\n  61    tiling.set_outputsize(output_size);\n  62    \n  63    uint32_t inputDataTypeSize = 0;\n  64    switch(inputDataType) {", "url": "https://github.com/wybxw/Ascend_ops_Base_S6/blob/d5e06fa213468ad4f61f1151d37668f3fc5b9ce9/Expand/op_host/expand.cpp#L14-L64", "sha256": "23956c9be2ed87c45173aa1429a82bb3017858da803725004c5effe945ee629d"}, {"id": "stages", "file": "Expand/op_kernel/expand.cpp", "start": 96, "end": 151, "text": "  96              {\n  97                  srcGm.SetGlobalBuffer(reinterpret_cast<__gm__ T *>(dst_addr));\n  98                  src32Gm.SetGlobalBuffer(reinterpret_cast<__gm__ int32_t *>(dst_addr));\n  99                  dstGm.SetGlobalBuffer(reinterpret_cast<__gm__ T *>(ws_addr));\n 100                  dst32Gm.SetGlobalBuffer(reinterpret_cast<__gm__ int32_t *>(ws_addr));\n 101              }\n 102              if (idx == 0)\n 103              {\n 104                  srcGm.SetGlobalBuffer(reinterpret_cast<__gm__ T *>(src_addr));\n 105                  src32Gm.SetGlobalBuffer(reinterpret_cast<__gm__ int32_t *>(src_addr));\n 106              }\n 107              int32_t step = 1;\n 108              if(inner[idx]*sizeof(T)>=32)//inner中等大小\n 109                  step = max(1,min(outer[idx],ub_buf_elems / inner[idx]));\n 110              for (int32_t outer_idx = step*this->blockIdx; outer_idx < this->outer[idx]; outer_idx+=step*this->blockStride)\n 111              {\n 112                  performTileBroadcast(idx, outer_idx,min(step,outer[idx]-outer_idx));\n 113              }\n 114          }\n 115      }\n 116      // 计算基址（以元素计）\n 117      __aicore__ inline int32_t compute_in_base(int tile_idx, int32_t outer_index)\n 118      {\n 119          return outer_index * (int32_t)this->inner[tile_idx];\n 120      }\n 121      __aicore__ inline int32_t compute_out_base(int tile_idx, int32_t outer_index)\n 122      {\n 123          return outer_index * (int32_t)(this->inner[tile_idx] * this->repeater[tile_idx]);\n 124      }\n 125  \n 126      __aicore__ inline bool is32AlignedElem(int32_t offset_elems) const\n 127      {\n 128          return (offset_elems * this->dtype_bytes) % 32 == 0;\n 129      }\n 130  \n 131      // 对齐拷贝\n 132      __aicore__ inline void MyCopy(AscendC::LocalTensor<T> &dstBase,\n 133                                     int32_t elems)\n 134      {\n 135          //当行大小中等偏上时可以直接pad 拷贝，然后非对齐搬出\n 136          //但当行大小 太小时，pad区域太多。应该考虑 标量补齐32B对齐\n 137          elems = (elems+this->align_elems-1)/this->align_elems*this->align_elems;//pad到对齐32B\n 138          if constexpr (std::is_same_v<T, int8_t>) Adds<int16_t>(dstBase[elems].template ReinterpretCast<int16_t>(),dstBase.template ReinterpretCast<int16_t>(),0,elems>>1);\n 139          else if constexpr(std::is_same_v<T, int16_t>) Adds<int16_t>(dstBase[elems],dstBase,0,elems);    \n 140          else if constexpr(std::is_same_v<T, int32_t>) Adds<int32_t>(dstBase[elems],dstBase,0,elems);    \n 141          else if constexpr (std::is_same_v<T, int64_t>) Adds<int32_t>(dstBase[elems].template ReinterpretCast<int32_t>(),dstBase.template ReinterpretCast<int32_t>(),0,elems<<1);\n 142  \n 143      }\n 144      __aicore__ inline void MyFillPad(AscendC::LocalTensor<T> &dstBase,int32_t &filled)\n 145      {\n 146          //使用标量 将其复制到一个可接受的大小\n 147          int repeat = this->align_elems/gcd_32(filled,this->align_elems);\n 148          if(repeat*filled*sizeof(T) <= 4 * 1024){\n 149              for(int i=1;i<repeat;i++)\n 150                  for(int j=0;j<filled;j++)\n 151                      dstBase.SetValue(i*filled + j,dstBase.GetValue(j));", "url": "https://github.com/wybxw/Ascend_ops_Base_S6/blob/d5e06fa213468ad4f61f1151d37668f3fc5b9ce9/Expand/op_kernel/expand.cpp#L96-L151", "sha256": "8585bd54dfdad692fc385389b25872390e340229593b4ef9c6c33ac1ef587148"}, {"id": "copy", "file": "Expand/op_kernel/expand.cpp", "start": 286, "end": 336, "text": " 286      int32_t blockIdx;\n 287      int32_t blockStride;\n 288      int32_t num_cores;\n 289  \n 290      int32_t num_tile_entries;\n 291      int32_t outer[3];\n 292      int32_t repeater[3];\n 293      int32_t inner[3];\n 294      int32_t outputsize;\n 295      int32_t tiling_size;\n 296      int32_t total_outer_repeats;\n 297      int32_t dtype_bytes;\n 298      int32_t ub_buf_elems;\n 299      int32_t align_elems;\n 300  \n 301      uint64_t masklow[1] = {0x5555555555555555};  // 0101...\n 302      uint64_t maskhigh[1] = {0xaaaaaaaaaaaaaaaa}; // 1010...\n 303      uint64_t mask16[2] = {0xffffffffffffffff, 0xffffffffffffffff};\n 304      uint64_t mask32[1] = {0xffffffffffffffff};\n 305      uint64_t mask64[1] = {0xffffffff};\n 306  };\n 307  \n 308  extern \"C\" __global__ __aicore__ void expand(GM_ADDR src, GM_ADDR dst, GM_ADDR workspace, GM_ADDR tiling)\n 309  {\n 310      GET_TILING_DATA(tilingData, tiling);\n 311      TPipe pipe;\n 312      // KERNEL_TASK_TYPE_DEFAULT(KERNEL_TYPE_MIX_AIV_1_0); // 增加这一行\n 313      // assert(sizeof(DTYPE_X)==4||sizeof(DTYPE_X)==8);\n 314      KernelExpand<int_of_bytes_t<sizeof(DTYPE_X)>> op;\n 315      op.Init(src, dst, workspace, tilingData, &pipe);\n 316      op.Process();\n 317      \n 318  }\n 319  \n 320  ", "url": "https://github.com/wybxw/Ascend_ops_Base_S6/blob/d5e06fa213468ad4f61f1151d37668f3fc5b9ce9/Expand/op_kernel/expand.cpp#L286-L336", "sha256": "8585bd54dfdad692fc385389b25872390e340229593b4ef9c6c33ac1ef587148"}, {"id": "copy-request", "file": "Expand/op_kernel/expand.cpp", "start": 144, "end": 263, "text": " 144      __aicore__ inline void MyFillPad(AscendC::LocalTensor<T> &dstBase,int32_t &filled)\n 145      {\n 146          //使用标量 将其复制到一个可接受的大小\n 147          int repeat = this->align_elems/gcd_32(filled,this->align_elems);\n 148          if(repeat*filled*sizeof(T) <= 4 * 1024){\n 149              for(int i=1;i<repeat;i++)\n 150                  for(int j=0;j<filled;j++)\n 151                      dstBase.SetValue(i*filled + j,dstBase.GetValue(j));\n 152              filled *= repeat;\n 153          }\n 154          \n 155      }\n 156      __aicore__ inline void copyIn(\n 157          int32_t in_base_elem,\n 158          int32_t offset_elem,\n 159          int32_t cur_elems)\n 160      {\n 161          auto vecbuf = Queue.AllocTensor<T>();\n 162          AscendC::DataCopy(vecbuf, srcGm[in_base_elem + offset_elem], cur_elems + align_elems - 1);\n 163          Queue.EnQue<T>(vecbuf);\n 164      }\n 165      __aicore__ inline int32_t computeExpandVec(int32_t cur_elems,int32_t inner_elems,int32_t repeat)\n 166      {\n 167          int32_t filled = cur_elems ;\n 168          auto vecbuf = Queue.DeQue<T>();\n 169          if (inner_elems == 1)\n 170          {\n 171              \n 172              filled = min(this->ub_buf_elems, repeat); // 最多repeat成一行\n 173              // printf(\"filled:%d\\n\",filled);\n 174              T value = vecbuf.GetValue(0);\n 175              if constexpr (std::is_same_v<T, int8_t>){\n 176                  // 按位解释为无符号\n 177                  Duplicate<int16_t>(vecbuf.template ReinterpretCast<int16_t>(), static_cast<std::int16_t>(static_cast<std::uint8_t>(value) * 0x0101u), (filled) >> 1);\n 178                  if(filled&1) vecbuf.SetValue(filled-1,value);\n 179              }\n 180              else if constexpr (std::is_same_v<T, int16_t>||std::is_same_v<T, int32_t>) Duplicate<T>(vecbuf, value, filled);\n 181              else if constexpr (std::is_same_v<T, int64_t>){\n 182                  uint8_t tmp = (filled+31)/32*32;\n 183                  Duplicate<int32_t>(vecbuf.template ReinterpretCast<int32_t>(), static_cast<int32_t>((value >> 32) & 0xffffffff), maskhigh, tmp, 1, 8);\n 184                  Duplicate<int32_t>(vecbuf.template ReinterpretCast<int32_t>(), static_cast<int32_t>(value & 0xffffffff), masklow, tmp, 1, 8);\n 185              }\n 186          }\n 187          else if(inner_elems*sizeof(T)<=32)\n 188          {\n 189              \n 190              //只考虑特别小的case \n 191              int32_t all =min(ub_buf_elems,repeat*inner_elems);\n 192              if(cur_elems%this->align_elems != 0){\n 193                  MyFillPad(vecbuf,filled);\n 194              }\n 195              if(filled % align_elems == 0)\n 196              while (filled * 2 <= all)//倍增不超界\n 197              {\n 198                  MyCopy(vecbuf, filled);\n 199                  filled <<= 1;//倍增拷贝\n 200              }\n 201          }\n 202          Queue.EnQue<T>(vecbuf);\n 203          return filled;\n 204      }\n 205  \n 206      // 修正后的 copyOut：多行/单行模式区分\n 207      __aicore__ inline void copyOut(int32_t out_base_elem,\n 208                                     int32_t offset_elems,     // 行内偏移\n 209                                     int32_t inner_elems,     // 一行的元素数 (in)\n 210                                     int32_t fill_elems,      // UB 中有效元素数\n 211                                     int32_t repeat,          // 需要的总行数\n 212                                     int32_t cur_chunk_elems) // 本 chunk 的列数 (cur)\n 213      {\n 214          int32_t rows_in_vec = max(1,fill_elems / inner_elems); // 可以保证fill是inner的整倍数\n 215          auto vecbuf = Queue.DeQue<T>();\n 216          int32_t copy_width = min (cur_chunk_elems,inner_elems);\n 217          int32_t rows_done = 0;\n 218          while (rows_done < repeat)\n 219          {\n 220              int32_t this_rows = min(rows_in_vec, repeat - rows_done);\n 221              int32_t dst_pos = out_base_elem + rows_done * inner_elems + offset_elems;\n 222              MyDataCopyPadOut(vecbuf,dst_pos, this_rows*copy_width);\n 223              rows_done += this_rows;\n 224          }\n 225          Queue.FreeTensor(vecbuf);\n 226      }\n 227      __aicore__ inline void performTileBroadcast(int tile_idx,\n 228                                                  int32_t outer_index,int32_t step =1)\n 229      {\n 230          int32_t inner_elems = this->inner[tile_idx]; // in\n 231          int32_t repeat = this->repeater[tile_idx];   // repeat\n 232          int32_t in_base = compute_in_base(tile_idx, outer_index);\n 233          int32_t out_base = compute_out_base(tile_idx, outer_index);\n 234  \n 235          int32_t chunk_elems = min(this->ub_buf_elems, inner_elems);\n 236          int32_t num_chunks = (inner_elems + chunk_elems - 1) / chunk_elems;\n 237          if(step>1){\n 238              DataCopyExtParams cp_in{static_cast<uint16_t>(step),static_cast<uint32_t>(inner_elems*sizeof(T)),0,0,0};\n 239              DataCopyExtParams cp_out{static_cast<uint16_t>(step),static_cast<uint32_t>(inner_elems*sizeof(T)),0,static_cast<uint32_t>((repeat-1)*inner_elems*sizeof(T)),0};\n 240              auto buf = Queue.AllocTensor<T>();\n 241              \n 242              if constexpr(sizeof(T)==1||sizeof(T)==2||sizeof(T)==4||sizeof(T)==8)\n 243                  DataCopyPad(buf,srcGm[in_base],cp_in,{0,0,0,0});\n 244              Queue.EnQue<T>(buf);\n 245              buf = Queue.DeQue<T>();\n 246              if constexpr(sizeof(T)==1||sizeof(T)==2||sizeof(T)==4||sizeof(T)==8)\n 247                  for(int i=0;i<repeat;i++)\n 248                      DataCopyPad(dstGm[out_base+i*inner_elems],buf,cp_out);\n 249              Queue.FreeTensor<T>(buf);\n 250          }else\n 251          for (int32_t c = 0; c < num_chunks; ++c)\n 252          {\n 253              int32_t offset = c * chunk_elems;\n 254              int32_t cur = min(chunk_elems, inner_elems - offset);\n 255              copyIn(in_base, offset, cur);\n 256              int32_t fill_elems = computeExpandVec(cur, inner_elems, repeat);\n 257              copyOut(out_base, offset, inner_elems, fill_elems, repeat, cur);\n 258          }\n 259      }\n 260      __aicore__ inline void MyDataCopyPadOut(LocalTensor<T> &vecbuf,int32_t dst_offset, int32_t elems)\n 261      {\n 262          DataCopyExtParams copyParams{1, static_cast<uint32_t>(elems * sizeof(T)), 0, 0, 0};\n 263          if constexpr (std::is_same_v<T, int8_t>||std::is_same_v<T, int16_t>||std::is_same_v<T, int32_t>) DataCopyPad<T>(dstGm[dst_offset], vecbuf,copyParams); // copyParams);", "url": "https://github.com/wybxw/Ascend_ops_Base_S6/blob/d5e06fa213468ad4f61f1151d37668f3fc5b9ce9/Expand/op_kernel/expand.cpp#L144-L263", "sha256": "8585bd54dfdad692fc385389b25872390e340229593b4ef9c6c33ac1ef587148"}]}}, "glyphs": {"source": "reports/llm-compute/diagram-legend-library/visual-system.js", "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8", "variants": ["data/collapsed", "node/task", "edge/mapping"], "matrix": "domain-generated exact element grid; not an abstract Tensor glyph"}};</script><script>
+'use strict';
+const M=TrialModel,$=id=>document.getElementById(id),kind='expand',isU=kind==='unpack',configs=isU?M.configs:M.expandConfigs,source=DATA.sources[kind];
+const state={config:0,o:0,p:0,page:0,kind:'element',core:null};const view={x:0,y:0,scale:1,fitScale:1};let model,selected,audit,columns=[],bounds={w:1240,h:700},drag=null,moved=false,sourceTab=0,follow=true,z=8;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const tx=(x,y,text,cls='',extra='')=>`<text x="${x}" y="${y}" font-size="12" fill="#ddd" class="${cls}" ${extra}>${esc(text)}</text>`;
+function mByte(){return model.bytes;}
+function renderConfigMenu(){$('config').value=state.config;$('configText').textContent=configLabel(configs[state.config]);$('configMenu').innerHTML=configs.map((c,i)=>`<button role="option" id="configOption${i}" data-config="${i}" data-tip="切换到 ${esc(configLabel(c))}" aria-selected="${i===state.config}" tabindex="-1"><span>${esc(configLabel(c))}</span><span class="check" aria-hidden="true">${i===state.config?'✓':''}</span></button>`).join('');}
+function configLabel(c){return c.shape.join('×')+(isU?' · axis '+c.axis:' → '+c.target.join('×'));}
+function openDropdown(){$('configMenu').classList.remove('is-closing');$('configMenu').classList.add('is-open');$('configMenu').setAttribute('aria-hidden','false');$('configTrigger').setAttribute('aria-expanded','true');$('configOption'+state.config)?.focus();}
+function closeDropdown(){if($('configTrigger').getAttribute('aria-expanded')!=='true')return;$('configMenu').classList.remove('is-open');$('configMenu').classList.add('is-closing');$('configMenu').setAttribute('aria-hidden','true');$('configTrigger').setAttribute('aria-expanded','false');const ms=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--dropdown-close-dur'))||150;setTimeout(()=>$('configMenu').classList.remove('is-closing'),ms);}
+function renderAuditResults(){let el=$('auditResults');if(!el){el=document.createElement('section');el.id='auditResults';el.className='audit-results';$('inspector').appendChild(el);}if(!audit){el.hidden=true;return;}el.hidden=false;$('inspector').insertBefore(el,$('readouts'));el.innerHTML=`<h3>自动核查</h3><div class="audit-summary">${audit.logical.mismatches===0?'✓':'!'} 独立广播模型 · ${audit.logical.checked} 输出 · ${audit.logical.mismatches} 差异</div>${audit.findings.length?audit.findings.map(f=>`<button class="audit-item" data-finding="${f.id}" aria-current="${state.kind==='finding'&&state.finding===f.id}" data-tip="定位边界元素并查看源码参数范围">${esc(f.title)}<small>${esc(f.source)} · [${f.start}, ${f.end}) / ${f.sourceSize} el</small></button>`).join(''):'<p>当前分支未发现 count 参数范围差异。</p>'}`;el.onclick=e=>{const target=e.target.closest('[data-finding]');if(target)locateFinding(target.dataset.finding);};}
+function locateFinding(id){const f=audit.findings.find(x=>x.id===id);state.kind='finding';state.finding=id;state.p=f.position;state.page=Math.floor(state.p/32);render();$('inspector').hidden=false;$('evidenceToggle').setAttribute('aria-expanded','true');renderInspector();}
+function buildModel(){model=isU?M.unpack(configs[state.config]):M.expand(configs[state.config]);$('title').textContent=isU?'Unpack':'Expand';document.title=$('title').textContent+' · 映射调查';$('identityShape').textContent=model.shape.join('×')+' · '+model.dtype+(isU?' · axis '+model.axis:' → '+model.target.join('×'));$('repository').textContent=source.repo+' ↗';$('repository').href=`https://github.com/${source.repo}/tree/${source.revision}`;renderConfigMenu();audit=isU?null:M.auditExpand(model);$('auditToggle').hidden=isU;$('auditCount').textContent=audit?.findings.length||'✓';$('outputLabel').hidden=!isU;$(kind+'Link').classList.add('active');if(isU)$('out').max=model.num-1;$('pos').max=model.size-1;}
+function traceExpand(p){const indices=[p];for(let i=model.stages.length-1;i>=0;i--){const s=model.stages[i],q=indices[0];indices.unshift(Math.floor(q/(s.inner*s.repeat))*s.inner+q%s.inner);}return indices;}
+function cell(x,y,index,id,selectedFlag,related,extra=''){return `<g class="cell ${selectedFlag?'selected':''} ${related?'related':''}" transform="translate(${x} ${y})" data-action="cell" data-column="${id}" data-index="${index}" role="button" tabindex="0" aria-label="${esc(id)} 元素 ${index}" ${extra}><rect width="40" height="40" rx="2"/>${tx(20,21,index)}</g>`;}
+function render(){selected=isU?M.unpackElement(model,state.o,state.p):M.expandElement(model,state.p);const start=state.page*32,items=Array.from({length:Math.min(32,model.size-start)},(_,i)=>isU?M.unpackElement(model,state.o,start+i):M.expandElement(model,start+i));let traces=isU?[]:items.map(x=>traceExpand(x.position)),currentTrace=isU?[]:traceExpand(state.p);const inputIndices=[...new Set(items.map(x=>x.src))];
+ columns=[{id:'X',label:'X',shape:model.shape,indices:inputIndices,chosen:selected.src,values:inputIndices.map(x=>x)}];
+ if(!isU)for(let i=0;i<model.stages.length-1;i++){const indices=[...new Set(traces.map(t=>t[i+1]))];columns.push({id:'S'+i,label:model.stages[i].destination,shape:[model.stages[i].outer*model.stages[i].inner*model.stages[i].repeat],indices,chosen:currentTrace[i+1],values:indices.map(q=>{let n=q;for(let j=i;j>=0;j--){const s=model.stages[j];n=Math.floor(n/(s.inner*s.repeat))*s.inner+n%s.inner;}return n;})});}
+ columns.push({id:'Y',label:isU?'Y'+state.o:'Y',shape:isU?model.shape.filter((_,i)=>i!==model.axis):model.target,indices:items.map(x=>x.position),chosen:state.p,values:items.map(x=>x.src)});
+ const spacing=columns.length===3?465:650;columns.forEach((c,i)=>{c.x=90+i*spacing;c.y=190;c.points=new Map(c.indices.map((n,j)=>[n,{x:c.x+(j%8)*47+20,y:c.y+Math.floor(j/8)*47+20}]));});bounds={w:columns.at(-1).x+440,h:isU?780:650};
+ let graph='';for(let i=0;i<columns.length-1;i++){const a=columns[i],b=columns[i+1],p=a.points.get(a.chosen);for(let j=0;j<b.indices.length;j++)if(b.values[j]===selected.src){const q=b.points.get(b.indices[j]);if(isU)continue;const mid=a.x+405;graph+=`<path class="${b.indices[j]===b.chosen?'selected-wire':'wire'}" d="M${p.x+22} ${p.y}H${mid}V${q.y}H${q.x-23}"/>`;}}
+ for(const c of columns){graph+=tx(c.x,110,c.label,'name')+tx(c.x,138,'['+c.shape.join(', ')+'] · '+model.dtype,'shape');c.indices.forEach((n,j)=>{graph+=cell(c.x+j%8*47,c.y+Math.floor(j/8)*47,n,c.id,n===c.chosen,c.values[j]===selected.src)});const rows=Math.ceil(c.indices.length/8);graph+=tx(c.x,c.y+rows*47+35,`${c.label} + ${(c.chosen*model.bytes).toLocaleString()} B`,'address');}
+ if(isU){const t=selected.task,p=columns[0].points.get(selected.src),q=columns[1].points.get(state.p),taskX=518,taskY=q.y-19.5,taskW=169,taskH=39,coreTop=530;
+ graph+=`<path data-relation="source-task" class="selected-wire" d="M${p.x+22} ${p.y}H${taskX}"/><path data-relation="task-output" class="selected-wire" d="M${taskX+taskW} ${q.y}H${q.x-23}"/>`;
+ const coreX=90+(t.core%12)*88+39,coreY=coreTop+Math.floor(t.core/12)*58;
+ graph+=`<path data-relation="core-task" d="M${coreX} ${coreY}V${coreTop-45}H${taskX+taskW/2}V${taskY+taskH}" fill="none" stroke="#888" stroke-width="1.2" stroke-dasharray="4 4"/><circle cx="${coreX}" cy="${coreY}" r="3" fill="#aaa"/>`;
+ graph+=tx(taskX,taskY-19,model.path,'shape');
+ graph+=`<g class="task-node" role="button" tabindex="0" data-action="task" aria-label="Task ${t.index}，由 C${t.core} 负责；从 X 映射到 Y${t.o}${t.cols?'–Y'+(t.o+t.cols-1):''}，元素区间 [${t.start},${t.start+t.count})；点击查看任务"><g transform="translate(${taskX} ${taskY}) scale(.65)">${VisualSystem.node('task',t.id,'Task '+t.index,0,0)}</g></g>`;
+ graph+=tx(taskX,taskY+taskH+25,`Y${t.o}${t.cols?'–Y'+(t.o+t.cols-1):''} · [${t.start}, ${t.start+t.count})`,'shape');
+ model.ranges.forEach((r,i)=>{const x=90+(i%12)*88,y=coreTop+Math.floor(i/12)*58,active=state.kind==='core'?state.core===r.core:t.core===r.core;graph+=`<g class="core ${r.start===r.end?'empty':''} ${active?'active':''}" opacity="${active?1:r.start===r.end?.75:.9}" transform="translate(${x} ${y})" role="button" tabindex="0" data-action="core" data-core="${r.core}" aria-label="C${r.core} · 任务 [${r.start}, ${r.end})${r.start===r.end?' · 无分配任务':''}"><rect width="78" height="47" rx="4"/>${tx(9,17,'C'+r.core)}${tx(9,34,`[${r.start},${r.end})`)}</g>`;});bounds.h=coreTop+70+Math.ceil(model.cores/12)*58;}
+
+ else{model.stages.forEach((s,i)=>{const x=(columns[i].x+376+columns[i+1].x)/2-41,y=180;graph+=`<g class="stage-link" transform="translate(${x} ${y})" data-action="stage" data-stage="${i}" role="button" tabindex="0" aria-label="阶段 S${i}：${s.outer} 组，每组 ${s.inner} 元素，重复 ${s.repeat} 次；点击查看搬运参数"><rect x="0" y="-24" width="82" height="42" rx="21"/>${tx(9,2,`S${i} · ×${s.repeat}`)}</g>`;});}
+
+ if(state.kind==='finding'){const f=audit.findings.find(x=>x.id===state.finding),c=columns[f.stage];if(c){graph+=`<rect class="candidate" x="${c.x-10}" y="${c.y-10}" width="386" height="${Math.ceil(c.indices.length/8)*47+10}" rx="5"/>`+tx(c.x,c.y+Math.ceil(c.indices.length/8)*47+65,`[${f.start}, ${f.end}) · bound ${f.sourceSize} el`,'candidate-label');}}$('world').innerHTML=graph;transform();$('out').value=state.o;$('pos').value=state.p;$('range').textContent=model.size<=32?`全部 ${model.size} 项`:`显示 ${start}–${Math.min(start+31,model.size-1)} / ${model.size}`;$('previous').hidden=model.size<=32;$('next').hidden=model.size<=32;$('previous').disabled=state.page===0;$('next').disabled=start+32>=model.size;if(!$('inspector').hidden)renderInspector();if(!$('sourceWindow').hidden&&follow){sourceTab=defaultSource();renderSource();}updateContext();}
+function transform(){$('world').setAttribute('transform',`translate(${view.x} ${view.y}) scale(${view.scale})`);$('zoom').textContent=Math.round(view.scale/view.fitScale*100)+'%';}
+function fit(){const top=innerWidth<=600?185:innerWidth<1000?145:110,bottom=innerWidth<1000?145:100;view.scale=Math.max(.13,Math.min((innerWidth-65)/bounds.w,(innerHeight-top-bottom)/bounds.h,1.2));view.fitScale=view.scale;view.x=(innerWidth-bounds.w*view.scale)/2;view.y=top+(innerHeight-top-bottom-bounds.h*view.scale)/2;transform();}
+function zoomAt(f,x=innerWidth/2,y=innerHeight/2){const old=view.scale;view.scale=Math.max(.12,Math.min(4,old*f));view.x=x-(x-view.x)*view.scale/old;view.y=y-(y-view.y)*view.scale/old;transform();$('tooltip').hidden=true;}
+function anchorPanel(panel){panel.style.left='auto';panel.style.bottom='auto';panel.style.right=(innerWidth<=600?16:26)+'px';panel.style.top=(innerWidth<=600?180:innerWidth<1000?132:86)+'px';panel.style.height='auto';panel.style.maxHeight=`calc(100dvh - ${innerWidth<=600?325:innerWidth<1000?280:190}px)`;}
+function toggle(id,button){const panel=$(id);panel.hidden=!panel.hidden;$(button).setAttribute('aria-expanded',!panel.hidden);if(!panel.hidden){anchorPanel(panel);panel.style.zIndex=++z;if(id==='inspector')renderInspector();if(id==='sourceWindow'){sourceTab=defaultSource();renderSource();}}}
+function close(id,button){$(id).hidden=true;$(button).setAttribute('aria-expanded','false');}
+function defaultSource(){if(state.kind==='finding'||state.kind==='audit')return source.evidence.findIndex(e=>e.id==='copy-request');if(isU&&state.kind==='core')return 1;return isU?(model.path==='Matrix deinterleave'?3:2):1;}
+function renderInspector(){$('readouts').hidden=state.kind==='audit';$('openSelectedSource').hidden=state.kind==='audit';$('mappingDisclosure').hidden=state.kind==='audit';$('handoff').hidden=state.kind==='audit';if(state.kind==='audit'){$('selectedTitle').textContent='自动核查';$('readouts').innerHTML='';}else if(state.kind==='finding'){const f=audit.findings.find(x=>x.id===state.finding);$('selectedTitle').textContent='S'+f.stage+' · 请求参数';$('readouts').innerHTML=readouts([['构造范围',`[${f.start*mByte()},${f.end*mByte()}) B`],['逻辑输入',f.sourceSize*mByte()+' B'],['超出逻辑边界',f.extra*mByte()+' B'],['输出定位','Y['+f.position+']']]);$('mappingDetail').innerHTML=`<p class="mono">${esc(f.expression)}</p><p>参数构造范围超出该阶段逻辑输入。DataCopy 的实际读入范围需结合 CANN 版本与设备验证。</p>`;$('question').value=`请核对 S${f.stage} copyIn 的 count 参数：构造区间 [${f.start},${f.end})，逻辑输入 ${f.sourceSize} 元素；结合当前 CANN DataCopy 语义确认实际读入边界。`;}else if(state.kind==='task'){const t=selected.task;$('selectedTitle').textContent='Task '+t.index;$('readouts').innerHTML=readouts([['所属核','C'+t.core],['输出',`Y${t.o}${t.cols?'–Y'+(t.o+t.cols-1):''}`],['元素区间',`[${t.start},${t.start+t.count})`],['当前元素','Y'+state.o+'['+state.p+']']]);$('mappingDetail').innerHTML=`<p class="mono">${esc(model.path)}</p><p>实线为元素映射，虚线为 Core 对 Task 的分配关系。</p>`;}else if(state.kind==='stage'){const s=model.stages[state.stage];$('selectedTitle').textContent='S'+s.index+' · 搬运';$('readouts').innerHTML=readouts([['分组数 outer',s.outer],['每组元素 inner',s.inner],['重复 repeat',s.repeat],['核','C0']]);$('mappingDetail').innerHTML=`<p class="mono">${s.source} → ${s.destination}</p><p class="mono">step ${s.step}</p>`;}else if(state.kind==='core'){const r=model.ranges[state.core];$('selectedTitle').textContent='C'+r.core;$('readouts').innerHTML=readouts([['任务区间',`[${r.start},${r.end})`],['任务数',r.end-r.start]]);$('mappingDetail').textContent='[floor(core × tasks / cores), floor((core + 1) × tasks / cores))';}else{$('selectedTitle').textContent=(isU?'Y'+state.o:'Y')+'['+state.p+']';$('readouts').innerHTML=readouts([['X',selected.srcBytes+' B'],[isU?'Y'+state.o:'Y',selected.dstBytes+' B'],...(isU?[['Task',selected.task.index],['Core','C'+selected.task.core]]:[['坐标','['+selected.coords+']'],['Core','C0']])]);$('mappingDetail').innerHTML=isU?`<p class="mono">src = (outer × num + output) × inner + i</p><p class="mono">outer ${selected.outer} · inner ${selected.inner}</p>`:`<p class="mono">inputShape[d] = 1 → src[d] = 0</p>${model.stages.map(s=>`<p class="mono">S${s.index} · outer ${s.outer} · inner ${s.inner} · repeat ${s.repeat} · step ${s.step}</p>`).join('')}`;}renderAuditResults();updateContext();}
+function readouts(pairs){return pairs.map(([k,v])=>`<div><small>${esc(k)}</small><strong>${esc(v)}</strong></div>`).join('');}
+function context(){return M.context(kind,{id:model.id,shape:model.shape,target:model.target,dtype:model.dtype,bytes:model.bytes,axis:model.axis,path:model.path,stages:model.stages,origin:'new-validation-configuration',audit:audit?{logical:audit.logical,findingCount:audit.findings.length,deviceAccess:audit.deviceAccess}:null},state.kind==='audit'?{audit}:state.kind==='finding'?{element:selected,finding:audit.findings.find(x=>x.id===state.finding)}:state.kind==='task'?{task:selected.task,element:selected}:state.kind==='stage'?model.stages[state.stage]:state.kind==='core'?model.ranges[state.core]:selected,source,$('question').value);}
+function updateContext(){$('contextPreview').textContent=JSON.stringify(context(),null,2);}
+function renderSource(){const e=source.evidence[sourceTab];$('sourceMeta').innerHTML=`<a href="${e.url}" target="_blank" rel="noopener">${esc(e.file)}:${e.start}–${e.end} ↗</a> · ${source.revision.slice(0,10)}`;$('sourceTabs').innerHTML=source.evidence.map((x,i)=>`<button data-source="${i}" data-tip="查看 ${esc(x.file)}:${x.start}–${x.end}" aria-pressed="${i===sourceTab}">${esc(x.id)}</button>`).join('');$('sourceCode').textContent=e.text;}
+function selectElement(column,index){state.kind='element';state.core=null;if(column==='Y')state.p=index;else if(column==='X'){const start=state.page*32;for(let p=start;p<Math.min(start+32,model.size);p++)if((isU?M.unpackElement(model,state.o,p):M.expandElement(model,p)).src===index){state.p=p;break;}}else{const stage=+column.slice(1);for(let p=state.page*32;p<Math.min(state.page*32+32,model.size);p++)if(traceExpand(p)[stage+1]===index){state.p=p;break;}}render();}
+function handleSelection(target){if(target.dataset.action==='task'){state.kind='task';if($('inspector').hidden)toggle('inspector','evidenceToggle');else renderInspector();return;}if(target.dataset.action==='stage'){state.kind='stage';state.stage=+target.dataset.stage;render();if($('inspector').hidden)toggle('inspector','evidenceToggle');return;}if(target.dataset.action==='cell')selectElement(target.dataset.column,+target.dataset.index);else{state.kind='core';state.core=+target.dataset.core;const t=model.tasks.find(t=>t.core===state.core);if(t){state.o=t.o;state.p=t.start;state.page=Math.floor(state.p/32);}render();}if(!$('inspector').hidden)renderInspector();}
+function makeMovable(panel,head){let moving=null;panel.addEventListener('pointerdown',()=>panel.style.zIndex=++z);head.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('button'))return;const r=panel.getBoundingClientRect();moving={x:e.clientX,y:e.clientY,left:r.left,top:r.top};head.setPointerCapture(e.pointerId);e.preventDefault();});head.addEventListener('pointermove',e=>{if(!moving)return;panel.style.left=Math.max(0,Math.min(innerWidth-100,moving.left+e.clientX-moving.x))+'px';panel.style.top=Math.max(0,Math.min(innerHeight-80,moving.top+e.clientY-moving.y))+'px';panel.style.right='auto';panel.style.bottom='auto';});head.addEventListener('pointerup',()=>moving=null);head.addEventListener('pointercancel',()=>moving=null);}
+$('canvas').addEventListener('pointerdown',e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,ox:view.x,oy:view.y};moved=false;});$('canvas').addEventListener('pointermove',e=>{if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)moved=true;if(moved){$('canvas').classList.add('dragging');$('canvas').setPointerCapture(e.pointerId);view.x=drag.ox+dx;view.y=drag.oy+dy;transform();$('tooltip').hidden=true;}return;}const target=e.target.closest('[data-action]');if(!target){$('tooltip').hidden=true;return;}$('tooltip').textContent=target.getAttribute('aria-label');$('tooltip').style.left=Math.min(e.clientX+14,innerWidth-210)+'px';$('tooltip').style.top=Math.max(4,e.clientY-48)+'px';$('tooltip').hidden=false;});window.addEventListener('pointerup',()=>{drag=null;$('canvas').classList.remove('dragging');setTimeout(()=>moved=false,0);});$('canvas').addEventListener('pointercancel',()=>{drag=null;moved=false;});$('canvas').addEventListener('pointerleave',()=>$('tooltip').hidden=true);$('canvas').addEventListener('click',e=>{if(moved)return;const target=e.target.closest('[data-action]');if(target)handleSelection(target);});$('canvas').addEventListener('wheel',e=>{e.preventDefault();if(e.shiftKey){view.x-=e.deltaX;view.y-=e.deltaY;transform();}else zoomAt(Math.exp(-e.deltaY*.0015),e.clientX,e.clientY);},{passive:false});$('canvas').addEventListener('keydown',e=>{const target=e.target.closest('[data-action]');if(target&&(e.key==='Enter'||e.key===' ')){e.preventDefault();handleSelection(target);}if(target&&target.dataset.column==='Y'&&['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();state.p=Math.max(0,Math.min(model.size-1,state.p+(e.key==='ArrowRight'?1:-1)));state.page=Math.floor(state.p/32);state.kind='element';render();$('world').querySelector(`[data-column="Y"][data-index="${state.p}"]`)?.focus();}});
+$('config').onchange=e=>{closeDropdown();state.config=+e.target.value;state.o=0;state.p=0;state.page=0;state.kind='element';buildModel();render();fit();};$('out').onchange=e=>{state.o=Math.max(0,Math.min(model.num-1,+e.target.value||0));state.kind='element';render();};$('pos').onchange=e=>{state.p=Math.max(0,Math.min(model.size-1,+e.target.value||0));state.page=Math.floor(state.p/32);state.kind='element';render();};$('previous').onclick=()=>{state.page=Math.max(0,state.page-1);state.p=state.page*32;state.kind='element';render();};$('next').onclick=()=>{state.page=Math.min(Math.floor((model.size-1)/32),state.page+1);state.p=state.page*32;state.kind='element';render();};$('plus').onclick=()=>zoomAt(1.2);$('minus').onclick=()=>zoomAt(1/1.2);$('fit').onclick=fit;
+$('evidenceToggle').onclick=()=>toggle('inspector','evidenceToggle');$('sourceToggle').onclick=()=>toggle('sourceWindow','sourceToggle');$('infoToggle').onclick=()=>toggle('info','infoToggle');$('closeInspector').onclick=()=>close('inspector','evidenceToggle');$('closeSource').onclick=()=>close('sourceWindow','sourceToggle');$('closeInfo').onclick=()=>close('info','infoToggle');$('openSelectedSource').onclick=()=>{if($('sourceWindow').hidden)toggle('sourceWindow','sourceToggle');else{sourceTab=defaultSource();renderSource();}$('sourceWindow').style.zIndex=++z;};$('sourceTabs').onclick=e=>{const b=e.target.closest('[data-source]');if(b){sourceTab=+b.dataset.source;renderSource();}};$('sourceFollow').onclick=()=>{follow=!follow;$('sourceFollow').setAttribute('aria-pressed',follow);if(follow){sourceTab=defaultSource();renderSource();}};
+$('question').oninput=updateContext;$('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('contextPreview').textContent);$('status').textContent='已复制';}catch{const r=document.createRange();r.selectNodeContents($('contextPreview'));getSelection().removeAllRanges();getSelection().addRange(r);$('status').textContent='可展开上下文后复制，或下载 JSON';}};$('download').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([$('contextPreview').textContent],{type:'application/json'}));a.download=kind+'-context.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDropdown();close('inspector','evidenceToggle');close('sourceWindow','sourceToggle');close('info','infoToggle');$('tooltip').hidden=true;}});window.addEventListener('resize',transform);
+$('infoBody').innerHTML=`<section class="info-value"><p class="value-copy">${isU?'核对拆分索引与核分配，定位边界任务。':'核对广播索引与分阶段搬运，定位边界请求。'}</p><p>选元素看地址，查源码，带当前证据继续调查。</p>${isU?'':'<p>自动比对逻辑映射与源码参数范围，优先列出待核查位置。</p>'}</section><div class="info-list">${esc(source.repo)}<br>${source.revision}<br>新建验证配置 · CPU 索引检查<br>本轮未运行 NPU</div><p>${isU?'任务与核区间按 Host / Kernel 源码推导。':'逻辑广播与 Host 阶段组合已核对；copyIn 对齐余量的实际设备访问边界待核查。'}</p><details><summary>图元与交互来源</summary><p>画布、指针缩放、独立控制、可移动浮层沿用 LogSumExp Case05 的工作台机制。Task 使用正式 VisualSystem renderer；逐元素矩阵使用独立领域模型。</p></details>`;
+$('configTrigger').onclick=()=>{if($('configTrigger').getAttribute('aria-expanded')==='true')closeDropdown();else openDropdown();};$('configTrigger').onkeydown=e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();openDropdown();}};$('configMenu').onclick=e=>{const target=e.target.closest('[data-config]');if(target){$('config').onchange({target:{value:target.dataset.config}});$('configTrigger').focus();}};$('configMenu').onkeydown=e=>{const target=e.target.closest('[data-config]');if(!target)return;const i=+target.dataset.config;if(['ArrowDown','ArrowUp','Home','End'].includes(e.key)){e.preventDefault();const n=e.key==='Home'?0:e.key==='End'?configs.length-1:(i+(e.key==='ArrowDown'?1:-1)+configs.length)%configs.length;$('configOption'+n).focus();}else if(e.key==='Escape'){e.preventDefault();closeDropdown();$('configTrigger').focus();}else if(e.key==='Tab')closeDropdown();};document.addEventListener('pointerdown',e=>{if(!e.target.closest('.configuration'))closeDropdown();});$('auditToggle').onclick=()=>{state.kind='audit';anchorPanel($('inspector'));$('inspector').style.zIndex=++z;if($('inspector').hidden)toggle('inspector','evidenceToggle');renderInspector();};
+function controlTip(target){return target?.getAttribute('data-tip')||target?.getAttribute('aria-label')||target?.textContent?.trim();}
+function showControlTip(target){if(!target||target.closest('#canvas'))return;const text=controlTip(target);if(!text)return;const r=target.getBoundingClientRect();$('tooltip').textContent=text;$('tooltip').style.left=Math.max(8,Math.min(r.left,innerWidth-300))+'px';$('tooltip').style.top=(r.bottom+9<innerHeight-70?r.bottom+9:Math.max(8,r.top-54))+'px';$('tooltip').hidden=false;}
+document.addEventListener('pointerover',e=>showControlTip(e.target.closest('[data-tip],button,input:not([type=hidden]),a,summary')));document.addEventListener('focusin',e=>showControlTip(e.target.closest('[data-tip],button,input:not([type=hidden]),a,summary')));document.addEventListener('pointerout',e=>{if(e.target.closest('[data-tip],button,input,a,summary'))$('tooltip').hidden=true;});document.addEventListener('focusout',()=>$('tooltip').hidden=true);
+document.querySelectorAll('button,a,input:not([type=hidden]),summary').forEach(el=>{if(!el.getAttribute('data-tip')){const text=controlTip(el);if(text)el.setAttribute('data-tip',text);}});
+makeMovable($('inspector'),$('inspectorHead'));makeMovable($('sourceWindow'),$('sourceHead'));makeMovable($('info'),$('infoHead'));buildModel();render();fit();
+</script><script>/* Liquid Glass Controls v1.0.0 — classic script, no build step. */
+(() => {
+"use strict";
+if (window.LiquidGlassControls) return;
+/*
+MIT License
+
+Copyright (c) 2026 Riz Roze
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+/**
+ * Liquid Glass — Real optical refraction for the web.
+ *
+ * Uses Canvas 2D to generate displacement maps fed into SVG feDisplacementMap
+ * filters. Three separate passes (one per RGB channel) with slightly different
+ * scale values create chromatic aberration at the edges.
+ *
+ * Chromium only. Safari/Firefox fall back to regular backdrop-filter: blur().
+ *
+ * @see https://github.com/rizzytoday/liquid-glass
+ * @license MIT
+ */
+function resolveConfig(el, opts) {
+  const rect = el.getBoundingClientRect();
+  const ab = opts.aberration ?? [0, 10, 20];
+  return {
+    width: opts.width ?? Math.round(rect.width),
+    height: opts.height ?? Math.round(rect.height),
+    radius: opts.borderRadius ?? 50,
+    scale: opts.scale ?? -180,
+    border: opts.border ?? 0.07,
+    lightness: opts.lightness ?? 50,
+    alpha: opts.alpha ?? 0.93,
+    blur: opts.blur ?? 11,
+    r: ab[0],
+    g: ab[1],
+    b: ab[2],
+    frost: opts.frost ?? 0,
+    saturation: opts.saturation ?? 1,
+    displace: opts.displaceBlur ?? 0
+  };
+}
+const isChromium = typeof navigator !== "undefined" && /Chrome\//.test(navigator.userAgent);
+const _mapCache = /* @__PURE__ */ new Map();
+function buildDisplacementMap(c) {
+  const key = `${c.width}:${c.height}:${c.radius}:${c.scale}:${c.border}:${c.blur}:${c.lightness}:${c.alpha}`;
+  const cached = _mapCache.get(key);
+  if (cached) return cached;
+  const maxDisplace = Math.max(Math.abs(c.scale) * 0.5, 20);
+  const padX = Math.ceil(maxDisplace);
+  const padY = Math.ceil(maxDisplace);
+  const totalW = c.width + padX * 2;
+  const totalH = c.height + padY * 2;
+  const canvas = document.createElement("canvas");
+  canvas.width = totalW;
+  canvas.height = totalH;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "rgb(128, 128, 128)";
+  ctx.fillRect(0, 0, totalW, totalH);
+  const ox = padX;
+  const oy = padY;
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(ox, oy, c.width, c.height, c.radius);
+  ctx.clip();
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(ox, oy, c.width, c.height);
+  const redGrad = ctx.createLinearGradient(ox + c.width, oy, ox, oy);
+  redGrad.addColorStop(0, "#000000");
+  redGrad.addColorStop(1, "#ff0000");
+  ctx.fillStyle = redGrad;
+  ctx.fillRect(ox, oy, c.width, c.height);
+  ctx.globalCompositeOperation = "difference";
+  const blueGrad = ctx.createLinearGradient(ox, oy, ox, oy + c.height);
+  blueGrad.addColorStop(0, "#000000");
+  blueGrad.addColorStop(1, "#0000ff");
+  ctx.fillStyle = blueGrad;
+  ctx.fillRect(ox, oy, c.width, c.height);
+  ctx.globalCompositeOperation = "source-over";
+  const borderPx = Math.min(c.width, c.height) * (c.border * 0.5);
+  ctx.filter = `blur(${c.blur}px)`;
+  ctx.fillStyle = `hsla(0, 0%, ${c.lightness}%, ${c.alpha})`;
+  ctx.beginPath();
+  ctx.roundRect(
+    ox + borderPx,
+    oy + borderPx,
+    c.width - borderPx * 2,
+    c.height - borderPx * 2,
+    c.radius
+  );
+  ctx.fill();
+  ctx.restore();
+  const uri = canvas.toDataURL();
+  _mapCache.set(key, uri);
+  return uri;
+}
+let _instanceCount = 0;
+function createFilterSVG(id) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg.style.cssText = "position:absolute;width:0;height:0;pointer-events:none;";
+  svg.innerHTML = `
+    <defs>
+      <filter id="${id}" color-interpolation-filters="sRGB" x="-38%" y="-188%" width="176%" height="476%">
+        <feImage result="map" preserveAspectRatio="none" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispRed" data-channel="red" />
+        <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispGreen" data-channel="green" />
+        <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispBlue" data-channel="blue" />
+        <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
+        <feBlend in="red" in2="green" mode="screen" result="rg" />
+        <feBlend in="rg" in2="blue" mode="screen" result="output" />
+        <feGaussianBlur in="output" stdDeviation="0" />
+      </filter>
+    </defs>
+  `;
+  const filter = svg.querySelector("filter");
+  const feImage = svg.querySelector("feImage");
+  const red = svg.querySelector('[data-channel="red"]');
+  const green = svg.querySelector('[data-channel="green"]');
+  const blue = svg.querySelector('[data-channel="blue"]');
+  const blurEl = svg.querySelector("feGaussianBlur");
+  return { svg, feImage, red, green, blue, blur: blurEl, filter };
+}
+function applyConfig(c, refs) {
+  const uri = buildDisplacementMap(c);
+  const maxD = Math.max(Math.abs(c.scale) * 0.5, 20);
+  const pctX = Math.ceil(maxD / c.width * 100);
+  const pctY = Math.ceil(maxD / c.height * 100);
+  refs.filter.setAttribute("x", `-${pctX}%`);
+  refs.filter.setAttribute("y", `-${pctY}%`);
+  refs.filter.setAttribute("width", `${100 + pctX * 2}%`);
+  refs.filter.setAttribute("height", `${100 + pctY * 2}%`);
+  refs.feImage.setAttributeNS("http://www.w3.org/1999/xlink", "href", uri);
+  refs.feImage.setAttribute("href", uri);
+  refs.red.setAttribute("scale", String(c.scale + c.r));
+  refs.green.setAttribute("scale", String(c.scale + c.g));
+  refs.blue.setAttribute("scale", String(c.scale + c.b));
+  refs.blur.setAttribute("stdDeviation", String(c.displace));
+}
+function createLiquidGlass(element, options = {}) {
+  const fallback = options.fallbackFilter ?? "blur(12px)";
+  if (!isChromium) {
+    const prev = element.style.backdropFilter;
+    const prevWebkit = element.style.getPropertyValue("-webkit-backdrop-filter");
+    element.style.backdropFilter = fallback;
+    element.style.setProperty("-webkit-backdrop-filter", fallback);
+    const dummySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    return {
+      isActive: false,
+      filterElement: dummySvg,
+      update() {
+      },
+      destroy() {
+        element.style.backdropFilter = prev;
+        element.style.setProperty("-webkit-backdrop-filter", prevWebkit);
+      }
+    };
+  }
+  const id = options.filterId ?? `liquid-glass-${++_instanceCount}`;
+  const refs = createFilterSVG(id);
+  document.body.appendChild(refs.svg);
+  let currentOpts = { ...options };
+  let config = resolveConfig(element, currentOpts);
+  applyConfig(config, refs);
+  const applyStyles = (c) => {
+    element.style.backdropFilter = `url(#${id}) saturate(${c.saturation})`;
+    element.style.setProperty(
+      "-webkit-backdrop-filter",
+      `url(#${id}) saturate(${c.saturation})`
+    );
+    if (c.frost > 0) {
+      element.style.background = `hsl(0 0% 0% / ${c.frost})`;
+    }
+  };
+  applyStyles(config);
+  let resizeRaf = 0;
+  const ro = new ResizeObserver(() => {
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      if (currentOpts.width == null || currentOpts.height == null) {
+        config = resolveConfig(element, currentOpts);
+        if (!config.width || !config.height) return;
+        applyConfig(config, refs);
+        applyStyles(config);
+      }
+    });
+  });
+  ro.observe(element);
+  return {
+    isActive: true,
+    filterElement: refs.svg,
+    update(newOpts) {
+      currentOpts = { ...currentOpts, ...newOpts };
+      config = resolveConfig(element, currentOpts);
+      applyConfig(config, refs);
+      applyStyles(config);
+    },
+    destroy() {
+      ro.disconnect();
+      cancelAnimationFrame(resizeRaf);
+      refs.svg.remove();
+      element.style.backdropFilter = "";
+      element.style.setProperty("-webkit-backdrop-filter", "");
+      element.style.background = "";
+    }
+  };
+}
+
+
+const presets=Object.freeze({
+ control:Object.freeze({scale:-110,aberration:[0,4,8],alpha:1,blur:8,displaceBlur:4,saturation:1,frost:0,fallbackFilter:'blur(12px)'}),
+ panel:Object.freeze({scale:-12,aberration:[0,0,0],alpha:1,blur:8,displaceBlur:18,saturation:1,frost:0,fallbackFilter:'blur(18px)'}),
+ icon:Object.freeze({scale:-36,aberration:[0,1,2],alpha:1,blur:6,displaceBlur:4,saturation:1,frost:0,fallbackFilter:'blur(12px)'})
+});
+const selector='[data-liquid-glass]';
+const instances=new Map();
+const properties=['backdrop-filter','-webkit-backdrop-filter','background'];
+let observer=null,frame=0,started=false;
+function restore(element,record){
+ record.glass.destroy();
+ for(const [name,value,priority] of record.styles){
+  if(value)element.style.setProperty(name,value,priority);else element.style.removeProperty(name);
+ }
+}
+function remove(element){const record=instances.get(element);if(record){instances.delete(element);restore(element,record);}}
+function refresh(){
+ if(!started)return;
+ const candidates=new Set(document.querySelectorAll(selector));
+ for(const element of instances.keys())if(!candidates.has(element))remove(element);
+ for(const element of candidates){
+  const preset=element.getAttribute('data-liquid-glass');
+  const rect=element.getBoundingClientRect(),css=getComputedStyle(element);
+  const visible=rect.width>0&&rect.height>0&&css.visibility!=='hidden';
+  const radius=Math.min(parseFloat(css.borderTopLeftRadius)||0,rect.width/2,rect.height/2);
+  const record=instances.get(element);
+  if(record&&(!visible||record.preset!==preset||record.radius!==radius))remove(element);
+  if(!visible||!presets[preset]||instances.has(element))continue;
+  const styles=properties.map(name=>[name,element.style.getPropertyValue(name),element.style.getPropertyPriority(name)]);
+  const glass=createLiquidGlass(element,{...presets[preset],borderRadius:radius});
+  instances.set(element,{glass,styles,preset,radius});
+ }
+}
+function schedule(){if(!started||frame)return;frame=requestAnimationFrame(()=>{frame=0;refresh();});}
+function start(){
+ if(started)return;started=true;
+ observer=new MutationObserver(schedule);
+ observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-liquid-glass','hidden','class','style']});
+ window.addEventListener('resize',schedule);
+ refresh();
+}
+function disconnect(){
+ started=false;if(observer)observer.disconnect();observer=null;
+ cancelAnimationFrame(frame);frame=0;window.removeEventListener('resize',schedule);
+ for(const element of instances.keys())remove(element);
+}
+window.LiquidGlassControls=Object.freeze({
+ version:'1.0.0',
+ init(element,preset='control'){
+  if(!presets[preset])throw new Error('Unknown liquid glass preset: '+preset);
+  element.setAttribute('data-liquid-glass',preset);start();refresh();return element;
+ },
+ destroy(element){element.removeAttribute('data-liquid-glass');remove(element);},
+ refresh,start,disconnect
+});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+window.addEventListener('pagehide',disconnect);
+window.addEventListener('pageshow',start);
+})();
+</script></body></html>

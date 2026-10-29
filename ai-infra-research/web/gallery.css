@@ -305,3 +305,60 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
 .card-visual .document-figure-pass-observability-guide{object-fit:contain;transform:none;filter:none;background:#fff}
 
 .card-visual .document-figure-model-architecture-v41 { object-fit: contain; background: #101010; transform: none; filter: none; }
+
+/* Shared cover viewport: source proportions never determine card geometry. */
+.report-card{aspect-ratio:auto;grid-template-rows:72px auto 36px}
+.card-visual-link{position:relative;width:100%;height:auto;aspect-ratio:16 / 10;min-height:0;overflow:hidden}
+.card-visual-link .card-visual{position:relative;width:100%;height:100%;min-height:0;overflow:hidden;border-radius:var(--radius-md)}
+.card-visual-link .card-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:none;filter:none;border-radius:inherit}
+
+.skill-role{display:block;font:11px/1.5 system-ui,sans-serif;color:var(--muted-foreground,#888);font-weight:400;margin-top:5px}
+
+.skill-preview-fallback{display:grid;place-items:center;max-height:260px;overflow:hidden;background:var(--surface-1)}.skill-preview-fallback svg{width:min(100%,420px);height:240px}
+
+/* Skill detail: introduction first, usage beside the task path. */
+.skill-detail{max-width:1180px;margin:0 auto;padding:10px 0 48px}
+.skill-back{display:inline-block;color:var(--foreground-secondary);font-size:13px;text-decoration:none;padding:8px 0}
+.skill-detail-header{padding:32px 0 30px;max-width:960px}
+.skill-eyebrow{font:12px/1.5 system-ui,sans-serif;color:var(--foreground-secondary);margin:0 0 10px}
+.skill-detail-header h1{font-size:clamp(26px,3vw,38px);line-height:1.25;letter-spacing:-.025em;margin:0 0 16px;font-weight:600}
+.skill-intro{font-size:16px;line-height:1.85;color:var(--foreground-secondary);max-width:800px;margin:0}
+.skill-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;align-items:start}
+.skill-section{border-top:1px solid var(--border-subtle);padding:24px 0}
+.skill-section h2,.skill-start h2{font-size:18px;font-weight:550;margin:0 0 14px}
+.skill-section>p,.skill-section li,.skill-io p,.skill-start p{font-size:13px;line-height:1.8;color:var(--foreground-secondary)}
+.skill-section ul{margin:0;padding-left:19px}.skill-section li{margin:6px 0}
+.skill-io{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px}
+.skill-io h3,.skill-start-note h3{font-size:12px;font-weight:550;margin:0 0 7px}.skill-io p{margin:0}
+.skill-stage-list{margin-top:18px}.skill-stage{display:grid;grid-template-columns:24px 100px 1fr 16px;gap:12px;align-items:start;padding:14px 0;border-bottom:1px solid var(--border-subtle);text-decoration:none;color:inherit}
+.skill-stage strong{font-size:13px;font-weight:500}.skill-stage>span{font-size:12px;line-height:1.6;color:var(--foreground-secondary)}.skill-stage:hover{background:var(--surface-1)}
+.stage-number{font-family:monospace;opacity:.6}
+.skill-start{position:sticky;top:24px;padding:22px;border-radius:18px;background:var(--surface-1)}
+.skill-start .skill-actions{display:flex;flex-direction:column;gap:10px;margin:18px 0}.skill-start .btn{white-space:normal;text-align:center;justify-content:center;box-shadow:none}
+.skill-start .skill-actions>.btn:first-child{background:var(--foreground);color:var(--background);border-color:transparent}
+.skill-start .skill-actions>.btn:not(:first-child){background:transparent;border-color:transparent;font-size:12px;color:var(--foreground-secondary)}
+.skill-example{display:block;font-size:13px;line-height:1.6;margin:18px 0;color:inherit}
+.skill-start-note{padding-top:18px;border-top:1px solid var(--border-subtle);margin-top:20px}.skill-start-note p{font-size:12px;margin:0}.skill-version{font-size:11px!important;opacity:.7;margin:20px 0 0}
+.skill-prompt{position:relative;background:var(--surface-1);border-radius:12px;margin-top:16px}
+.skill-prompt pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.9 ui-monospace,SFMono-Regular,monospace;padding:22px 44px 22px 20px;margin:0;color:var(--foreground)}
+.skill-prompt-copy{position:absolute;right:8px;top:8px;display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:var(--foreground-secondary);cursor:pointer}.skill-prompt-copy:hover{background:var(--surface-2)}
+.skill-copy-status{font-size:11px!important;margin:5px 0 0;min-height:0}.skill-copy-status:empty{display:none}
+.skill-instructions summary{font-size:13px;cursor:pointer;color:var(--foreground-secondary)}.skill-source{font-size:11px;line-height:1.8;margin-top:16px}
+@media(max-width:800px){.skill-detail-grid{grid-template-columns:1fr;gap:24px}.skill-start{position:static;grid-row:1}.skill-detail-header{padding-top:22px}.skill-io{gap:16px}.skill-stage{grid-template-columns:22px 84px 1fr 14px;gap:8px}}
+
+/* Developer README: a single continuous document, no promotional sidebar. */
+.skill-readme-page{max-width:940px;margin:0 auto;padding:8px 0 64px}
+.skill-readme{margin-top:18px;padding:36px 44px;background:var(--background);border:1px solid var(--border-subtle);border-radius:10px;overflow-wrap:anywhere}
+.skill-readme h1{font-size:30px;line-height:1.3;letter-spacing:-.025em;font-weight:600;margin:0 0 20px;padding-bottom:18px;border-bottom:1px solid var(--border-subtle)}
+.skill-readme h2{font-size:21px;line-height:1.4;font-weight:600;margin:36px 0 16px;padding-bottom:9px;border-bottom:1px solid var(--border-subtle)}
+.skill-readme h3{font-size:17px;margin:24px 0 12px}.skill-readme p,.skill-readme li{font-size:14px;line-height:1.85;color:var(--foreground-secondary)}
+.skill-readme p{margin:14px 0}.skill-readme>h1+p{font-size:15px;color:var(--foreground)}.skill-readme ul{padding-left:24px;margin:12px 0}.skill-readme li{margin:5px 0}
+.skill-readme a{color:var(--foreground);text-decoration:underline;text-underline-offset:3px}.skill-readme code{font:12px/1.7 ui-monospace,SFMono-Regular,monospace;background:var(--surface-1);padding:2px 5px;border-radius:4px}
+.readme-code{position:relative;background:var(--surface-1);border-radius:7px;margin:18px 0}
+.readme-code pre{margin:0;padding:20px 44px 20px 20px;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.85 ui-monospace,SFMono-Regular,monospace;color:var(--foreground)}.readme-code pre code{padding:0;background:none;font:inherit}
+.readme-code .skill-prompt-copy{font-size:20px}.readme-copy-status{position:absolute;right:44px;top:12px;font-size:11px;color:var(--foreground-secondary)}
+.readme-table{overflow:auto;margin:18px 0}.skill-readme table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.7}.skill-readme th,.skill-readme td{padding:10px 13px;border:1px solid var(--border-subtle);text-align:left}.skill-readme th{font-weight:550;background:var(--surface-1)}
+.readme-instructions{border-top:1px solid var(--border-subtle);margin-top:32px;padding-top:20px}.readme-instructions summary{font-size:13px;color:var(--foreground-secondary);cursor:pointer}.readme-instructions pre{white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.8 ui-monospace,SFMono-Regular,monospace;margin-top:16px}
+@media(max-width:700px){.skill-readme{padding:24px 20px}.skill-readme h1{font-size:25px}.skill-readme h2{font-size:19px}}
+
+.readme-figure{margin:22px 0 30px}.readme-figure img{display:block;width:100%;height:auto;max-height:480px;object-fit:contain;border:1px solid var(--border-subtle);border-radius:8px;background:#111}.readme-figure img[src$=".svg"]{max-height:280px;padding:12px}.readme-figure figcaption{font-size:12px;line-height:1.7;color:var(--foreground-secondary);margin-top:9px}

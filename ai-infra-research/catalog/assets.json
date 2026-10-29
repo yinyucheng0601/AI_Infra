@@ -2,6 +2,175 @@
   "version": 1,
   "assets": [
     {
+      "id": "ai-infra-investigation",
+      "title": "AI Infra 计算可视化 · 总 workflow",
+      "type": "method",
+      "form": "Skill",
+      "summary": "面向训练与推理开发全流程，按任务组织模型计算、编译变换、部署通信和运行证据视图。",
+      "skillRole": "总入口 · 调度调查到交付",
+      "designValue": "一个入口选择领域能力，组合计算图元、证据工作台与 Systems UI；按来源与适配范围交付可核查视图。",
+      "outline": [
+        "模型结构与训练 / 推理计算机制",
+        "算子索引、布局与搬运映射",
+        "编译变换、并行部署与通信",
+        "运行事件与时间证据",
+        "领域路由、资产复用与分层验收"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "methods/ai-infra-investigation/SKILL.md",
+      "packagePath": "methods/ai-infra-investigation",
+      "downloadUrl": "methods/ai-infra-investigation.zip",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/methods/ai-infra-investigation/SKILL.md",
+          "sha256": "7157e57209a682034985023ffd5b21ffa33b9d57d50bd063833cde12ff52f855",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。",
+        "2026-10-29：补充空间调查工作台、定稿参考复用、Let layout explain itself 与骨架优先验收；真实渲染需逐产物验证。"
+      ],
+      "related": [
+        "operator-mapping-investigation",
+        "ai-infra-glyphs",
+        "observability-design-style",
+        "spatial-systems-ui-style-guide",
+        "diagram-legend-library"
+      ],
+      "reviewedAt": "2026-10-29",
+      "author": "Yucheng",
+      "workflowBundleUrl": "methods/ai-infra-investigation-workflow.zip",
+      "workflowSkillCount": 6,
+      "readmePath": "methods/ai-infra-investigation/README.md"
+    },
+    {
+      "id": "operator-mapping-investigation",
+      "title": "算子映射调查",
+      "type": "method",
+      "form": "Skill",
+      "summary": "核对多维索引、源地址、搬运布局与参与计算范围，建立独立模型和固定版本证据。",
+      "skillRole": "领域层 · 建模与核查",
+      "designValue": "核对多维索引、源地址、搬运布局与参与计算范围，建立独立模型和固定版本证据。",
+      "outline": [
+        "数学集合与请求集合",
+        "生效分支与 API 约束",
+        "地址、布局和消费范围",
+        "独立验证与未知语义"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "methods/operator-mapping-investigation/SKILL.md",
+      "packagePath": "methods/operator-mapping-investigation",
+      "downloadUrl": "methods/operator-mapping-investigation.zip",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/methods/operator-mapping-investigation/SKILL.md",
+          "sha256": "9add56e95149fdd96aecf62eefe6e30045d42953beaa07b20272b77bc5a44205",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。"
+      ],
+      "related": [
+        "ai-infra-investigation",
+        "ai-infra-glyphs",
+        "observability-design-style",
+        "spatial-systems-ui-style-guide",
+        "diagram-legend-library"
+      ],
+      "reviewedAt": "2026-10-28",
+      "author": "Yucheng",
+      "readmePath": "methods/operator-mapping-investigation/README.md"
+    },
+    {
+      "id": "ai-infra-glyphs",
+      "title": "计算可视化图元体系",
+      "type": "method",
+      "form": "Skill",
+      "summary": "从正式图例与 Pattern 库选择 Tensor、OP 和关系图元，保持类别、variant 与来源可追踪。",
+      "skillRole": "图元层 · 选型与复用",
+      "designValue": "从正式图例与 Pattern 库选择 Tensor、OP 和关系图元，保持类别、variant 与来源可追踪。",
+      "outline": [
+        "正式库来源与版本",
+        "Tensor / OP 及类别图标",
+        "renderer 与 SVG 接入",
+        "来源指纹与漂移核查"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "methods/ai-infra-glyphs/SKILL.md",
+      "packagePath": "methods/ai-infra-glyphs",
+      "downloadUrl": "methods/ai-infra-glyphs.zip",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/methods/ai-infra-glyphs/SKILL.md",
+          "sha256": "21dd3d0b1ec35b6f2f24ab460929031cdf8ad4b4fb74e21580d88125cb91b65f",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。"
+      ],
+      "related": [
+        "ai-infra-investigation",
+        "operator-mapping-investigation",
+        "observability-design-style",
+        "spatial-systems-ui-style-guide",
+        "diagram-legend-library"
+      ],
+      "reviewedAt": "2026-10-28",
+      "author": "Yucheng",
+      "readmePath": "methods/ai-infra-glyphs/README.md"
+    },
+    {
       "id": "reduction-memory-inspector",
       "title": "归约访存检查 · LogSumExp",
       "type": "pattern",
@@ -48,6 +217,122 @@
         "diagram-legend-library"
       ],
       "reviewedAt": "2026-10-28",
+      "author": "Yucheng"
+    },
+    {
+      "id": "expand-broadcast-inspector",
+      "title": "广播搬运与边界核查 · Expand",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "追踪一对多广播、Workspace 中转与源码参数范围，主动定位可调查的边界对象。",
+      "designValue": "通过持续选择、分阶段索引和自动核查候选，让开发者从范围差异直接进入源码与调查问题。",
+      "outline": [
+        "3 个新建广播验证配置",
+        "输出与来源元素联动",
+        "两阶段 Workspace 中转",
+        "静态参数范围核查与上下文导出"
+      ],
+      "domains": [
+        "AI Infra",
+        "AscendC",
+        "Operators"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/expand-broadcast-inspector/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/expand-broadcast-inspector/index.html",
+          "sha256": "3a766ad423f33c3e9d1601b5f7ddfa3fe5c4bf667ad8a5f16b3e820e41ad4329",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/compute-investigation-trial/expand.html",
+          "sha256": "20f23fc3cdc20bfac7720b84681b366dc7a63ad37d24d84c2ad262e8c12e22e1",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-29：用户多轮评审后确认收录 Library / Pattern。",
+        "223169 个元素映射、任务/阶段关联、参数边界核查和 DOM 替身交互检查通过。",
+        "固定源码与新建验证配置；未运行 NPU。真实浏览器验收未由自动化完成。"
+      ],
+      "related": [
+        "reduction-memory-inspector",
+        "ai-infra-investigation",
+        "unpack-layout-inspector"
+      ],
+      "reviewedAt": "2026-10-29",
+      "author": "Yucheng"
+    },
+    {
+      "id": "unpack-layout-inspector",
+      "title": "拆分布局与任务分配 · Unpack",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "追踪输入到各输出的索引映射，联动任务路径、分块区间与各核分配。",
+      "designValue": "将 X → Task → Y 元素映射与 Core → Task 分配同时呈现，帮助开发者从选中对象核对源码。",
+      "outline": [
+        "6 个配置与三种任务路径",
+        "输入、任务、输出的选择联动",
+        "Core 与 Task 分配关系",
+        "按需源码、地址与调查交接"
+      ],
+      "domains": [
+        "AI Infra",
+        "AscendC",
+        "Operators"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/unpack-layout-inspector/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/unpack-layout-inspector/index.html",
+          "sha256": "7b88c007325406fa192525d097da65ae857540c8902e615e3070bf32bc11f19f",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/compute-investigation-trial/unpack.html",
+          "sha256": "0ac7f4a359e021087c935dcefb916d370d3a959f09846d2830c391ee05e67f0b",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-29：用户多轮评审后确认收录 Library / Pattern。",
+        "223169 个元素映射、任务/阶段关联、参数边界核查和 DOM 替身交互检查通过。",
+        "固定源码与新建验证配置；未运行 NPU。真实浏览器验收未由自动化完成。"
+      ],
+      "related": [
+        "reduction-memory-inspector",
+        "ai-infra-investigation",
+        "expand-broadcast-inspector"
+      ],
+      "reviewedAt": "2026-10-29",
       "author": "Yucheng"
     },
     {
@@ -655,7 +940,8 @@
         "experience",
         "visual"
       ],
-      "author": "Ryan"
+      "author": "Ryan",
+      "readmePath": "methods/anatomy.README.md"
     },
     {
       "id": "atlas-950-anatomy",
@@ -1185,7 +1471,7 @@
           "url": null,
           "path": "ai-infra-research/methods/design-spatial-systems-ui/SKILL.md",
           "revision": null,
-          "sha256": "e1f27301c707896b1c6265b431b9b951a8d4af9990a23a85f0193113ee9e8d88"
+          "sha256": "d6c035e7d753f4e8d7c75e8778f975a5e8bf7f3f871fe6c25010f194e2f31a98"
         }
       ],
       "validation": [
@@ -1199,7 +1485,9 @@
         "experience",
         "visual"
       ],
-      "author": "Yucheng"
+      "author": "Yucheng",
+      "skillRole": "界面层 · 布局与交互",
+      "readmePath": "methods/design-spatial-systems-ui/README.md"
     },
     {
       "id": "llm-inference-dense-to-clusters",
@@ -1300,19 +1588,19 @@
     },
     {
       "id": "observability-design-style",
-      "title": "数据观测工作台设计系统",
-      "form": "设计规范",
+      "title": "证据工作台 · 信息组织",
+      "form": "Skill",
       "domains": [
         "Observability",
         "AI Infra"
       ],
-      "summary": "从模型训练观测原型提炼视觉语言、组件与交互模式，覆盖灰度数据表达、异常定位和总览详情联动。",
+      "summary": "组织对象选择、源码检查、分析前提和问题交接；保留原工作台规范作为来源。",
       "designValue": "支持模型观测、算子分析、性能诊断和时间线工作台的设计与界面生成，统一视觉秩序、交互语义及数据表达。",
       "outline": [
-        "中性灰基础样式与异常色语义",
-        "总览与详情联动、悬停和选中",
-        "局部展开、异常定位与渐进披露",
-        "数据表达约定、状态叠加与验收清单"
+        "总览定位与对象身份",
+        "检查器的信息优先级",
+        "分析前提与未确认项",
+        "预览、复制与调查交接"
       ],
       "type": "method",
       "media": [
@@ -1320,8 +1608,15 @@
       ],
       "status": "draft",
       "visibility": "internal",
-      "content": "methods/observability-design-style/observability-design-system.md",
+      "content": "methods/observability-design-style/SKILL.md",
       "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/methods/observability-design-style/SKILL.md",
+          "sha256": "e41280face19a4115294de1e56d326eaba9ff1e6856d4ed2c9f27521c6e58cd8",
+          "url": null,
+          "revision": null
+        },
         {
           "repository": "ai-infra",
           "url": null,
@@ -1333,14 +1628,24 @@
       "validation": [
         "2026-09-20：用户指定将 Markdown 规范收录到 Skill 库，使用提供的截图；文档为 v0.1 草案，尚未完成跨场景验证。"
       ],
-      "related": [],
+      "related": [
+        "ai-infra-investigation",
+        "operator-mapping-investigation",
+        "ai-infra-glyphs",
+        "spatial-systems-ui-style-guide",
+        "diagram-legend-library"
+      ],
       "reviewedAt": "2026-09-20",
       "topics": [
         "experience",
         "visual"
       ],
       "author": "Yucheng",
-      "demoUrl": "https://yinyucheng0601.github.io/AI_Infra/layer_stack/pangu-layer-stack.html"
+      "demoUrl": "https://yinyucheng0601.github.io/AI_Infra/layer_stack/pangu-layer-stack.html",
+      "skillRole": "证据层 · 选择、检查与交接",
+      "packagePath": "methods/observability-design-style",
+      "downloadUrl": "methods/observability-design-style.zip",
+      "readmePath": "methods/observability-design-style/README.md"
     },
     {
       "id": "llm-compute-diagrams",
@@ -1372,7 +1677,7 @@
           "url": null,
           "path": "ai-infra-research/methods/llm-compute-diagrams/SKILL.md",
           "revision": null,
-          "sha256": "23788c0bfc3c947271eef1c4141afa9d5c0b8c722860e55d9a2a8387c4150687"
+          "sha256": "aa1614872cae0ffdfff19393bc9aaee6366bdb85771b9a726b6195a03b466b4f"
         }
       ],
       "validation": [
@@ -1388,7 +1693,9 @@
         "inference",
         "visual"
       ],
-      "author": "Yucheng"
+      "author": "Yucheng",
+      "skillRole": "机制讲解 · 渐进式图解",
+      "readmePath": "methods/llm-compute-diagrams/README.md"
     },
     {
       "id": "dense-ffn-to-moe",

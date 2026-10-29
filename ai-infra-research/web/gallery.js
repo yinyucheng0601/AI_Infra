@@ -10,6 +10,9 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'unpack-layout-inspector':{src:'__UNPACK_MAPPING_COVER__',alt:'Unpack：输入、Task、输出与 Core 分配连线'},
+    'expand-broadcast-inspector':{src:'__EXPAND_MAPPING_COVER__',alt:'Expand：一对多广播的输入输出关联'},
+    'reduction-memory-inspector':{src:'web/media/reduction-memory-inspector-cover.png',alt:'归约访存检查：输出、输入与 GM / UB / work 联动映射'},
     'paged-attention-graph':{src:'web/media/paged-attention-graph-cover.png',alt:'Paged Attention 计算图与橙色同步卡片'},
     'model-architecture-v41':{src:'web/media/model-architecture-v41-cover.png',alt:'DeepSeek V4.1 L24 架构截图'},
     'model-architecture-v4':{src:'web/media/model-architecture-v4-cover.jpg',alt:'DeepSeek V4 模型架构与 mHC 残差路径'},
@@ -79,7 +82,7 @@
     const source=`${a.author} · ${a.sources[0].url?'官网':C.projects[a.sources[0].repository]}`;
     const href=a.type==='method'&&!/^https?:\/\//i.test(a.sources[0].url||'')?detailHref(a):C.sourceHref(a,config);
     return `<article class="card-demo report-card">
-      <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(href)}">${esc(a.title)}</a></h3><span class="card-kind">${esc(a.form)}</span></div>
+      <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(href)}">${esc(a.title)}</a>${isSkills&&a.skillRole?`<span class="skill-role">${esc(a.skillRole)}</span>`:''}</h3><span class="card-kind">${esc(a.form)}</span></div>
       <a class="card-visual-link" href="${esc(href)}" tabindex="-1" aria-hidden="true"><div class="card-visual">${coverArt(a)}</div></a>
       <div class="card-demo-footer card-footer"><span class="card-source">${esc(source)}</span></div></article>`;
   }
@@ -90,12 +93,9 @@
   function renderDetail() {
     const a=assets.find(a=>a.id===state.asset);
     if(a?.type==='method'){
-      const isGuide=a.form==='设计规范';
-      const guideNote=a.id==='observability-design-style'?'v0.1 · 设计规范草案，尚未完成跨场景验证。':'设计规范参考，结合具体场景使用。';
-      const demoAction=a.demoUrl?`<a class="btn btn-sm" href="${esc(a.demoUrl)}" target="_blank" rel="noopener noreferrer">查看完整demo</a>`:'';
-      const actions=isGuide?`<a class="btn btn-sm" href="${esc(a.content)}" download>下载 Markdown ↓</a>${demoAction}`:`<a class="btn btn-sm" href="${esc(a.downloadUrl||'methods/llm-compute-diagrams.zip')}" download>下载 Skill ZIP ↓</a>${a.id==='llm-compute-diagrams'?'<a class="btn btn-sm" href="methods/llm-compute-diagrams/assets/reference-guide.html">查看示例 ↗</a>':''}`;
       document.title=a.title+' · AI Infra Skill';
-      $('detailView').innerHTML=`<a class="btn btn-sm" href="skills.html">← 返回 Skill 库</a><div class="detail-heading"><p class="hero-kicker">${esc(a.form)} · ${esc(a.author)}</p><h1 id="detailTitle">${esc(a.title)}</h1><p class="hero-description">${esc(a.summary)}</p></div><div class="detail-layout"><div><img class="skill-preview" src="${documentFigures[a.id].src}" alt="${esc(documentFigures[a.id].alt)}"><section class="detail-section"><h2>适用场景</h2><p>${esc(a.designValue)}</p><ul>${a.outline.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section><details class="detail-section"><summary>${isGuide?'查看完整设计规范':'查看完整 Skill 指令'}</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></div><aside class="panel-shell panel-shell-quiet source-panel"><h2>${isGuide?'使用这份规范':'使用这个 Skill'}</h2><p>${isGuide?'将这份 Markdown 规范作为设计和界面生成的参考，结合具体场景使用。':'下载完整技能包，解压后保留目录结构，添加到你的技能目录。'}</p><div class="skill-actions">${actions}</div><p class="card-note">${isGuide?esc(guideNote):'完整目录结构随包保留；下载的是当前构建版本，不会自动更新。'}</p></aside></div>`;
+      const readme=config.skillReadmes?.[a.id]||`<h1 id="detailTitle">${esc(a.title)}</h1><p>${esc(a.summary)}</p>`;
+      $('detailView').innerHTML=`<div class="skill-readme-page"><a class="skill-back" href="skills.html">← Skill 库</a><article class="skill-readme">${readme}<details class="readme-instructions"><summary>展开当前版本的完整 Skill 指令</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></article></div>`;
       return;
     }
     const back=`<a class="btn btn-sm" href="${esc(C.stateQuery({...state,asset:''}))}">← 返回知识库</a>`;
@@ -112,6 +112,13 @@
     }
     if(check?.externalDependencies){$('detailView').querySelector('.source-panel').insertAdjacentHTML('beforeend',`<p class="card-note">原文有 ${check.externalDependencies} 项外部资源依赖，离线时可能无法加载。</p>`);}
   }
+  $('detailView').addEventListener('click',async event=>{
+    const button=event.target.closest('.skill-prompt-copy');if(!button)return;
+    const block=button.closest('.readme-code');if(!block)return;
+    const text=block.querySelector('pre').textContent,status=block.querySelector('.readme-copy-status');
+    try{await navigator.clipboard.writeText(text);status.textContent='已复制';}
+    catch{status.textContent='请选中代码复制';}
+  });
   function render() {
     const detail=Boolean(state.asset);
     for(const id of ['galleryHero','galleryControls','collection'])$(id).hidden=detail;

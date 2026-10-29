@@ -1,11 +1,15 @@
 ---
 name: llm-compute-diagrams
-description: 制作或扩展大模型计算领域的渐进式交互图解网页，涵盖 Transformer 子层、Dense/MoE、分布式并行与通信、推理和 Traceview 泳道。用于将计算机制讲清楚并交付独立 HTML，或沿用本系列的图元与讲解风格；普通概念问答无需强制生成网页。
+description: 制作或扩展大模型计算领域的渐进式交互图解网页，涵盖 Transformer 子层、Dense/MoE、分布式并行与通信、推理和 Traceview 泳道。用于讲清计算机制及复用本系列领域图元；具体源码索引与布局核查交给 operator-mapping-investigation，完整调查界面使用 ai-infra-investigation。普通概念问答不强制生成网页。
 ---
 
 # 大模型计算图解
 
 把计算机制组织成读者可以逐页理解、操作并最终读懂完整结构的网页。面向具备产品或设计经验、正在建立 AI infra 概念体系的读者。默认使用中文专业解释、深色矩阵图元和离线单文件 HTML；用户本次要求优先。
+
+## 与调查工作流的边界
+
+本 Skill 负责机制讲解。用户要核查具体源码的索引、分块与布局时，转到独立的 `operator-mapping-investigation`；需要完整调查界面时使用 `ai-infra-investigation` 总 workflow。先确认这些 Skill 或仓库路径可读，缺少时指出依赖；不要把调查任务套成带封面、分页和常驻解释的课程式报告。[旧入口兼容说明](references/operator-investigation.md)。
 
 ## 当前图元入口
 

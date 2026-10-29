@@ -1,0 +1,38 @@
+{
+  "kind": "generated-distribution-snapshot",
+  "files": [
+    {
+      "file": "legend-library.html",
+      "source": "reports/llm-compute/diagram-legend-library/index.html",
+      "sha256": "c928c0aac67870eee472dcf621df5b39001666d1512a7c9a0c7b6d44979e6f2f"
+    },
+    {
+      "file": "inventory.json",
+      "source": "reports/llm-compute/diagram-legend-library/inventory.json",
+      "sha256": "43c8c3420df4a3656711b54bae2ab14af267e5a512a5c1ae5f3cd969c981106c"
+    },
+    {
+      "file": "visual-system.js",
+      "source": "reports/llm-compute/diagram-legend-library/visual-system.js",
+      "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8"
+    },
+    {
+      "file": "op-icons.js",
+      "source": "reports/llm-compute/diagram-legend-library/op-icons.js",
+      "sha256": "a2d430dcf655d38bcb09428f7b2645990e761a3b6abee1b3401b8cc18e804408"
+    }
+  ],
+  "samples": [
+    {
+      "file": "sample-system-value.svg",
+      "item": "system-value",
+      "sha256": "ffce4f52da4aa9c300763bbc5f824fcffd66edfaba511a3739ec6e3980ae560b"
+    },
+    {
+      "file": "sample-system-op.svg",
+      "item": "system-op",
+      "sha256": "0c484b30e58f788a78a089181f240dcb6f2ce3a50b32436fe5445d2f2307febf"
+    }
+  ],
+  "refresh": "python3 scripts/package_investigation.py"
+}
