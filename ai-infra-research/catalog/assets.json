@@ -38,14 +38,15 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/ai-infra-investigation/SKILL.md",
-          "sha256": "7157e57209a682034985023ffd5b21ffa33b9d57d50bd063833cde12ff52f855",
+          "sha256": "18007c2fd31f93d152655816cf92443d892976ff8e29d07fff80f84c6711eb17",
           "url": null,
           "revision": null
         }
       ],
       "validation": [
         "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。",
-        "2026-10-29：补充空间调查工作台、定稿参考复用、Let layout explain itself 与骨架优先验收；真实渲染需逐产物验证。"
+        "2026-10-29：补充空间调查工作台、定稿参考复用、Let layout explain itself 与骨架优先验收；真实渲染需逐产物验证。",
+        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。"
       ],
       "related": [
         "operator-mapping-investigation",
@@ -96,13 +97,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/operator-mapping-investigation/SKILL.md",
-          "sha256": "9add56e95149fdd96aecf62eefe6e30045d42953beaa07b20272b77bc5a44205",
+          "sha256": "7f802b88f99b5fa9eec59fb84546462b8c6386f393660b75961552b96f1721f1",
           "url": null,
           "revision": null
         }
       ],
       "validation": [
-        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。"
+        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。",
+        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。"
       ],
       "related": [
         "ai-infra-investigation",
@@ -111,7 +113,7 @@
         "spatial-systems-ui-style-guide",
         "diagram-legend-library"
       ],
-      "reviewedAt": "2026-10-28",
+      "reviewedAt": "2026-10-29",
       "author": "Yucheng",
       "readmePath": "methods/operator-mapping-investigation/README.md"
     },
@@ -151,13 +153,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/ai-infra-glyphs/SKILL.md",
-          "sha256": "21dd3d0b1ec35b6f2f24ab460929031cdf8ad4b4fb74e21580d88125cb91b65f",
+          "sha256": "8d27152d9c2b9caacf77f52d9e11db9ab9dbbbf67aa33138214851549c4ab325",
           "url": null,
           "revision": null
         }
       ],
       "validation": [
-        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。"
+        "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。",
+        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。"
       ],
       "related": [
         "ai-infra-investigation",
@@ -166,7 +169,7 @@
         "spatial-systems-ui-style-guide",
         "diagram-legend-library"
       ],
-      "reviewedAt": "2026-10-28",
+      "reviewedAt": "2026-10-29",
       "author": "Yucheng",
       "readmePath": "methods/ai-infra-glyphs/README.md"
     },
@@ -1471,16 +1474,17 @@
           "url": null,
           "path": "ai-infra-research/methods/design-spatial-systems-ui/SKILL.md",
           "revision": null,
-          "sha256": "d6c035e7d753f4e8d7c75e8778f975a5e8bf7f3f871fe6c25010f194e2f31a98"
+          "sha256": "4be4ade9115a3b1695193fb7433d164db451722c1856d91ac8112b85d6d52fd3"
         }
       ],
       "validation": [
-        "2026-09-23：替换为用户提供的完整 Skill 包，保留截图；核对入口与打包内容，未进行跨场景设计验证。"
+        "2026-09-23：替换为用户提供的完整 Skill 包，保留截图；核对入口与打包内容，未进行跨场景设计验证。",
+        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。"
       ],
       "related": [
         "observability-design-style"
       ],
-      "reviewedAt": "2026-09-23",
+      "reviewedAt": "2026-10-29",
       "topics": [
         "experience",
         "visual"
@@ -1613,7 +1617,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/observability-design-style/SKILL.md",
-          "sha256": "e41280face19a4115294de1e56d326eaba9ff1e6856d4ed2c9f27521c6e58cd8",
+          "sha256": "4e136d0856be5e4dead29ae008012ba5989a3df8af2ef28a42b004a12ffd850f",
           "url": null,
           "revision": null
         },
@@ -1626,7 +1630,8 @@
         }
       ],
       "validation": [
-        "2026-09-20：用户指定将 Markdown 规范收录到 Skill 库，使用提供的截图；文档为 v0.1 草案，尚未完成跨场景验证。"
+        "2026-09-20：用户指定将 Markdown 规范收录到 Skill 库，使用提供的截图；文档为 v0.1 草案，尚未完成跨场景验证。",
+        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。"
       ],
       "related": [
         "ai-infra-investigation",
@@ -1635,7 +1640,7 @@
         "spatial-systems-ui-style-guide",
         "diagram-legend-library"
       ],
-      "reviewedAt": "2026-09-20",
+      "reviewedAt": "2026-10-29",
       "topics": [
         "experience",
         "visual"
