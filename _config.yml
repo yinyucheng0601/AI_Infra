@@ -1,0 +1,3 @@
+# Raw upstream reference text is not a Jekyll page.
+exclude:
+  - ai-infra-research/prototypes/rsfa-performance-trial/source/README.md
