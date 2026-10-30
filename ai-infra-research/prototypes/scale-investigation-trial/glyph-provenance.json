@@ -1,0 +1,16 @@
+{
+  "files": {
+    "visual-system.js": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8",
+    "liquid-glass.js": "077d76e1431fb6400960d1ef8497359f8855b72e6d0a3e8396e5710effa4cf6c",
+    "liquid-glass.css": "c7deb86b934d96f632ed04d80ba01839f922471fd762db6fd11b5967f501d4bc"
+  },
+  "formal_renderer": "reports/llm-compute/diagram-legend-library/visual-system.js",
+  "variants": [
+    "node/multiply",
+    "node/add"
+  ],
+  "matrix": "domain-generated element grid; not abstract tensor renderer",
+  "reference": "prototypes/logsumexp-case5/page.html",
+  "mechanisms": "full viewport SVG, separate selection and viewport, pointer-relative zoom, fit, floating source/inspector, shared handoff serializer",
+  "material": "Liquid Glass control/panel copied from reference; MIT license included"
+}

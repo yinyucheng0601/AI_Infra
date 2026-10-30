@@ -1,0 +1,71 @@
+{
+  "scope": "all final prototype entry pages; templates and tutorial fragments are build inputs",
+  "pages": [
+    {
+      "page": "logsumexp-case5/index.html",
+      "sha256": "46f24d2e9439d1fdf15316140d9abb1539c8acf1614593e2f2e3252464cef3ca",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    },
+    {
+      "page": "compute-investigation-trial/index.html",
+      "sha256": "b3a33e9ec4025d7f6f94f6fa64afb62ec39e9873a1070ee542f89773a574825c",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    },
+    {
+      "page": "compute-investigation-trial/unpack.html",
+      "sha256": "b3a33e9ec4025d7f6f94f6fa64afb62ec39e9873a1070ee542f89773a574825c",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    },
+    {
+      "page": "compute-investigation-trial/expand.html",
+      "sha256": "ee790b7f794e657c2e206777432db7b83bfc7b20715d4dc263e2242e23f7f38b",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    },
+    {
+      "page": "unpack-case3/index.html",
+      "sha256": "113c6a5aa715b58069bc1f943e2ba80c66614dc869b8f2d9d9fbfb3c563fb6c6",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    },
+    {
+      "page": "scale-investigation-trial/index.html",
+      "sha256": "d743e3599ae86f147ec90b2c29d4d454992970cd346aac01dd30bd4675a82e95",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    },
+    {
+      "page": "rsfa-performance-trial/index.html",
+      "sha256": "527cff550b53914ed70bac28ad804be2eda1c5ad5bf556f9ff5dc629da226cfb",
+      "tutorial_sections": 4,
+      "shared_controls_and_tooltips": true,
+      "inline_script_syntax": "pass"
+    }
+  ],
+  "business_exceptions": {
+    "scale": "no automatic Kernel audit; selected object / source / Info",
+    "case5": "tail-difference action uses audit icon; source moved from bottom to top",
+    "rsfa": "source action opens benchmark records"
+  },
+  "checks": [
+    "rebuilt all five demo groups",
+    "one tutorial, shared stylesheet and runtime per entry",
+    "four tutorial sections",
+    "no native HTML title attributes",
+    "all inline JavaScript compiles"
+  ],
+  "not_verified": [
+    "real browser rendering",
+    "pointer/focus and clipboard behavior in a real browser",
+    "optical quality at desktop and narrow viewport"
+  ]
+}

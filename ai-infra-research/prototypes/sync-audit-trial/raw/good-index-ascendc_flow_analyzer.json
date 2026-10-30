@@ -1,0 +1,178 @@
+{
+  "files_scanned": [
+    "prototypes/sync-audit-trial/sources/good-index.cpp",
+    "prototypes/sync-audit-trial/sources/sync14_common.h"
+  ],
+  "frontends": {
+    "prototypes/sync-audit-trial/sources/good-index.cpp": "regex",
+    "prototypes/sync-audit-trial/sources/sync14_common.h": "regex"
+  },
+  "operations": [
+    {
+      "id": "o1",
+      "kind": "datacopy",
+      "file": "prototypes/sync-audit-trial/sources/good-index.cpp",
+      "line": 9,
+      "func": "Kernel",
+      "pipe": "MTE3",
+      "object": "",
+      "field": "",
+      "buffers": [
+        {
+          "name": "outputGm_",
+          "index_expr": "0",
+          "index_var": "",
+          "index_root": "",
+          "role": "output",
+          "index_summary": {
+            "raw": "0",
+            "root": "",
+            "index_var": "",
+            "slot": "0",
+            "offset": 0,
+            "modulo": "",
+            "stride": "",
+            "canonical": "<constant>:expr=0",
+            "unknown": "0"
+          }
+        },
+        {
+          "name": "ubBiasOutTotalBuffer_",
+          "index_expr": "(idx & 3) * TILE_SIZE",
+          "index_var": "idx",
+          "index_root": "idx",
+          "role": "output",
+          "index_summary": {
+            "raw": "(idx & 3) * TILE_SIZE",
+            "root": "idx",
+            "index_var": "idx",
+            "slot": "idx&3",
+            "offset": 0,
+            "modulo": "4",
+            "stride": "TILE_SIZE",
+            "canonical": "idx:offset=0:mod=4",
+            "unknown": ""
+          }
+        }
+      ],
+      "raw": "DataCopyPad(outputGm_[0], ubBiasOutTotalBuffer_[(idx & 3) * TILE_SIZE], copyParams);"
+    }
+  ],
+  "buffer_accesses": [
+    {
+      "id": "a1",
+      "file": "prototypes/sync-audit-trial/sources/good-index.cpp",
+      "line": 9,
+      "func": "Kernel",
+      "access": "write",
+      "pipe": "MTE3",
+      "statement_kind": "datacopy",
+      "buffer": {
+        "name": "outputGm_",
+        "index_expr": "0",
+        "index_var": "",
+        "index_root": "",
+        "role": "output",
+        "index_summary": {
+          "raw": "0",
+          "root": "",
+          "index_var": "",
+          "slot": "0",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=0",
+          "unknown": "0"
+        }
+      },
+      "symbol_id": "",
+      "region_key": "outputGm_:<constant>:expr=0",
+      "raw": "DataCopyPad(outputGm_[0], ubBiasOutTotalBuffer_[(idx & 3) * TILE_SIZE], copyParams);"
+    },
+    {
+      "id": "a2",
+      "file": "prototypes/sync-audit-trial/sources/good-index.cpp",
+      "line": 9,
+      "func": "Kernel",
+      "access": "read",
+      "pipe": "MTE3",
+      "statement_kind": "datacopy",
+      "buffer": {
+        "name": "ubBiasOutTotalBuffer_",
+        "index_expr": "(idx & 3) * TILE_SIZE",
+        "index_var": "idx",
+        "index_root": "idx",
+        "role": "output",
+        "index_summary": {
+          "raw": "(idx & 3) * TILE_SIZE",
+          "root": "idx",
+          "index_var": "idx",
+          "slot": "idx&3",
+          "offset": 0,
+          "modulo": "4",
+          "stride": "TILE_SIZE",
+          "canonical": "idx:offset=0:mod=4",
+          "unknown": ""
+        }
+      },
+      "symbol_id": "Kernel:idx",
+      "region_key": "ubBiasOutTotalBuffer_:idx:offset=0:mod=4",
+      "raw": "DataCopyPad(outputGm_[0], ubBiasOutTotalBuffer_[(idx & 3) * TILE_SIZE], copyParams);"
+    }
+  ],
+  "buffer_dependencies": [],
+  "sync_edges": [
+    {
+      "id": "s1",
+      "kind": "set",
+      "event_type": "MTE3_V",
+      "flag_id": "eventId[idx % 4]",
+      "index_expr": "idx % 4",
+      "index_var": "idx",
+      "index_root": "idx",
+      "file": "prototypes/sync-audit-trial/sources/good-index.cpp",
+      "line": 10,
+      "func": "Kernel",
+      "raw": "SetFlag<HardEvent::MTE3_V>(eventId[idx % 4]);",
+      "index_summary": {
+        "raw": "idx % 4",
+        "root": "idx",
+        "index_var": "idx",
+        "slot": "idx%4",
+        "offset": 0,
+        "modulo": "4",
+        "stride": "",
+        "canonical": "idx:offset=0:mod=4",
+        "unknown": ""
+      }
+    }
+  ],
+  "sync_coverages": [
+    {
+      "id": "c1",
+      "status": "covered",
+      "file": "prototypes/sync-audit-trial/sources/good-index.cpp",
+      "line": 10,
+      "func": "Kernel",
+      "event_type": "MTE3_V",
+      "sync_edge_id": "s1",
+      "access_id": "a2",
+      "distance": 1,
+      "expected_root": "idx",
+      "actual_root": "idx",
+      "expected_region": "ubBiasOutTotalBuffer_:idx:offset=0:mod=4",
+      "actual_region": "ubBiasOutTotalBuffer_:idx:offset=0:mod=4",
+      "message": "sync covers same buffer region"
+    }
+  ],
+  "aliases": {
+    "prototypes/sync-audit-trial/sources/good-index.cpp": {
+      "<global>": {},
+      "Kernel": {}
+    },
+    "prototypes/sync-audit-trial/sources/sync14_common.h": {
+      "<global>": {}
+    }
+  },
+  "findings": []
+}

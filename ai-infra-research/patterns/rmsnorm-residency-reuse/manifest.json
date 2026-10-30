@@ -1,0 +1,13 @@
+{
+  "authoritativeSource": "prototypes/rmsnorm-performance-investigation/index.html",
+  "sourceSha256": "f619c1667a93952fa19a786572ec67e48d8931aabd6ef31398d230fd968392e0",
+  "files": {
+    "index.html": "f619c1667a93952fa19a786572ec67e48d8931aabd6ef31398d230fd968392e0",
+    "provenance.json": "cde812d277ba19f42db07daff2db31f7854d57eaee305e323dc038e224f4dbd7"
+  },
+  "cover": "web/media/rmsnorm-residency-reuse-cover.png",
+  "coverSha256": "ab69b81194fe15d2514686f433d984e1e11cd649b6e3ef67b6dcc47b3ccc4e39",
+  "coverMethod": "user supplied screenshot, 2026-10-30 11:15:23",
+  "refresh": "python3 scripts/build.py",
+  "validation": "standalone package; offline model/source checks, browser interaction reviewed; device prediction accuracy not established"
+}

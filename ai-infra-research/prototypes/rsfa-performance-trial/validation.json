@@ -1,0 +1,178 @@
+{
+  "data": "PASS: 30 records, 600 samples; min/max exact; mean/population std within 0.0011 ms rounding tolerance",
+  "source": "PASS: fixed-revision downloads, SHA-256 snapshot consistency",
+  "browser": "NOT VERIFIED: file protocol blocked by browser security policy; no workaround attempted",
+  "device": "NOT VERIFIED: no device execution or correctness rerun",
+  "summary": [
+    {
+      "mode": "non_causal",
+      "variant": "fused",
+      "case": "nc_1024_128",
+      "gain_percent": 52.40186850728578,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "non_causal",
+      "variant": "fused",
+      "case": "nc_1024_256",
+      "gain_percent": 10.459075691692,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "non_causal",
+      "variant": "fused",
+      "case": "nc_2048_128",
+      "gain_percent": 53.59817303096288,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "non_causal",
+      "variant": "fused",
+      "case": "nc_2048_256",
+      "gain_percent": 52.61718790305107,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "non_causal",
+      "variant": "fused",
+      "case": "nc_4096_128",
+      "gain_percent": 54.51801731621002,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "non_causal",
+      "variant": "fused",
+      "case": "nc_8192_64",
+      "gain_percent": 49.40590302906721,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused",
+      "case": "c_1024_128",
+      "gain_percent": -18.934944657781806,
+      "range_crosses_one": false,
+      "regression": true
+    },
+    {
+      "mode": "causal",
+      "variant": "fused",
+      "case": "c_1024_256",
+      "gain_percent": -10.067038792740735,
+      "range_crosses_one": false,
+      "regression": true
+    },
+    {
+      "mode": "causal",
+      "variant": "fused",
+      "case": "c_2048_128",
+      "gain_percent": -10.79974757380906,
+      "range_crosses_one": false,
+      "regression": true
+    },
+    {
+      "mode": "causal",
+      "variant": "fused",
+      "case": "c_2048_256",
+      "gain_percent": 0.25874368254327207,
+      "range_crosses_one": true,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused",
+      "case": "c_4096_128",
+      "gain_percent": -4.627915761639434,
+      "range_crosses_one": false,
+      "regression": true
+    },
+    {
+      "mode": "causal",
+      "variant": "fused",
+      "case": "c_8192_64",
+      "gain_percent": -6.062872677176112,
+      "range_crosses_one": false,
+      "regression": true
+    },
+    {
+      "mode": "causal",
+      "variant": "fused_split",
+      "case": "c_1024_128",
+      "gain_percent": 49.36187034108877,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused_split",
+      "case": "c_1024_256",
+      "gain_percent": 64.62932316064067,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused_split",
+      "case": "c_2048_128",
+      "gain_percent": 50.582456379730864,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused_split",
+      "case": "c_2048_256",
+      "gain_percent": 71.24962719952282,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused_split",
+      "case": "c_4096_128",
+      "gain_percent": 50.95570875436775,
+      "range_crosses_one": false,
+      "regression": false
+    },
+    {
+      "mode": "causal",
+      "variant": "fused_split",
+      "case": "c_8192_64",
+      "gain_percent": 48.9164098896823,
+      "range_crosses_one": false,
+      "regression": false
+    }
+  ],
+  "interaction_simulation": "PASS: minimal DOM VM; 18 comparisons, boundary select, close/reopen view retention, reverse-reference axis, path filter, median, question/preview consistency. Does not prove browser interaction, export download, pointer behavior or layout.",
+  "visual": "NOT VERIFIED: desktop 1440x900 and narrow 390x844 intended; no rendered evidence",
+  "style_revision": "Dark Spatial Systems UI: copied design-tokens.css and official Liquid Glass JS/CSS/LICENSE; control on nav/viewtools, panel on evidence/info. No rendered optical verification.",
+  "style_assets": {
+    "design-tokens.css": "e34f224f6f86db4ae0bc9097ff08b98f8712b2d913e706b3a15eb2e4cdf2884e",
+    "liquid-glass-controls/LICENSE": "62d298ef9dab08ee1ceb20877aa4ad38c3bb71aa0cb779a8738ecfa652160052",
+    "liquid-glass-controls/liquid-glass.css": "c7deb86b934d96f632ed04d80ba01839f922471fd762db6fd11b5967f501d4bc",
+    "liquid-glass-controls/liquid-glass.js": "077d76e1431fb6400960d1ef8497359f8855b72e6d0a3e8396e5710effa4cf6c"
+  },
+  "controls_revision": {
+    "checks": "PASS static: zero native selects/options; 3 custom listboxes, 7 options; no inspect button/handler; JS syntax; resource paths",
+    "reuse": {
+      "menu": "compute-investigation-trial/spatial.html: config-trigger/config-menu CSS, transition rules, keyboard/selection contract",
+      "zoom": "logsumexp-case5/page.html: zoom-controls CSS and minus/output/plus/fit structure; existing view handlers"
+    },
+    "browser": "NOT VERIFIED: previous browser file-protocol policy block remains; user screenshots demonstrate previous state only",
+    "css_sha256": "6540a7ef082dfeff4ae9e94873f8971caa0cb84407c149f4e3c7cd991806c8c4"
+  },
+  "unpack_controls_revision": {
+    "source": "prototypes/unpack-case3/index.html",
+    "reused": "top-actions DOM and four SVG paths; top-actions/icon CSS geometry; centered configuration anchor",
+    "changes": "font inheritance explicitly unified at body and configuration; labels/values/inputs 12px monospace; top-right audit/evidence/raw source/info handlers; source panel follows selected record",
+    "static_checks": "PASS JS syntax, unique IDs, resources, no native selects, no evidence shortcut in zoom",
+    "rendered": "NOT VERIFIED; browser file policy blocked earlier"
+  },
+  "action_deduplication": "PASS static: removed evidenceToggle DOM and handler; retained audit/source/info; row selection opens evidence; configuration top:24px. Render not verified."
+}

@@ -60,6 +60,10 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         '/* APP_JS */': (ROOT / 'web/gallery.js').read_text(),
         '__CRITICAL_PATH_SWIMLANE_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/critical-path-swimlane-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__UNPACK_MAPPING_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/unpack-mapping-inspector-cover.svg').read_bytes()).decode('ascii'),
+        '__UNPACK_CASE3_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/unpack-case3-inspector-cover.svg').read_bytes()).decode('ascii'),
+        '__SCALE_BROADCAST_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/scale-broadcast-inspector-cover.svg').read_bytes()).decode('ascii'),
+        '__RMSNORM_REUSE_COVER__': 'data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/rmsnorm-residency-reuse-cover.png').read_bytes()).decode('ascii'),
+        '__RSFA_PERFORMANCE_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/rsfa-performance-comparison-cover.svg').read_bytes()).decode('ascii'),
         '__EXPAND_MAPPING_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/expand-mapping-inspector-cover.svg').read_bytes()).decode('ascii'),
         '__MEMORY_INSPECTOR_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/memory-inspector-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
         '__PASS_ERROR_CASES_COVER__': ('data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/pass-error-cases-cover.png').read_bytes()).decode('ascii')) if collection == 'patterns' else '',
@@ -97,6 +101,10 @@ if __name__ == '__main__':
     collect()
     from collect_operator_mapping import collect as collect_operator_mapping
     collect_operator_mapping()
+    from collect_rmsnorm_pattern import collect as collect_rmsnorm_pattern
+    collect_rmsnorm_pattern()
+    from collect_trial_patterns import collect as collect_trial_patterns
+    collect_trial_patterns()
     from package_investigation import package as package_investigation
     package_investigation()
     packages = [('methods/llm-compute-diagrams', 'methods/llm-compute-diagrams.zip')]

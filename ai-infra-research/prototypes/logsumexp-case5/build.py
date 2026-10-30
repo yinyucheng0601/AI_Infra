@@ -2,6 +2,9 @@
 from pathlib import Path
 import json
 import hashlib
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / '_shared'))
+from demo_ui import enhance
 ROOT = Path(__file__).resolve().parent
 page = (ROOT / 'page.html').read_text()
 assets = ROOT.parents[1] / 'reports/llm-compute'
@@ -23,5 +26,6 @@ model = (ROOT / 'model.js').read_text()
 sources = json.loads((ROOT / 'sources.json').read_text())
 page = page.replace('/* MODEL_INLINE */', model).replace('/* SOURCES_INLINE */', json.dumps(sources, ensure_ascii=False).replace('</', '<\\/'))
 page = page.replace('/* GLASS_CSS_INLINE */', (ROOT / 'liquid-glass.css').read_text()).replace('/* GLASS_JS_INLINE */', (ROOT / 'liquid-glass.js').read_text())
+page=enhance(page,'case5')
 (ROOT / 'index.html').write_text(page)
 print('Built index.html:', len(page.encode()), 'bytes')

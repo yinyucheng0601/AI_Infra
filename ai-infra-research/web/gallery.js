@@ -5,11 +5,17 @@
   const config=JSON.parse(document.getElementById('runtimeConfig').textContent);
   const isSkills=config.collection==='skills', isPatterns=config.collection==='patterns';
   const assets=allAssets.filter(a=>isSkills?a.type==='method':isPatterns?a.type==='pattern':a.type==='knowledge');
+  // Patterns: newest date first; same-day additions follow reverse catalog insertion order.
+  if(isPatterns){const order=new Map(allAssets.map((a,i)=>[a.id,i]));assets.sort((a,b)=>String(b.addedAt||b.reviewedAt||'').localeCompare(String(a.addedAt||a.reviewedAt||''))||order.get(b.id)-order.get(a.id));}
   config.fileMode=location.protocol==='file:';
   if(config.mode==='pto' && typeof window.PTO_BASE_PREFIX==='string')config.ptoBase=window.PTO_BASE_PREFIX.replace(/\/?$/,'/');
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'unpack-case3-inspector':{src:'__UNPACK_CASE3_COVER__',alt:'Unpack case3：INT32 多输出拆分、任务与核分配'},
+    'scale-broadcast-inspector':{src:'__SCALE_BROADCAST_COVER__',alt:'Scale：共享 scale 和 bias 与各批次输出的关系'},
+    'rmsnorm-residency-reuse':{src:'__RMSNORM_REUSE_COVER__',alt:'RMSNorm 执行泳道与内存复用联动分屏'},
+    'rsfa-performance-comparison':{src:'__RSFA_PERFORMANCE_COVER__',alt:'RSFA：实现耗时比率与观测波动区间'},
     'unpack-layout-inspector':{src:'__UNPACK_MAPPING_COVER__',alt:'Unpack：输入、Task、输出与 Core 分配连线'},
     'expand-broadcast-inspector':{src:'__EXPAND_MAPPING_COVER__',alt:'Expand：一对多广播的输入输出关联'},
     'reduction-memory-inspector':{src:'web/media/reduction-memory-inspector-cover.png',alt:'归约访存检查：输出、输入与 GM / UB / work 联动映射'},

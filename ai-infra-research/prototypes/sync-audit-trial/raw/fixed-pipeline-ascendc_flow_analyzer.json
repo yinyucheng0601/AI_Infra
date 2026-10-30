@@ -1,0 +1,83 @@
+{
+  "files_scanned": [
+    "prototypes/sync-audit-trial/sources/fixed-pipeline.asc"
+  ],
+  "frontends": {
+    "prototypes/sync-audit-trial/sources/fixed-pipeline.asc": "regex"
+  },
+  "operations": [
+    {
+      "id": "o1",
+      "kind": "datacopy",
+      "file": "prototypes/sync-audit-trial/sources/fixed-pipeline.asc",
+      "line": 25,
+      "func": "Process",
+      "pipe": "MTE2",
+      "object": "",
+      "field": "",
+      "buffers": [],
+      "raw": "DataCopyPad(xLocal, xGm, copyParams, padParams);"
+    }
+  ],
+  "buffer_accesses": [],
+  "buffer_dependencies": [],
+  "sync_edges": [
+    {
+      "id": "s1",
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "index_expr": "",
+      "index_var": "",
+      "index_root": "",
+      "file": "prototypes/sync-audit-trial/sources/fixed-pipeline.asc",
+      "line": 26,
+      "func": "Process",
+      "raw": "SetFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+      "index_summary": {
+        "raw": "",
+        "root": "",
+        "index_var": "",
+        "slot": "",
+        "offset": 0,
+        "modulo": "",
+        "stride": "",
+        "canonical": "<constant>:expr=",
+        "unknown": ""
+      }
+    },
+    {
+      "id": "s2",
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "index_expr": "",
+      "index_var": "",
+      "index_root": "",
+      "file": "prototypes/sync-audit-trial/sources/fixed-pipeline.asc",
+      "line": 27,
+      "func": "Process",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+      "index_summary": {
+        "raw": "",
+        "root": "",
+        "index_var": "",
+        "slot": "",
+        "offset": 0,
+        "modulo": "",
+        "stride": "",
+        "canonical": "<constant>:expr=",
+        "unknown": ""
+      }
+    }
+  ],
+  "sync_coverages": [],
+  "aliases": {
+    "prototypes/sync-audit-trial/sources/fixed-pipeline.asc": {
+      "<global>": {},
+      "Init": {},
+      "Process": {}
+    }
+  },
+  "findings": []
+}

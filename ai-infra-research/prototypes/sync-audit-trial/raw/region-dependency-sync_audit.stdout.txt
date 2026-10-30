@@ -1,0 +1,29 @@
+{
+  "files_scanned": [
+    "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/region-dependency.cpp"
+  ],
+  "event_count": 1,
+  "findings": [
+    {
+      "code": "SYNC-04",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/region-dependency.cpp",
+      "line": 22,
+      "message": "Set/Wait 个数不一致: 方向=MTE3_V flag=eventId[idx] Set=1 Wait=0",
+      "detail": "Set: ['region-dependency.cpp:22']; Wait: [] | 历史 case: cann/ops-nn PR#N/A (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -811,7 +811,7 @@\n-        biasBufId_ = abL1LoopCnt_ & 1;\n+        biasBufId_ = scaleL1BufId;..."
+    }
+  ],
+  "events": [
+    {
+      "kind": "set",
+      "event_type": "MTE3_V",
+      "flag_id": "eventId[idx]",
+      "line": 22,
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/region-dependency.cpp",
+      "func": "void Kernel",
+      "raw": "SetFlag<HardEvent::MTE3_V>(",
+      "side": "",
+      "pipe_param": ""
+    }
+  ]
+}

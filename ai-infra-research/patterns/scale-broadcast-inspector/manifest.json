@@ -1,0 +1,13 @@
+{
+  "authoritativeSource": "prototypes/scale-investigation-trial/index.html",
+  "sourceSha256": "d743e3599ae86f147ec90b2c29d4d454992970cd346aac01dd30bd4675a82e95",
+  "outputSha256": "d743e3599ae86f147ec90b2c29d4d454992970cd346aac01dd30bd4675a82e95",
+  "files": {
+    "index.html": "d743e3599ae86f147ec90b2c29d4d454992970cd346aac01dd30bd4675a82e95"
+  },
+  "cover": "web/media/scale-broadcast-inspector-cover.svg",
+  "coverSha256": "a1cb02f5cc5c9e2af70dbfad82970d49f534655fb9606ca826a98f36e82dd579",
+  "coverMethod": "application-generated SVG scene exported via DOM substitute; not browser screenshot",
+  "refresh": "python3 scripts/build.py",
+  "validation": "packaged dependencies and hashes checked; rendering and device execution not verified by this collection"
+}

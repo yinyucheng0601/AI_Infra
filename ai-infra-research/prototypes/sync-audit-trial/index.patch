@@ -1,0 +1,11 @@
+--- sources/bad-index.cpp
++++ sources/fixed-index.cpp
+@@ -35,7 +35,7 @@
+                               VECTOR_REG_WIDTH]
+             .GetPhyAddr();
+     mxA8W4NzParams.biasOutUbAddr =
+-        ubBiasOutTotalBuffer_[ubMte2BufferIdx * UB_BUFFER_INFO::biasReducedSingleBufferSize].GetPhyAddr();
++        ubBiasOutTotalBuffer_[(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize].GetPhyAddr();
+     SetFlag<HardEvent::MTE3_V>(
+         vecEventIdMte3ToV[ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)]);
+ }

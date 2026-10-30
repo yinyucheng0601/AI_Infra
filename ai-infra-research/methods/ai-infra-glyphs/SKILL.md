@@ -7,6 +7,8 @@ description: 从 AI Infra 正式图例与 Pattern 库选择并复用 Tensor、OP
 
 输入是领域模型中的对象/关系及所需交互。输出对象类型 → 正式 item/variant → renderer 或 SVG → 来源指纹的对应表及使用代码。
 
+此 Skill 负责图元层，不负责完整 Pattern 选型。模型层级、Rank/服务器布局、训练内存、泳道、编译与比较工具先由总 workflow 检索 catalog 与实际页面，复用交互/布局实现；不能把图例库当成全部可视化能力。
+
 ## 来源顺序
 
 AI_Infra checkout 中的正式源为 `ai-infra-research/reports/llm-compute/diagram-legend-library/`：先读 OBJECT-SYSTEM.md，以 index.html / inventory.json 的已收录对象为准，按需读取 visual-system.js、op-icons.js 或 build.cjs 对应 renderer。review / extract 页面和旧报告不自动成为已确认资产。
@@ -24,3 +26,7 @@ OP 类别显式选择，未知类别不默认回落到 Linear。数据角色、�
 关键对象必须能沿有证据的关系核对其作用：输入/输出、执行归属或存储绑定按对象适用。优先让对象贴近所属关系，选中后突出相关链路并弱化其他对象；不要孤立摆放 Task、阶段或 Core，再用长说明解释归属。Task、Kernel 与 Instruction 的身份由领域模型决定，不能因外形或图标相似混用。连线表达已确认的关系类型，不补造流水时长或调用因果。
 
 缺少表达时保留可读名称和来源缺口，记录候选，不自动新增正式图元或改已定稿 Pattern。产物检查实际 SVG/DOM 的标签、类别图标、比例和选择行为；文件存在/颜色接近不算复用通过。
+
+## 交互高亮与语义颜色
+
+交互高亮不默认使用绿色。先读取宿主已确认的 selection / highlight token；没有约定时使用中性近白填充与深色文字。绿色仅用于已有明确语义的成功、健康、已排除状态或正式图元的数据角色，不得从示例 OP、Tensor 或绿色状态胶囊推导出全局 accent。选中、关联、hover 与状态色分别定义；保留图元原有语义，不把所有相关对象染绿。

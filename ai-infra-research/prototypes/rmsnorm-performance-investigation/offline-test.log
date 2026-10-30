@@ -1,0 +1,29 @@
+PASS  (46 cases / 10 算子: add, add_rms_norm, cast, gelu, layer_norm, reduce_sum, rms_norm, softmax, swiglu, vchain)
+PASS  (46 cases / 10 算子符合 flow: add, add_rms_norm, cast, gelu, layer_norm, reduce_sum, rms_norm, softmax, swiglu, vchain)
+PASS  (22 项负向用例：校验/强校验/路由 门禁均按预期拦截)
+PASS  (300 asc-devkit rows; 326 documented-rate/alias checks)
+PASS  (one_exp=0.001212 us, one_add=0.000303 us; exp+4add=0.001515 us vs old-sum 0.002424 us)
+PASS  (34 项引擎旋钮：带宽口径/读写争用/显式固定开销/launch floor/l2_aware/填充排空/bound/尾块均衡)
+PASS  (5 cases：resident 按行分核 core_balance；整除 eta=1、非整除 eta<1 且不回退 tile_count 口径)
+PASS  (10 项：classify 三判定+边界 / compare 退出码)
+PASS  (24 项标定一致性：l2_aware 曲线 5 点 ⟷ membw；单指令吞吐 4 项 ⟷ regbase-microbench；HBM 带宽 6 项 ⟷ membw；l2_capacity 9 点 ⟷ membw)
+
+===== offline/test_builders.py =====
+
+===== offline/test_design_conformance.py =====
+
+===== offline/test_negative.py =====
+
+===== offline/test_public_instruction_rates.py =====
+
+===== offline/test_overlap_model.py =====
+
+===== offline/test_engine_knobs.py =====
+
+===== offline/test_core_balance.py =====
+
+===== offline/test_compare.py =====
+
+===== calibration/check_calibration.py =====
+
+✅ ALL OFFLINE PASS

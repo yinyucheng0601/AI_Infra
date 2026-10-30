@@ -33,3 +33,6 @@ rtk node ai-infra-research/prototypes/compute-investigation-trial/verify-audit.c
 ```
 
 默认使用已保存证据快照离线重建；`--refresh-evidence` 才从构建脚本列出的只读 checkout 刷新。`preview.py` 仅绑定回环地址，白名单为三份生成 HTML。
+
+
+同步核查已集成在 Unpack：`unpack.html?sync=1` 直接打开核查层。`unpack-sync.json` 固定扫描器、源码指纹与三个原始候选；`sync-model.js` 按源码分支推导当前元素 / Task 的关联。标量 fallback 和未确认的 compact 尾行不绑定 vector 候选。图中连线是源码调用次序，不是设备时间线。运行 `node verify-sync.cjs` 验证归属、源码 helper、选择 / 视角和交接。旧 sync-audit-trial 入口仅保留兼容跳转，样例留在测试材料。

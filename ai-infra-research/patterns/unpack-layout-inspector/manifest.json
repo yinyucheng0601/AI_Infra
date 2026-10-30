@@ -1,9 +1,9 @@
 {
   "authoritativeSource": "prototypes/compute-investigation-trial/unpack.html",
-  "sourceSha256": "0ac7f4a359e021087c935dcefb916d370d3a959f09846d2830c391ee05e67f0b",
-  "outputSha256": "7b88c007325406fa192525d097da65ae857540c8902e615e3070bf32bc11f19f",
+  "sourceSha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
+  "outputSha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
   "cover": "web/media/unpack-mapping-inspector-cover.svg",
-  "coverSha256": "98a5ce854c6853ccff4df8dba4331f1ea881c254855220be9de2c2a8ef8acff0",
+  "coverSha256": "5f0c0db1563ac73d9e984a2d40fd19e5bfb4bdb86deb1fb6aa0c5ac410d7091f",
   "coverMethod": "export of actual SVG scene from delivered application; not a browser screenshot",
   "refresh": "python3 scripts/collect_operator_mapping.py",
   "validation": "model and DOM-substitute behavior checks passed; no NPU/device run"

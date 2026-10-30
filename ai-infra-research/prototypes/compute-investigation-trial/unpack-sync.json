@@ -1,0 +1,2121 @@
+{
+  "revision": "13baf5274751fcf46aa04905c53ad285d656ac74",
+  "sourceSha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1",
+  "source": "#include \"kernel_operator.h\"\n#include \"kernel_operator_list_tensor_intf.h\"\n\nusing namespace AscendC;\n\nconstexpr uint32_t kUnpackCopyUbBytes = 128 * 1024;\nconstexpr uint32_t kUnpackCopyTileBytes = 32 * 1024;\nconstexpr uint32_t kUnpackCopyBuffers = 3;\nconstexpr uint32_t kUnpackRowBurstMaxBytes = 32 * 1024;\nconstexpr uint32_t kUnpackMatrixCols = 16;\nconstexpr uint32_t kUnpackMatrixTileBytes = 48 * 1024;\nconstexpr uint32_t kUnpackCompactBuffers = 3;\nconstexpr uint32_t kUnpackCompactTileBytes = 30 * 1024;\nconstexpr uint32_t kUnpackMatrixBufferBytes = kUnpackCompactBuffers * kUnpackCompactTileBytes;\nconstexpr uint32_t kUnpackMatrixOffsetBytes = 8 * 1024;\n\n__aicore__ inline uint64_t MinU64(uint64_t a, uint64_t b)\n{\n    return a < b ? a : b;\n}\n\n__aicore__ inline uint64_t CeilDivU64(uint64_t value, uint64_t divisor)\n{\n    return divisor == 0 ? 0 : (value + divisor - 1) / divisor;\n}\n\n__aicore__ inline uint32_t AlignUp32(uint32_t value)\n{\n    return (value + 31) / 32 * 32;\n}\n\nstruct UnpackTaskRange {\n    uint64_t start;\n    uint64_t end;\n};\n\nstruct UnpackTaskSpan {\n    uint64_t start;\n    uint64_t count;\n};\n\nstruct UnpackSchedulePlan {\n    uint64_t totalTasks;\n    UnpackTaskSpan matrixDeinterleaveTasks;\n    UnpackTaskSpan rowBurstCopyTasks;\n    UnpackTaskSpan copyChunkTasks;\n    uint64_t matrixRowBlocks;\n    uint64_t matrixRowsPerTask;\n    uint64_t matrixColBlocks;\n    uint64_t rowBurstRowBlocks;\n    uint64_t rowBurstRowsPerTask;\n    uint64_t chunksPerOutput;\n    uint32_t copyTileSize;\n};\n\nstruct UnpackCopyTaskDesc {\n    uint32_t outputIndex;\n    uint64_t inputOffset;\n    uint64_t outputOffset;\n    uint32_t tile;\n};\n\nstruct UnpackRowBurstTaskDesc {\n    uint32_t outputIndex;\n    uint64_t inputOffset;\n    uint64_t outputOffset;\n    uint32_t rows;\n    uint32_t rowBytes;\n    uint32_t paddedRowBytes;\n    uint32_t rightPadding;\n    uint32_t srcStrideBytes;\n};\n\ntemplate <typename T>\n__aicore__ inline uint64_t GetUnpackMatrixRowsPerTask()\n{\n    return kUnpackMatrixTileBytes / (kUnpackMatrixCols * sizeof(T));\n}\n\ntemplate <typename T>\n__aicore__ inline uint64_t GetUnpackCompactMatrixRowsPerTask(uint64_t num)\n{\n    uint64_t rows = kUnpackMatrixOffsetBytes / sizeof(uint32_t);\n    const uint64_t srcRows = num == 0 ? 0 : kUnpackCompactTileBytes / (num * sizeof(T));\n    const uint64_t dstRows = num == 0 ? 0 : kUnpackCompactTileBytes / (num * sizeof(T));\n    rows = rows < srcRows ? rows : srcRows;\n    rows = rows < dstRows ? rows : dstRows;\n    return rows / kUnpackMatrixCols * kUnpackMatrixCols;\n}\n\n__aicore__ inline void AppendUnpackTaskSpan(UnpackSchedulePlan& plan, UnpackTaskSpan& span, uint64_t count)\n{\n    span.start = plan.totalTasks;\n    span.count = count;\n    plan.totalTasks += count;\n}\n\n__aicore__ inline UnpackTaskRange GetUnpackTaskRange(uint64_t totalTasks)\n{\n    const uint64_t blockNum = GetBlockNum();\n    return {GetBlockIdx() * totalTasks / blockNum, (GetBlockIdx() + 1) * totalTasks / blockNum};\n}\n\n__aicore__ inline bool GetUnpackLocalTaskRange(\n    const UnpackTaskRange& assignedRange, const UnpackTaskSpan& span, UnpackTaskRange& localRange)\n{\n    if (span.count == 0) {\n        return false;\n    }\n    const uint64_t spanEnd = span.start + span.count;\n    const uint64_t start = assignedRange.start > span.start ? assignedRange.start : span.start;\n    const uint64_t end = assignedRange.end < spanEnd ? assignedRange.end : spanEnd;\n    if (start >= end) {\n        return false;\n    }\n    localRange.start = start - span.start;\n    localRange.end = end - span.start;\n    return true;\n}\n\ntemplate <typename T>\n__aicore__ inline UnpackSchedulePlan BuildUnpackSchedulePlan(const UnpackTilingData& tilingData)\n{\n    UnpackSchedulePlan plan{0, {0, 0}, {0, 0}, {0, 0}, 0, 0, 0, 0, 0, 0, kUnpackCopyTileBytes / sizeof(T)};\n    if (tilingData.totalSize == 0 || tilingData.num == 0) {\n        return plan;\n    }\n\n    if (tilingData.innerSize > 1) {\n        const uint64_t rowBytes = tilingData.innerSize * sizeof(T);\n        const uint64_t paddedRowBytes = AlignUp32(static_cast<uint32_t>(rowBytes));\n        const uint64_t rightPadding = (paddedRowBytes - rowBytes) / sizeof(T);\n        if (tilingData.outerSize > 1 && rowBytes > 0 && rowBytes <= kUnpackRowBurstMaxBytes &&\n            rightPadding <= 255) {\n            uint64_t rowsPerTask = kUnpackRowBurstMaxBytes / paddedRowBytes;\n            rowsPerTask = rowsPerTask == 0 ? 1 : rowsPerTask;\n            rowsPerTask = rowsPerTask > tilingData.outerSize ? tilingData.outerSize : rowsPerTask;\n            plan.rowBurstRowsPerTask = rowsPerTask;\n            plan.rowBurstRowBlocks = CeilDivU64(tilingData.outerSize, plan.rowBurstRowsPerTask);\n            AppendUnpackTaskSpan(plan, plan.rowBurstCopyTasks, tilingData.num * plan.rowBurstRowBlocks);\n            return plan;\n        }\n        plan.chunksPerOutput = CeilDivU64(tilingData.innerSize, plan.copyTileSize);\n        AppendUnpackTaskSpan(plan, plan.copyChunkTasks, tilingData.num * tilingData.outerSize * plan.chunksPerOutput);\n        return plan;\n    }\n\n    plan.matrixRowsPerTask = GetUnpackMatrixRowsPerTask<T>();\n    if constexpr (sizeof(T) == 2 || sizeof(T) == 4) {\n        if (tilingData.num < kUnpackMatrixCols) {\n            const uint64_t compactRows = GetUnpackCompactMatrixRowsPerTask<T>(tilingData.num);\n            plan.matrixRowsPerTask = compactRows == 0 ? plan.matrixRowsPerTask : compactRows;\n        }\n    }\n    plan.matrixRowBlocks = CeilDivU64(tilingData.totalSize, plan.matrixRowsPerTask);\n    plan.matrixColBlocks = CeilDivU64(tilingData.num, kUnpackMatrixCols);\n    AppendUnpackTaskSpan(plan, plan.matrixDeinterleaveTasks, plan.matrixRowBlocks * plan.matrixColBlocks);\n    return plan;\n}\n\n__aicore__ inline void SetUnpackCopyMte2Mte3(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        SetFlag<HardEvent::MTE2_MTE3>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        SetFlag<HardEvent::MTE2_MTE3>(EVENT_ID1);\n    } else {\n        SetFlag<HardEvent::MTE2_MTE3>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void WaitUnpackCopyMte2Mte3(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        WaitFlag<HardEvent::MTE2_MTE3>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        WaitFlag<HardEvent::MTE2_MTE3>(EVENT_ID1);\n    } else {\n        WaitFlag<HardEvent::MTE2_MTE3>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void SetUnpackCopyMte3Mte2(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);\n    } else {\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void WaitUnpackCopyMte3Mte2(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);\n    } else {\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void SetUnpackMatrixMte2V(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        SetFlag<HardEvent::MTE2_V>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        SetFlag<HardEvent::MTE2_V>(EVENT_ID1);\n    } else {\n        SetFlag<HardEvent::MTE2_V>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void WaitUnpackMatrixMte2V(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        WaitFlag<HardEvent::MTE2_V>(EVENT_ID1);\n    } else {\n        WaitFlag<HardEvent::MTE2_V>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void SetUnpackMatrixVMte3(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        SetFlag<HardEvent::V_MTE3>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        SetFlag<HardEvent::V_MTE3>(EVENT_ID1);\n    } else {\n        SetFlag<HardEvent::V_MTE3>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void WaitUnpackMatrixVMte3(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        WaitFlag<HardEvent::V_MTE3>(EVENT_ID1);\n    } else {\n        WaitFlag<HardEvent::V_MTE3>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void SetUnpackMatrixMte3Mte2(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);\n    } else {\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);\n    }\n}\n\n__aicore__ inline void WaitUnpackMatrixMte3Mte2(uint32_t bufferIndex)\n{\n    if (bufferIndex == 0) {\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n    } else if (bufferIndex == 1) {\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);\n    } else {\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline UnpackCopyTaskDesc GetUnpackCopyTask(\n    uint64_t task, const UnpackTilingData& tilingData, const UnpackSchedulePlan& plan)\n{\n    const uint64_t tasksPerOutput = tilingData.outerSize * plan.chunksPerOutput;\n    const uint64_t outputIndex = tasksPerOutput == 0 ? 0 : task / tasksPerOutput;\n    const uint64_t localTask = tasksPerOutput == 0 ? 0 : task - outputIndex * tasksPerOutput;\n    const uint64_t outer = plan.chunksPerOutput == 0 ? 0 : localTask / plan.chunksPerOutput;\n    const uint64_t chunk = plan.chunksPerOutput == 0 ? 0 : localTask - outer * plan.chunksPerOutput;\n    const uint64_t innerOffset = chunk * plan.copyTileSize;\n    const uint32_t tile = static_cast<uint32_t>(\n        MinU64(static_cast<uint64_t>(plan.copyTileSize), tilingData.innerSize - innerOffset));\n\n    return {\n        static_cast<uint32_t>(outputIndex),\n        (outer * tilingData.num + outputIndex) * tilingData.innerSize + innerOffset,\n        outer * tilingData.innerSize + innerOffset,\n        tile};\n}\n\ntemplate <typename T>\n__aicore__ inline UnpackRowBurstTaskDesc GetUnpackRowBurstTask(\n    uint64_t task, const UnpackTilingData& tilingData, const UnpackSchedulePlan& plan)\n{\n    const uint64_t outputIndex = plan.rowBurstRowBlocks == 0 ? 0 : task / plan.rowBurstRowBlocks;\n    const uint64_t rowBlock = plan.rowBurstRowBlocks == 0 ? 0 : task - outputIndex * plan.rowBurstRowBlocks;\n    const uint64_t rowStart = rowBlock * plan.rowBurstRowsPerTask;\n    const uint32_t rows = static_cast<uint32_t>(\n        MinU64(plan.rowBurstRowsPerTask, tilingData.outerSize - rowStart));\n    const uint32_t rowBytes = static_cast<uint32_t>(tilingData.innerSize * sizeof(T));\n    const uint32_t paddedRowBytes = AlignUp32(rowBytes);\n    const uint32_t rightPadding = (paddedRowBytes - rowBytes) / sizeof(T);\n    const uint32_t srcStrideBytes = static_cast<uint32_t>((tilingData.num - 1) * tilingData.innerSize * sizeof(T));\n\n    return {\n        static_cast<uint32_t>(outputIndex),\n        (rowStart * tilingData.num + outputIndex) * tilingData.innerSize,\n        rowStart * tilingData.innerSize,\n        rows,\n        rowBytes,\n        paddedRowBytes,\n        rightPadding,\n        srcStrideBytes};\n}\n\ntemplate <typename T>\n__aicore__ inline void StoreUnpackMatrixScalar(GlobalTensor<T>& xGm, GlobalTensor<T>& yGm,\n    ListTensorDesc& yDesc, const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t rowCount,\n    uint64_t colBase, uint64_t validCols)\n{\n    for (uint64_t colOffset = 0; colOffset < validCols; ++colOffset) {\n        const uint64_t outputIndex = colBase + colOffset;\n        yGm.SetGlobalBuffer(\n            yDesc.GetDataPtr<__gm__ T>(static_cast<uint32_t>(outputIndex)), tilingData.totalSize);\n        for (uint64_t rowOffset = 0; rowOffset < rowCount; ++rowOffset) {\n            const uint64_t row = rowStart + rowOffset;\n            yGm.SetValue(row, xGm.GetValue(row * tilingData.num + outputIndex));\n        }\n        SetFlag<HardEvent::S_MTE3>(EVENT_ID0);\n        WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void PrepareUnpackGatherOffsets(\n    const LocalTensor<uint32_t>& offsetLocal, uint64_t rows, uint64_t rowStrideBytes)\n{\n    ArithProgression<int32_t>(\n        offsetLocal.ReinterpretCast<int32_t>(),\n        static_cast<int32_t>(0),\n        static_cast<int32_t>(rowStrideBytes),\n        static_cast<uint32_t>(rows));\n}\n\ntemplate <typename T>\n__aicore__ inline void RunUnpackCompactMatrixTask(GlobalTensor<T>& xGm, GlobalTensor<T>& yGm,\n    ListTensorDesc& yDesc, const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t rowCount,\n    uint64_t colBase, uint64_t validCols, const LocalTensor<T>& srcLocal, const LocalTensor<T>& dstLocal,\n    const LocalTensor<uint32_t>& offsetLocal)\n{\n    if constexpr (sizeof(T) == 2 || sizeof(T) == 4) {\n        const uint64_t vectorRows = rowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n        if (vectorRows == 0) {\n            StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n            return;\n        }\n\n        DataCopyExtParams inCopyParams{\n            1,\n            static_cast<uint32_t>(vectorRows * tilingData.num * sizeof(T)),\n            0,\n            0,\n            0};\n        DataCopyPadExtParams<T> padParams{false, 0, 0, 0};\n        DataCopyPad(srcLocal, xGm[rowStart * tilingData.num], inCopyParams, padParams);\n        SetFlag<HardEvent::MTE2_V>(EVENT_ID0);\n        WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);\n\n        for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n            const uint32_t srcBaseAddr = static_cast<uint32_t>((colBase + colOffset) * sizeof(T));\n            Gather(dstLocal[colOffset * vectorRows], srcLocal, offsetLocal, srcBaseAddr,\n                static_cast<uint32_t>(vectorRows));\n        }\n        SetFlag<HardEvent::V_MTE3>(EVENT_ID0);\n        WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);\n\n        DataCopyExtParams outCopyParams{1, static_cast<uint32_t>(vectorRows * sizeof(T)), 0, 0, 0};\n        for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n            yGm.SetGlobalBuffer(\n                yDesc.GetDataPtr<__gm__ T>(static_cast<uint32_t>(colBase + colOffset)), tilingData.totalSize);\n            DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);\n        }\n        SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n        WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n\n        if (vectorRows < rowCount) {\n            StoreUnpackMatrixScalar<T>(\n                xGm, yGm, yDesc, tilingData, rowStart + vectorRows, rowCount - vectorRows, colBase, validCols);\n        }\n    } else {\n        StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void PrefetchUnpackCompactMatrixTask(GlobalTensor<T>& xGm,\n    const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t vectorRows,\n    const LocalTensor<T>& srcLocal, uint32_t bufferIndex)\n{\n    DataCopyExtParams inCopyParams{\n        1,\n        static_cast<uint32_t>(vectorRows * tilingData.num * sizeof(T)),\n        0,\n        0,\n        0};\n    DataCopyPadExtParams<T> padParams{false, 0, 0, 0};\n    DataCopyPad(srcLocal, xGm[rowStart * tilingData.num], inCopyParams, padParams);\n    SetUnpackMatrixMte2V(bufferIndex);\n}\n\ntemplate <typename T>\n__aicore__ inline void ComputeUnpackCompactMatrixTask(GlobalTensor<T>& yGm, ListTensorDesc& yDesc,\n    const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t vectorRows, uint64_t colBase,\n    uint64_t validCols, const LocalTensor<T>& srcLocal, const LocalTensor<T>& dstLocal,\n    const LocalTensor<uint32_t>& offsetLocal, uint32_t bufferIndex)\n{\n    WaitUnpackMatrixMte2V(bufferIndex);\n    for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n        const uint32_t srcBaseAddr = static_cast<uint32_t>((colBase + colOffset) * sizeof(T));\n        Gather(dstLocal[colOffset * vectorRows], srcLocal, offsetLocal, srcBaseAddr,\n            static_cast<uint32_t>(vectorRows));\n    }\n    SetUnpackMatrixVMte3(bufferIndex);\n    WaitUnpackMatrixVMte3(bufferIndex);\n\n    DataCopyExtParams outCopyParams{1, static_cast<uint32_t>(vectorRows * sizeof(T)), 0, 0, 0};\n    for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n        yGm.SetGlobalBuffer(\n            yDesc.GetDataPtr<__gm__ T>(static_cast<uint32_t>(colBase + colOffset)), tilingData.totalSize);\n        DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);\n    }\n    SetUnpackMatrixMte3Mte2(bufferIndex);\n}\n\ntemplate <typename T>\n__aicore__ inline void RunUnpackCompactMatrixTasks(GlobalTensor<T>& xGm, GlobalTensor<T>& yGm,\n    ListTensorDesc& yDesc, const UnpackTilingData& tilingData, const UnpackSchedulePlan& plan,\n    const UnpackTaskRange& taskRange, const LocalTensor<T> srcLocal[kUnpackCompactBuffers],\n    const LocalTensor<T> dstLocal[kUnpackCompactBuffers], const LocalTensor<uint32_t>& offsetLocal)\n{\n    if constexpr (sizeof(T) == 2 || sizeof(T) == 4) {\n        uint64_t pipelineEnd = taskRange.end;\n        if (pipelineEnd > taskRange.start) {\n            const uint64_t lastTask = pipelineEnd - 1;\n            const uint64_t lastRowStart = lastTask * plan.matrixRowsPerTask;\n            const uint64_t lastRowCount = MinU64(plan.matrixRowsPerTask, tilingData.totalSize - lastRowStart);\n            const uint64_t lastVectorRows = lastRowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n            if (lastVectorRows == 0) {\n                pipelineEnd = lastTask;\n            }\n        }\n\n        const uint64_t totalTasks = pipelineEnd > taskRange.start ? pipelineEnd - taskRange.start : 0;\n        const uint32_t warmupTasks = static_cast<uint32_t>(\n            totalTasks < 2 ? totalTasks : static_cast<uint64_t>(2));\n        for (uint32_t i = 0; i < warmupTasks; ++i) {\n            const uint64_t task = taskRange.start + i;\n            const uint64_t rowStart = task * plan.matrixRowsPerTask;\n            const uint64_t rowCount = MinU64(plan.matrixRowsPerTask, tilingData.totalSize - rowStart);\n            const uint64_t vectorRows = rowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n            PrefetchUnpackCompactMatrixTask<T>(\n                xGm, tilingData, rowStart, vectorRows, srcLocal[i], i);\n        }\n\n        for (uint64_t taskOffset = 0; taskOffset < totalTasks; ++taskOffset) {\n            const uint64_t task = taskRange.start + taskOffset;\n            const uint32_t bufferIndex = static_cast<uint32_t>(taskOffset % kUnpackCompactBuffers);\n            const uint64_t rowStart = task * plan.matrixRowsPerTask;\n            const uint64_t rowCount = MinU64(plan.matrixRowsPerTask, tilingData.totalSize - rowStart);\n            const uint64_t vectorRows = rowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n\n            ComputeUnpackCompactMatrixTask<T>(yGm, yDesc, tilingData, rowStart, vectorRows, 0,\n                tilingData.num, srcLocal[bufferIndex], dstLocal[bufferIndex], offsetLocal, bufferIndex);\n\n            const uint64_t prefetchOffset = taskOffset + 2;\n            if (prefetchOffset < totalTasks) {\n                const uint64_t prefetchTask = taskRange.start + prefetchOffset;\n                const uint32_t prefetchBuffer = static_cast<uint32_t>(prefetchOffset % kUnpackCompactBuffers);\n                if (prefetchOffset >= kUnpackCompactBuffers) {\n                    WaitUnpackMatrixMte3Mte2(prefetchBuffer);\n                }\n                const uint64_t prefetchRowStart = prefetchTask * plan.matrixRowsPerTask;\n                const uint64_t prefetchRowCount =\n                    MinU64(plan.matrixRowsPerTask, tilingData.totalSize - prefetchRowStart);\n                const uint64_t prefetchVectorRows =\n                    prefetchRowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n                PrefetchUnpackCompactMatrixTask<T>(xGm, tilingData, prefetchRowStart, prefetchVectorRows,\n                    srcLocal[prefetchBuffer], prefetchBuffer);\n            }\n        }\n\n        const uint64_t waitCount = totalTasks < kUnpackCompactBuffers ? totalTasks : kUnpackCompactBuffers;\n        for (uint64_t i = 0; i < waitCount; ++i) {\n            const uint32_t bufferIndex = static_cast<uint32_t>((totalTasks - 1 - i) % kUnpackCompactBuffers);\n            WaitUnpackMatrixMte3Mte2(bufferIndex);\n        }\n\n        if (pipelineEnd < taskRange.end) {\n            const uint64_t rowStart = pipelineEnd * plan.matrixRowsPerTask;\n            if (rowStart < tilingData.totalSize) {\n                const uint64_t rowCount = MinU64(plan.matrixRowsPerTask, tilingData.totalSize - rowStart);\n                StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, 0, tilingData.num);\n            }\n        }\n    } else {\n        for (uint64_t task = taskRange.start; task < taskRange.end; ++task) {\n            const uint64_t rowStart = task * plan.matrixRowsPerTask;\n            if (rowStart >= tilingData.totalSize) {\n                continue;\n            }\n            const uint64_t rowCount = MinU64(plan.matrixRowsPerTask, tilingData.totalSize - rowStart);\n            StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, 0, tilingData.num);\n        }\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void RunUnpackPackedMatrixTask(GlobalTensor<T>& xGm, GlobalTensor<T>& yGm,\n    ListTensorDesc& yDesc, const UnpackTilingData& tilingData, uint64_t rowStart, uint64_t rowCount,\n    uint64_t colBase, uint64_t validCols, const LocalTensor<T>& srcLocal, const LocalTensor<T>& dstLocal,\n    const LocalTensor<uint32_t>& offsetLocal)\n{\n    const uint64_t vectorRows = rowCount / kUnpackMatrixCols * kUnpackMatrixCols;\n    if (vectorRows == 0) {\n        StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n        return;\n    }\n\n    if constexpr (sizeof(T) == 1) {\n        StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n        return;\n    }\n\n    if (validCols < kUnpackMatrixCols) {\n        StoreUnpackMatrixScalar<T>(xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols);\n        return;\n    }\n\n    const uint32_t inputRowBytes = static_cast<uint32_t>(validCols * sizeof(T));\n    const uint32_t inputStrideBytes = static_cast<uint32_t>((tilingData.num - validCols) * sizeof(T));\n    const bool contiguousInput = inputStrideBytes == 0;\n    DataCopyExtParams inCopyParams{\n        contiguousInput ? static_cast<uint16_t>(1) : static_cast<uint16_t>(vectorRows),\n        contiguousInput ? static_cast<uint32_t>(vectorRows * inputRowBytes) : inputRowBytes,\n        inputStrideBytes,\n        0,\n        0};\n    DataCopyPadExtParams<T> fullPadParams{false, 0, 0, 0};\n    DataCopyPadExtParams<T> tailPadParams{true, 0, static_cast<uint8_t>(kUnpackMatrixCols - validCols),\n        static_cast<T>(0)};\n    const DataCopyPadExtParams<T>& padParams =\n        validCols == kUnpackMatrixCols ? fullPadParams : tailPadParams;\n    DataCopyPad(srcLocal, xGm[rowStart * tilingData.num + colBase], inCopyParams, padParams);\n    SetFlag<HardEvent::MTE2_V>(EVENT_ID0);\n    WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);\n\n    if constexpr (sizeof(T) == 4) {\n        for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n            const uint32_t srcBaseAddr = static_cast<uint32_t>(colOffset * sizeof(T));\n            Gather(dstLocal[colOffset * vectorRows], srcLocal, offsetLocal, srcBaseAddr,\n                static_cast<uint32_t>(vectorRows));\n        }\n    } else {\n        uint64_t srcList[kUnpackMatrixCols];\n        uint64_t dstList[kUnpackMatrixCols];\n        TransDataTo5HDParams transDataParams(false, false, 1, 0, 0);\n        for (uint64_t transOffset = 0; transOffset < vectorRows; transOffset += kUnpackMatrixCols) {\n            for (uint32_t i = 0; i < kUnpackMatrixCols; ++i) {\n                srcList[i] = static_cast<uint64_t>(\n                    srcLocal[transOffset * kUnpackMatrixCols + i * kUnpackMatrixCols].GetPhyAddr());\n                dstList[i] = static_cast<uint64_t>(dstLocal[i * vectorRows + transOffset].GetPhyAddr());\n            }\n            TransDataTo5HD<T>(dstList, srcList, transDataParams);\n        }\n    }\n    SetFlag<HardEvent::V_MTE3>(EVENT_ID0);\n    WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);\n\n    DataCopyExtParams outCopyParams{1, static_cast<uint32_t>(vectorRows * sizeof(T)), 0, 0, 0};\n    for (uint32_t colOffset = 0; colOffset < validCols; ++colOffset) {\n        yGm.SetGlobalBuffer(\n            yDesc.GetDataPtr<__gm__ T>(static_cast<uint32_t>(colBase + colOffset)), tilingData.totalSize);\n        DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);\n    }\n    SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n    WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);\n\n    if (vectorRows < rowCount) {\n        StoreUnpackMatrixScalar<T>(\n            xGm, yGm, yDesc, tilingData, rowStart + vectorRows, rowCount - vectorRows, colBase, validCols);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void UnpackMatrixDeinterleaveKernel(GM_ADDR x, GM_ADDR y, const UnpackTilingData& tilingData)\n{\n    const UnpackSchedulePlan plan = BuildUnpackSchedulePlan<T>(tilingData);\n    if (plan.totalTasks == 0) {\n        return;\n    }\n    const UnpackTaskRange taskRange = GetUnpackTaskRange(plan.totalTasks);\n    if (taskRange.start >= taskRange.end) {\n        return;\n    }\n\n    GlobalTensor<T> xGm;\n    GlobalTensor<T> yGm;\n    ListTensorDesc yDesc(reinterpret_cast<__gm__ void*>(y));\n    xGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(x), tilingData.totalSize * tilingData.num);\n\n    TPipe pipe;\n    TBuf<QuePosition::VECCALC> srcBuf;\n    TBuf<QuePosition::VECCALC> dstBuf;\n    TBuf<QuePosition::VECCALC> offsetBuf;\n    pipe.InitBuffer(srcBuf, kUnpackMatrixBufferBytes);\n    pipe.InitBuffer(dstBuf, kUnpackMatrixBufferBytes);\n    pipe.InitBuffer(offsetBuf, kUnpackMatrixOffsetBytes);\n    LocalTensor<T> srcLocal = srcBuf.Get<T>();\n    LocalTensor<T> dstLocal = dstBuf.Get<T>();\n    LocalTensor<uint32_t> offsetLocal = offsetBuf.Get<uint32_t>();\n    LocalTensor<T> compactSrcLocal[kUnpackCompactBuffers];\n    LocalTensor<T> compactDstLocal[kUnpackCompactBuffers];\n    for (uint32_t i = 0; i < kUnpackCompactBuffers; ++i) {\n        compactSrcLocal[i] = srcLocal[i * (kUnpackCompactTileBytes / sizeof(T))];\n        compactDstLocal[i] = dstLocal[i * (kUnpackCompactTileBytes / sizeof(T))];\n    }\n\n    bool compactOffsetsReady = false;\n    bool packedOffsetsReady = false;\n    if (tilingData.num < kUnpackMatrixCols && (sizeof(T) == 2 || sizeof(T) == 4)) {\n        if (!compactOffsetsReady) {\n            PrepareUnpackGatherOffsets<T>(offsetLocal, plan.matrixRowsPerTask, tilingData.num * sizeof(T));\n            compactOffsetsReady = true;\n        }\n        RunUnpackCompactMatrixTasks<T>(\n            xGm, yGm, yDesc, tilingData, plan, taskRange, compactSrcLocal, compactDstLocal, offsetLocal);\n        return;\n    }\n\n    for (uint64_t task = taskRange.start; task < taskRange.end; ++task) {\n        const uint64_t rowBlock = plan.matrixColBlocks == 0 ? 0 : task / plan.matrixColBlocks;\n        const uint64_t colBlock = plan.matrixColBlocks == 0 ? 0 : task - rowBlock * plan.matrixColBlocks;\n        const uint64_t rowStart = rowBlock * plan.matrixRowsPerTask;\n        if (rowStart >= tilingData.totalSize) {\n            continue;\n        }\n\n        const uint64_t colBase = colBlock * kUnpackMatrixCols;\n        const uint64_t validCols = MinU64(static_cast<uint64_t>(kUnpackMatrixCols), tilingData.num - colBase);\n        const uint64_t rowCount = MinU64(plan.matrixRowsPerTask, tilingData.totalSize - rowStart);\n        if (tilingData.num <= kUnpackMatrixCols && validCols < kUnpackMatrixCols &&\n            (sizeof(T) == 2 || sizeof(T) == 4)) {\n            if (!compactOffsetsReady) {\n                PrepareUnpackGatherOffsets<T>(offsetLocal, plan.matrixRowsPerTask, tilingData.num * sizeof(T));\n                compactOffsetsReady = true;\n            }\n            RunUnpackCompactMatrixTask<T>(\n                xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols, srcLocal, dstLocal, offsetLocal);\n            continue;\n        }\n\n        if constexpr (sizeof(T) == 4) {\n            if (!packedOffsetsReady) {\n                PrepareUnpackGatherOffsets<T>(offsetLocal, plan.matrixRowsPerTask, kUnpackMatrixCols * sizeof(T));\n                packedOffsetsReady = true;\n            }\n        }\n        RunUnpackPackedMatrixTask<T>(\n            xGm, yGm, yDesc, tilingData, rowStart, rowCount, colBase, validCols, srcLocal, dstLocal, offsetLocal);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void UnpackRowBurstCopyKernel(\n    GM_ADDR x, GM_ADDR y, const UnpackTilingData& tilingData, const UnpackSchedulePlan& plan)\n{\n    if (plan.rowBurstCopyTasks.count == 0) {\n        return;\n    }\n    const UnpackTaskRange assignedRange = GetUnpackTaskRange(plan.totalTasks);\n    UnpackTaskRange taskRange{0, 0};\n    if (!GetUnpackLocalTaskRange(assignedRange, plan.rowBurstCopyTasks, taskRange)) {\n        return;\n    }\n\n    GlobalTensor<T> xGm;\n    GlobalTensor<T> yGm;\n    ListTensorDesc yDesc(reinterpret_cast<__gm__ void*>(y));\n    xGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(x), tilingData.totalSize * tilingData.num);\n\n    TPipe pipe;\n    TBuf<QuePosition::VECCALC> ubBuf;\n    pipe.InitBuffer(ubBuf, kUnpackCopyUbBytes);\n    LocalTensor<uint8_t> tmp = ubBuf.Get<uint8_t>();\n    const uint32_t rowBytes = static_cast<uint32_t>(tilingData.innerSize * sizeof(T));\n    const uint32_t tileBytes = static_cast<uint32_t>(plan.rowBurstRowsPerTask * AlignUp32(rowBytes));\n    LocalTensor<T> local[kUnpackCopyBuffers];\n    for (uint32_t i = 0; i < kUnpackCopyBuffers; ++i) {\n        local[i] = tmp[i * tileBytes].ReinterpretCast<T>();\n    }\n\n    DataCopyPadExtParams<T> padParams{false, 0, 0, 0};\n    const uint64_t totalTasks = taskRange.end > taskRange.start ? taskRange.end - taskRange.start : 0;\n    const uint32_t warmupTasks = static_cast<uint32_t>(\n        totalTasks < kUnpackCopyBuffers ? totalTasks : static_cast<uint64_t>(kUnpackCopyBuffers));\n    for (uint32_t i = 0; i < warmupTasks; ++i) {\n        const UnpackRowBurstTaskDesc desc = GetUnpackRowBurstTask<T>(taskRange.start + i, tilingData, plan);\n        DataCopyExtParams copyParams{\n            static_cast<uint16_t>(desc.rows),\n            desc.rowBytes,\n            desc.srcStrideBytes,\n            0,\n            0};\n        DataCopyPadExtParams<T> rowPadParams{desc.rightPadding != 0, 0, static_cast<uint8_t>(desc.rightPadding), 0};\n        DataCopyPad(local[i], xGm[desc.inputOffset], copyParams, rowPadParams);\n        SetUnpackCopyMte2Mte3(i);\n    }\n\n    for (uint64_t taskOffset = 0; taskOffset < totalTasks; ++taskOffset) {\n        const uint32_t bufferIndex = static_cast<uint32_t>(taskOffset % kUnpackCopyBuffers);\n        const UnpackRowBurstTaskDesc desc = GetUnpackRowBurstTask<T>(taskRange.start + taskOffset, tilingData, plan);\n        DataCopyExtParams outCopyParams{\n            static_cast<uint16_t>(desc.rows),\n            desc.rowBytes,\n            0,\n            0,\n            0};\n\n        WaitUnpackCopyMte2Mte3(bufferIndex);\n        yGm.SetGlobalBuffer(yDesc.GetDataPtr<__gm__ T>(desc.outputIndex), tilingData.totalSize);\n        DataCopyPad(yGm[desc.outputOffset], local[bufferIndex], outCopyParams);\n        SetUnpackCopyMte3Mte2(bufferIndex);\n\n        const uint64_t prefetchOffset = taskOffset + kUnpackCopyBuffers;\n        if (prefetchOffset < totalTasks) {\n            WaitUnpackCopyMte3Mte2(bufferIndex);\n            const UnpackRowBurstTaskDesc prefetchDesc =\n                GetUnpackRowBurstTask<T>(taskRange.start + prefetchOffset, tilingData, plan);\n            DataCopyExtParams prefetchCopyParams{\n                static_cast<uint16_t>(prefetchDesc.rows),\n                prefetchDesc.rowBytes,\n                prefetchDesc.srcStrideBytes,\n                0,\n                0,\n            };\n            DataCopyPadExtParams<T> prefetchPadParams{\n                prefetchDesc.rightPadding != 0, 0, static_cast<uint8_t>(prefetchDesc.rightPadding), 0};\n            DataCopyPad(local[bufferIndex], xGm[prefetchDesc.inputOffset], prefetchCopyParams, prefetchPadParams);\n            SetUnpackCopyMte2Mte3(bufferIndex);\n        }\n    }\n\n    const uint64_t waitCount = totalTasks < kUnpackCopyBuffers ? totalTasks : kUnpackCopyBuffers;\n    for (uint64_t i = 0; i < waitCount; ++i) {\n        const uint32_t bufferIndex = static_cast<uint32_t>((totalTasks - 1 - i) % kUnpackCopyBuffers);\n        WaitUnpackCopyMte3Mte2(bufferIndex);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void UnpackCopyKernel(GM_ADDR x, GM_ADDR y, const UnpackTilingData& tilingData)\n{\n    const UnpackSchedulePlan plan = BuildUnpackSchedulePlan<T>(tilingData);\n    if (plan.rowBurstCopyTasks.count != 0) {\n        UnpackRowBurstCopyKernel<T>(x, y, tilingData, plan);\n        return;\n    }\n    if (plan.copyChunkTasks.count == 0) {\n        return;\n    }\n    const UnpackTaskRange assignedRange = GetUnpackTaskRange(plan.totalTasks);\n    UnpackTaskRange taskRange{0, 0};\n    if (!GetUnpackLocalTaskRange(assignedRange, plan.copyChunkTasks, taskRange)) {\n        return;\n    }\n\n    GlobalTensor<T> xGm;\n    GlobalTensor<T> yGm;\n    ListTensorDesc yDesc(reinterpret_cast<__gm__ void*>(y));\n    xGm.SetGlobalBuffer(reinterpret_cast<__gm__ T*>(x), tilingData.totalSize * tilingData.num);\n\n    TPipe pipe;\n    TBuf<QuePosition::VECCALC> ubBuf;\n    pipe.InitBuffer(ubBuf, kUnpackCopyUbBytes);\n    LocalTensor<uint8_t> tmp = ubBuf.Get<uint8_t>();\n    const uint32_t tileBytes = AlignUp32(plan.copyTileSize * sizeof(T));\n    LocalTensor<T> local[kUnpackCopyBuffers];\n    for (uint32_t i = 0; i < kUnpackCopyBuffers; ++i) {\n        local[i] = tmp[i * tileBytes].ReinterpretCast<T>();\n    }\n\n    DataCopyPadExtParams<T> padParams{false, 0, 0, 0};\n    const uint64_t totalTasks = taskRange.end > taskRange.start ? taskRange.end - taskRange.start : 0;\n    const uint32_t warmupTasks = static_cast<uint32_t>(\n        totalTasks < kUnpackCopyBuffers ? totalTasks : static_cast<uint64_t>(kUnpackCopyBuffers));\n    for (uint32_t i = 0; i < warmupTasks; ++i) {\n        const UnpackCopyTaskDesc desc = GetUnpackCopyTask<T>(taskRange.start + i, tilingData, plan);\n        DataCopyExtParams copyParams{1, static_cast<uint32_t>(desc.tile * sizeof(T)), 0, 0, 0};\n        DataCopyPad(local[i], xGm[desc.inputOffset], copyParams, padParams);\n        SetUnpackCopyMte2Mte3(i);\n    }\n\n    for (uint64_t taskOffset = 0; taskOffset < totalTasks; ++taskOffset) {\n        const uint32_t bufferIndex = static_cast<uint32_t>(taskOffset % kUnpackCopyBuffers);\n        const UnpackCopyTaskDesc desc = GetUnpackCopyTask<T>(taskRange.start + taskOffset, tilingData, plan);\n        DataCopyExtParams copyParams{1, static_cast<uint32_t>(desc.tile * sizeof(T)), 0, 0, 0};\n\n        WaitUnpackCopyMte2Mte3(bufferIndex);\n        yGm.SetGlobalBuffer(yDesc.GetDataPtr<__gm__ T>(desc.outputIndex), tilingData.totalSize);\n        DataCopyPad(yGm[desc.outputOffset], local[bufferIndex], copyParams);\n        SetUnpackCopyMte3Mte2(bufferIndex);\n\n        const uint64_t prefetchOffset = taskOffset + kUnpackCopyBuffers;\n        if (prefetchOffset < totalTasks) {\n            WaitUnpackCopyMte3Mte2(bufferIndex);\n            const UnpackCopyTaskDesc prefetchDesc =\n                GetUnpackCopyTask<T>(taskRange.start + prefetchOffset, tilingData, plan);\n            DataCopyExtParams prefetchCopyParams{\n                1, static_cast<uint32_t>(prefetchDesc.tile * sizeof(T)), 0, 0, 0};\n            DataCopyPad(local[bufferIndex], xGm[prefetchDesc.inputOffset], prefetchCopyParams, padParams);\n            SetUnpackCopyMte2Mte3(bufferIndex);\n        }\n    }\n\n    const uint64_t waitCount = totalTasks < kUnpackCopyBuffers ? totalTasks : kUnpackCopyBuffers;\n    for (uint64_t i = 0; i < waitCount; ++i) {\n        const uint32_t bufferIndex = static_cast<uint32_t>((totalTasks - 1 - i) % kUnpackCopyBuffers);\n        WaitUnpackCopyMte3Mte2(bufferIndex);\n    }\n}\n\ntemplate <typename T>\n__aicore__ inline void UnpackKernel(GM_ADDR x, GM_ADDR y, const UnpackTilingData& tilingData)\n{\n    if (tilingData.innerSize <= 1) {\n        UnpackMatrixDeinterleaveKernel<T>(x, y, tilingData);\n    } else {\n        UnpackCopyKernel<T>(x, y, tilingData);\n    }\n}\n\nextern \"C\" __global__ __aicore__ void unpack(GM_ADDR x, GM_ADDR y, GM_ADDR workspace, GM_ADDR tiling)\n{\n    (void)workspace;\n    GET_TILING_DATA(tiling_data, tiling);\n#if ORIG_DTYPE_X == DT_FLOAT16\n    UnpackKernel<half>(x, y, tiling_data);\n#elif ORIG_DTYPE_X == DT_BF16\n    if (tiling_data.innerSize <= 1) {\n        UnpackMatrixDeinterleaveKernel<int16_t>(x, y, tiling_data);\n    } else {\n        UnpackCopyKernel<bfloat16_t>(x, y, tiling_data);\n    }\n#elif ORIG_DTYPE_X == DT_FLOAT\n    UnpackKernel<float>(x, y, tiling_data);\n#elif ORIG_DTYPE_X == DT_INT32\n    UnpackKernel<int32_t>(x, y, tiling_data);\n#elif ORIG_DTYPE_X == DT_INT16\n    UnpackKernel<int16_t>(x, y, tiling_data);\n#elif ORIG_DTYPE_X == DT_UINT8\n    UnpackKernel<uint8_t>(x, y, tiling_data);\n#elif ORIG_DTYPE_X == DT_INT8\n    UnpackKernel<int8_t>(x, y, tiling_data);\n#elif ORIG_DTYPE_X == DT_BOOL\n    if (tiling_data.innerSize <= 1) {\n        UnpackMatrixDeinterleaveKernel<uint8_t>(x, y, tiling_data);\n    } else {\n        UnpackCopyKernel<bool>(x, y, tiling_data);\n    }\n#endif\n}\n",
+  "origin": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp",
+  "scanner": {
+    "repository": "hicann/cannbot-skills",
+    "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+    "files": {
+      "scripts/ascendc_flow_analyzer.py": "b84ef0d82628bb92c313f4d7b78ff626debf0198cbeed06da5e0a194cf2e799a",
+      "scripts/sync05_resolve.py": "9294534fdcfa3655091ad493aa341c64e974cc0d1fc40122453cf9b63a79cb33",
+      "scripts/sync_audit.py": "af629036820e7765639df7379d94fde4c2b0aca63f54a295384005a015a181d4",
+      "scripts/sync_logging.py": "f7935ada47e6de4553fc02772e808c526265c2b13bf11dcf391ed96bdfbd3b11",
+      "scripts/case_retriever.py": "21508467a95c4128230162e49523bc055572436e820db7570c937f1d74c97200"
+    }
+  },
+  "audit": {
+    "files_scanned": [
+      "prototypes/sync-audit-trial/sources/unpack.cpp"
+    ],
+    "event_count": 44,
+    "findings": [
+      {
+        "code": "SYNC-08",
+        "severity": "红线",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 366,
+        "message": "SetFlag 前存在提前退出（可能跳过 Set → 死锁）: SetFlag<HardEvent::MTE2_V>",
+        "detail": "同函数 __aicore__ inline void RunUnpackCompactMatrixTask 内未被兜底的 return/break: [355]；确认所有路径都触发 SetFlag | 历史 case: cann/ops-transformer PR#3140 (flag_pair) | 修复提示: 补齐缺失的 SetFlag 或 WaitFlag，确保所有路径都触发 SetFlag | diff证据: @@ -166,6 +166,7 @@ __aicore__ inline void DLIKLLossVector2Service<DLIT>::DeterSumLoss()\n     if (co..."
+      },
+      {
+        "code": "SYNC-02",
+        "severity": "红线",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 430,
+        "message": "疑似计算后未同步即搬出 GM: 搬出@430 (计算@420)",
+        "detail": "候选：Vector 计算后、DataCopy 出 GM 前需 V→MTE3 同步 | 历史 case: cann/ops-math PR#703 (pipe_barrier_missing) | 修复提示: 在异步搬出后、SetFlag 释放 buffer 前加 PipeBarrier<PIPE_ALL>() | diff证据: @@ -38,6 +38,14 @@ private:\n     __aicore__ inline void valueMove(uint64_t valueOffset, uint64_t ubV..."
+      },
+      {
+        "code": "SYNC-08",
+        "severity": "红线",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 554,
+        "message": "SetFlag 前存在提前退出（可能跳过 Set → 死锁）: SetFlag<HardEvent::MTE2_V>",
+        "detail": "同函数 __aicore__ inline void RunUnpackPackedMatrixTask 内未被兜底的 return/break: [526, 531, 536]；确认所有路径都触发 SetFlag | 历史 case: cann/ops-transformer PR#3140 (flag_pair) | 修复提示: 补齐缺失的 SetFlag 或 WaitFlag，确保所有路径都触发 SetFlag | diff证据: @@ -166,6 +166,7 @@ __aicore__ inline void DLIKLLossVector2Service<DLIT>::DeterSumLoss()\n     if (co..."
+      }
+    ],
+    "events": [
+      {
+        "kind": "set",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 164,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackCopyMte2Mte3",
+        "raw": "SetFlag<HardEvent::MTE2_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID1",
+        "line": 166,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackCopyMte2Mte3",
+        "raw": "SetFlag<HardEvent::MTE2_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID2",
+        "line": 168,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackCopyMte2Mte3",
+        "raw": "SetFlag<HardEvent::MTE2_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 175,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackCopyMte2Mte3",
+        "raw": "WaitFlag<HardEvent::MTE2_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID1",
+        "line": 177,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackCopyMte2Mte3",
+        "raw": "WaitFlag<HardEvent::MTE2_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID2",
+        "line": 179,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackCopyMte2Mte3",
+        "raw": "WaitFlag<HardEvent::MTE2_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 186,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackCopyMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "line": 188,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackCopyMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "line": 190,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackCopyMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 197,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackCopyMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "line": 199,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackCopyMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "line": 201,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackCopyMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "line": 208,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixMte2V",
+        "raw": "SetFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID1",
+        "line": 210,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixMte2V",
+        "raw": "SetFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID2",
+        "line": 212,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixMte2V",
+        "raw": "SetFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "line": 219,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixMte2V",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID1",
+        "line": 221,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixMte2V",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID2",
+        "line": 223,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixMte2V",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 230,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixVMte3",
+        "raw": "SetFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID1",
+        "line": 232,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixVMte3",
+        "raw": "SetFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID2",
+        "line": 234,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixVMte3",
+        "raw": "SetFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 241,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixVMte3",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID1",
+        "line": 243,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixVMte3",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID2",
+        "line": 245,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixVMte3",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 252,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "line": 254,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "line": 256,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void SetUnpackMatrixMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 263,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "line": 265,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "line": 267,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void WaitUnpackMatrixMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "S_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 329,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void StoreUnpackMatrixScalar",
+        "raw": "SetFlag<HardEvent::S_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "S_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 330,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void StoreUnpackMatrixScalar",
+        "raw": "WaitFlag<HardEvent::S_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "line": 366,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "line": 367,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 374,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+        "raw": "SetFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 375,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 383,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 384,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "line": 554,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "line": 555,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 576,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+        "raw": "SetFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "line": 577,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 585,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      },
+      {
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "line": 586,
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+        "side": "",
+        "pipe_param": ""
+      }
+    ]
+  },
+  "graph": {
+    "files_scanned": [
+      "prototypes/sync-audit-trial/sources/unpack.cpp"
+    ],
+    "frontends": {
+      "prototypes/sync-audit-trial/sources/unpack.cpp": "regex"
+    },
+    "operations": [
+      {
+        "id": "o1",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 365,
+        "func": "RunUnpackCompactMatrixTask",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(srcLocal, xGm[rowStart * tilingData.num], inCopyParams, padParams);"
+      },
+      {
+        "id": "o2",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 381,
+        "func": "RunUnpackCompactMatrixTask",
+        "pipe": "MTE3",
+        "object": "",
+        "field": "",
+        "buffers": [
+          {
+            "name": "dstLocal",
+            "index_expr": "colOffset * vectorRows",
+            "index_var": "colOffset",
+            "index_root": "colOffset",
+            "role": "output",
+            "index_summary": {
+              "raw": "colOffset * vectorRows",
+              "root": "colOffset",
+              "index_var": "colOffset",
+              "slot": "colOffset*vectorRows",
+              "offset": 0,
+              "modulo": "",
+              "stride": "",
+              "canonical": "colOffset:expr=colOffset*vectorRows",
+              "unknown": "colOffset*vectorRows"
+            }
+          }
+        ],
+        "raw": "DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);"
+      },
+      {
+        "id": "o3",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 407,
+        "func": "PrefetchUnpackCompactMatrixTask",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(srcLocal, xGm[rowStart * tilingData.num], inCopyParams, padParams);"
+      },
+      {
+        "id": "o4",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 430,
+        "func": "ComputeUnpackCompactMatrixTask",
+        "pipe": "MTE3",
+        "object": "",
+        "field": "",
+        "buffers": [
+          {
+            "name": "dstLocal",
+            "index_expr": "colOffset * vectorRows",
+            "index_var": "colOffset",
+            "index_root": "colOffset",
+            "role": "output",
+            "index_summary": {
+              "raw": "colOffset * vectorRows",
+              "root": "colOffset",
+              "index_var": "colOffset",
+              "slot": "colOffset*vectorRows",
+              "offset": 0,
+              "modulo": "",
+              "stride": "",
+              "canonical": "colOffset:expr=colOffset*vectorRows",
+              "unknown": "colOffset*vectorRows"
+            }
+          }
+        ],
+        "raw": "DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);"
+      },
+      {
+        "id": "o5",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 553,
+        "func": "RunUnpackPackedMatrixTask",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(srcLocal, xGm[rowStart * tilingData.num + colBase], inCopyParams, padParams);"
+      },
+      {
+        "id": "o6",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 583,
+        "func": "RunUnpackPackedMatrixTask",
+        "pipe": "MTE3",
+        "object": "",
+        "field": "",
+        "buffers": [
+          {
+            "name": "dstLocal",
+            "index_expr": "colOffset * vectorRows",
+            "index_var": "colOffset",
+            "index_root": "colOffset",
+            "role": "output",
+            "index_summary": {
+              "raw": "colOffset * vectorRows",
+              "root": "colOffset",
+              "index_var": "colOffset",
+              "slot": "colOffset*vectorRows",
+              "offset": 0,
+              "modulo": "",
+              "stride": "",
+              "canonical": "colOffset:expr=colOffset*vectorRows",
+              "unknown": "colOffset*vectorRows"
+            }
+          }
+        ],
+        "raw": "DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);"
+      },
+      {
+        "id": "o7",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 715,
+        "func": "UnpackRowBurstCopyKernel",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(local[i], xGm[desc.inputOffset], copyParams, rowPadParams);"
+      },
+      {
+        "id": "o8",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 731,
+        "func": "UnpackRowBurstCopyKernel",
+        "pipe": "MTE3",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(yGm[desc.outputOffset], local[bufferIndex], outCopyParams);"
+      },
+      {
+        "id": "o9",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 748,
+        "func": "UnpackRowBurstCopyKernel",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(local[bufferIndex], xGm[prefetchDesc.inputOffset], prefetchCopyParams, prefetchPadParams);"
+      },
+      {
+        "id": "o10",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 799,
+        "func": "UnpackCopyKernel",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(local[i], xGm[desc.inputOffset], copyParams, padParams);"
+      },
+      {
+        "id": "o11",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 810,
+        "func": "UnpackCopyKernel",
+        "pipe": "MTE3",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(yGm[desc.outputOffset], local[bufferIndex], copyParams);"
+      },
+      {
+        "id": "o12",
+        "kind": "datacopy",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 820,
+        "func": "UnpackCopyKernel",
+        "pipe": "MTE2",
+        "object": "",
+        "field": "",
+        "buffers": [],
+        "raw": "DataCopyPad(local[bufferIndex], xGm[prefetchDesc.inputOffset], prefetchCopyParams, padParams);"
+      }
+    ],
+    "buffer_accesses": [
+      {
+        "id": "a1",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 381,
+        "func": "RunUnpackCompactMatrixTask",
+        "access": "read",
+        "pipe": "MTE3",
+        "statement_kind": "datacopy",
+        "buffer": {
+          "name": "dstLocal",
+          "index_expr": "colOffset * vectorRows",
+          "index_var": "colOffset",
+          "index_root": "colOffset",
+          "role": "output",
+          "index_summary": {
+            "raw": "colOffset * vectorRows",
+            "root": "colOffset",
+            "index_var": "colOffset",
+            "slot": "colOffset*vectorRows",
+            "offset": 0,
+            "modulo": "",
+            "stride": "",
+            "canonical": "colOffset:expr=colOffset*vectorRows",
+            "unknown": "colOffset*vectorRows"
+          }
+        },
+        "symbol_id": "RunUnpackCompactMatrixTask:colOffset",
+        "region_key": "dstLocal:colOffset:expr=colOffset*vectorRows",
+        "raw": "DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);"
+      },
+      {
+        "id": "a2",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 430,
+        "func": "ComputeUnpackCompactMatrixTask",
+        "access": "read",
+        "pipe": "MTE3",
+        "statement_kind": "datacopy",
+        "buffer": {
+          "name": "dstLocal",
+          "index_expr": "colOffset * vectorRows",
+          "index_var": "colOffset",
+          "index_root": "colOffset",
+          "role": "output",
+          "index_summary": {
+            "raw": "colOffset * vectorRows",
+            "root": "colOffset",
+            "index_var": "colOffset",
+            "slot": "colOffset*vectorRows",
+            "offset": 0,
+            "modulo": "",
+            "stride": "",
+            "canonical": "colOffset:expr=colOffset*vectorRows",
+            "unknown": "colOffset*vectorRows"
+          }
+        },
+        "symbol_id": "ComputeUnpackCompactMatrixTask:colOffset",
+        "region_key": "dstLocal:colOffset:expr=colOffset*vectorRows",
+        "raw": "DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);"
+      },
+      {
+        "id": "a3",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 583,
+        "func": "RunUnpackPackedMatrixTask",
+        "access": "read",
+        "pipe": "MTE3",
+        "statement_kind": "datacopy",
+        "buffer": {
+          "name": "dstLocal",
+          "index_expr": "colOffset * vectorRows",
+          "index_var": "colOffset",
+          "index_root": "colOffset",
+          "role": "output",
+          "index_summary": {
+            "raw": "colOffset * vectorRows",
+            "root": "colOffset",
+            "index_var": "colOffset",
+            "slot": "colOffset*vectorRows",
+            "offset": 0,
+            "modulo": "",
+            "stride": "",
+            "canonical": "colOffset:expr=colOffset*vectorRows",
+            "unknown": "colOffset*vectorRows"
+          }
+        },
+        "symbol_id": "RunUnpackPackedMatrixTask:colOffset",
+        "region_key": "dstLocal:colOffset:expr=colOffset*vectorRows",
+        "raw": "DataCopyPad(yGm[rowStart], dstLocal[colOffset * vectorRows], outCopyParams);"
+      }
+    ],
+    "buffer_dependencies": [],
+    "sync_edges": [
+      {
+        "id": "s1",
+        "kind": "set",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 164,
+        "func": "SetUnpackCopyMte2Mte3",
+        "raw": "SetFlag<HardEvent::MTE2_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s2",
+        "kind": "set",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 166,
+        "func": "SetUnpackCopyMte2Mte3",
+        "raw": "SetFlag<HardEvent::MTE2_MTE3>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s3",
+        "kind": "set",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 168,
+        "func": "SetUnpackCopyMte2Mte3",
+        "raw": "SetFlag<HardEvent::MTE2_MTE3>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s4",
+        "kind": "wait",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 175,
+        "func": "WaitUnpackCopyMte2Mte3",
+        "raw": "WaitFlag<HardEvent::MTE2_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s5",
+        "kind": "wait",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 177,
+        "func": "WaitUnpackCopyMte2Mte3",
+        "raw": "WaitFlag<HardEvent::MTE2_MTE3>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s6",
+        "kind": "wait",
+        "event_type": "MTE2_MTE3",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 179,
+        "func": "WaitUnpackCopyMte2Mte3",
+        "raw": "WaitFlag<HardEvent::MTE2_MTE3>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s7",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 186,
+        "func": "SetUnpackCopyMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s8",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 188,
+        "func": "SetUnpackCopyMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s9",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 190,
+        "func": "SetUnpackCopyMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s10",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 197,
+        "func": "WaitUnpackCopyMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s11",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 199,
+        "func": "WaitUnpackCopyMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s12",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 201,
+        "func": "WaitUnpackCopyMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s13",
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 208,
+        "func": "SetUnpackMatrixMte2V",
+        "raw": "SetFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s14",
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 210,
+        "func": "SetUnpackMatrixMte2V",
+        "raw": "SetFlag<HardEvent::MTE2_V>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s15",
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 212,
+        "func": "SetUnpackMatrixMte2V",
+        "raw": "SetFlag<HardEvent::MTE2_V>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s16",
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 219,
+        "func": "WaitUnpackMatrixMte2V",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s17",
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 221,
+        "func": "WaitUnpackMatrixMte2V",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s18",
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 223,
+        "func": "WaitUnpackMatrixMte2V",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s19",
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 230,
+        "func": "SetUnpackMatrixVMte3",
+        "raw": "SetFlag<HardEvent::V_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s20",
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 232,
+        "func": "SetUnpackMatrixVMte3",
+        "raw": "SetFlag<HardEvent::V_MTE3>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s21",
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 234,
+        "func": "SetUnpackMatrixVMte3",
+        "raw": "SetFlag<HardEvent::V_MTE3>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s22",
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 241,
+        "func": "WaitUnpackMatrixVMte3",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s23",
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 243,
+        "func": "WaitUnpackMatrixVMte3",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s24",
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 245,
+        "func": "WaitUnpackMatrixVMte3",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s25",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 252,
+        "func": "SetUnpackMatrixMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s26",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 254,
+        "func": "SetUnpackMatrixMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s27",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 256,
+        "func": "SetUnpackMatrixMte3Mte2",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s28",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 263,
+        "func": "WaitUnpackMatrixMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s29",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID1",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 265,
+        "func": "WaitUnpackMatrixMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID1);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s30",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID2",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 267,
+        "func": "WaitUnpackMatrixMte3Mte2",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID2);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s31",
+        "kind": "set",
+        "event_type": "S_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 329,
+        "func": "StoreUnpackMatrixScalar",
+        "raw": "SetFlag<HardEvent::S_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s32",
+        "kind": "wait",
+        "event_type": "S_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 330,
+        "func": "StoreUnpackMatrixScalar",
+        "raw": "WaitFlag<HardEvent::S_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s33",
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 366,
+        "func": "RunUnpackCompactMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s34",
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 367,
+        "func": "RunUnpackCompactMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s35",
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 374,
+        "func": "RunUnpackCompactMatrixTask",
+        "raw": "SetFlag<HardEvent::V_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s36",
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 375,
+        "func": "RunUnpackCompactMatrixTask",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s37",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 383,
+        "func": "RunUnpackCompactMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s38",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 384,
+        "func": "RunUnpackCompactMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s39",
+        "kind": "set",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 554,
+        "func": "RunUnpackPackedMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s40",
+        "kind": "wait",
+        "event_type": "MTE2_V",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 555,
+        "func": "RunUnpackPackedMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s41",
+        "kind": "set",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 576,
+        "func": "RunUnpackPackedMatrixTask",
+        "raw": "SetFlag<HardEvent::V_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s42",
+        "kind": "wait",
+        "event_type": "V_MTE3",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 577,
+        "func": "RunUnpackPackedMatrixTask",
+        "raw": "WaitFlag<HardEvent::V_MTE3>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s43",
+        "kind": "set",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 585,
+        "func": "RunUnpackPackedMatrixTask",
+        "raw": "SetFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      },
+      {
+        "id": "s44",
+        "kind": "wait",
+        "event_type": "MTE3_MTE2",
+        "flag_id": "EVENT_ID0",
+        "index_expr": "",
+        "index_var": "",
+        "index_root": "",
+        "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+        "line": 586,
+        "func": "RunUnpackPackedMatrixTask",
+        "raw": "WaitFlag<HardEvent::MTE3_MTE2>(EVENT_ID0);",
+        "index_summary": {
+          "raw": "",
+          "root": "",
+          "index_var": "",
+          "slot": "",
+          "offset": 0,
+          "modulo": "",
+          "stride": "",
+          "canonical": "<constant>:expr=",
+          "unknown": ""
+        }
+      }
+    ],
+    "sync_coverages": [],
+    "aliases": {
+      "prototypes/sync-audit-trial/sources/unpack.cpp": {
+        "<global>": {
+          "kUnpackMatrixBufferBytes": "kUnpackCompactBuffers"
+        },
+        "AlignUp32": {},
+        "AppendUnpackTaskSpan": {},
+        "BuildUnpackSchedulePlan": {
+          "rowBytes": "tilingData",
+          "paddedRowBytes": "uint32_t",
+          "rightPadding": "uint32_t",
+          "rowsPerTask": "kUnpackRowBurstMaxBytes",
+          "compactRows": "tilingData"
+        },
+        "CeilDivU64": {},
+        "ComputeUnpackCompactMatrixTask": {
+          "srcBaseAddr": "uint32_t"
+        },
+        "GetUnpackCompactMatrixRowsPerTask": {
+          "rows": "kUnpackMatrixOffsetBytes",
+          "srcRows": "num",
+          "dstRows": "num"
+        },
+        "GetUnpackCopyTask": {
+          "tasksPerOutput": "tilingData",
+          "outputIndex": "tilingData",
+          "localTask": "tilingData",
+          "outer": "plan",
+          "chunk": "plan",
+          "innerOffset": "plan",
+          "tile": "uint32_t"
+        },
+        "GetUnpackLocalTaskRange": {
+          "spanEnd": "span",
+          "start": "assignedRange",
+          "end": "assignedRange"
+        },
+        "GetUnpackMatrixRowsPerTask": {},
+        "GetUnpackRowBurstTask": {
+          "outputIndex": "plan",
+          "rowBlock": "plan",
+          "rowStart": "plan",
+          "rows": "uint32_t",
+          "rowBytes": "uint32_t",
+          "paddedRowBytes": "uint32_t",
+          "rightPadding": "uint32_t",
+          "srcStrideBytes": "uint32_t"
+        },
+        "GetUnpackTaskRange": {},
+        "MinU64": {},
+        "PrefetchUnpackCompactMatrixTask": {},
+        "PrepareUnpackGatherOffsets": {},
+        "RunUnpackCompactMatrixTask": {
+          "vectorRows": "rowCount",
+          "srcBaseAddr": "uint32_t"
+        },
+        "RunUnpackCompactMatrixTasks": {
+          "pipelineEnd": "taskRange",
+          "lastTask": "taskRange",
+          "lastRowStart": "taskRange",
+          "lastRowCount": "plan",
+          "lastVectorRows": "plan",
+          "totalTasks": "taskRange",
+          "warmupTasks": "uint32_t",
+          "task": "taskRange",
+          "rowStart": "taskRange",
+          "rowCount": "plan",
+          "vectorRows": "plan",
+          "bufferIndex": "uint32_t",
+          "prefetchOffset": "taskOffset",
+          "prefetchTask": "taskRange",
+          "prefetchBuffer": "uint32_t",
+          "prefetchRowStart": "taskRange",
+          "prefetchRowCount": "plan",
+          "prefetchVectorRows": "plan",
+          "waitCount": "taskRange"
+        },
+        "RunUnpackPackedMatrixTask": {
+          "vectorRows": "rowCount",
+          "inputRowBytes": "uint32_t",
+          "inputStrideBytes": "uint32_t",
+          "srcBaseAddr": "uint32_t"
+        },
+        "SetUnpackCopyMte2Mte3": {},
+        "SetUnpackCopyMte3Mte2": {},
+        "SetUnpackMatrixMte2V": {},
+        "SetUnpackMatrixMte3Mte2": {},
+        "SetUnpackMatrixVMte3": {},
+        "StoreUnpackMatrixScalar": {
+          "outputIndex": "colBase",
+          "row": "rowStart"
+        },
+        "UnpackCopyKernel": {
+          "tileBytes": "plan",
+          "totalTasks": "taskRange",
+          "warmupTasks": "uint32_t",
+          "bufferIndex": "uint32_t",
+          "prefetchOffset": "taskOffset",
+          "waitCount": "taskRange"
+        },
+        "UnpackKernel": {},
+        "UnpackMatrixDeinterleaveKernel": {
+          "task": "taskRange",
+          "rowBlock": "plan",
+          "colBlock": "plan",
+          "rowStart": "plan",
+          "colBase": "plan",
+          "validCols": "uint64_t",
+          "rowCount": "plan"
+        },
+        "UnpackRowBurstCopyKernel": {
+          "rowBytes": "uint32_t",
+          "tileBytes": "uint32_t",
+          "totalTasks": "taskRange",
+          "warmupTasks": "uint32_t",
+          "bufferIndex": "uint32_t",
+          "prefetchOffset": "taskOffset",
+          "waitCount": "taskRange"
+        },
+        "WaitUnpackCopyMte2Mte3": {},
+        "WaitUnpackCopyMte3Mte2": {},
+        "WaitUnpackMatrixMte2V": {},
+        "WaitUnpackMatrixMte3Mte2": {},
+        "WaitUnpackMatrixVMte3": {},
+        "unpack": {}
+      }
+    },
+    "findings": []
+  },
+  "reviews": [
+    {
+      "line": 366,
+      "status": "excluded",
+      "statusLabel": "已排除",
+      "scope": "",
+      "reason": "提前返回同时跳过 Set/Wait；该分支在当前调度下不可达。",
+      "evidence": [
+        {
+          "start": 351,
+          "end": 367,
+          "reason": "vectorRows=0 时走标量路径；否则成对执行 Set/Wait。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L351-L367"
+        },
+        {
+          "start": 630,
+          "end": 659,
+          "reason": "num<16 已由前置分支处理；num=16 时 validCols=16，不满足此分支条件。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L630-L659"
+        }
+      ],
+      "remainingEvidence": [
+        "若需确认设备同步行为：目标 CANN/芯片的事件语义、编译结果及边界配置设备运行。"
+      ],
+      "method": "agent source review: branch conditions, same-file helper expansion and caller inspection",
+      "sourceRevision": "13baf5274751fcf46aa04905c53ad285d656ac74",
+      "sourceSha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1",
+      "scannerRerun": false,
+      "deviceValidated": false
+    },
+    {
+      "line": 430,
+      "status": "excluded",
+      "statusLabel": "已排除",
+      "scope": "仅排除该扫描候选的具体指控，不构成 Kernel 整体同步正确性证明",
+      "reason": "搬出前已有 V→MTE3 同步，扫描未展开同文件 helper。",
+      "evidence": [
+        {
+          "start": 417,
+          "end": 430,
+          "reason": "Gather 后无条件调用 SetUnpackMatrixVMte3(bufferIndex)、WaitUnpackMatrixVMte3(bufferIndex)，随后才 DataCopyPad。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L417-L430"
+        },
+        {
+          "start": 227,
+          "end": 246,
+          "reason": "两个 helper 对同一 bufferIndex 使用相同分支：0→EVENT_ID0、1→EVENT_ID1、其余→EVENT_ID2，方向均为 V_MTE3。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L227-L246"
+        }
+      ],
+      "remainingEvidence": [
+        "若需确认设备同步行为：目标 CANN/芯片的事件语义、编译结果及边界配置设备运行。"
+      ],
+      "method": "agent source review: branch conditions, same-file helper expansion and caller inspection",
+      "sourceRevision": "13baf5274751fcf46aa04905c53ad285d656ac74",
+      "sourceSha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1",
+      "scannerRerun": false,
+      "deviceValidated": false
+    },
+    {
+      "line": 554,
+      "status": "excluded",
+      "statusLabel": "已排除",
+      "scope": "仅排除该扫描候选的具体指控，不构成 Kernel 整体同步正确性证明",
+      "reason": "所有提前返回都位于本次搬入及 Set/Wait 之前，没有留下对应的孤立 Wait。",
+      "evidence": [
+        {
+          "start": 523,
+          "end": 555,
+          "reason": "vectorRows=0、sizeof(T)=1、validCols<16 三条分支均在 DataCopyPad 之前标量处理并返回；向量路径连续执行 L554 Set 与 L555 Wait。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L523-L555"
+        },
+        {
+          "start": 576,
+          "end": 590,
+          "reason": "向量搬出与 MTE3→MTE2 Set/Wait 在函数返回前完成；尾行在此后进入标量处理。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L576-L590"
+        },
+        {
+          "start": 640,
+          "end": 670,
+          "reason": "调用方按 task 顺序调用；此循环中不存在对该 MTE2_V 事件的外部 Wait。",
+          "url": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp#L640-L670"
+        }
+      ],
+      "remainingEvidence": [
+        "若需确认设备同步行为：目标 CANN/芯片的事件语义、编译结果及边界配置设备运行。"
+      ],
+      "method": "agent source review: branch conditions, same-file helper expansion and caller inspection",
+      "sourceRevision": "13baf5274751fcf46aa04905c53ad285d656ac74",
+      "sourceSha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1",
+      "scannerRerun": false,
+      "deviceValidated": false
+    }
+  ]
+}

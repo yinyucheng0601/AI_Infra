@@ -1,0 +1,27 @@
+{
+  "revision": "13baf5274751fcf46aa04905c53ad285d656ac74",
+  "elementsChecked": 17391,
+  "numericMismatches": 0,
+  "indexMismatches": 0,
+  "missing": 0,
+  "duplicates": 0,
+  "tasks": 17,
+  "cores": 8,
+  "coreTaskCounts": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    3
+  ],
+  "rowBytes": 132,
+  "paddedRowBytes": 160,
+  "rightPaddingElements": 7,
+  "srcStrideBytes": 2112,
+  "inputGenerator": "Python Random(3003), integers 1..10; independent of upstream NumPy sample",
+  "mutationDetected": true,
+  "deviceRun": false
+}

@@ -1,0 +1,34 @@
+{
+  "files_scanned": [
+    "prototypes/sync-audit-trial/sources/bad-pipeline.asc"
+  ],
+  "frontends": {
+    "prototypes/sync-audit-trial/sources/bad-pipeline.asc": "regex"
+  },
+  "operations": [
+    {
+      "id": "o1",
+      "kind": "datacopy",
+      "file": "prototypes/sync-audit-trial/sources/bad-pipeline.asc",
+      "line": 25,
+      "func": "Process",
+      "pipe": "MTE2",
+      "object": "",
+      "field": "",
+      "buffers": [],
+      "raw": "DataCopyPad(xLocal, xGm, copyParams, padParams);"
+    }
+  ],
+  "buffer_accesses": [],
+  "buffer_dependencies": [],
+  "sync_edges": [],
+  "sync_coverages": [],
+  "aliases": {
+    "prototypes/sync-audit-trial/sources/bad-pipeline.asc": {
+      "<global>": {},
+      "Init": {},
+      "Process": {}
+    }
+  },
+  "findings": []
+}

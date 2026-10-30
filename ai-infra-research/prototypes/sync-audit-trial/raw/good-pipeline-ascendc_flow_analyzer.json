@@ -1,0 +1,51 @@
+{
+  "files_scanned": [
+    "prototypes/sync-audit-trial/sources/good-pipeline.asc"
+  ],
+  "frontends": {
+    "prototypes/sync-audit-trial/sources/good-pipeline.asc": "regex"
+  },
+  "operations": [
+    {
+      "id": "o1",
+      "kind": "datacopy",
+      "file": "prototypes/sync-audit-trial/sources/good-pipeline.asc",
+      "line": 34,
+      "func": "CopyIn",
+      "pipe": "MTE2",
+      "object": "",
+      "field": "",
+      "buffers": [],
+      "raw": "DataCopyPad(xLocal, xGm[tileIdx * tileSize], copyParams, padParams);"
+    },
+    {
+      "id": "o2",
+      "kind": "datacopy",
+      "file": "prototypes/sync-audit-trial/sources/good-pipeline.asc",
+      "line": 46,
+      "func": "CopyOut",
+      "pipe": "MTE3",
+      "object": "",
+      "field": "",
+      "buffers": [],
+      "raw": "DataCopyPad(yGm[tileIdx * tileSize], yOut, copyParams);"
+    }
+  ],
+  "buffer_accesses": [],
+  "buffer_dependencies": [],
+  "sync_edges": [],
+  "sync_coverages": [],
+  "aliases": {
+    "prototypes/sync-audit-trial/sources/good-pipeline.asc": {
+      "<global>": {},
+      "Compute": {},
+      "CopyIn": {},
+      "CopyOut": {},
+      "Init": {},
+      "Process": {
+        "tileNum": "totalLength"
+      }
+    }
+  },
+  "findings": []
+}

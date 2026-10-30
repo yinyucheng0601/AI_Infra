@@ -1,0 +1,50 @@
+{
+  "default_canvas": {
+    "type": "source-ordered execution swimlanes with linked tensor lifetimes",
+    "renderer": "comparison.js",
+    "sha256": "5dc056193d943edad673b7037b376889d3785a08283659987fc9f0932b3c9365",
+    "layout": "Device Perf Lane inline resource-row composition adapted to source-order axis; MTE2/Vector/MTE3 and UB lifetimes share coordinates; hardware mapping opens a linked 950B corner window; bottom-left input/implementation/mapping dock; playback removed; queue request lifetimes use actual Alloc/Free records"
+  },
+  "tensor": {
+    "path": "reports/llm-compute/training-parallel-communication-v1.html",
+    "sha256": "a72446dbe597fb26199fc0f2ffdd62931f232e8934e0982c8d4ab624f109b4d2",
+    "variant": "tensorNode + dataTiles / text over role grid; host adapter fixes equal 5-unit inset with square cells and distributed grid gaps",
+    "role_colors": {
+      "source": "reports/llm-compute/diagram-legend-library/visual-system.js",
+      "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8",
+      "mapping": "VisualSystem.tokens.role: activation X/Y, weight gamma, aggregate partials/rstd; selection does not recolor tensors"
+    }
+  },
+  "architecture": {
+    "preset": "ascend950b",
+    "upstream_status": "shared-standard",
+    "assets": {
+      "tokens/foundation.css": "4627f2807150c0eb23a7e5c99b4c15da1b72f4d476ce45fbddccb0d0f4fc439a",
+      "tokens/semantic.css": "d1a160a95ebed46997702ee556b34922afbea9b23527bf57171f5e682aacce90",
+      "tokens/components.css": "9ad87944b2a9338378ecb2b9161b8f5a332b7101492d7fe54d65fa25e94a319f",
+      "patterns/aic-core-object/pattern.css": "f7e09daa746fcec79cc415e4e275c8b4a8a7428e649e5057d1430ab99570f88a",
+      "patterns/aiv-core-object/pattern.css": "aabcf943eba5490c41cf67b36540c29afb5099930d5ef378f4a5ff40e01cf31d",
+      "patterns/memory-architecture/pattern.css": "27d7af870ccb964c8154f78564f247a46d0e09111a302a540b1d09d3ed7a8f4d",
+      "patterns/memory-reuse-viewer/pattern.css": "ee9037f9f13fd3bcf10e9f709350cf5b386e1d050a60513b7e78fd988ad0e881",
+      "patterns/aic-core-object/pattern.js": "af5fe1ac53a63e8203df800d9669fdf4bd367c0e2e084f8548d4ab01191d77fe",
+      "patterns/aiv-core-object/pattern.js": "cc8a920ce20614713df7cbbbabcc813c645c9796268fb0787b6b69364fb884fb",
+      "patterns/memory-architecture/pattern.js": "1a226209b388621cf971ffc97f3389a5a072793b03a86eda139885c4a9e25f63",
+      "patterns/swimlane-task/pattern.js": "3a1edaf246e4f214a7fc3eefc438343d98e1bcf5293f9566333c09542cf01b14",
+      "patterns/memory-reuse-viewer/pattern.js": "3e575de94680010d7702353f4464ea7d5f86ed58537b28b072e3fcf902d36a37"
+    },
+    "reuse": "shared 950B architecture mounted in a small draggable/resizable corner window; event selection drives setPathFocus; inactive topology remains neutral"
+  },
+  "selection_override": "Single host --hi (#D4D4D4), fill and dark text; tensor role colors stay independent",
+  "queue_overview_adapter": "Five shared Memory Reuse Viewer instances in one horizontal figure with identical source-step axes, per-queue relative-size coordinates and unified toolbar. Local delivery adapter uses neutral kind tones, formats sub-KiB sizes in B and uses fill selection; shared upstream files unchanged.",
+  "patterns": [
+    {
+      "path": "/Users/yin/PyPTO3-main/Design/device-perf-lane/index-pipeline-merged.html",
+      "sha256": "8e6adc06c1616a07d0e645e43c20f35865a1dfc54e0662df4e0c28a9ce1247c0",
+      "reuse": "reference composition: resource lanes as main stage; in-place expansion, shared axis, selected dependency links; source-order event scale adapted independently"
+    },
+    {
+      "path": "prototypes/logsumexp-case5/page.html",
+      "reuse": "viewport state, pointer zoom, pan, fit, overlay and source window mechanisms adapted to RMSNorm"
+    }
+  ]
+}

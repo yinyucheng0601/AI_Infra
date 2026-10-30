@@ -2,7 +2,7 @@
   "id": "reduction-memory-inspector",
   "source": "prototypes/logsumexp-case5",
   "entry": "index.html",
-  "sha256": "6d51a3cde5e9dcaa65dfccb04b66c3b4e670b92d2846902340b4daaa3f4e8093",
+  "sha256": "e505ecd47cc4f6bd9c3730ce6f7365beb2a0f5acbe2d600595b2b370a2f07851",
   "operatorCommit": "04c0c97dc5623053fefc585786697a8c19b9504a",
   "collectedAt": "2026-10-28",
   "scope": "Fixed LogSumExp Case 05; conditional source mapping, no NPU execution"

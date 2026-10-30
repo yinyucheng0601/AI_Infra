@@ -1,0 +1,92 @@
+{
+  "scanner": {
+    "repository": "hicann/cannbot-skills",
+    "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+    "files": {
+      "scripts/ascendc_flow_analyzer.py": "b84ef0d82628bb92c313f4d7b78ff626debf0198cbeed06da5e0a194cf2e799a",
+      "scripts/sync05_resolve.py": "9294534fdcfa3655091ad493aa341c64e974cc0d1fc40122453cf9b63a79cb33",
+      "scripts/sync_audit.py": "af629036820e7765639df7379d94fde4c2b0aca63f54a295384005a015a181d4",
+      "scripts/sync_logging.py": "f7935ada47e6de4553fc02772e808c526265c2b13bf11dcf391ed96bdfbd3b11",
+      "scripts/case_retriever.py": "21508467a95c4128230162e49523bc055572436e820db7570c937f1d74c97200"
+    }
+  },
+  "cases": [
+    {
+      "id": "bad-index",
+      "file": "bad-index.cpp",
+      "sourceSha256": "f30b5d235406fb0d0325ae5c0d00db2bf6c1a2203e5cedc304118b4e797b13c5",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/references/examples/sync14_output_bundle_index.cpp",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": false
+    },
+    {
+      "id": "root-only-index",
+      "file": "root-only-index.cpp",
+      "sourceSha256": "7c6ad06858e972d26806a8a431ffc50bd76ee6379f14ef912391f5ce4c7cced5",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/references/examples/sync14_output_bundle_index.cpp",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": true
+    },
+    {
+      "id": "fixed-index",
+      "file": "fixed-index.cpp",
+      "sourceSha256": "281ff62b787757adfe515f57a80c076645c165e307f307c900edcb29e0e78a2d",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/references/examples/sync14_output_bundle_index.cpp",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": true
+    },
+    {
+      "id": "good-index",
+      "file": "good-index.cpp",
+      "sourceSha256": "46d161770027d468ee88357f7965477d6e35fbd4e2d9e9a4ef0bcbd44b54790b",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/references/examples/sync14_equivalent_modulo_region.cpp",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": false
+    },
+    {
+      "id": "region-dependency",
+      "file": "region-dependency.cpp",
+      "sourceSha256": "5bb64ae83fbf1f843b5c326450ed124c00eb13c8dc0b68861bc7c2f34e43b098",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/references/examples/sync14_same_root_different_region.cpp",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": false
+    },
+    {
+      "id": "bad-pipeline",
+      "file": "bad-pipeline.asc",
+      "sourceSha256": "63f6dd31d3abd3ccda205d78179506c4108da1694763a538ac31f5019422210c",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/benchmark/defects/bm_sync02_datacopy_then_adds.asc",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": false
+    },
+    {
+      "id": "fixed-pipeline",
+      "file": "fixed-pipeline.asc",
+      "sourceSha256": "704a1975bfbe434c671baa614e785086d17ee8567eaf4806d5088fa940499184",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/benchmark/defects/bm_sync02_datacopy_then_adds.asc",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": true
+    },
+    {
+      "id": "good-pipeline",
+      "file": "good-pipeline.asc",
+      "sourceSha256": "5fc54f329dadd2d3aa471bcf52ab1aea3a18953ef93d767cf36bbc5d1e051df1",
+      "origin": "https://github.com/hicann/cannbot-skills/blob/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ascendc-sync-audit/benchmark/correct/bm_good_a_standard_pipeline.asc",
+      "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+      "derived": false
+    },
+    {
+      "id": "unpack",
+      "file": "unpack.cpp",
+      "sourceSha256": "a73d36b372bfa5f2c6d29f391896becf7625311ba503d609df855c107a74f4d1",
+      "origin": "https://github.com/heiheiha798/Ascend-Kernels-S8/blob/13baf5274751fcf46aa04905c53ad285d656ac74/op/Unpack/op_kernel/unpack.cpp",
+      "revision": "13baf5274751fcf46aa04905c53ad285d656ac74",
+      "derived": false
+    }
+  ],
+  "glyphs": {
+    "renderer": "reports/llm-compute/diagram-legend-library/visual-system.js",
+    "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8",
+    "variant": "node/memref for source buffer references; sync and coverage nodes are domain-specific, not hardware instruction glyphs"
+  }
+}

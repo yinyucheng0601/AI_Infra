@@ -1,0 +1,499 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Scale · 参数与输出调查</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#111;color:#eee;font:13px system-ui,sans-serif}button,input,textarea{font:inherit;color:inherit}button{background:transparent;border:0;cursor:pointer;padding:9px 12px;border-radius:8px;min-height:38px}button:hover{background:#ffffff18}button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid white;outline-offset:2px}button[aria-pressed=true]{color:#111;background:#eee}a{color:#ddd}input,textarea{background:#222;border:1px solid #777;border-radius:5px;padding:7px}input{width:80px}header{position:absolute;left:28px;top:24px;pointer-events:none}header small{font:11px monospace;color:#aaa}h1{font-weight:450;font-size:24px;margin:8px 0}header p{color:#bbb;margin:0;font:12px monospace}nav{position:absolute;top:26px;left:50%;transform:translateX(-50%);display:flex;padding:4px;border-radius:24px;gap:3px}nav button{font-size:12px;border-radius:999px;border:0;outline:none;box-shadow:none}nav button:focus-visible{outline:none;background:#ddd;color:#111;text-decoration:underline;text-underline-offset:4px}.actions{position:absolute;right:24px;top:26px;display:flex;border-radius:22px;padding:3px}#canvas{position:absolute;inset:0;touch-action:none;cursor:grab}#canvas.dragging{cursor:grabbing}#canvas svg{display:block;width:100%;height:100%}.control{position:absolute;left:28px;bottom:25px;border-radius:22px;padding:8px 14px;display:flex;align-items:center;gap:12px}.zoom{position:absolute;right:24px;bottom:25px;border-radius:22px;padding:3px;display:flex;align-items:center}.zoom output{padding:8px;font:12px monospace}.note{position:absolute;bottom:92px;left:28px;color:#bbb;font:12px monospace;pointer-events:none}aside{position:absolute;right:24px;top:84px;width:min(450px,calc(100vw - 48px));max-height:calc(100vh - 170px);overflow:auto;border-radius:20px;padding:20px;resize:both}aside[hidden]{display:none}.head{display:flex;align-items:center;justify-content:space-between;cursor:move}h2{font-size:17px;font-weight:500;margin:0}aside p{line-height:1.7;color:#ccc}pre{font:12px/1.7 monospace;white-space:pre-wrap;overflow-wrap:anywhere}textarea{width:100%;min-height:80px}#handoff{max-height:230px;overflow:auto}#detail{font:13px/1.8 monospace}.cell{cursor:pointer}.cell:hover rect,.cell:focus-visible rect{fill:#eee;stroke:none}.cell:hover text,.cell:focus-visible text{fill:#111}.cell:focus{outline:none}#live{position:absolute;width:1px;height:1px;overflow:hidden}#status{font-size:12px;color:#ccc}@media(max-width:1100px){nav{top:104px;max-width:calc(100% - 40px);width:max-content}header{left:20px}.control{gap:7px;left:12px;bottom:70px;flex-wrap:wrap;max-width:calc(100% - 24px)}.zoom{bottom:16px}.note{bottom:210px;left:20px;font-size:11px;max-width:calc(100% - 40px)}.actions{right:12px}aside{top:160px;max-height:calc(100vh - 230px)}}
+.control,.zoom{height:44px;padding:4px;gap:6px;border-radius:999px}.control{padding-inline:12px}.control label{display:flex;align-items:center;gap:5px}.control button,.zoom button{height:36px;min-height:36px;padding:6px 10px;border-radius:999px}.control input{height:30px;width:64px;padding:4px 7px}.zoom output{padding:6px}.control span{white-space:nowrap}.control button:focus-visible,.zoom button:focus-visible,.actions button:focus-visible{outline:none;background:#ddd;color:#111;text-decoration:underline}.control input:focus-visible,textarea:focus-visible{outline:none;background:#eee;color:#111}#tooltip{position:fixed;z-index:100;pointer-events:none;max-width:min(330px,calc(100vw - 24px));padding:9px 12px;background:#292929;color:#eee;border:1px solid #444;border-radius:8px;font:12px/1.5 system-ui;box-shadow:0 4px 16px #0008}#tooltip[hidden]{display:none}@media(max-width:1100px){.control{height:44px;flex-wrap:nowrap;max-width:calc(100% - 24px);overflow-x:auto}.control>*{flex-shrink:0}}
+</style><style>/* Material only: host page owns layout, spacing, typography and radius.
+   Load after the host stylesheet. Dark-canvas presets from the approved atlas. */
+[data-liquid-glass="control"],[data-liquid-glass="icon"],[data-liquid-glass="panel"]{
+ color:#eee;border:1px solid rgb(255 255 255 / 18%);
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+[data-liquid-glass="control"]{
+ background:rgb(26 26 26 / 28%);border-color:rgb(255 255 255 / 28%);
+ box-shadow:inset 0 1px 0 rgb(255 255 255 / 22%),inset 0 -1px 0 rgb(255 255 255 / 7%),0 8px 24px rgb(0 0 0 / 22%);
+}
+[data-liquid-glass="control"] :is(button:not([aria-pressed="true"]),select,[data-liquid-readout]){color:#eee;text-shadow:0 1px 3px rgb(0 0 0 / 90%)}
+[data-liquid-glass="icon"]{background:rgb(26 26 26 / 72%);box-shadow:inset 0 1px 0 rgb(255 255 255 / 8%),0 8px 24px rgb(0 0 0 / 18%)}
+[data-liquid-glass="icon"]:is(:hover,[aria-expanded="true"],[aria-pressed="true"]){background:rgb(58 58 58 / 92%)}
+[data-liquid-glass="panel"]{
+ background:rgb(26 26 26 / 94%);
+ -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+ box-shadow:inset 0 1px 0 rgb(255 255 255 / 6%),0 12px 36px rgb(0 0 0 / 30%);
+}
+[data-liquid-glass="panel"] :is(p,legend,[data-liquid-muted]){color:#c4c4c4}
+[data-liquid-glass="panel"] :is(select,input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),textarea){background-color:rgb(12 12 12 / 65%);border:1px solid rgb(255 255 255 / 22%);color:#eee}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ [data-liquid-glass="control"],[data-liquid-glass="panel"],[data-liquid-glass="icon"]{background:#242424}
+}
+</style>
+<style data-demo-consistency>/* Shared prototype control contract. Loaded after page-specific styles. */
+.demo-top-actions{position:fixed!important;top:24px!important;right:26px!important;left:auto!important;display:flex!important;gap:8px!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;z-index:10!important;height:38px!important}
+.demo-top-actions .demo-icon{display:grid!important;place-items:center!important;width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;padding:0!important;border-radius:50%!important;position:relative;font-size:13px!important}
+.demo-top-actions .demo-icon svg,.prompt-copy svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#tooltip,.tooltip{display:none!important}#demoHoverTip{position:fixed;z-index:10000;pointer-events:none;max-width:min(320px,calc(100vw - 16px));padding:8px 11px;border:1px solid #555;border-radius:7px;background:#252525;color:#eee;font:12px/1.5 system-ui;white-space:normal}#demoHoverTip[hidden]{display:none}
+.demo-info{position:fixed;right:26px;top:86px;width:min(340px,calc(100vw - 32px));height:auto;max-height:calc(100dvh - 110px);overflow:auto;border-radius:16px;padding:18px;z-index:12;background:#202020;color:#ddd;font:13px/1.7 system-ui}.demo-panel-head{display:flex;align-items:center;justify-content:space-between}.demo-panel-head h2{font-size:15px}
+.demo-tutorial{position:fixed;inset:0;margin:auto;width:min(820px,calc(100vw - 32px));height:fit-content;max-height:calc(100dvh - 48px);padding:22px;border:1px solid #444;border-radius:18px;background:#191919;color:#ddd;overflow:auto;font:13px/1.75 system-ui;z-index:20}.demo-tutorial::backdrop{background:#0009}.demo-tutorial .panel-head{display:flex;align-items:center;gap:12px;justify-content:space-between}.demo-tutorial h2{font-size:18px;margin:0}.demo-tutorial h3{font-size:16px;margin:24px 0 10px}.demo-tutorial h4{font-size:13px}.demo-tutorial .usage-body{padding:0;overflow:visible;max-height:none}.demo-tutorial .prompt-block{position:relative;margin:12px 0;background:#111;border-radius:9px}.demo-tutorial pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:42px 16px 16px;margin:0;font:12px/1.7 ui-monospace,monospace}.demo-tutorial .prompt-copy{position:absolute;right:8px;top:8px;width:30px;height:30px;min-height:30px;display:grid;place-items:center;padding:5px;background:#292929;border-radius:6px;color:#ddd;border:0;cursor:pointer}.demo-tutorial table{width:100%;border-collapse:collapse;font-size:12px}.demo-tutorial td,.demo-tutorial th{text-align:left;padding:8px;border-bottom:1px solid #383838}.demo-icon:focus-visible,.prompt-copy:focus-visible{outline:0!important;background:#ddd!important;color:#111!important;text-decoration:underline}
+@media(max-width:600px){.demo-top-actions{top:20px!important;right:16px!important;gap:4px!important}.demo-tutorial{max-height:calc(100dvh - 24px);padding:16px}.demo-tutorial h2{font-size:16px}}
+</style></head><body data-demo="scale"><div id="canvas"><svg id="workspace" role="img" aria-label="Scale 输入参数与输出关系画布"><g id="scene"></g></svg></div>
+<header><small>ASCEND-KERNELS-S8 / 13baf527</small><h1>Scale</h1><p>[2,6,10] · FP32 · CPU 参考关系</p></header>
+<nav id="configs" data-liquid-glass="control" aria-label="参考配置"></nav>
+<div class="actions" data-liquid-glass="control"><button id="inspect">检查对象</button><button id="source">源码 / 范围</button></div>
+<div class="note">高亮填充关联共享参数的输出 · 格内保留 1 位小数，精确值见检查对象</div>
+<div class="control" data-liquid-glass="control"><span id="param"></span><label>scale <input id="scale" type="number" min="-10" max="10" step="0.25"></label><label>bias <input id="bias" type="number" min="-10" max="10" step="0.5"></label><button id="apply">应用参数</button><button id="biasToggle" aria-pressed="true">启用 bias</button><button id="reset">重置参数</button><button id="boundary">末元素</button></div>
+<div class="zoom" data-liquid-glass="control"><button id="minus" aria-label="缩小">−</button><output id="zoom">100%</output><button id="plus" aria-label="放大">＋</button><button id="fit">适应</button></div>
+<aside id="inspector" data-liquid-glass="panel" hidden><div class="head"><h2>选中对象</h2><button data-close="inspector">关闭</button></div><div id="detail"></div><p>相对本配置初始参数的 Δy；高亮填充表示参数共享关系，数值为当前计算值。</p><label>继续调查的问题<textarea id="question" placeholder="输入想核对的参数或边界问题"></textarea></label><details><summary>交接证据预览</summary><pre id="handoff"></pre></details><button id="export">导出 JSON</button><button id="copy">复制问题与证据</button><div id="status" aria-live="polite"></div></aside>
+<aside id="sources" data-liquid-glass="panel" hidden><div class="head"><h2>固定版本 · CPU 参考</h2><button data-close="sources">关闭</button></div><p id="links"></p><pre id="sourceCode"></pre><p>case1 的随机输入未设 seed；当前使用确定性测试数据。参考变体仅验证此 Python 函数的规则，未证明 custom_op 支持这些配置。</p><p>未安装 torch / torch_npu，未运行 NPU，未检查 Host/Kernel 或 CANN API。字节偏移按连续 FP32 逻辑数组推导，不代表设备物理地址、实际搬运或缓存复用。</p><p>源码审阅项：dtype 不一致分支调用 warnings.warn，但此文件未 import warnings；CPU 函数允许 bias=None，测试调用却直接 bias.npu()。这些分支不影响当前 case1，尚未作为设备缺陷验证。</p></aside><div id="live" aria-live="polite"></div><div id="tooltip" role="tooltip" hidden></div>
+<script>(function(root){
+'use strict';
+const revision='13baf5274751fcf46aa04905c53ad285d656ac74';
+const source='https://github.com/heiheiha798/Ascend-Kernels-S8/blob/'+revision+'/case_910b/Scale/test_op.py';
+const configs=[{id:'case1',label:'case1 · 原配置',axis:1,axes_num:-1,blob:true,shape:[6,10]}, {id:'channel',label:'按通道 · 参考变体',axis:1,axes_num:1,blob:true,shape:[6]}, {id:'rank',label:'rank(scale) · 参考变体',axis:1,axes_num:0,blob:false,shape:[6,10]}, {id:'negative',label:'负轴 · 参考变体',axis:-1,axes_num:1,blob:true,shape:[10]}];
+const f=Math.fround;
+function create(index=0){const c=configs[index],a=c.axis<0?3+c.axis:c.axis,end=c.blob?(c.axes_num===-1?3:a+c.axes_num):a+c.shape.length;
+ const expected=[2,6,10].slice(a,end);if(JSON.stringify(expected)!==JSON.stringify(c.shape))throw Error('shape mismatch');
+ const size=c.shape.reduce((a,b)=>a*b,1),x=Array.from({length:120},(_,i)=>f(((i*37)%97-48)/4)),s=Array.from({length:size},(_,i)=>f((i%9-4)/4)),b=Array.from({length:size},(_,i)=>f((i%7-3)/2));
+ return {config:c,axis:a,end,broadcast:[...Array(a).fill(1),...c.shape,...Array(3-end).fill(1)],x,s,b,originalS:s.slice(),originalB:b.slice(),bias:true};}
+function element(m,i){if(!Number.isInteger(i)||i<0||i>=120)throw Error('coordinate outside [2,6,10]');const coord=[Math.floor(i/60),Math.floor(i/10)%6,i%10],pc=coord.slice(m.axis,m.end);let k=0;pc.forEach((v,j)=>k=k*m.config.shape[j]+v);const product=f(m.x[i]*m.s[k]),y=m.bias?f(product+m.b[k]):product,base=f(f(m.x[i]*m.originalS[k])+(m.bias?m.originalB[k]:0));return {id:m.config.id+':y:'+coord.join(','),i,coord,k,parameterCoord:pc,x:m.x[i],scale:m.s[k],bias:m.bias?m.b[k]:null,product,y,base,delta:f(y-base),offsetBytes:{x:i*4,y:i*4,scale:k*4,bias:m.bias?k*4:null},evidence:[source+'#L103-L121',source+'#L139-L160']};}
+function affected(m,k){return Array.from({length:120},(_,i)=>element(m,i)).filter(e=>e.k===k);}
+function context(m,i,question=''){const e=element(m,i);return {revision,source,config:m.config,broadcast:m.broadcast,dtype:'float32',selection:e,affected:affected(m,e.k).map(x=>x.id),question,scope:'CPU reference relation; deterministic fixtures, not upstream random samples',unverified:['NPU output','Host/Kernel implementation and physical memory accesses','FP16/BF16','original PyTorch runtime']};}
+const api={revision,source,configs,create,element,affected,context};if(typeof module!=='undefined')module.exports=api;root.ScaleModel=api;
+})(globalThis);
+</script><script>/* Reusable SVG grammar. No DOM or report runtime dependency. */
+(function(root){
+'use strict';
+const tokens=Object.freeze({font:14,gap:24,dataWidth:160,dataHeight:64,opWidth:260,opHeight:48,cell:24,role:{activation:'#B1EF6B',weight:'#BCA0F3',aggregate:'#F2C45F',gradient:'#79D4F2',optimizer:'#B0B0B0'},parallel:{DP:'#8CE580',TP:'#B58AF7',SP:'#80B7F7',CP:'#80E5D3',PP:'#E580CF',EP:'#F7B080'}});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const text=(x,y,s,size=14,color='#E8E8E8',anchor='start')=>`<text x="${x}" y="${y}" font-size="${size}" fill="${color}" text-anchor="${anchor}" dominant-baseline="middle">${esc(s)}</text>`;
+const rect=(x,y,w,h,rx=4,stroke='#888',fill='#202020',extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" stroke="${stroke}" fill="${fill}" ${extra}/>`;
+function rankBoard(x,y,w,h,fill='#393939'){
+const compact=h<64,inset=compact?9:16,r=compact?3:5;
+let body=`<rect class="rank-outline outline" x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}"/>`;
+for(const px of [x+inset,x+w-inset])for(const py of [y+inset,y+h-inset])body+=`<circle class="rank-pin" cx="${px}" cy="${py}" r="${r}" fill="#2b2b2b"/>`;
+return body;
+}
+function data(o,x,y,opts={}){
+ const expanded=opts.expanded,shape=o.shape||[2,4],rows=shape.length===1?1:shape[0],cols=shape.length===1?shape[0]:shape[1],w=expanded?cols*tokens.cell:tokens.dataWidth,h=expanded?rows*tokens.cell:tokens.dataHeight,color=tokens.role[o.role]||'#B0B0B0';
+ let body=expanded?'':rect(x,y,w,h,6,'none','#2d2d2d');
+ if(expanded){for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){body+=rect(x+c*24+2,y+r*24+2,20,20,1,'none',color,'fill-opacity=".18" data-element="true"');if(o.values)body+=text(x+c*24+12,y+r*24+12,o.values[r*cols+c],11,color,'middle')}body+=text(x,y-14,`${o.label} · [${shape}]`,14)}
+ else {
+  for(let i=0;i<4;i++)body+=rect(x+8,y+8+i*12,10,10,0,'none',color,`fill-opacity="${[1,.8,.6,.4][i]}"`);
+  body+=text(x+27,y+22,o.label,16,'#fff')+text(x+27,y+46,`${shape.join(' × ')}  ${o.dtype||'FP16'}`,12,'#ccc');
+ }
+ if(opts.parallel&&opts.parallel!=='none'){let pc=tokens.parallel[opts.parallel];body+=`<path data-decoration="distribution" d="M${x},${y+h+8}v6h${w}v-6" stroke="${pc}" fill="none"/>`+text(x+w/2,y+h+30,`${opts.parallel} · ${opts.placement||'分片'}`,12,pc,'middle')}
+ return `<g data-object="${esc(o.id)}" data-kind="${o.kind||'value'}" data-role="${esc(o.role||'activation')}" data-representation="${expanded?'expanded':'collapsed'}">${body}</g>`;
+}
+// Memory grid is a surface texture, not an element or capacity scale.
+function memory(id,label,detail,x,y,w=300,h=106,physical=false){
+ let b=rect(x,y,w,h,12,'none',physical?'#087CFA':'#2d2d2d');
+ const cols=17,rows=5,gap=3,pad=9,cw=(w-pad*2-gap*(cols-1))/cols,ch=(h-pad*2-gap*(rows-1))/rows;
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=rect(x+pad+c*(cw+gap),y+pad+r*(ch+gap),cw,ch,1.5,physical?'#B3D7FF':'#aaa','#000','fill-opacity=".10" style="stroke-width:.65;stroke-opacity:.30"');
+ b+=text(x+24,y+h*.36,label,Math.min(32,w*.09),'#fff')+text(x+24,y+h*.74,detail,Math.min(18,w*.047),'#eee');
+ return `<g data-object="${esc(id)}" data-kind="${physical?'storage':'memref'}">${b}</g>`;
+}
+function node(kind,id,label,x,y){let w=180,h=64,b='';
+ if(kind==='op'||kind==='communication'){w=tokens.opWidth;h=tokens.opHeight;b=rect(x,y,w,h,24,'#858585','#505050',kind==='communication'?'stroke-dasharray="5 4"':'')+`<g font-weight="650">${text(x+w/2,y+24,label,18,'#fff','middle')}</g>`}
+ else if(kind==='add'||kind==='multiply'){w=h=48;const cx=x+24,cy=y+24;b=`<circle cx="${cx}" cy="${cy}" r="24" stroke="#ddd" fill="#111" style="stroke-width:1.5"/><path d="${kind==='add'?`M${cx-8} ${cy}H${cx+8} M${cx} ${cy-8}V${cy+8}`:`M${cx-6} ${cy-6}L${cx+6} ${cy+6} M${cx-6} ${cy+6}L${cx+6} ${cy-6}`}" stroke="#eee" fill="none" style="stroke-width:2" stroke-linecap="round"/>`}
+ else if(kind==='memref'||kind==='storage'){return memory(id,label,kind==='memref'?'MemRef':'内存分配',x,y,w,h,kind==='storage')}
+ else if(kind==='instruction'||kind==='task'){
+ w=260;h=60;const green='#9EF04B';
+ b=rect(x,y,w,h,0,'none',green)+rect(x+10,y+12,36,36,3,'none','#080b05');
+ const icon=kind==='instruction'?'M9 9 L16 17 L9 25 M20 25 H29':'M9 10 H27 M9 18 H20 M9 26 H16 M23 22 L28 26 L23 30';
+ b+=`<path data-icon="${kind}" transform="translate(${x+10} ${y+12})" d="${icon}" fill="none" stroke="${green}" style="stroke-width:2.6"/>`;
+ b+=`<g font-weight="650">${text(x+62,y+30,label,20,'#080b05')}</g>`;
+ }
+ else if(kind==='rank'){b=rankBoard(x,y,w,h)+text(x+24,y+27,label,14)}
+ else if(kind==='pass'){h=32;b=rect(x,y,w,h,0,'#aaa')+text(x+w/2,y+16,label,14,'#eee','middle')}
+ else {const purple=['kernel','task','function','loop'].includes(kind),color=purple?'#9B91FF':'#999';b=rect(x,y,w,h,kind==='task'?8:2,color,'#202020',kind==='loop'?'stroke-dasharray="5 4"':'')+text(x+12,y+17,kind.toUpperCase(),10,color)+text(x+12,y+43,label);if(['kernel','function','rank','storage'].includes(kind))b+=`<path d="M${x},${y+28}h${w}" stroke="${color}"/>`;if(kind==='loop')b+=`<path d="M${x},${y}v${h}" stroke="${color}" stroke-width="3"/>`}
+ return `<g data-object="${esc(id)}" data-kind="${kind}">${b}</g>`;
+}
+function edge(x1,y1,x2,y2,kind='data',label=''){let binding=kind==='binding',mapping=kind==='mapping',dash=kind==='call'?'8 5':mapping?'2 5':'';return `<path data-relation="${kind}" d="M${x1} ${y1} H${(x1+x2)/2} V${y2} H${x2}" fill="none" stroke="#aaa" ${dash?`stroke-dasharray="${dash}"`:''} marker-end="url(#${binding?'bind':mapping?'map':'arrow'})"/>`+(label?text((x1+x2)/2,(y1+y2)/2-12,label,12,'#aaa','middle'):'')}
+function wrap(body,w=900,h=340){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="对象与关系示例"><style>text{font-family:Inter,'PingFang SC',system-ui,sans-serif}path,rect,circle{stroke-width:1.5}</style><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" stroke="#aaa" fill="none"/></marker><marker id="bind" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3" stroke="#aaa" fill="#202020"/></marker><marker id="map" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8"><path d="M1 5L5 1L9 5L5 9Z" stroke="#aaa" fill="#202020"/></marker></defs>${body}</svg>`}
+function render(id,o={}){let b='',ex=!!o.expanded;const v=(id,label,role,shape,values)=>({id,label,role,shape,values});
+ if(id==='pattern-compute'){
+ // Expanded dimensions: X 2x4, W 4x3, Y 2x3. Fixed cell pitch throughout.
+ b=edge(ex?136:200,190,350,190)+edge(480,ex?126:94,480,166,'data','参数输入')+edge(610,190,680,190)+data(v('X','X','activation',[2,4]),40,166,{expanded:ex})+data(v('W','W','weight',[4,3]),ex?444:400,30,{expanded:ex})+node('op','matmul','MatMul',350,166)+data(v('Y','Y','activation',[2,3]),680,166,{expanded:ex})+text(40,290,'X [2,4] × W [4,3] → Y [2,3]；示例尺寸，格子不编码数值。',14);
+ }else if(id==='pattern-distribution'){
+ const mode=o.mode||'shard',lab={shard:'分片',replica:'复制',partial:'部分结果'}[mode];
+ b=text(40,26,mode==='shard'?'按列切分 W：局部 [4,2]，全局 [4,4]':mode==='replica'?'每个 Rank 保存完整 W [4,4] 的副本':'沿 K 维切分 MatMul：Y = Y₀ + Y₁，各部分结果均为 [2,4]',16);
+ for(let i=0;i<2;i++){let x=40+i*440;b+=rankBoard(x,55,390,235)+text(x+24,82,'Rank '+i,14)+data(v(mode==='replica'?'W':mode==='partial'?'Y'+i:'W'+i,mode==='replica'?'W · 副本 '+i:mode==='partial'?'Y'+i+' · 待求和':'W'+i+' · 列 '+(i===0?'[0,2)':'[2,4)'),mode==='partial'?'activation':'weight',mode==='shard'?[4,2]:mode==='partial'?[2,4]:[4,4]),x+45,110,{expanded:ex,parallel:'TP',placement:lab})}b+=text(40,320,mode==='partial'?'部分结果不是输出的互斥分片；求和归约后得到完整输出。':'角色色位于数据内部；TP 标记位于对象外侧。Rank 表示进程身份。',13);
+ }else if(id==='pattern-storage'){
+ b=data(v('V','V','activation',[4,4]),40,70,{expanded:ex})+data({...v('view','V 的视图','activation',[2,4]),kind:'view'},40,225,{expanded:ex})+node('memref','M0','M0 · offset 0 B',345,70)+node('memref','M1','M1 · offset 16 B',345,225)+node('storage','B0','B0 · 32 B',660,135)+edge(ex?136:200,102,345,102,'binding')+edge(ex?136:200,257,345,257,'binding')+edge(525,102,660,167,'binding')+edge(525,257,660,183,'binding')+text(660,240,'FP16 · 连续行布局',13)+text(660,265,'视图引用 [16,32) B',13)+text(40,335,'同一底层分配 B0；视图改变索引范围，不创建新的数据副本。示例偏移以字节计。',13);
+ return wrap(b,900,375);
+ }else if(id==='system-value') b=data(v(o.vector?'vector-0':'value-0',o.vector?'v':'X',o.role||'activation',o.vector?[6]:[2,4],o.vector?[1,2,3,4,5,6]:undefined),80,65,{...o,expanded:ex});
+ else if(id.startsWith('relation-')) b=edge(60,100,330,100,id.slice(9))+text(195,155,{data:'生产者 → 消费者',call:'调用方 → 被调用函数',binding:'值 / 视图 — 存储引用',mapping:'跨阶段对应（需要证据）'}[id.slice(9)],13,'#aaa','middle');
+ else b=node(id.replace('system-',''),id,'示例 '+id.replace('system-',''),85,75);
+ return wrap(b,id.startsWith('pattern-')?900:420,id.startsWith('pattern-')?350:280);
+}
+const api={tokens,rankBoard,data,memory,node,edge,wrap,render};if(typeof module!=='undefined')module.exports=api;root.VisualSystem=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+</script><script>const SOURCE_TEXT="import torch\nimport torch_npu\nfrom torch_npu.testing.testcase import TestCase, run_tests\nimport custom_ops_lib\ntorch.npu.config.allow_internal_format = False\nimport numpy as np\nimport sys  \n\ncase_data = {\n    'case1': {\n        'input':np.random.uniform(-1000, 1000, [2, 6, 10]).astype(np.float32),\n        'scale':np.random.uniform(-10, 10, [6,10]).astype(np.float32),\n        'bias':np.random.uniform(-10, 10, [6,10]).astype(np.float32),\n        'axis': 1,\n        'axes_num': -1,\n        'scale_from_blob': True\n    }\n}\n\ndef verify_result(real_result, golden):\n    # 根据数据类型设置误差阈值（与原逻辑一致）\n    if golden.dtype == torch.float32:\n        rtol = 1e-4  # fp32相对误差阈值\n        atol = 1e-4  # fp32绝对误差阈值\n    else:\n        rtol = 1e-3  # fp16相对误差阈值\n        atol = 1e-3  # fp16绝对误差阈值\n\n    minimum = 10e-10\n    golden = torch.where(golden == 0, minimum, golden)\n    real_result = torch.where(real_result == 0, minimum, real_result)\n\n    abs_diff = torch.abs(real_result - golden)\n    rel_diff = abs_diff / torch.max(torch.abs(real_result), torch.abs(golden))\n    is_close = (abs_diff <= atol) | (rel_diff <= rtol)\n    # 补充NaN判断（与equal_nan=True保持一致）\n    both_nan = torch.isnan(real_result) & torch.isnan(golden)\n    is_close = is_close | both_nan\n    err_num = torch.sum(~is_close).item()  # 取反统计不满足的数量\n    #print(err_num)\n    #print(real_result[~is_close])\n    #print(golden[~is_close])\n\n    # 与原逻辑相同的误差数量判断\n    if real_result.numel() * rtol < err_num:\n        print(f\"[ERROR] result error\")\n        return False\n    print(\"test pass\")\n    return True\n\ndef custom_scale(\n    tensor_input: torch.Tensor,\n    tensor_scale: torch.Tensor,\n    tensor_bias: torch.Tensor = None,\n    axis: int = 1,\n    axes_num: int = 1,\n    scale_from_blob: bool = True\n) -> torch.Tensor:\n    \"\"\"\n    自定义Scale算子，严格遵循指定的维度规则，支持scale/bias广播、多数据类型（float32/float16/bfloat16）\n    \n    Args:\n        tensor_input: 输入张量（任意维度，最高6维）\n        tensor_scale: 缩放张量，shape需符合axis/axes_num/scale_from_blob规则\n        tensor_bias: 偏移张量（可选），shape需与scale一致\n        axis: 起始维度索引（会自动转换为正数）\n        axes_num: scaleFromBlob=True时，表示从axis取的维度数；scaleFromBlob=False时无意义（用scale自身rank）\n        scale_from_blob: True=用axes_num推导scale shape；False=用scale自身rank推导\n    \n    Returns:\n        torch.Tensor: 缩放（+偏移）后的输出张量，shape与输入一致\n    \n    Raises:\n        ValueError: 输入维度/shape不合法、广播不兼容、数据类型错误等\n        TypeError: 输入不是torch.Tensor\n    \"\"\"\n    # ===================== 1. 输入类型校验 =====================\n    if not isinstance(tensor_input, torch.Tensor):\n        raise TypeError(f\"tensor_input必须是torch.Tensor，当前类型：{type(tensor_input)}\")\n    if not isinstance(tensor_scale, torch.Tensor):\n        raise TypeError(f\"tensor_scale必须是torch.Tensor，当前类型：{type(tensor_scale)}\")\n    if tensor_bias is not None and not isinstance(tensor_bias, torch.Tensor):\n        raise TypeError(f\"tensor_bias必须是torch.Tensor或None，当前类型：{type(tensor_bias)}\")\n    \n    # 支持的数值类型（排除整数/布尔类型）\n    supported_dtypes = {torch.float32, torch.float16, torch.bfloat16}\n    if tensor_input.dtype not in supported_dtypes:\n        raise ValueError(f\"tensor_input仅支持{supported_dtypes}类型，当前类型：{tensor_input.dtype}\")\n    if tensor_scale.dtype != tensor_input.dtype:\n        warnings.warn(f\"tensor_scale类型({tensor_scale.dtype})与输入({tensor_input.dtype})不一致，自动转换\")\n        tensor_scale = tensor_scale.to(tensor_input.dtype)\n    if tensor_bias is not None and tensor_bias.dtype != tensor_input.dtype:\n        warnings.warn(f\"tensor_bias类型({tensor_bias.dtype})与输入({tensor_input.dtype})不一致，自动转换\")\n        tensor_bias = tensor_bias.to(tensor_input.dtype)\n\n    # ===================== 2. 维度预处理 =====================\n    input_shape = tensor_input.shape\n    input_rank = len(input_shape)\n    if input_rank > 6:\n        raise ValueError(f\"输入张量最高支持6维，当前维度：{input_rank}\")\n    \n    # 将axis转换为正数（处理负索引，如axis=-1 → input_rank-1）\n    axis = axis if axis >= 0 else input_rank + axis\n    if axis < 0 or axis >= input_rank:\n        raise ValueError(f\"axis={axis}超出输入张量维度范围[0, {input_rank-1}]\")\n    \n    # ===================== 3. 推导scale的合法shape =====================\n    if scale_from_blob:\n        # scaleFromBlob=True: scale_shape = input_shape[axis:axis+axes_num]\n        # 处理axes_num=-1（取到最后一维）\n        end_axis = input_rank if axes_num == -1 else axis + axes_num\n        if end_axis > input_rank:\n            raise ValueError(f\"axis={axis} + axes_num={axes_num} = {end_axis}，超出输入张量维度{input_rank}\")\n        expected_scale_shape = input_shape[axis:end_axis]\n    else:\n        # scaleFromBlob=False: scale_shape = input_shape[axis:axis+rank(scale)]\n        scale_rank = len(tensor_scale.shape)\n        end_axis = axis + scale_rank\n        if end_axis > input_rank:\n            raise ValueError(f\"axis={axis} + scale维度数({scale_rank}) = {end_axis}，超出输入张量维度{input_rank}\")\n        expected_scale_shape = input_shape[axis:end_axis]\n    \n    # ===================== 4. 校验scale/bias的shape合法性 =====================\n    if tensor_scale.shape != expected_scale_shape:\n        raise ValueError(\n            f\"tensor_scale shape不合法！\\n\"\n            f\"预期shape（按规则推导）：{expected_scale_shape}\\n\"\n            f\"实际shape：{tensor_scale.shape}\\n\"\n            f\"输入shape：{input_shape}, axis={axis}, axes_num={axes_num}, scale_from_blob={scale_from_blob}\"\n        )\n    \n    if tensor_bias is not None and tensor_bias.shape != expected_scale_shape:\n        raise ValueError(\n            f\"tensor_bias shape必须与scale一致！\\n\"\n            f\"scale shape：{tensor_scale.shape}\\n\"\n            f\"bias shape：{tensor_bias.shape}\"\n        )\n    \n    # ===================== 5. 构建广播维度（核心：将scale/bias扩展为输入的维度） =====================\n    # 步骤1：为scale/bias补充前导维度，使其与输入的维度对齐（便于广播）\n    # 示例：输入shape=[2,4,8,16], axis=2, scale_shape=[8,16] → 补充前2个维度为1 → [1,1,8,16]\n    prepend_dims = [1] * axis  # 前导补1的维度数\n    scale_broadcast_shape = prepend_dims + list(tensor_scale.shape)\n    # 补充后导维度（如果有）：确保scale的广播shape长度与输入一致\n    append_dims = [1] * (input_rank - len(scale_broadcast_shape))\n    scale_broadcast_shape += append_dims\n    tensor_scale_broadcast = tensor_scale.reshape(scale_broadcast_shape)\n    \n    # bias做同样的广播处理\n    tensor_bias_broadcast = None\n    if tensor_bias is not None:\n        tensor_bias_broadcast = tensor_bias.reshape(scale_broadcast_shape)\n    \n    # ===================== 6. 核心计算：scale + 可选bias =====================\n    output = tensor_input * tensor_scale_broadcast\n    if tensor_bias_broadcast is not None:\n        output += tensor_bias_broadcast\n    \n    # ===================== 7. 保证输出属性与输入一致 =====================\n    output = output.to(device=tensor_input.device, dtype=tensor_input.dtype)\n    return output\n\nclass TestCustomOP(TestCase):\n    def test_custom_op_case(self,num):\n        print(num)\n        caseName='case'+str(num) \n        if int(num) == 3:\n            input_x = case_data[caseName][\"input\"]\n            scale = case_data[caseName][\"scale\"]\n            bias = case_data[caseName][\"bias\"]\n        else:\n            input_x = torch.from_numpy(case_data[caseName][\"input\"])\n            scale = torch.from_numpy(case_data[caseName][\"scale\"])\n            bias_value = case_data[caseName][\"bias\"]\n            bias = bias_value if bias_value is None else torch.from_numpy(bias_value)\n\n        axis = case_data[caseName]['axis']\n        axes_num = case_data[caseName]['axes_num']\n        scale_from_blob = case_data[caseName]['scale_from_blob']\n\n        output = custom_scale(input_x, scale, bias, axis=axis, axes_num=axes_num, scale_from_blob=scale_from_blob)\n        # print(output)\n\n        # 修改输入\n        output_npu = custom_ops_lib.custom_op(input_x.npu(), scale.npu(), bias.npu(), axis, axes_num, scale_from_blob)\n        # print(output_npu.cpu())\n        if output_npu is None:\n            print(f\"{caseName} execution timed out!\")\n        else:\n            if verify_result(output_npu.cpu(), output):\n                print(f\"{caseName} verify result pass!\")\n            else:\n                print(f\"{caseName} verify result failed!\")\n\nif __name__ == \"__main__\":\n    TestCustomOP().test_custom_op_case(sys.argv[1])\n    \n";</script><script>
+const M=ScaleModel,$=id=>document.getElementById(id);let model=M.create(),selected=0;const view={x:0,y:0,s:1};const svg=$('workspace');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const txt=(x,y,s,size=13,color='#ddd')=>`<text x="${x}" y="${y}" fill="${color}" font-family="monospace" font-size="${size}">${esc(s)}</text>`;
+const num=n=>Number(n.toFixed(3)).toString();
+function cell(x,y,label,i,kind,related,current){label=label==='—'?label:Number(Number(label).toFixed(1)).toString();return `<g class="cell" role="button" tabindex="0" data-i="${i}" data-kind="${kind}" data-tip="选择 ${kind}[${i}]，查看精确值与共享参数关系" aria-label="${kind} ${i}: ${label}"><rect x="${x}" y="${y}" width="37" height="32" rx="2" fill="${current||related?'#B1EF6B':kind==='s'||kind==='b'?'#39313f':'#2d3927'}" stroke="none"/>${txt(x+4,y+20,label,10,current||related?'#111':kind==='s'||kind==='b'?'#d9c4f4':'#c7e7a5')}</g>`;}
+function render(){const e=M.element(model,selected),all=Array.from({length:120},(_,i)=>M.element(model,i));let s='';
+for(const [kind,x] of [['x',0],['y',850]]){s+=txt(x,20,kind==='x'?'X · [2,6,10]':'Y · [2,6,10]',21);for(let n=0;n<2;n++){const top=80+n*265;s+=txt(x,top-18,'batch '+n,12,'#aaa');for(let r=0;r<6;r++){s+=txt(x-21,top+r*36+20,r,10,'#aaa');for(let c=0;c<10;c++){const i=n*60+r*10+c,v=all[i];s+=cell(x+c*40,top+r*36,num(kind==='x'?v.x:v.y),i,kind,v.k===e.k,i===selected);}}for(let c=0;c<10;c++)s+=txt(x+c*40+12,top+232,c,10,'#aaa');}}
+const cols=model.config.shape.length===2?10:model.config.shape[0],rows=model.config.shape.length===2?6:1;
+for(const [kind,top] of [['s',65],['b',65+rows*36+62]]){s+=txt(430,top-20,(kind==='s'?'scale':'bias')+' · ['+model.config.shape+']',17);for(let k=0;k<model.s.length;k++)s+=cell(430+k%cols*40,top+Math.floor(k/cols)*36,kind==='b'&&!model.bias?'—':num(model[kind][k]),k,kind,k===e.k,k===e.k);}
+const opY=650;
+s+=VisualSystem.node('multiply','multiply','',470,opY)+(model.bias?VisualSystem.node('add','add','',670,opY):txt(670,opY-12,'无 bias',12));
+const parameterRight=430+(cols-1)*40+37,scaleBottom=65+(rows-1)*36+32,biasBottom=127+rows*36+(rows-1)*36+32;
+const wire=(d)=>`<path class="computation-edge" d="${d}" fill="none" stroke="#aaa" stroke-width="1.4" marker-end="url(#flow-arrow)"/>`;
+s+=`<defs><marker id="flow-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="#aaa" stroke-width="1.4"/></marker></defs>`;
+s+=wire(`M198.5 557 V674 H470`)+wire(`M${parameterRight} ${65+Math.floor(e.k/cols)*36+16} H838 V610 H494 V650`);
+s+=model.bias?wire(`M694 ${biasBottom} V650`)+wire('M518 674 H670')+wire('M718 674 H1048.5 V557'):wire('M518 674 H1048.5 V557');
+
+s+=txt(430,opY+90,`reshape → [${model.broadcast}]`,16)+txt(430,opY+125,`y[${e.coord}] = ${num(e.x)} × ${num(e.scale)}` ,16)+txt(430,opY+151,`${model.bias?'+ '+num(e.bias):'(无 bias)'} = ${num(e.y)}`,22)+txt(430,opY+185,`共享参数 → ${M.affected(model,e.k).length} 个输出`,13,'#bbb');
+$('scene').innerHTML=s;$('param').textContent='参数 ['+e.parameterCoord+']';$('scale').value=e.scale;$('bias').value=model.b[e.k];$('bias').disabled=!model.bias;
+$('biasToggle').setAttribute('aria-pressed',model.bias);$('biasToggle').textContent=model.bias?'启用 bias':'无 bias';
+$('detail').innerHTML=`<h3>${e.id}</h3><p>axis=${model.config.axis} → ${model.axis}<br>axes_num=${model.config.axes_num} · scale_from_blob=${model.config.blob}<br>reshape [${model.broadcast}]</p><p>X[${e.coord}] ${e.x}<br>S[${e.parameterCoord}] ${e.scale}<br>B ${e.bias===null?'None':e.bias}<br>Y ${e.y} · Δy ${e.delta}</p><p>逻辑偏移 / B<br>X / Y ${e.offsetBytes.x}<br>scale ${e.offsetBytes.scale} · bias ${e.offsetBytes.bias??'—'}</p>`;
+$('live').textContent=e.id+' = '+e.y;handoff();transform();}
+function handoff(){const t=JSON.stringify(M.context(model,selected,$('question').value),null,2);$('handoff').textContent=t;return t;}
+function transform(){$('scene').setAttribute('transform',`translate(${view.x} ${view.y}) scale(${view.s})`);$('zoom').value=Math.round(view.s*100)+'%';}
+function fit(){const w=svg.clientWidth,h=svg.clientHeight;view.s=Math.max(.12,Math.min((w-100)/1280,(h-(w<1100?330:210))/900));view.x=(w-1250*view.s)/2;view.y=w<1100?175:120;transform();}
+$('configs').innerHTML=M.configs.map((c,i)=>`<button data-tip="${esc(c.label)}：axis=${c.axis}，axes_num=${c.axes_num}，scale_from_blob=${c.blob}；切换会重置参数" data-config="${i}" aria-pressed="${i===0}">${c.label}</button>`).join('');
+$('configs').onclick=ev=>{const b=ev.target.closest('[data-config]');if(!b)return;model=M.create(+b.dataset.config);document.querySelectorAll('[data-config]').forEach(x=>x.setAttribute('aria-pressed',x===b));render();};
+$('scene').onclick=ev=>{const c=ev.target.closest('[data-kind]');if(!c)return;selected=c.dataset.kind==='x'||c.dataset.kind==='y'?+c.dataset.i:M.affected(model,+c.dataset.i)[0].i;render();};
+$('scene').onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();ev.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}};
+$('apply').onclick=()=>{const s=Number($('scale').value),b=Number($('bias').value);if(!Number.isFinite(s)||!Number.isFinite(b)||Math.abs(s)>10||Math.abs(b)>10){$('status').textContent='参数范围为 [-10,10]';return;}const k=M.element(model,selected).k;model.s[k]=Math.fround(s);model.b[k]=Math.fround(b);render();};
+$('biasToggle').onclick=()=>{model.bias=!model.bias;render();};$('reset').onclick=()=>{model.s=model.originalS.slice();model.b=model.originalB.slice();render();};$('boundary').onclick=()=>{selected=119;render();};
+$('inspect').onclick=()=>{$('inspector').hidden=!$('inspector').hidden;};$('source').onclick=()=>{$('sources').hidden=!$('sources').hidden;};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).hidden=true);
+$('links').innerHTML=`<a href="${M.source}#L9-L17" target="_blank" rel="noopener">case1 L9–17 ↗</a> · <a href="${M.source}#L103-L160" target="_blank" rel="noopener">广播与计算 L103–160 ↗</a>`;
+$('sourceCode').textContent=SOURCE_TEXT.split('\n').map((x,i)=>`${i+1}  ${x}`).filter((x,i)=>(i>=102&&i<=120)||(i>=138&&i<=160)).join('\n');$('question').oninput=handoff;
+$('export').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([handoff()],{type:'application/json'}));a.download='scale-evidence.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);};$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(handoff());$('status').textContent='已复制';}catch{$('status').textContent='剪贴板不可用，请从证据预览选择复制。';document.querySelector('details').open=true;}};
+function zoom(f,cx=svg.clientWidth/2,cy=svg.clientHeight/2){const n=Math.max(.1,Math.min(4,view.s*f)),r=n/view.s;view.x=cx-(cx-view.x)*r;view.y=cy-(cy-view.y)*r;view.s=n;transform();}
+$('plus').onclick=()=>zoom(1.2);$('minus').onclick=()=>zoom(1/1.2);$('fit').onclick=fit;svg.addEventListener('wheel',ev=>{ev.preventDefault();zoom(Math.exp(-ev.deltaY*.001),ev.clientX,ev.clientY);},{passive:false});let drag;
+svg.onpointerdown=ev=>{if(ev.target.closest('.cell'))return;drag={x:ev.clientX,y:ev.clientY,vx:view.x,vy:view.y};svg.setPointerCapture(ev.pointerId);$('canvas').classList.add('dragging');};svg.onpointermove=ev=>{if(!drag)return;view.x=drag.vx+ev.clientX-drag.x;view.y=drag.vy+ev.clientY-drag.y;transform();};svg.onpointerup=svg.onpointercancel=()=>{drag=null;$('canvas').classList.remove('dragging');};
+document.querySelectorAll('aside .head').forEach(head=>{let d;head.onpointerdown=ev=>{if(ev.target.closest('button'))return;const p=head.parentElement,r=p.getBoundingClientRect();d={x:ev.clientX-r.left,y:ev.clientY-r.top};head.setPointerCapture(ev.pointerId);};head.onpointermove=ev=>{if(!d)return;let p=head.parentElement;p.style.left=Math.max(0,Math.min(innerWidth-100,ev.clientX-d.x))+'px';p.style.top=Math.max(0,Math.min(innerHeight-80,ev.clientY-d.y))+'px';p.style.right='auto';};head.onpointerup=head.onpointercancel=()=>d=null;});
+document.onkeydown=ev=>{if(ev.key==='Escape')document.querySelectorAll('aside').forEach(x=>x.hidden=true); };
+const tips={inspect:'打开或关闭当前对象的精确值、逻辑偏移与调查证据',source:'打开或关闭固定版本源码与验证范围',scale:'编辑当前共享参数的 scale，范围 −10 到 10；点击应用参数生效',bias:'编辑当前共享参数的 bias，范围 −10 到 10；点击应用参数生效',apply:'应用当前 scale 和 bias，重新计算所有关联输出',biasToggle:'切换是否执行加 bias；保留参数数值',reset:'恢复当前配置的初始 scale 和 bias',boundary:'选择末元素 Y[1,5,9]，检查边界坐标与参数',minus:'以画布中心缩小视图',plus:'以画布中心放大视图',fit:'让全部矩阵和计算关系适应当前视口',question:'填写问题，自动加入证据预览、复制内容与 JSON 导出',export:'下载当前配置、选中对象、问题与固定版本证据 JSON',copy:'复制与证据预览完全一致的当前问题和证据'};
+Object.entries(tips).forEach(([id,tip])=>$(id).dataset.tip=tip);
+document.querySelectorAll('[data-close]').forEach(e=>e.dataset.tip='关闭浮层，保留选择和画布视角');
+document.querySelector('summary').dataset.tip='展开或收起当前问题与完整结构化证据';
+document.querySelectorAll('#links a').forEach(e=>e.dataset.tip='在新标签页查看固定 commit 对应源码行');
+let tipTarget=null;
+function hideTip(){if(tipTarget)tipTarget.removeAttribute('aria-describedby');tipTarget=null;$('tooltip').hidden=true;}
+function showTip(target){if(!target||target.disabled)return;hideTip();tipTarget=target;const tip=$('tooltip');tip.textContent=target.dataset.tip;tip.hidden=false;target.setAttribute('aria-describedby','tooltip');const r=target.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(12,Math.min(innerWidth-w-12,r.left+r.width/2-w/2))+'px';tip.style.top=(r.top>h+16?r.top-h-8:Math.min(innerHeight-h-12,r.bottom+8))+'px';}
+document.addEventListener('pointerover',e=>{const t=e.target.closest('[data-tip]');if(t&&t!==tipTarget)showTip(t);});
+document.addEventListener('pointerout',e=>{if(tipTarget&&!tipTarget.contains(e.relatedTarget))hideTip();});
+document.addEventListener('focusin',e=>showTip(e.target.closest('[data-tip]')));
+document.addEventListener('focusout',hideTip);document.addEventListener('pointerdown',hideTip);document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip();});
+render();fit();
+</script><script>/* Liquid Glass Controls v1.0.0 — classic script, no build step. */
+(() => {
+"use strict";
+if (window.LiquidGlassControls) return;
+/*
+MIT License
+
+Copyright (c) 2026 Riz Roze
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+/**
+ * Liquid Glass — Real optical refraction for the web.
+ *
+ * Uses Canvas 2D to generate displacement maps fed into SVG feDisplacementMap
+ * filters. Three separate passes (one per RGB channel) with slightly different
+ * scale values create chromatic aberration at the edges.
+ *
+ * Chromium only. Safari/Firefox fall back to regular backdrop-filter: blur().
+ *
+ * @see https://github.com/rizzytoday/liquid-glass
+ * @license MIT
+ */
+function resolveConfig(el, opts) {
+  const rect = el.getBoundingClientRect();
+  const ab = opts.aberration ?? [0, 10, 20];
+  return {
+    width: opts.width ?? Math.round(rect.width),
+    height: opts.height ?? Math.round(rect.height),
+    radius: opts.borderRadius ?? 50,
+    scale: opts.scale ?? -180,
+    border: opts.border ?? 0.07,
+    lightness: opts.lightness ?? 50,
+    alpha: opts.alpha ?? 0.93,
+    blur: opts.blur ?? 11,
+    r: ab[0],
+    g: ab[1],
+    b: ab[2],
+    frost: opts.frost ?? 0,
+    saturation: opts.saturation ?? 1,
+    displace: opts.displaceBlur ?? 0
+  };
+}
+const isChromium = typeof navigator !== "undefined" && /Chrome\//.test(navigator.userAgent);
+const _mapCache = /* @__PURE__ */ new Map();
+function buildDisplacementMap(c) {
+  const key = `${c.width}:${c.height}:${c.radius}:${c.scale}:${c.border}:${c.blur}:${c.lightness}:${c.alpha}`;
+  const cached = _mapCache.get(key);
+  if (cached) return cached;
+  const maxDisplace = Math.max(Math.abs(c.scale) * 0.5, 20);
+  const padX = Math.ceil(maxDisplace);
+  const padY = Math.ceil(maxDisplace);
+  const totalW = c.width + padX * 2;
+  const totalH = c.height + padY * 2;
+  const canvas = document.createElement("canvas");
+  canvas.width = totalW;
+  canvas.height = totalH;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "rgb(128, 128, 128)";
+  ctx.fillRect(0, 0, totalW, totalH);
+  const ox = padX;
+  const oy = padY;
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(ox, oy, c.width, c.height, c.radius);
+  ctx.clip();
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(ox, oy, c.width, c.height);
+  const redGrad = ctx.createLinearGradient(ox + c.width, oy, ox, oy);
+  redGrad.addColorStop(0, "#000000");
+  redGrad.addColorStop(1, "#ff0000");
+  ctx.fillStyle = redGrad;
+  ctx.fillRect(ox, oy, c.width, c.height);
+  ctx.globalCompositeOperation = "difference";
+  const blueGrad = ctx.createLinearGradient(ox, oy, ox, oy + c.height);
+  blueGrad.addColorStop(0, "#000000");
+  blueGrad.addColorStop(1, "#0000ff");
+  ctx.fillStyle = blueGrad;
+  ctx.fillRect(ox, oy, c.width, c.height);
+  ctx.globalCompositeOperation = "source-over";
+  const borderPx = Math.min(c.width, c.height) * (c.border * 0.5);
+  ctx.filter = `blur(${c.blur}px)`;
+  ctx.fillStyle = `hsla(0, 0%, ${c.lightness}%, ${c.alpha})`;
+  ctx.beginPath();
+  ctx.roundRect(
+    ox + borderPx,
+    oy + borderPx,
+    c.width - borderPx * 2,
+    c.height - borderPx * 2,
+    c.radius
+  );
+  ctx.fill();
+  ctx.restore();
+  const uri = canvas.toDataURL();
+  _mapCache.set(key, uri);
+  return uri;
+}
+let _instanceCount = 0;
+function createFilterSVG(id) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg.style.cssText = "position:absolute;width:0;height:0;pointer-events:none;";
+  svg.innerHTML = `
+    <defs>
+      <filter id="${id}" color-interpolation-filters="sRGB" x="-38%" y="-188%" width="176%" height="476%">
+        <feImage result="map" preserveAspectRatio="none" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispRed" data-channel="red" />
+        <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispGreen" data-channel="green" />
+        <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispBlue" data-channel="blue" />
+        <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
+        <feBlend in="red" in2="green" mode="screen" result="rg" />
+        <feBlend in="rg" in2="blue" mode="screen" result="output" />
+        <feGaussianBlur in="output" stdDeviation="0" />
+      </filter>
+    </defs>
+  `;
+  const filter = svg.querySelector("filter");
+  const feImage = svg.querySelector("feImage");
+  const red = svg.querySelector('[data-channel="red"]');
+  const green = svg.querySelector('[data-channel="green"]');
+  const blue = svg.querySelector('[data-channel="blue"]');
+  const blurEl = svg.querySelector("feGaussianBlur");
+  return { svg, feImage, red, green, blue, blur: blurEl, filter };
+}
+function applyConfig(c, refs) {
+  const uri = buildDisplacementMap(c);
+  const maxD = Math.max(Math.abs(c.scale) * 0.5, 20);
+  const pctX = Math.ceil(maxD / c.width * 100);
+  const pctY = Math.ceil(maxD / c.height * 100);
+  refs.filter.setAttribute("x", `-${pctX}%`);
+  refs.filter.setAttribute("y", `-${pctY}%`);
+  refs.filter.setAttribute("width", `${100 + pctX * 2}%`);
+  refs.filter.setAttribute("height", `${100 + pctY * 2}%`);
+  refs.feImage.setAttributeNS("http://www.w3.org/1999/xlink", "href", uri);
+  refs.feImage.setAttribute("href", uri);
+  refs.red.setAttribute("scale", String(c.scale + c.r));
+  refs.green.setAttribute("scale", String(c.scale + c.g));
+  refs.blue.setAttribute("scale", String(c.scale + c.b));
+  refs.blur.setAttribute("stdDeviation", String(c.displace));
+}
+function createLiquidGlass(element, options = {}) {
+  const fallback = options.fallbackFilter ?? "blur(12px)";
+  if (!isChromium) {
+    const prev = element.style.backdropFilter;
+    const prevWebkit = element.style.getPropertyValue("-webkit-backdrop-filter");
+    element.style.backdropFilter = fallback;
+    element.style.setProperty("-webkit-backdrop-filter", fallback);
+    const dummySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    return {
+      isActive: false,
+      filterElement: dummySvg,
+      update() {
+      },
+      destroy() {
+        element.style.backdropFilter = prev;
+        element.style.setProperty("-webkit-backdrop-filter", prevWebkit);
+      }
+    };
+  }
+  const id = options.filterId ?? `liquid-glass-${++_instanceCount}`;
+  const refs = createFilterSVG(id);
+  document.body.appendChild(refs.svg);
+  let currentOpts = { ...options };
+  let config = resolveConfig(element, currentOpts);
+  applyConfig(config, refs);
+  const applyStyles = (c) => {
+    element.style.backdropFilter = `url(#${id}) saturate(${c.saturation})`;
+    element.style.setProperty(
+      "-webkit-backdrop-filter",
+      `url(#${id}) saturate(${c.saturation})`
+    );
+    if (c.frost > 0) {
+      element.style.background = `hsl(0 0% 0% / ${c.frost})`;
+    }
+  };
+  applyStyles(config);
+  let resizeRaf = 0;
+  const ro = new ResizeObserver(() => {
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      if (currentOpts.width == null || currentOpts.height == null) {
+        config = resolveConfig(element, currentOpts);
+        if (!config.width || !config.height) return;
+        applyConfig(config, refs);
+        applyStyles(config);
+      }
+    });
+  });
+  ro.observe(element);
+  return {
+    isActive: true,
+    filterElement: refs.svg,
+    update(newOpts) {
+      currentOpts = { ...currentOpts, ...newOpts };
+      config = resolveConfig(element, currentOpts);
+      applyConfig(config, refs);
+      applyStyles(config);
+    },
+    destroy() {
+      ro.disconnect();
+      cancelAnimationFrame(resizeRaf);
+      refs.svg.remove();
+      element.style.backdropFilter = "";
+      element.style.setProperty("-webkit-backdrop-filter", "");
+      element.style.background = "";
+    }
+  };
+}
+
+
+const presets=Object.freeze({
+ control:Object.freeze({scale:-110,aberration:[0,4,8],alpha:1,blur:8,displaceBlur:4,saturation:1,frost:0,fallbackFilter:'blur(12px)'}),
+ panel:Object.freeze({scale:-12,aberration:[0,0,0],alpha:1,blur:8,displaceBlur:18,saturation:1,frost:0,fallbackFilter:'blur(18px)'}),
+ icon:Object.freeze({scale:-36,aberration:[0,1,2],alpha:1,blur:6,displaceBlur:4,saturation:1,frost:0,fallbackFilter:'blur(12px)'})
+});
+const selector='[data-liquid-glass]';
+const instances=new Map();
+const properties=['backdrop-filter','-webkit-backdrop-filter','background'];
+let observer=null,frame=0,started=false;
+function restore(element,record){
+ record.glass.destroy();
+ for(const [name,value,priority] of record.styles){
+  if(value)element.style.setProperty(name,value,priority);else element.style.removeProperty(name);
+ }
+}
+function remove(element){const record=instances.get(element);if(record){instances.delete(element);restore(element,record);}}
+function refresh(){
+ if(!started)return;
+ const candidates=new Set(document.querySelectorAll(selector));
+ for(const element of instances.keys())if(!candidates.has(element))remove(element);
+ for(const element of candidates){
+  const preset=element.getAttribute('data-liquid-glass');
+  const rect=element.getBoundingClientRect(),css=getComputedStyle(element);
+  const visible=rect.width>0&&rect.height>0&&css.visibility!=='hidden';
+  const radius=Math.min(parseFloat(css.borderTopLeftRadius)||0,rect.width/2,rect.height/2);
+  const record=instances.get(element);
+  if(record&&(!visible||record.preset!==preset||record.radius!==radius))remove(element);
+  if(!visible||!presets[preset]||instances.has(element))continue;
+  const styles=properties.map(name=>[name,element.style.getPropertyValue(name),element.style.getPropertyPriority(name)]);
+  const glass=createLiquidGlass(element,{...presets[preset],borderRadius:radius});
+  instances.set(element,{glass,styles,preset,radius});
+ }
+}
+function schedule(){if(!started||frame)return;frame=requestAnimationFrame(()=>{frame=0;refresh();});}
+function start(){
+ if(started)return;started=true;
+ observer=new MutationObserver(schedule);
+ observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-liquid-glass','hidden','class','style']});
+ window.addEventListener('resize',schedule);
+ refresh();
+}
+function disconnect(){
+ started=false;if(observer)observer.disconnect();observer=null;
+ cancelAnimationFrame(frame);frame=0;window.removeEventListener('resize',schedule);
+ for(const element of instances.keys())remove(element);
+}
+window.LiquidGlassControls=Object.freeze({
+ version:'1.0.0',
+ init(element,preset='control'){
+  if(!presets[preset])throw new Error('Unknown liquid glass preset: '+preset);
+  element.setAttribute('data-liquid-glass',preset);start();refresh();return element;
+ },
+ destroy(element){element.removeAttribute('data-liquid-glass');remove(element);},
+ refresh,start,disconnect
+});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+window.addEventListener('pagehide',disconnect);
+window.addEventListener('pageshow',start);
+})();
+</script><dialog id="usageWindow" aria-labelledby="usageTitle"><div class="panel-head"><h2 id="usageTitle">教程 · Scale · 参数广播</h2><button id="usageClose" aria-label="关闭教程">×</button></div><div class="usage-body"><h3>1 · 价值</h3><p>核对 scale、bias 如何共享到各批次输出，观察参数变化后的结果。</p><h3>2 · 使用</h3><p>点选 X、scale、bias 或 Y；调整参数后应用，检查关联输出与数值；通过源码面板核对参考函数。</p><h4>调用当前 workflow</h4><div class="prompt-block"><pre>读取 AI_Infra 的 AGENTS.md 和 methods/ai-infra-investigation/SKILL.md。
+基于固定版本 Scale 测试文件与 Python 参考函数，构建 Scale · 参数广播 交互工具。
+先核对来源和计算口径，复用已有 Pattern、正式图元与空间界面。
+提供可定位选择、源码依据与可复制的调查上下文，分别验证模型、CPU 与交互。</pre></div><h4>带当前选择继续调查</h4><div class="prompt-block"><pre>请基于下面导出的当前对象和来源证据，核对我的问题。
+先检查计算口径及分析前提，给出所需证据和最小验证步骤。
+[粘贴当前页面导出的 JSON 或调查上下文]</pre></div><h3>3 · 扩展</h3><p>替换输入维度、axis、axes_num 或参数来源时，先适配参考计算与参数索引，再验证全部输出。</p><h3>4 · 实现分工</h3><p>独立领域模型负责计算与来源；ai-infra-investigation 组织任务；ai-infra-glyphs 提供适用的正式图元；observability-design-style 组织选择与证据；design-spatial-systems-ui 约束画布、控件和面板。按当前问题选择图形；性能比较的点与区间不表示设备事件时间线。</p><p>本页来源、CPU 或测量口径与未验证范围见源码 / 来源面板。按页面实际内容复用能力，不把源码推导或仓库测量当作本机设备复现。</p><p id="usageCopyStatus" role="status" aria-live="polite"></p></div></dialog><script data-demo-consistency>(() => {
+'use strict';
+const icons={audit:'<path d="m3 6 1.5 1.5L7 5M10 6h11M3 12l1.5 1.5L7 11M10 12h11M3 18l1.5 1.5L7 17M10 18h11"/>',selection:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',source:'<path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-14-2 16"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/>',copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/>'};
+const svg=k=>'<svg viewBox="0 0 24 24" aria-hidden="true">'+icons[k]+'</svg>';
+const byId=id=>document.getElementById(id),kind=document.body.dataset.demo;
+let group=document.querySelector('.top-actions');
+if(!group){group=document.querySelector('.actions');group.classList.add('top-actions');group.removeAttribute('data-liquid-glass');}
+group.classList.add('demo-top-actions');
+if(kind==='scale'){
+ const info=document.createElement('aside');info.id='demoInfo';info.className='demo-info';info.hidden=true;info.setAttribute('data-liquid-glass','panel');info.innerHTML='<div class="demo-panel-head"><h2>Scale · 来源与前提</h2><button aria-label="关闭来源与前提">×</button></div><p>选择 X、scale 或 bias，核对参数共享与输出关系；修改参数后查看 CPU 参考值。</p><p>依据固定版本的 Python 参考计算；设备 Kernel 访问与性能未在本轮验证。</p><button id="usageOpen">教程</button>';document.body.append(info);info.querySelector('button').onclick=()=>info.hidden=true;
+ const b=document.createElement('button');b.id='demoInfoToggle';group.append(b);b.onclick=()=>{info.hidden=!info.hidden;b.setAttribute('aria-expanded',String(!info.hidden))};
+}
+const entries=kind==='scale'?[['inspect','selection','当前选择'],['source','source','源码与范围'],['demoInfoToggle','info','来源与前提']]:[['auditToggle','audit','自动核查'],['tailDemo','audit','查看尾块差异'],['evidenceToggle','selection','当前选择'],['sourceToggle','source',kind==='rsfa'?'原始数据':'源码'],['infoToggle','info','来源与前提'],['infoButton','info','来源与前提']];
+for(const [id,icon,label]of entries){const b=byId(id);if(!b)continue;const badge=b.querySelector('.audit-count');b.innerHTML=svg(icon);if(badge)b.append(badge);b.classList.add('demo-icon');b.setAttribute('data-liquid-glass','icon');b.setAttribute('aria-label',label);b.setAttribute('data-tip',label);group.append(b);}
+// One tooltip owner, including controls produced after configuration changes.
+const selector='button,a[href],input:not([type="hidden"]),select,textarea,summary,[role="button"],[role="option"],[data-tip]';
+const normalize=root=>{if(root.nodeType!==1&&root!==document)return;const all=[...(root.matches?.('[title]')?[root]:[]),...root.querySelectorAll('[title]')];for(const e of all){if(!e.dataset.tip)e.dataset.tip=e.getAttribute('title');e.removeAttribute('title');}};
+normalize(document);new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='attributes')normalize(m.target);else m.addedNodes.forEach(normalize)})).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title']});
+const tip=document.createElement('div');tip.id='demoHoverTip';tip.role='tooltip';tip.hidden=true;document.body.append(tip);let active;
+function hide(){if(active)active.removeAttribute('aria-describedby');active=null;tip.hidden=true;}
+function show(target,override){if(!target)return hide();const label=override||target.dataset.tip||target.getAttribute('aria-label')||target.getAttribute('placeholder')||target.closest('label')?.textContent.trim()||target.textContent.trim()||target.id;if(!label)return;hide();active=target;const modal=target.closest('dialog[open]');(modal||document.body).append(tip);tip.textContent=label;tip.hidden=false;target.setAttribute('aria-describedby',tip.id);const b=target.getBoundingClientRect(),r=tip.getBoundingClientRect();tip.style.left=Math.max(8,Math.min(innerWidth-r.width-8,b.left+b.width/2-r.width/2))+'px';tip.style.top=(b.top>r.height+12?b.top-r.height-8:Math.min(innerHeight-r.height-8,b.bottom+8))+'px';}
+document.addEventListener('pointerover',e=>{const t=e.target.closest(selector);if(t!==active)show(t)});document.addEventListener('pointerout',e=>{if(active&&!active.contains(e.relatedTarget))hide()});document.addEventListener('focusin',e=>show(e.target.closest(selector)));document.addEventListener('focusout',hide);document.addEventListener('pointermove',e=>{const target=e.target.closest('[role="button"]');const old=byId('tooltip');if(target?.closest('svg')&&old&&!old.hidden&&old.textContent)show(target,old.textContent)});document.addEventListener('pointerdown',hide);window.addEventListener('blur',hide);window.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
+const dialog=byId('usageWindow');if(dialog){const open=byId('usageOpen');if(open){open.textContent='教程';open.dataset.tip='打开教程：价值、使用、扩展与实现分工';open.onclick=()=>dialog.showModal();}byId('usageClose').onclick=()=>dialog.close();dialog.classList.add('demo-tutorial');dialog.querySelectorAll('pre').forEach((pre,i)=>{let block=pre.closest('.prompt-block');if(!block){block=document.createElement('div');block.className='prompt-block';pre.before(block);block.append(pre);}if(!pre.id)pre.id='demo-code-'+i;let b=block.querySelector('button');if(!b){b=document.createElement('button');block.prepend(b);}b.className='prompt-copy';b.innerHTML=svg('copy');b.setAttribute('aria-label','复制代码');b.dataset.tip='复制代码';b.onclick=async()=>{const status=byId('usageCopyStatus');try{await navigator.clipboard.writeText(pre.textContent);if(status)status.textContent='已复制';b.dataset.tip='已复制';}catch{if(status)status.textContent='复制失败，请选择代码后手动复制';b.dataset.tip='复制失败，请手动复制';}if(active===b)show(b);};});}
+})();
+</script></body></html>

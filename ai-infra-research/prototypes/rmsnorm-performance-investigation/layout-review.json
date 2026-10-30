@@ -1,0 +1,53 @@
+{
+  "viewport": {
+    "height": 945.4545288085938,
+    "width": 1158.1817626953125
+  },
+  "fit": [
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"buffer:UB\"]"
+    },
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"exec:SIMD\"]"
+    },
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"exec:SIMT\"]"
+    },
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"cache:ND-DMA Cache\"]"
+    }
+  ],
+  "zoomed": [
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"buffer:UB\"]"
+    },
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"exec:SIMD\"]"
+    },
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"exec:SIMT\"]"
+    },
+    {
+      "overflow": [],
+      "overlaps": [],
+      "selector": "[data-aiv-node=\"cache:ND-DMA Cache\"]"
+    }
+  ],
+  "rootCause": "Page-global header positioning leaked into shared architecture internal headers",
+  "routeCheck": "Five active AIV path endpoints checked against target rectangles; all within boundary",
+  "scope": "Four dense AIV objects, fitted and two zoom increments; no NPU claims"
+}

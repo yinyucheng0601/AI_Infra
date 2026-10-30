@@ -1,0 +1,25 @@
+{
+  "files_scanned": [
+    "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-pipeline.asc"
+  ],
+  "event_count": 0,
+  "findings": [
+    {
+      "code": "SYNC-02",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-pipeline.asc",
+      "line": 26,
+      "message": "疑似 MTE2 搬入后未同步即计算: Adds@26 (搬入@25)",
+      "detail": "候选：DataCopy 后、Vector 计算前需 EnQue/DeQue 或 SetFlag/WaitFlag<MTE2_V> | 历史 case: cann/ops-transformer PR#4648 (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -0,0 +1,44 @@\n+/**\n+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.\n+ * This program is free ..."
+    },
+    {
+      "code": "SYNC-02",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-pipeline.asc",
+      "line": 26,
+      "message": "变量 xLocal 跨流水缺同步: MTE2(MTE2_write)@L25 → V(V_read)@L26",
+      "detail": "xLocal 在 L25 被 MTE2 写入，在 L26 被 V 读取，中间无 EnQue/DeQue/SetFlag/WaitFlag/PipeBarrier 同步 | 历史 case: cann/ops-transformer PR#4648 (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -0,0 +1,44 @@\n+/**\n+ * Copyright (c) 2026 Huawei Technologies Co., Ltd.\n+ * This program is free ..."
+    }
+  ],
+  "events": []
+}

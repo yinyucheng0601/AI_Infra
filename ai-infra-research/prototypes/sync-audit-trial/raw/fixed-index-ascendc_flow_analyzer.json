@@ -1,0 +1,204 @@
+{
+  "files_scanned": [
+    "prototypes/sync-audit-trial/sources/fixed-index.cpp"
+  ],
+  "frontends": {
+    "prototypes/sync-audit-trial/sources/fixed-index.cpp": "regex"
+  },
+  "operations": [
+    {
+      "id": "o1",
+      "kind": "field_assign",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 33,
+      "func": "Kernel",
+      "pipe": "",
+      "object": "mxA8W4NzParams",
+      "field": "weightHighBitPhyAddr",
+      "buffers": [
+        {
+          "name": "ubHighBitTotalBuffer_",
+          "index_expr": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * VECTOR_REG_WIDTH",
+          "index_var": "ubComputeLoopIdx_",
+          "index_root": "ubComputeLoopIdx_",
+          "role": "producer_output",
+          "index_summary": {
+            "raw": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * VECTOR_REG_WIDTH",
+            "root": "ubComputeLoopIdx_",
+            "index_var": "ubComputeLoopIdx_",
+            "slot": "ubComputeLoopIdx_&(UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum-1)",
+            "offset": 0,
+            "modulo": "UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+            "stride": "VECTOR_REG_WIDTH",
+            "canonical": "ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+            "unknown": ""
+          }
+        }
+      ],
+      "raw": "mxA8W4NzParams.weightHighBitPhyAddr = ubHighBitTotalBuffer_[(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * VECTOR_REG_WIDTH] .GetPhyAddr();"
+    },
+    {
+      "id": "o2",
+      "kind": "field_assign",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 37,
+      "func": "Kernel",
+      "pipe": "",
+      "object": "mxA8W4NzParams",
+      "field": "biasOutUbAddr",
+      "buffers": [
+        {
+          "name": "ubBiasOutTotalBuffer_",
+          "index_expr": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize",
+          "index_var": "ubComputeLoopIdx_",
+          "index_root": "ubComputeLoopIdx_",
+          "role": "producer_output",
+          "index_summary": {
+            "raw": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize",
+            "root": "ubComputeLoopIdx_",
+            "index_var": "ubComputeLoopIdx_",
+            "slot": "ubComputeLoopIdx_&(UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum-1)",
+            "offset": 0,
+            "modulo": "UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+            "stride": "UB_BUFFER_INFO::biasReducedSingleBufferSize",
+            "canonical": "ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+            "unknown": ""
+          }
+        }
+      ],
+      "raw": "mxA8W4NzParams.biasOutUbAddr = ubBiasOutTotalBuffer_[(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize].GetPhyAddr();"
+    }
+  ],
+  "buffer_accesses": [
+    {
+      "id": "a1",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 33,
+      "func": "Kernel",
+      "access": "address",
+      "pipe": "producer_addr",
+      "statement_kind": "field_assign",
+      "buffer": {
+        "name": "ubHighBitTotalBuffer_",
+        "index_expr": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * VECTOR_REG_WIDTH",
+        "index_var": "ubComputeLoopIdx_",
+        "index_root": "ubComputeLoopIdx_",
+        "role": "producer_output",
+        "index_summary": {
+          "raw": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * VECTOR_REG_WIDTH",
+          "root": "ubComputeLoopIdx_",
+          "index_var": "ubComputeLoopIdx_",
+          "slot": "ubComputeLoopIdx_&(UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum-1)",
+          "offset": 0,
+          "modulo": "UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+          "stride": "VECTOR_REG_WIDTH",
+          "canonical": "ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+          "unknown": ""
+        }
+      },
+      "symbol_id": "Kernel:ubComputeLoopIdx_",
+      "region_key": "ubHighBitTotalBuffer_:ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+      "raw": "mxA8W4NzParams.weightHighBitPhyAddr = ubHighBitTotalBuffer_[(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * VECTOR_REG_WIDTH] .GetPhyAddr();"
+    },
+    {
+      "id": "a2",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 37,
+      "func": "Kernel",
+      "access": "address",
+      "pipe": "producer_addr",
+      "statement_kind": "field_assign",
+      "buffer": {
+        "name": "ubBiasOutTotalBuffer_",
+        "index_expr": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize",
+        "index_var": "ubComputeLoopIdx_",
+        "index_root": "ubComputeLoopIdx_",
+        "role": "producer_output",
+        "index_summary": {
+          "raw": "(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize",
+          "root": "ubComputeLoopIdx_",
+          "index_var": "ubComputeLoopIdx_",
+          "slot": "ubComputeLoopIdx_&(UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum-1)",
+          "offset": 0,
+          "modulo": "UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+          "stride": "UB_BUFFER_INFO::biasReducedSingleBufferSize",
+          "canonical": "ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+          "unknown": ""
+        }
+      },
+      "symbol_id": "Kernel:ubComputeLoopIdx_",
+      "region_key": "ubBiasOutTotalBuffer_:ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+      "raw": "mxA8W4NzParams.biasOutUbAddr = ubBiasOutTotalBuffer_[(ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)) * UB_BUFFER_INFO::biasReducedSingleBufferSize].GetPhyAddr();"
+    }
+  ],
+  "buffer_dependencies": [],
+  "sync_edges": [
+    {
+      "id": "s1",
+      "kind": "set",
+      "event_type": "MTE3_V",
+      "flag_id": "vecEventIdMte3ToV[ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)]",
+      "index_expr": "ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)",
+      "index_var": "ubComputeLoopIdx_",
+      "index_root": "ubComputeLoopIdx_",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 39,
+      "func": "Kernel",
+      "raw": "SetFlag<HardEvent::MTE3_V>( vecEventIdMte3ToV[ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)]);",
+      "index_summary": {
+        "raw": "ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)",
+        "root": "ubComputeLoopIdx_",
+        "index_var": "ubComputeLoopIdx_",
+        "slot": "ubComputeLoopIdx_&(UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum-1)",
+        "offset": 0,
+        "modulo": "UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+        "stride": "",
+        "canonical": "ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+        "unknown": ""
+      }
+    }
+  ],
+  "sync_coverages": [
+    {
+      "id": "c1",
+      "status": "covered",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 39,
+      "func": "Kernel",
+      "event_type": "MTE3_V",
+      "sync_edge_id": "s1",
+      "access_id": "a1",
+      "distance": 6,
+      "expected_root": "ubComputeLoopIdx_",
+      "actual_root": "ubComputeLoopIdx_",
+      "expected_region": "ubHighBitTotalBuffer_:ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+      "actual_region": "ubHighBitTotalBuffer_:ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+      "message": "sync covers same buffer region"
+    },
+    {
+      "id": "c2",
+      "status": "covered",
+      "file": "prototypes/sync-audit-trial/sources/fixed-index.cpp",
+      "line": 39,
+      "func": "Kernel",
+      "event_type": "MTE3_V",
+      "sync_edge_id": "s1",
+      "access_id": "a2",
+      "distance": 2,
+      "expected_root": "ubComputeLoopIdx_",
+      "actual_root": "ubComputeLoopIdx_",
+      "expected_region": "ubBiasOutTotalBuffer_:ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+      "actual_region": "ubBiasOutTotalBuffer_:ubComputeLoopIdx_:offset=0:mod=UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum",
+      "message": "sync covers same buffer region"
+    }
+  ],
+  "aliases": {
+    "prototypes/sync-audit-trial/sources/fixed-index.cpp": {
+      "<global>": {},
+      "Kernel": {
+        "ubMte2BufferIdx": "ubMte2LoopIdx_"
+      }
+    }
+  },
+  "findings": []
+}

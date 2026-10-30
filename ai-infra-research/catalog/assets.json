@@ -38,7 +38,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/ai-infra-investigation/SKILL.md",
-          "sha256": "18007c2fd31f93d152655816cf92443d892976ff8e29d07fff80f84c6711eb17",
+          "sha256": "54174e911ed3214f43e65219cc874f5c2b7edfbcc712abca535c9655760b8d6e",
           "url": null,
           "revision": null
         }
@@ -46,7 +46,8 @@
       "validation": [
         "2026-10-28：按调查任务职责拆分；格式、引用与分发包校验不代表真实任务效果验收。",
         "2026-10-29：补充空间调查工作台、定稿参考复用、Let layout explain itself 与骨架优先验收；真实渲染需逐产物验证。",
-        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。"
+        "2026-10-29：吸收两例调查工具评审：主动核查、关系完整性、稳定证据层级、控件反馈与联合操作路径验收；未宣称新任务行为已验证。",
+        "2026-10-29：加入教程四段结构、代码复制图标、跨页右上角按钮与全部控件单一 hover/focus tip 的交付自检；原型代码检查与实际视觉验收分开记录。"
       ],
       "related": [
         "operator-mapping-investigation",
@@ -206,7 +207,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/logsumexp-case5/index.html",
-          "sha256": "6d51a3cde5e9dcaa65dfccb04b66c3b4e670b92d2846902340b4daaa3f4e8093",
+          "sha256": "e505ecd47cc4f6bd9c3730ce6f7365beb2a0f5acbe2d600595b2b370a2f07851",
           "url": null,
           "revision": null
         }
@@ -255,14 +256,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/expand-broadcast-inspector/index.html",
-          "sha256": "3a766ad423f33c3e9d1601b5f7ddfa3fe5c4bf667ad8a5f16b3e820e41ad4329",
+          "sha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
           "url": null,
           "revision": null
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/compute-investigation-trial/expand.html",
-          "sha256": "20f23fc3cdc20bfac7720b84681b366dc7a63ad37d24d84c2ad262e8c12e22e1",
+          "sha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
           "url": null,
           "revision": null
         }
@@ -313,14 +314,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/unpack-layout-inspector/index.html",
-          "sha256": "7b88c007325406fa192525d097da65ae857540c8902e615e3070bf32bc11f19f",
+          "sha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
           "url": null,
           "revision": null
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/compute-investigation-trial/unpack.html",
-          "sha256": "0ac7f4a359e021087c935dcefb916d370d3a959f09846d2830c391ee05e67f0b",
+          "sha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
           "url": null,
           "revision": null
         }
@@ -2504,6 +2505,223 @@
         "competitive"
       ],
       "author": "Yuanfeng"
+    },
+    {
+      "id": "unpack-case3-inspector",
+      "title": "参数化拆分与任务核查 · Unpack case3",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "核对公开 case3 的 INT32 拆分、17 个输出和字节地址，检查配置变化后的映射与任务分配。",
+      "designValue": "让同一映射 Pattern 接受新配置，关联输入、Task、输出与 Core。",
+      "outline": [
+        "公开 case3 · [31,17,33] / axis=1 / INT32",
+        "17 个 [31,33] 输出",
+        "17391 元素 CPU 与索引覆盖检查",
+        "配置输入、源码依据与调查上下文"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/unpack-case3-inspector/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/unpack-case3-inspector/index.html",
+          "sha256": "e2f808739144d8293bb43267e5644f7604c7fe5965c85be2290cd707443953e6",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/unpack-case3/index.html",
+          "sha256": "113c6a5aa715b58069bc1f943e2ba80c66614dc869b8f2d9d9fbfb3c563fb6c6",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-29：用户要求将新 demo 收录 Pattern；内容成熟度与验证证据分别记录。",
+        "已有来源与模型 / CPU 或测量数据检查记录；本轮检查打包、依赖和链接，不代表设备复现或自动视觉验收。"
+      ],
+      "related": [
+        "unpack-layout-inspector",
+        "operator-mapping-investigation"
+      ],
+      "reviewedAt": "2026-10-29",
+      "author": "Yucheng"
+    },
+    {
+      "id": "scale-broadcast-inspector",
+      "title": "参数共享与输出关系 · Scale",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "观察 scale、bias 广播到各批次输出的关系，修改参数并核对 CPU 参考值与逻辑地址。",
+      "designValue": "将一对多参数关系、可编辑数值和来源证据组织为可交互画布。",
+      "outline": [
+        "[2,6,10] 输入与 [6,10] 参数",
+        "scale / bias 参数共享",
+        "参数修改与输出重算",
+        "固定参考函数、证据预览与导出"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/scale-broadcast-inspector/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/scale-broadcast-inspector/index.html",
+          "sha256": "d743e3599ae86f147ec90b2c29d4d454992970cd346aac01dd30bd4675a82e95",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/scale-investigation-trial/index.html",
+          "sha256": "d743e3599ae86f147ec90b2c29d4d454992970cd346aac01dd30bd4675a82e95",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-29：用户要求将新 demo 收录 Pattern；内容成熟度与验证证据分别记录。",
+        "已有来源与模型 / CPU 或测量数据检查记录；本轮检查打包、依赖和链接，不代表设备复现或自动视觉验收。"
+      ],
+      "related": [
+        "expand-broadcast-inspector",
+        "operator-mapping-investigation"
+      ],
+      "reviewedAt": "2026-10-29",
+      "author": "Yucheng"
+    },
+    {
+      "id": "rsfa-performance-comparison",
+      "title": "优化收益与退化比较 · RSFA",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "比较实现耗时、退化与观测波动，查看原始样本和 BM/BN，保留固定版本的测量出处。",
+      "designValue": "用同一比率坐标呈现收益、退化与波动范围，支持从比较对象追溯到原始记录。",
+      "outline": [
+        "causal / non-causal 与实现对照",
+        "耗时比率、退化与波动区间",
+        "30 条记录与 600 个原始样本",
+        "BM/BN、原始 JSON 与证据导出"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/rsfa-performance-comparison/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/rsfa-performance-comparison/index.html",
+          "sha256": "527cff550b53914ed70bac28ad804be2eda1c5ad5bf556f9ff5dc629da226cfb",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/rsfa-performance-trial/index.html",
+          "sha256": "527cff550b53914ed70bac28ad804be2eda1c5ad5bf556f9ff5dc629da226cfb",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-29：用户要求将新 demo 收录 Pattern；内容成熟度与验证证据分别记录。",
+        "已有来源与模型 / CPU 或测量数据检查记录；本轮检查打包、依赖和链接，不代表设备复现或自动视觉验收。"
+      ],
+      "related": [
+        "ai-infra-investigation",
+        "observability-design-style"
+      ],
+      "reviewedAt": "2026-10-29",
+      "author": "Yucheng"
+    },
+    {
+      "id": "rmsnorm-residency-reuse",
+      "title": "驻留、重读与内存复用 · RMSNorm",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "联动执行泳道、Tensor 驻留与队列申请生命周期，对照 RMSNorm 整行驻留和两遍分块。",
+      "designValue": "用源码步骤串联容量条件、方案选择、数据重读及性能估算，并关联硬件位置和核查证据。",
+      "outline": [
+        "执行泳道与 Tensor 生命周期",
+        "内存复用分屏与双向选择",
+        "950 硬件映射与模型估算",
+        "配置关联核查与继续调查"
+      ],
+      "domains": [
+        "AI Infra",
+        "Operators",
+        "Visualization"
+      ],
+      "topics": [
+        "operators",
+        "visual",
+        "experience"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/rmsnorm-residency-reuse/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/rmsnorm-performance-investigation/index.html",
+          "sha256": "f619c1667a93952fa19a786572ec67e48d8931aabd6ef31398d230fd968392e0",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-10-30：按用户要求收录，封面采用用户指定截图。",
+        "离线模型与源码核对、页面交互已检查；尚未独立验证设备预测精度。"
+      ],
+      "related": [
+        "ai-infra-investigation",
+        "rsfa-performance-comparison"
+      ],
+      "reviewedAt": "2026-10-30",
+      "author": "Yucheng"
     }
   ]
 }

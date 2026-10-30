@@ -1,0 +1,9 @@
+{
+  "cases": 9,
+  "upstreamBenchmark": "15/15 defects, 0/6 correct false reports, 4/4 graph cases; benchmark.txt",
+  "adapter": "all findings retained; relation endpoints resolve",
+  "numeric": "256 modulo equivalence probes and source fixture address differences",
+  "interaction": "delivered scripts in DOM substitute: case/selection/question/graph/source/view retention/zoom",
+  "device": "not run",
+  "browser": "not run; repository reserves visual acceptance to user"
+}

@@ -1,0 +1,31 @@
+{
+  "files_scanned": [
+    "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/fixed-pipeline.asc"
+  ],
+  "event_count": 2,
+  "findings": [],
+  "events": [
+    {
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 26,
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/fixed-pipeline.asc",
+      "func": "__aicore__ inline void Process",
+      "raw": "SetFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 27,
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/fixed-pipeline.asc",
+      "func": "__aicore__ inline void Process",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    }
+  ]
+}

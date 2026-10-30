@@ -1,0 +1,11 @@
+--- sources/bad-pipeline.asc
++++ sources/fixed-pipeline.asc
+@@ -23,6 +23,8 @@
+         // AllocTensor 后 DataCopy，未经 EnQue/DeQue 或 Flag 直接 Adds → 读半成品
+         LocalTensor<half> xLocal = inQueueX.AllocTensor<half>();
+         DataCopyPad(xLocal, xGm, copyParams, padParams);
++        SetFlag<HardEvent::MTE2_V>(EVENT_ID0);
++        WaitFlag<HardEvent::MTE2_V>(EVENT_ID0);
+         Adds(yLocal, xLocal, 1.0f, tileSize);  // 缺 MTE2→V
+     }
+ private:

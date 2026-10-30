@@ -1,0 +1,53 @@
+{
+  "files_scanned": [
+    "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-index.cpp"
+  ],
+  "event_count": 1,
+  "findings": [
+    {
+      "code": "SYNC-14",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-index.cpp",
+      "line": 37,
+      "message": "输出 buffer 写址索引变量(ubMte2LoopIdx_)与输出同步索引变量(ubComputeLoopIdx_)不一致",
+      "detail": "mxA8W4NzParams.biasOutUbAddr@L37 写入 ubBiasOutTotalBuffer_[...]，索引 ubMte2BufferIdx 解析为 ubMte2LoopIdx_；同一参数对象 mxA8W4NzParams.weightHighBitPhyAddr@L33 使用输出索引变量 ubComputeLoopIdx_。同一 VF/计算参数对象的输出地址必须使用同一 output buffer id；否则后续 SetFlag/WaitFlag 按 ubComputeLoopIdx_ 保护的 buffer 与实际写入 buffer 不一致。原始代码: mxA8W4NzParams.biasOutUbAddr =         ubBiasOutTotalBuffer_[ubMte2BufferIdx * UB_BUFFER_INFO::biasReducedSingleBufferSize].GetPhyAddr(); | 历史 case: cann/ops-nn PR#N/A (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -811,7 +811,7 @@\n-        biasBufId_ = abL1LoopCnt_ & 1;\n+        biasBufId_ = scaleL1BufId;..."
+    },
+    {
+      "code": "SYNC-14",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-index.cpp",
+      "line": 38,
+      "message": "同步索引变量(ubComputeLoopIdx_)与 buffer 索引变量(ubMte2BufferIdx)不一致",
+      "detail": "SetFlag/WaitFlag<MTE3_V>@L39 用索引变量 ubComputeLoopIdx_，但 L38 的 ubBiasOutTotalBuffer_[...] 用索引变量 ubMte2BufferIdx。两个循环索引不同可能导致同步保护的 buffer 与实际操作的 buffer 对不上。请确认 ubComputeLoopIdx_ 和 ubMte2BufferIdx 是否等价（不同循环计数器通常不等价） | 历史 case: cann/ops-nn PR#N/A (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -811,7 +811,7 @@\n-        biasBufId_ = abL1LoopCnt_ & 1;\n+        biasBufId_ = scaleL1BufId;..."
+    },
+    {
+      "code": "SYNC-14",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-index.cpp",
+      "line": 38,
+      "message": "同步窗口内 buffer 索引根变量不一致: ubMte2BufferIdx vs flag(ubComputeLoopIdx_)",
+      "detail": "SetFlag/WaitFlag<MTE3_V>@L39 的 ±15 行窗口内存在多个 buffer 访问，索引根变量不一致。即使部分 buffer 无独立 flag（隐式复用邻居同步），其索引变量也应与所复用同步的 flag 索引变量同源。请确认窗口内各索引变量是否等价 | 历史 case: cann/ops-nn PR#N/A (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -811,7 +811,7 @@\n-        biasBufId_ = abL1LoopCnt_ & 1;\n+        biasBufId_ = scaleL1BufId;..."
+    },
+    {
+      "code": "SYNC-04",
+      "severity": "红线",
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-index.cpp",
+      "line": 39,
+      "message": "Set/Wait 个数不一致: 方向=MTE3_V flag=vecEventIdMte3ToV[ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)] Set=1 Wait=0",
+      "detail": "Set: ['bad-index.cpp:39']; Wait: [] | 历史 case: cann/ops-nn PR#N/A (buffer_index_mismatch) | 修复提示: 将 buffer 索引统一为 flag 索引变量（如 biasBufId_ = scaleL1BufId） | diff证据: @@ -811,7 +811,7 @@\n-        biasBufId_ = abL1LoopCnt_ & 1;\n+        biasBufId_ = scaleL1BufId;..."
+    }
+  ],
+  "events": [
+    {
+      "kind": "set",
+      "event_type": "MTE3_V",
+      "flag_id": "vecEventIdMte3ToV[ubComputeLoopIdx_ & (UB_BUFFER_INFO::ubWeightOutputHighBitBufferNum - 1)]",
+      "line": 39,
+      "file": "/Users/yin/AI_Infra/ai-infra-research/prototypes/sync-audit-trial/sources/bad-index.cpp",
+      "func": "void Kernel",
+      "raw": "SetFlag<HardEvent::MTE3_V>(",
+      "side": "",
+      "pipe_param": ""
+    }
+  ]
+}

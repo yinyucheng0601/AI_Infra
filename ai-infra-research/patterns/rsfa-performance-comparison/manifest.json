@@ -1,0 +1,23 @@
+{
+  "authoritativeSource": "prototypes/rsfa-performance-trial/index.html",
+  "sourceSha256": "527cff550b53914ed70bac28ad804be2eda1c5ad5bf556f9ff5dc629da226cfb",
+  "outputSha256": "527cff550b53914ed70bac28ad804be2eda1c5ad5bf556f9ff5dc629da226cfb",
+  "files": {
+    "index.html": "527cff550b53914ed70bac28ad804be2eda1c5ad5bf556f9ff5dc629da226cfb",
+    "app.js": "276f95ddc89f7802d98b30a86c57e82c7938eb3ce87c27d7de143aa96edadafd",
+    "model.js": "85708bb2d78b8347596e61b86407acefea55880d6d869e9cf15e10e99197db31",
+    "style.css": "ec6bd8fb6d35e262c36a12b96756e243b867496db17dda0e1ddccc692e84e93c",
+    "system-controls.css": "fc02ddae40720e72d7efe104ca90ca6e03522d75e50516fffe9b891567ce864d",
+    "design-tokens.css": "e34f224f6f86db4ae0bc9097ff08b98f8712b2d913e706b3a15eb2e4cdf2884e",
+    "source/ablation_raw_data.json": "8d78b73b33c6569e65ca75913b4fca3a5b680814502fd78c82afa930b31a6b62",
+    "source-manifest.json": "0b024bdfc24e90d15f84f4c011d88e79760295034f671f9bffa0f0fab4f83b27",
+    "liquid-glass-controls/liquid-glass.js": "077d76e1431fb6400960d1ef8497359f8855b72e6d0a3e8396e5710effa4cf6c",
+    "liquid-glass-controls/liquid-glass.css": "c7deb86b934d96f632ed04d80ba01839f922471fd762db6fd11b5967f501d4bc",
+    "liquid-glass-controls/LICENSE": "62d298ef9dab08ee1ceb20877aa4ad38c3bb71aa0cb779a8738ecfa652160052"
+  },
+  "cover": "web/media/rsfa-performance-comparison-cover.svg",
+  "coverSha256": "947def6c840a8312a8b1c57cabbb577d6c42e3bb3899e25065cdbe6c8aa0b603",
+  "coverMethod": "application-generated SVG scene exported via DOM substitute; not browser screenshot",
+  "refresh": "python3 scripts/build.py",
+  "validation": "packaged dependencies and hashes checked; rendering and device execution not verified by this collection"
+}

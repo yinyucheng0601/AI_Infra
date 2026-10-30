@@ -1,0 +1,518 @@
+{
+  "files_scanned": [
+    "prototypes/sync-audit-trial/sources/unpack.cpp"
+  ],
+  "event_count": 44,
+  "findings": [
+    {
+      "code": "SYNC-08",
+      "severity": "红线",
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "line": 366,
+      "message": "SetFlag 前存在提前退出（可能跳过 Set → 死锁）: SetFlag<HardEvent::MTE2_V>",
+      "detail": "同函数 __aicore__ inline void RunUnpackCompactMatrixTask 内未被兜底的 return/break: [355]；确认所有路径都触发 SetFlag | 历史 case: cann/ops-transformer PR#3140 (flag_pair) | 修复提示: 补齐缺失的 SetFlag 或 WaitFlag，确保所有路径都触发 SetFlag | diff证据: @@ -166,6 +166,7 @@ __aicore__ inline void DLIKLLossVector2Service<DLIT>::DeterSumLoss()\n     if (co..."
+    },
+    {
+      "code": "SYNC-02",
+      "severity": "红线",
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "line": 430,
+      "message": "疑似计算后未同步即搬出 GM: 搬出@430 (计算@420)",
+      "detail": "候选：Vector 计算后、DataCopy 出 GM 前需 V→MTE3 同步 | 历史 case: cann/ops-math PR#703 (pipe_barrier_missing) | 修复提示: 在异步搬出后、SetFlag 释放 buffer 前加 PipeBarrier<PIPE_ALL>() | diff证据: @@ -38,6 +38,14 @@ private:\n     __aicore__ inline void valueMove(uint64_t valueOffset, uint64_t ubV..."
+    },
+    {
+      "code": "SYNC-08",
+      "severity": "红线",
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "line": 554,
+      "message": "SetFlag 前存在提前退出（可能跳过 Set → 死锁）: SetFlag<HardEvent::MTE2_V>",
+      "detail": "同函数 __aicore__ inline void RunUnpackPackedMatrixTask 内未被兜底的 return/break: [526, 531, 536]；确认所有路径都触发 SetFlag | 历史 case: cann/ops-transformer PR#3140 (flag_pair) | 修复提示: 补齐缺失的 SetFlag 或 WaitFlag，确保所有路径都触发 SetFlag | diff证据: @@ -166,6 +166,7 @@ __aicore__ inline void DLIKLLossVector2Service<DLIT>::DeterSumLoss()\n     if (co..."
+    }
+  ],
+  "events": [
+    {
+      "kind": "set",
+      "event_type": "MTE2_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 164,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackCopyMte2Mte3",
+      "raw": "SetFlag<HardEvent::MTE2_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_MTE3",
+      "flag_id": "EVENT_ID1",
+      "line": 166,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackCopyMte2Mte3",
+      "raw": "SetFlag<HardEvent::MTE2_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_MTE3",
+      "flag_id": "EVENT_ID2",
+      "line": 168,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackCopyMte2Mte3",
+      "raw": "SetFlag<HardEvent::MTE2_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 175,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackCopyMte2Mte3",
+      "raw": "WaitFlag<HardEvent::MTE2_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_MTE3",
+      "flag_id": "EVENT_ID1",
+      "line": 177,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackCopyMte2Mte3",
+      "raw": "WaitFlag<HardEvent::MTE2_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_MTE3",
+      "flag_id": "EVENT_ID2",
+      "line": 179,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackCopyMte2Mte3",
+      "raw": "WaitFlag<HardEvent::MTE2_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 186,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackCopyMte3Mte2",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID1",
+      "line": 188,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackCopyMte3Mte2",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID2",
+      "line": 190,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackCopyMte3Mte2",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 197,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackCopyMte3Mte2",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID1",
+      "line": 199,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackCopyMte3Mte2",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID2",
+      "line": 201,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackCopyMte3Mte2",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 208,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixMte2V",
+      "raw": "SetFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID1",
+      "line": 210,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixMte2V",
+      "raw": "SetFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID2",
+      "line": 212,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixMte2V",
+      "raw": "SetFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 219,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixMte2V",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID1",
+      "line": 221,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixMte2V",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID2",
+      "line": 223,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixMte2V",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 230,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixVMte3",
+      "raw": "SetFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID1",
+      "line": 232,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixVMte3",
+      "raw": "SetFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID2",
+      "line": 234,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixVMte3",
+      "raw": "SetFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 241,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixVMte3",
+      "raw": "WaitFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID1",
+      "line": 243,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixVMte3",
+      "raw": "WaitFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID2",
+      "line": 245,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixVMte3",
+      "raw": "WaitFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 252,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixMte3Mte2",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID1",
+      "line": 254,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixMte3Mte2",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID2",
+      "line": 256,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void SetUnpackMatrixMte3Mte2",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 263,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixMte3Mte2",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID1",
+      "line": 265,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixMte3Mte2",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID2",
+      "line": 267,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void WaitUnpackMatrixMte3Mte2",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "S_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 329,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void StoreUnpackMatrixScalar",
+      "raw": "SetFlag<HardEvent::S_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "S_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 330,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void StoreUnpackMatrixScalar",
+      "raw": "WaitFlag<HardEvent::S_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 366,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+      "raw": "SetFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 367,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 374,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+      "raw": "SetFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 375,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+      "raw": "WaitFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 383,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 384,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackCompactMatrixTask",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 554,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+      "raw": "SetFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE2_V",
+      "flag_id": "EVENT_ID0",
+      "line": 555,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+      "raw": "WaitFlag<HardEvent::MTE2_V>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 576,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+      "raw": "SetFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "V_MTE3",
+      "flag_id": "EVENT_ID0",
+      "line": 577,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+      "raw": "WaitFlag<HardEvent::V_MTE3>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "set",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 585,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+      "raw": "SetFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    },
+    {
+      "kind": "wait",
+      "event_type": "MTE3_MTE2",
+      "flag_id": "EVENT_ID0",
+      "line": 586,
+      "file": "prototypes/sync-audit-trial/sources/unpack.cpp",
+      "func": "__aicore__ inline void RunUnpackPackedMatrixTask",
+      "raw": "WaitFlag<HardEvent::MTE3_MTE2>(",
+      "side": "",
+      "pipe_param": ""
+    }
+  ]
+}
