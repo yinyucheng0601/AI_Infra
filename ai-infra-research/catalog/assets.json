@@ -388,17 +388,22 @@
     },
     {
       "id": "model-architecture-v41",
-      "title": "DeepSeek V4.1 · 模型架构",
+      "title": "DeepSeek · 模型架构",
       "type": "pattern",
       "form": "交互 Pattern",
-      "summary": "逐层查看 V4.1 的 CSA2、跨层 KV / 索引复用、mHC、MoE，以及 Vision、Engram 和 DSpark 分支。",
+      "summary": "分层浏览 DeepSeek V4 与 V4.1 模型架构，对照 CSA / CSA2、MoE、mHC 残差路径及跨层复用。",
       "designValue": "用单层选择、侧边张量输入与渐进展开表达跨层依赖，统一 OP 图标、Residual Add 和张量语义。",
       "outline": [
-        "Layer selector 单层浏览与 L0 / L1 / L2 展开",
-        "CSA2 Full / Reuse / Reindex 与跨层输入",
-        "Vision Encoder、Engram 与 DSpark 分支",
-        "OP 语义图标与独立 Residual Add",
-        "源码检查、路径高亮与拖拽缩放"
+        "DeepSeek V4：L0 / L1 / L2 渐进式架构浏览",
+        "DeepSeek V4：mHC 残差旁路与整条路径联动高亮",
+        "DeepSeek V4：CSA 计算分支与 KV 状态布局",
+        "DeepSeek V4：统一算子、张量与权重图元",
+        "DeepSeek V4：模块折叠、画布拖拽缩放与深浅主题",
+        "DeepSeek V4.1：Layer selector 单层浏览与 L0 / L1 / L2 展开",
+        "DeepSeek V4.1：CSA2 Full / Reuse / Reindex 与跨层输入",
+        "DeepSeek V4.1：Vision Encoder、Engram 与 DSpark 分支",
+        "DeepSeek V4.1：OP 语义图标与独立 Residual Add",
+        "DeepSeek V4.1：源码检查、路径高亮与拖拽缩放"
       ],
       "domains": [
         "DeepSeek",
@@ -444,50 +449,7 @@
           "url": null,
           "revision": null,
           "sha256": "0ac91a91527cb80dc4966c7e626cc9c479e1cbd70730a7650d5a37f09239f204"
-        }
-      ],
-      "validation": [
-        "2026-10-23：用户要求将当前 V4.1 架构图收录 Library / Pattern。",
-        "收录快照文件哈希、资源依赖和 JavaScript 语法检查通过；目录校验通过。",
-        "2026-10-23：Library 卡片主链接已切换到 AI_Infra 当前维护的 Pattern 入口。"
-      ],
-      "related": [
-        "model-architecture-v4"
-      ],
-      "reviewedAt": "2026-10-23",
-      "author": "Yucheng"
-    },
-    {
-      "id": "model-architecture-v4",
-      "title": "DeepSeek V4 · 模型架构",
-      "type": "pattern",
-      "form": "交互 Pattern",
-      "summary": "从整网概览逐层展开 CSA 与 MoE，查看算子、张量、权重、KV 状态及 mHC 残差路径。",
-      "designValue": "以一致的图元、分层展开和关联路径高亮，在模型全局结构与局部计算关系之间保持连续阅读。",
-      "outline": [
-        "L0 / L1 / L2 渐进式架构浏览",
-        "mHC 残差旁路与整条路径联动高亮",
-        "CSA 计算分支与 KV 状态布局",
-        "统一算子、张量与权重图元",
-        "模块折叠、画布拖拽缩放与深浅主题"
-      ],
-      "domains": [
-        "DeepSeek",
-        "AI Infra",
-        "Inference"
-      ],
-      "topics": [
-        "inference",
-        "visual",
-        "experience"
-      ],
-      "media": [
-        "web"
-      ],
-      "status": "reviewed",
-      "visibility": "internal",
-      "content": "patterns/model-architecture-v4/index.html",
-      "sources": [
+        },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/model-architecture-v4/index.html",
@@ -525,14 +487,30 @@
         }
       ],
       "validation": [
+        "2026-10-23：用户要求将当前 V4.1 架构图收录 Library / Pattern。",
+        "收录快照文件哈希、资源依赖和 JavaScript 语法检查通过；目录校验通过。",
+        "2026-10-23：Library 卡片主链接已切换到 AI_Infra 当前维护的 Pattern 入口。",
         "2026-10-22：用户多轮视觉与交互评审后明确确认 V4 定稿，并要求收录 Library / Patterns。",
         "63 种 CSA 展开组合布局回归通过；收录快照与来源文件哈希核对、JS 语法和本地依赖闭包检查通过。",
         "2026-10-23：同步已确认的 OP 语义图标；保留节点高度、整体居中文字与展开按钮。",
-        "2026-10-23：Library 卡片主链接已切换到 AI_Infra 当前维护的 Pattern 入口。"
+        "2026-10-23：Library 卡片主链接已切换到 AI_Infra 当前维护的 Pattern 入口。",
+        "2026-10-30：V4 与 V4.1 合并为单张分组卡片，保留两个原始页面入口。"
       ],
       "related": [],
-      "reviewedAt": "2026-10-22",
-      "author": "Yucheng"
+      "reviewedAt": "2026-10-23",
+      "author": "Yucheng",
+      "entries": [
+        {
+          "label": "DeepSeek V4",
+          "content": "patterns/model-architecture-v4/index.html",
+          "description": "打开 DeepSeek V4 模型架构 · CSA、MoE 与 mHC 残差路径"
+        },
+        {
+          "label": "DeepSeek V4.1",
+          "content": "patterns/model-architecture-v41/index.html",
+          "description": "打开 DeepSeek V4.1 模型架构 · CSA2、跨层复用与分支"
+        }
+      ]
     },
     {
       "id": "csa-swimlane",
@@ -2680,13 +2658,14 @@
       "title": "驻留、重读与内存复用 · RMSNorm",
       "type": "pattern",
       "form": "交互 Pattern",
-      "summary": "联动执行泳道、Tensor 驻留与队列申请生命周期，对照 RMSNorm 整行驻留和两遍分块。",
+      "summary": "联动执行泳道、Tensor 驻留与队列申请生命周期，收录 RMSNorm 驻留与重读（950）、Fused Add RMSNorm（910B）两个案例。",
       "designValue": "用源码步骤串联容量条件、方案选择、数据重读及性能估算，并关联硬件位置和核查证据。",
       "outline": [
         "执行泳道与 Tensor 生命周期",
         "内存复用分屏与双向选择",
         "950 硬件映射与模型估算",
-        "配置关联核查与继续调查"
+        "配置关联核查与继续调查",
+        "Fused Add RMSNorm · 910B：源码步骤、队列复用与硬件联动"
       ],
       "domains": [
         "AI Infra",
@@ -2708,21 +2687,41 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/rmsnorm-performance-investigation/index.html",
-          "sha256": "f619c1667a93952fa19a786572ec67e48d8931aabd6ef31398d230fd968392e0",
+          "sha256": "1b4bedb25edc948e013c26bc7d3af1708054b0a50215c79d5ad5b1f28bbe79b3",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/fused-add-rmsnorm-independent/index.html",
+          "sha256": "f8f2aed6fa6d9fe391a5d71c9e6dc5ec2720199782176eb944d3f57ffada6341",
           "url": null,
           "revision": null
         }
       ],
       "validation": [
         "2026-10-30：按用户要求收录，封面采用用户指定截图。",
-        "离线模型与源码核对、页面交互已检查；尚未独立验证设备预测精度。"
+        "离线模型与源码核对、页面交互已检查；尚未独立验证设备预测精度。",
+        "2026-10-30：同卡片收录独立 Fused Add RMSNorm；973 项模型检查及浏览器联动检查通过，未进行 NPU 实测。"
       ],
       "related": [
         "ai-infra-investigation",
         "rsfa-performance-comparison"
       ],
       "reviewedAt": "2026-10-30",
-      "author": "Yucheng"
+      "author": "Yucheng",
+      "entries": [
+        {
+          "label": "RMSNorm · 950",
+          "content": "patterns/rmsnorm-residency-reuse/index.html",
+          "description": "打开 RMSNorm 整行驻留与两遍分块对照 · Ascend 950"
+        },
+        {
+          "label": "Add + RMSNorm · 910B",
+          "content": "patterns/rmsnorm-residency-reuse/fused-add.html",
+          "description": "打开 Fused Add RMSNorm 源码步骤、内存复用与硬件联动 · Ascend 910B"
+        }
+      ]
     }
   ]
 }

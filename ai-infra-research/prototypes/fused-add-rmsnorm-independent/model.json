@@ -1,0 +1,4020 @@
+{
+  "repo": "https://github.com/llrnb666-arch/HPC101-AscendC-FusedRMSNorm",
+  "revision": "7729cdf7bc37d77bd3c82448414b77cea3e96637",
+  "sources": {
+    "kernel": {
+      "path": "src/ascendc/op_kernel/fused_add_rms_norm.cpp",
+      "blob": "a1cf48e0c235adbb8238db8f98f1d763a13ec5d4",
+      "text": "#include \"kernel_operator.h\"\n \nnamespace {\nconstexpr int32_t BUFFER_NUM = 2;\nconstexpr int32_t ALIGN_NUM = 16;\nconstexpr int32_t TILE_MAX_ELEMS = 4096;\n}\n \nclass KernelFusedAddRmsNorm {\npublic:\n    __aicore__ inline KernelFusedAddRmsNorm() {}\n \n    __aicore__ inline void Init(GM_ADDR x, GM_ADDR residual, GM_ADDR weight,\n                                GM_ADDR y, GM_ADDR residual_out,\n                                FusedAddRmsNormTilingData& tiling, AscendC::TPipe* pipeIn) {\n        this->pipe = pipeIn;\n        this->blockIdx = AscendC::GetBlockIdx();\n        this->batchSize = tiling.batchSize;\n        this->hiddenSize = tiling.hiddenSize;\n        this->alignedHidden = tiling.alignedHidden;\n        this->alignNum = tiling.alignNum;\n        this->eps = tiling.eps;\n        this->useNR = true;\n        this->tileElems = this->alignedHidden;\n        if (this->tileElems > TILE_MAX_ELEMS) this->tileElems = TILE_MAX_ELEMS;\n        if (this->tileElems < this->alignNum) this->tileElems = this->alignNum;\n        int32_t totalRows = this->batchSize;\n        int32_t blockNum = static_cast<int32_t>(AscendC::GetBlockNum());\n        int32_t rowsPerBlock = (totalRows + blockNum - 1) / blockNum;\n        this->startRow = static_cast<int64_t>(this->blockIdx) * rowsPerBlock;\n        this->endRow = this->startRow + rowsPerBlock;\n        if (this->endRow > totalRows) this->endRow = totalRows;\n        uint64_t totalElems = static_cast<uint64_t>(this->batchSize) * static_cast<uint64_t>(this->hiddenSize);\n        if (totalElems == 0) totalElems = 1;\n        xGm.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(x), totalElems);\n        residualGm.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(residual), totalElems);\n        yGm.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(y), totalElems);\n        residualOutGm.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(residual_out), totalElems);\n        uint64_t weightElems = static_cast<uint64_t>(this->hiddenSize > 0 ? this->hiddenSize : 1);\n        weightGm.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(weight), weightElems);\n        uint32_t tileBytesFp16 = static_cast<uint32_t>(this->tileElems) * sizeof(half);\n        uint32_t tileBytesFp32 = static_cast<uint32_t>(this->tileElems) * sizeof(float);\n        pipe->InitBuffer(inQueX, BUFFER_NUM, tileBytesFp16);\n        pipe->InitBuffer(inQueRes, BUFFER_NUM, tileBytesFp16);\n        pipe->InitBuffer(outQueY, BUFFER_NUM, tileBytesFp16);\n        pipe->InitBuffer(outQueResOut, BUFFER_NUM, tileBytesFp16);\n        pipe->InitBuffer(weightHalfBuf, tileBytesFp16);\n        pipe->InitBuffer(weightFp32Buf, tileBytesFp32);\n        pipe->InitBuffer(resoFp32Buf, tileBytesFp32);\n        pipe->InitBuffer(sqBuf, tileBytesFp32);\n        pipe->InitBuffer(meanBuf, tileBytesFp32);\n        pipe->InitBuffer(nrBuf, tileBytesFp32);\n        pipe->InitBuffer(resOutHalfBuf0, tileBytesFp16);\n        pipe->InitBuffer(resOutHalfBuf1, tileBytesFp16);\n        pipe->InitBuffer(yHalfBuf0, tileBytesFp16);\n        pipe->InitBuffer(yHalfBuf1, tileBytesFp16);\n        pipe->InitBuffer(scalarBuf, 32);\n        pipe->InitBuffer(reduceTmpBuf, 32);\n    }\n \n    __aicore__ inline void Process() {\n        if (this->startRow >= this->endRow) return;\n        if (this->hiddenSize <= 0) return;\n        if (this->alignedHidden <= this->tileElems) { ProcessWholeRows(); }\n        else { ProcessChunkedRows(); }\n    }\n \nprivate:\n    __aicore__ inline void ProcessWholeRows() {\n        AscendC::LocalTensor<float> weightFp32 = weightFp32Buf.Get<float>();\n        AscendC::LocalTensor<float> resoFp32 = resoFp32Buf.Get<float>();\n        AscendC::LocalTensor<float> sq = sqBuf.Get<float>();\n        AscendC::LocalTensor<float> mean = meanBuf.Get<float>();\n        AscendC::LocalTensor<float> nr = nrBuf.Get<float>();\n        AscendC::LocalTensor<float> scalar = scalarBuf.Get<float>();\n        AscendC::LocalTensor<half> resOutHalf0 = resOutHalfBuf0.Get<half>();\n        AscendC::LocalTensor<half> resOutHalf1 = resOutHalfBuf1.Get<half>();\n        AscendC::LocalTensor<half> yHalf0 = yHalfBuf0.Get<half>();\n        AscendC::LocalTensor<half> yHalf1 = yHalfBuf1.Get<half>();\n        LoadWeightRow(weightFp32, 0, this->hiddenSize, this->alignedHidden);\n        const int32_t H = this->hiddenSize;\n        const int32_t alignH = this->alignedHidden;\n        const float invH = 1.0f / static_cast<float>(H);\n        // Prologue: issue first row load (MTE2 prefetch)\n        {\n            uint64_t base0 = static_cast<uint64_t>(this->startRow) * static_cast<uint64_t>(H);\n            AscendC::LocalTensor<half> xPrefetch = inQueX.AllocTensor<half>();\n            AscendC::LocalTensor<half> resPrefetch = inQueRes.AllocTensor<half>();\n            CopyInRow(xPrefetch, xGm, base0);\n            CopyInRow(resPrefetch, residualGm, base0);\n            inQueX.EnQue(xPrefetch);\n            inQueRes.EnQue(resPrefetch);\n        }\n        uint64_t base = static_cast<uint64_t>(this->startRow) * static_cast<uint64_t>(H);\n        for (int64_t row = this->startRow; row < this->endRow; ++row) {\n            int32_t eid = static_cast<int32_t>(row & 1);\n            // Prefetch next row (MTE2 overlaps with current V compute)\n            if (row + 1 < this->endRow) {\n                uint64_t nextBase = base + static_cast<uint64_t>(H);\n                AscendC::LocalTensor<half> xNext = inQueX.AllocTensor<half>();\n                AscendC::LocalTensor<half> resNext = inQueRes.AllocTensor<half>();\n                CopyInRow(xNext, xGm, nextBase);\n                CopyInRow(resNext, residualGm, nextBase);\n                inQueX.EnQue(xNext);\n                inQueRes.EnQue(resNext);\n            }\n            // Wait for MTE3 from 2 iterations ago before reusing output buffers\n            if (row >= this->startRow + 2) {\n                AscendC::SetFlag<AscendC::HardEvent::MTE3_V>(eid);\n                AscendC::WaitFlag<AscendC::HardEvent::MTE3_V>(eid);\n            }\n            // DeQue current row (waits for MTE2 to complete)\n            AscendC::LocalTensor<half> xLocal = inQueX.DeQue<half>();\n            AscendC::LocalTensor<half> resLocal = inQueRes.DeQue<half>();\n            // residual_out = x + residual (FP16 add directly to output buffer)\n            if (eid == 0) AscendC::Add(resOutHalf0, xLocal, resLocal, alignH);\n            else AscendC::Add(resOutHalf1, xLocal, resLocal, alignH);\n            // Cast to FP32 for RMSNorm\n            if (eid == 0) AscendC::Cast(resoFp32, resOutHalf0, AscendC::RoundMode::CAST_NONE, alignH);\n            else AscendC::Cast(resoFp32, resOutHalf1, AscendC::RoundMode::CAST_NONE, alignH);\n            // --- RMSNorm: reduce, rsqrt+NR ---\n            AscendC::Mul(sq, resoFp32, resoFp32, alignH);\n            ReduceNormal(scalar, sq, H);\n            AscendC::SetFlag<AscendC::HardEvent::V_S>(EVENT_ID0);\n            AscendC::WaitFlag<AscendC::HardEvent::V_S>(EVENT_ID0);\n            float sumSq = scalar.GetValue(0);\n            float meanPlusEps = sumSq * invH + this->eps;\n            AscendC::Duplicate<float>(mean, meanPlusEps, alignH);\n            AscendC::Rsqrt<float>(sq, mean, alignH);\n            if (this->useNR) {\n                AscendC::Mul(nr, sq, sq, alignH);\n                AscendC::Mul(nr, mean, nr, alignH);\n                AscendC::Muls(nr, nr, -0.5f, alignH);\n                AscendC::Adds(nr, nr, 1.5f, alignH);\n                AscendC::Mul(sq, sq, nr, alignH);\n            }\n            // Precompute rstd*weight\n            AscendC::Mul(sq, sq, weightFp32, alignH);\n            // y = resoFp32 * (rstd * weight)\n            AscendC::Mul(resoFp32, resoFp32, sq, alignH);\n            // Cast y to FP16\n            if (eid == 0) AscendC::Cast(yHalf0, resoFp32, AscendC::RoundMode::CAST_NONE, alignH);\n            else AscendC::Cast(yHalf1, resoFp32, AscendC::RoundMode::CAST_NONE, alignH);\n            // --- Write both outputs (single V_MTE3 event, MTE3 copies both) ---\n            AscendC::SetFlag<AscendC::HardEvent::V_MTE3>(eid);\n            AscendC::WaitFlag<AscendC::HardEvent::V_MTE3>(eid);\n            if (eid == 0) {\n                CopyOutRow(resOutHalf0, residualOutGm, base);\n                CopyOutRow(yHalf0, yGm, base);\n            } else {\n                CopyOutRow(resOutHalf1, residualOutGm, base);\n                CopyOutRow(yHalf1, yGm, base);\n            }\n            inQueX.FreeTensor(xLocal);\n            inQueRes.FreeTensor(resLocal);\n            base += static_cast<uint64_t>(H);\n        }\n        // Drain: wait for last 2 MTE3 operations\n        int64_t nRows = this->endRow - this->startRow;\n        if (nRows >= 1) {\n            int32_t eidLast = static_cast<int32_t>((this->endRow - 1) & 1);\n            AscendC::SetFlag<AscendC::HardEvent::MTE3_V>(eidLast);\n            AscendC::WaitFlag<AscendC::HardEvent::MTE3_V>(eidLast);\n        }\n        if (nRows >= 2) {\n            int32_t eidPrev = static_cast<int32_t>((this->endRow - 2) & 1);\n            AscendC::SetFlag<AscendC::HardEvent::MTE3_V>(eidPrev);\n            AscendC::WaitFlag<AscendC::HardEvent::MTE3_V>(eidPrev);\n        }\n    }\n    __aicore__ inline void ProcessChunkedRows() {\n        AscendC::LocalTensor<float> weightFp32 = weightFp32Buf.Get<float>();\n        AscendC::LocalTensor<float> resoFp32 = resoFp32Buf.Get<float>();\n        AscendC::LocalTensor<float> sq = sqBuf.Get<float>();\n        AscendC::LocalTensor<float> mean = meanBuf.Get<float>();\n        AscendC::LocalTensor<float> nr = nrBuf.Get<float>();\n        AscendC::LocalTensor<float> scalar = scalarBuf.Get<float>();\n        const int32_t H = this->hiddenSize;\n        const int32_t chunkElems = this->tileElems;\n        const float invH = 1.0f / static_cast<float>(H);\n        for (int64_t row = this->startRow; row < this->endRow; ++row) {\n            uint64_t base = static_cast<uint64_t>(row) * static_cast<uint64_t>(H);\n            float sumSq = 0.0f;\n            int32_t off = 0;\n            while (off < H) {\n                int32_t n = (H - off > chunkElems) ? chunkElems : (H - off);\n                int32_t nAlign = (n + this->alignNum - 1) / this->alignNum * this->alignNum;\n                AscendC::LocalTensor<half> xLocal = inQueX.AllocTensor<half>();\n                AscendC::LocalTensor<half> resLocal = inQueRes.AllocTensor<half>();\n                CopyInChunk(xLocal, xGm, base + off, n, nAlign);\n                CopyInChunk(resLocal, residualGm, base + off, n, nAlign);\n                inQueX.EnQue(xLocal);\n                inQueRes.EnQue(resLocal);\n                xLocal = inQueX.DeQue<half>();\n                resLocal = inQueRes.DeQue<half>();\n                AscendC::Cast(resoFp32, xLocal, AscendC::RoundMode::CAST_NONE, nAlign);\n                AscendC::Cast(sq, resLocal, AscendC::RoundMode::CAST_NONE, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                AscendC::Add(resoFp32, resoFp32, sq, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                AscendC::Mul(sq, resoFp32, resoFp32, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                ReduceNormal(scalar, sq, n);\n                AscendC::SetFlag<AscendC::HardEvent::V_S>(EVENT_ID0);\n                AscendC::WaitFlag<AscendC::HardEvent::V_S>(EVENT_ID0);\n                sumSq += scalar.GetValue(0);\n                inQueX.FreeTensor(xLocal);\n                inQueRes.FreeTensor(resLocal);\n                off += n;\n            }\n            float meanPlusEps = sumSq * invH + this->eps;\n            off = 0;\n            while (off < H) {\n                int32_t n = (H - off > chunkElems) ? chunkElems : (H - off);\n                int32_t nAlign = (n + this->alignNum - 1) / this->alignNum * this->alignNum;\n                AscendC::LocalTensor<half> xLocal = inQueX.AllocTensor<half>();\n                AscendC::LocalTensor<half> resLocal = inQueRes.AllocTensor<half>();\n                CopyInChunk(xLocal, xGm, base + off, n, nAlign);\n                CopyInChunk(resLocal, residualGm, base + off, n, nAlign);\n                inQueX.EnQue(xLocal);\n                inQueRes.EnQue(resLocal);\n                xLocal = inQueX.DeQue<half>();\n                resLocal = inQueRes.DeQue<half>();\n                AscendC::Cast(resoFp32, xLocal, AscendC::RoundMode::CAST_NONE, nAlign);\n                AscendC::Cast(sq, resLocal, AscendC::RoundMode::CAST_NONE, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                AscendC::Add(resoFp32, resoFp32, sq, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                inQueX.FreeTensor(xLocal);\n                inQueRes.FreeTensor(resLocal);\n                AscendC::LocalTensor<half> resOutLocal = outQueResOut.AllocTensor<half>();\n                AscendC::Cast(resOutLocal, resoFp32, AscendC::RoundMode::CAST_NONE, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                outQueResOut.EnQue(resOutLocal);\n                resOutLocal = outQueResOut.DeQue<half>();\n                CopyOutChunk(resOutLocal, residualOutGm, base + off, n);\n                outQueResOut.FreeTensor(resOutLocal);\n                AscendC::Duplicate<float>(mean, meanPlusEps, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                AscendC::Rsqrt<float>(sq, mean, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                if (this->useNR) {\n                    AscendC::Mul(nr, sq, sq, nAlign);\n                    AscendC::PipeBarrier<PIPE_V>();\n                    AscendC::Mul(nr, mean, nr, nAlign);\n                    AscendC::PipeBarrier<PIPE_V>();\n                    AscendC::Muls(nr, nr, -0.5f, nAlign);\n                    AscendC::PipeBarrier<PIPE_V>();\n                    AscendC::Adds(nr, nr, 1.5f, nAlign);\n                    AscendC::PipeBarrier<PIPE_V>();\n                    AscendC::Mul(sq, sq, nr, nAlign);\n                    AscendC::PipeBarrier<PIPE_V>();\n                }\n                AscendC::Mul(resoFp32, resoFp32, sq, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                LoadWeightRow(weightFp32, off, n, nAlign);\n                AscendC::Mul(resoFp32, resoFp32, weightFp32, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                AscendC::LocalTensor<half> yLocal = outQueY.AllocTensor<half>();\n                AscendC::Cast(yLocal, resoFp32, AscendC::RoundMode::CAST_NONE, nAlign);\n                AscendC::PipeBarrier<PIPE_V>();\n                outQueY.EnQue(yLocal);\n                yLocal = outQueY.DeQue<half>();\n                CopyOutChunk(yLocal, yGm, base + off, n);\n                outQueY.FreeTensor(yLocal);\n                off += n;\n            }\n        }\n    }\n \n    __aicore__ inline void LoadWeightRow(AscendC::LocalTensor<float>& wFp32, int32_t off, int32_t realN, int32_t nAlign) {\n        AscendC::LocalTensor<half> wHalf = weightHalfBuf.Get<half>();\n        AscendC::DataCopyExtParams copyParams;\n        copyParams.blockCount = 1; copyParams.blockLen = static_cast<uint32_t>(realN * sizeof(half));\n        copyParams.srcStride = 0; copyParams.dstStride = 0;\n        AscendC::DataCopyPadExtParams<half> padParams;\n        padParams.isPad = (realN < nAlign); padParams.leftPadding = 0;\n        padParams.rightPadding = static_cast<uint16_t>(nAlign - realN); padParams.paddingValue = 0;\n        AscendC::DataCopyPad(wHalf, weightGm[static_cast<uint64_t>(off)], copyParams, padParams);\n        AscendC::PipeBarrier<PIPE_ALL>();\n        AscendC::Cast(wFp32, wHalf, AscendC::RoundMode::CAST_NONE, nAlign);\n        AscendC::PipeBarrier<PIPE_V>();\n    }\n    __aicore__ inline void CopyInRow(AscendC::LocalTensor<half>& dst, AscendC::GlobalTensor<half>& src, uint64_t off) {\n        if (this->hiddenSize == this->alignedHidden) {\n            AscendC::DataCopyParams params;\n            params.blockCount = 1;\n            params.blockLen = static_cast<uint16_t>(this->hiddenSize * sizeof(half) / 32);\n            params.srcStride = 0;\n            params.dstStride = 0;\n            AscendC::DataCopy(dst, src[off], params);\n            return;\n        }\n        AscendC::DataCopyExtParams copyParams;\n        copyParams.blockCount = 1; copyParams.blockLen = static_cast<uint32_t>(this->hiddenSize * sizeof(half));\n        copyParams.srcStride = 0; copyParams.dstStride = 0;\n        AscendC::DataCopyPadExtParams<half> padParams;\n        padParams.isPad = (this->hiddenSize < this->alignedHidden); padParams.leftPadding = 0;\n        padParams.rightPadding = static_cast<uint16_t>(this->alignedHidden - this->hiddenSize); padParams.paddingValue = 0;\n        AscendC::DataCopyPad(dst, src[off], copyParams, padParams);\n    }\n    __aicore__ inline void CopyInChunk(AscendC::LocalTensor<half>& dst, AscendC::GlobalTensor<half>& src, uint64_t off, int32_t n, int32_t nAlign) {\n        AscendC::DataCopyExtParams copyParams;\n        copyParams.blockCount = 1; copyParams.blockLen = static_cast<uint32_t>(n * sizeof(half));\n        copyParams.srcStride = 0; copyParams.dstStride = 0;\n        AscendC::DataCopyPadExtParams<half> padParams;\n        padParams.isPad = (n < nAlign); padParams.leftPadding = 0;\n        padParams.rightPadding = static_cast<uint16_t>(nAlign - n); padParams.paddingValue = 0;\n        AscendC::DataCopyPad(dst, src[off], copyParams, padParams);\n    }\n    __aicore__ inline void CopyOutRow(AscendC::LocalTensor<half>& src, AscendC::GlobalTensor<half>& dst, uint64_t off) {\n        if (this->hiddenSize == this->alignedHidden) {\n            AscendC::DataCopyParams params;\n            params.blockCount = 1;\n            params.blockLen = static_cast<uint16_t>(this->hiddenSize * sizeof(half) / 32);\n            params.srcStride = 0;\n            params.dstStride = 0;\n            AscendC::DataCopy(dst[off], src, params);\n            return;\n        }\n        AscendC::DataCopyExtParams copyParams;\n        copyParams.blockCount = 1; copyParams.blockLen = static_cast<uint32_t>(this->hiddenSize * sizeof(half));\n        copyParams.srcStride = 0; copyParams.dstStride = 0;\n        AscendC::DataCopyPad(dst[off], src, copyParams);\n    }\n    __aicore__ inline void CopyOutChunk(AscendC::LocalTensor<half>& src, AscendC::GlobalTensor<half>& dst, uint64_t off, int32_t n) {\n        AscendC::DataCopyExtParams copyParams;\n        copyParams.blockCount = 1; copyParams.blockLen = static_cast<uint32_t>(n * sizeof(half));\n        copyParams.srcStride = 0; copyParams.dstStride = 0;\n        AscendC::DataCopyPad(dst[off], src, copyParams);\n    }\n    __aicore__ inline void ReduceNormal(const AscendC::LocalTensor<float>& dst, const AscendC::LocalTensor<float>& src, const int totalElements) {\n        constexpr int elemsPerBlock = 32 / sizeof(float);\n        int currentLen = totalElements;\n        AscendC::SetMaskCount();\n        while (currentLen > (elemsPerBlock * 8)) {\n            int blockCount = (currentLen + elemsPerBlock - 1) / elemsPerBlock;\n            int repeat = (blockCount + 7) / 8;\n            AscendC::SetVectorMask<float, AscendC::MaskMode::COUNTER>(currentLen);\n            AscendC::BlockReduceSum<float, false>(src, src, repeat, AscendC::MASK_PLACEHOLDER, 1, 1, 8);\n            currentLen = blockCount;\n        }\n        AscendC::SetVectorMask<float, AscendC::MaskMode::COUNTER>(currentLen);\n        AscendC::WholeReduceSum<float, false>(dst, src, AscendC::MASK_PLACEHOLDER, 1, 1, 1, 8);\n        AscendC::SetMaskNorm();\n        AscendC::ResetMask();\n    }\nprivate:\n    AscendC::TPipe* pipe;\n    int32_t blockIdx, batchSize, hiddenSize, alignedHidden, alignNum, tileElems;\n    int64_t startRow, endRow;\n    float eps;\n    bool useNR;\n    AscendC::GlobalTensor<half> xGm, residualGm, weightGm, yGm, residualOutGm;\n    AscendC::TQue<AscendC::TPosition::VECIN, BUFFER_NUM> inQueX, inQueRes;\n    AscendC::TQue<AscendC::TPosition::VECOUT, BUFFER_NUM> outQueY, outQueResOut;\n    AscendC::TBuf<AscendC::TPosition::VECCALC> weightHalfBuf, weightFp32Buf, resoFp32Buf, sqBuf, meanBuf, nrBuf, scalarBuf, reduceTmpBuf;\n    AscendC::TBuf<AscendC::TPosition::VECCALC> resOutHalfBuf0, resOutHalfBuf1, yHalfBuf0, yHalfBuf1;\n};\nextern \"C\" __global__ __aicore__ void fused_add_rms_norm(GM_ADDR x, GM_ADDR residual, GM_ADDR weight, GM_ADDR y, GM_ADDR residual_out, GM_ADDR workspace, GM_ADDR tiling) {\n    GET_TILING_DATA(tilingData, tiling);\n    AscendC::TPipe pipe;\n    KernelFusedAddRmsNorm op;\n    op.Init(x, residual, weight, y, residual_out, tilingData, &pipe);\n    op.Process();\n}\n"
+    },
+    "host": {
+      "path": "src/ascendc/op_host/fused_add_rms_norm.cpp",
+      "blob": "7182ed91a1b4d6b40b732853416a956fd035b274",
+      "text": "/**\n * @file fused_add_rms_norm.cpp\n * @brief Host tiling + registration for the FusedAddRmsNorm operator.\n *\n * Op: FusedAddRmsNorm(x, residual, weight, eps, enable_pdl) -> (y, residual_out)\n *   residual_out = x + residual\n *   y = residual_out / sqrt(mean(residual_out^2, dim=-1) + eps) * weight\n *\n * Inputs are FP16 ND tensors of shape (B, H); weight is (H,). Outputs mirror the\n * (B, H) shape. The kernel is row-parallel and reduces the H axis in FP32.\n *\n * Tiling carries B, H, the 32B-aligned H (for UB sizing), the align unit, and\n * eps. Multi-core split is over the B (row) axis: each AIV core owns a disjoint\n * contiguous range of rows — no cross-core sync or workspace needed.\n */\n#include \"../op_kernel/fused_add_rms_norm_tiling.h\"\n#include \"register/op_def_registry.h\"\n#include \"tiling/platform/platform_ascendc.h\"\n\nconstexpr int sizeFP16 = 2;\nconstexpr int alignSizeB = 32;   // 32B UB / DataCopy alignment unit\n// ALIGN_NUM mirrors the kernel constant (16 FP16 / 32B). Kept local here so the\n// host does not need the kernel's constexpr in scope.\nconstexpr int32_t kAlignNum = alignSizeB / sizeFP16;\n\nnamespace optiling {\nstatic ge::graphStatus TilingFunc(gert::TilingContext* context) {\n    FusedAddRmsNormTilingData tiling;\n\n    // --- Read shapes: x is (B, H); weight is (H,). ---\n    const gert::StorageShape* x_shape = context->GetInputShape(0);\n    if (x_shape == nullptr) { return ge::GRAPH_FAILED; }\n    const auto& xs = x_shape->GetStorageShape();\n    int32_t numDims = static_cast<int32_t>(xs.GetDimNum());\n\n    int32_t B = 1;\n    int32_t H = 1;\n    if (numDims == 0) {\n        // scalar input — treat as a single element (degenerate, but safe).\n        B = 1; H = 1;\n    } else if (numDims == 1) {\n        // (H,) — a single row.\n        B = 1;\n        H = static_cast<int32_t>(xs.GetDim(0));\n    } else {\n        // (B, H) (or higher rank — collapse the leading axes into B).\n        H = static_cast<int32_t>(xs.GetDim(numDims - 1));\n        B = 1;\n        for (int32_t i = 0; i < numDims - 1; ++i) {\n            B *= static_cast<int32_t>(xs.GetDim(i));\n        }\n    }\n    if (H <= 0) H = 1;\n    if (B <= 0) B = 1;\n\n    // 32B-aligned H (in FP16 elements). UB tiles and vector op counts use this;\n    // the reduce runs on the exact H (tail ignored).\n    int32_t alignedHidden = (H + kAlignNum - 1) / kAlignNum * kAlignNum;\n\n    // --- Read eps (OPTIONAL, default 1e-6). enable_pdl is unused by the kernel. ---\n    float eps = 1e-6f;\n    const gert::RuntimeAttrs* attrs = context->GetAttrs();\n    if (attrs != nullptr) {\n        const float* epsPtr = attrs->GetFloat(0);   // eps (Float, index 0)\n        if (epsPtr != nullptr) eps = *epsPtr;\n    }\n\n    tiling.set_batchSize(B);\n    tiling.set_hiddenSize(H);\n    tiling.set_alignedHidden(alignedHidden);\n    tiling.set_alignNum(kAlignNum);\n    tiling.set_eps(eps);\n\n    // --- Multi-core: split rows across all AIV cores. ---\n    auto ascendcPlatform = platform_ascendc::PlatformAscendC(context->GetPlatformInfo());\n    context->SetBlockDim(ascendcPlatform.GetCoreNumAiv());\n\n    tiling.SaveToBuffer(context->GetRawTilingData()->GetData(),\n                        context->GetRawTilingData()->GetCapacity());\n    context->GetRawTilingData()->SetDataSize(tiling.GetDataSize());\n    return ge::GRAPH_SUCCESS;\n}\n}\n\n\nnamespace ge {\n// Output shapes mirror the x/residual input (B, H). y and residual_out both have\n// the same shape as x.\nstatic ge::graphStatus InferShape(gert::InferShapeContext* context) {\n    const gert::Shape* x_shape = context->GetInputShape(0);\n    if (x_shape == nullptr) { return GRAPH_FAILED; }\n    gert::Shape* y_shape = context->GetOutputShape(0);\n    gert::Shape* resout_shape = context->GetOutputShape(1);\n    if (y_shape == nullptr || resout_shape == nullptr) { return GRAPH_FAILED; }\n\n    *y_shape = *x_shape;\n    *resout_shape = *x_shape;\n    return GRAPH_SUCCESS;\n}\n\nstatic ge::graphStatus InferDataType(gert::InferDataTypeContext* context) {\n    // y and residual_out share x's dtype (FP16).\n    context->SetOutputDataType(0, context->GetInputDataType(0));\n    context->SetOutputDataType(1, context->GetInputDataType(0));\n    return ge::GRAPH_SUCCESS;\n}\n}\n\n\nnamespace ops {\nclass FusedAddRmsNorm : public OpDef {\npublic:\n    explicit FusedAddRmsNorm(const char* name) : OpDef(name)\n    {\n        this->Input(\"x\")\n            .ParamType(REQUIRED)\n            .DataType({ge::DT_FLOAT16})\n            .Format({ge::FORMAT_ND})\n            .UnknownShapeFormat({ge::FORMAT_ND});\n        this->Input(\"residual\")\n            .ParamType(REQUIRED)\n            .DataType({ge::DT_FLOAT16})\n            .Format({ge::FORMAT_ND})\n            .UnknownShapeFormat({ge::FORMAT_ND});\n        this->Input(\"weight\")\n            .ParamType(REQUIRED)\n            .DataType({ge::DT_FLOAT16})\n            .Format({ge::FORMAT_ND})\n            .UnknownShapeFormat({ge::FORMAT_ND});\n        this->Output(\"y\")\n            .ParamType(REQUIRED)\n            .DataType({ge::DT_FLOAT16})\n            .Format({ge::FORMAT_ND})\n            .UnknownShapeFormat({ge::FORMAT_ND});\n        this->Output(\"residual_out\")\n            .ParamType(REQUIRED)\n            .DataType({ge::DT_FLOAT16})\n            .Format({ge::FORMAT_ND})\n            .UnknownShapeFormat({ge::FORMAT_ND});\n        this->Attr(\"eps\").AttrType(OPTIONAL).Float(1e-06);\n        this->Attr(\"enable_pdl\").AttrType(OPTIONAL).Bool(false);\n\n        this->SetInferShape(ge::InferShape).SetInferDataType(ge::InferDataType);\n\n        this->AICore()\n            .SetTiling(optiling::TilingFunc);\n        this->AICore().AddConfig(\"ascend910b\");\n    }\n};\n\nOP_ADD(FusedAddRmsNorm);\n}\n"
+    },
+    "cases": {
+      "path": "checker/case_specs.py",
+      "blob": "7b1975d91b8bfbb9118eea084e1f9a67b38c95e3",
+      "text": "\"\"\"Public case specifications for FusedAddRmsNorm.\n\nEach case is just a spec — inputs are generated on the fly from `seed` (so the\nkit ships NO .bin data), and the golden is computed in-process (fp32, then cast\nfp16) by test_op.py. The judge swaps this file for a hidden case_specs.py with\ndifferent shapes; test_op.py itself never changes.\n\nTuple layout: (B, H, eps, data_range, seed)\n  data_range in {\"S\": (-1,1), \"M\": (1,10), \"L\": (-1000,1000)}\n\"\"\"\n\nCASES = [\n    (32,   4096, 1e-6, \"S\", 1001),   # small, aligned\n    (256,  1024, 1e-6, \"S\", 1002),   # regular, aligned\n    (1,    4096, 1e-6, \"S\", 1003),   # single row — scalar-bound\n    (1997, 3037, 1e-6, \"S\", 1004),   # misaligned B + misaligned H (tail handling)\n    (2048, 4096, 1e-6, \"S\", 1005),   # large, aligned\n]\n"
+    }
+  },
+  "cases": [
+    {
+      "id": "32x4096/aiv48/core0",
+      "shape": [
+        32,
+        4096
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "public",
+      "aligned": 4096,
+      "tile": 4096,
+      "whole": true,
+      "start": 0,
+      "end": 1,
+      "shown": [
+        0
+      ],
+      "ticks": 9,
+      "events": [
+        {
+          "id": "32x4096/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "γ → UB",
+          "kind": "weight",
+          "row": null,
+          "chunk": null,
+          "line": 80,
+          "parents": []
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "γ FP16 → FP32",
+          "kind": "cast",
+          "row": null,
+          "chunk": null,
+          "line": 281,
+          "parents": []
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 0,
+          "label": "r0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": null,
+          "line": 89,
+          "parents": []
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 1,
+          "label": "r0 Add FP16",
+          "kind": "add",
+          "row": 0,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "32x4096/aiv48/core0/event/2"
+          ]
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "r0 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "32x4096/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 1,
+          "label": "r0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "32x4096/aiv48/core0/event/4"
+          ]
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 2,
+          "label": "r0 R_out + Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "32x4096/aiv48/core0/event/5"
+          ]
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 3,
+          "label": "r0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "32x4096/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 3,
+          "label": "Drain · 等待末两次写回",
+          "kind": "drain",
+          "row": null,
+          "chunk": null,
+          "line": 158,
+          "parents": []
+        }
+      ],
+      "life": [
+        {
+          "id": "32x4096/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[r0]",
+          "size": 8192,
+          "start": 2,
+          "end": 8,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "32x4096/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "32x4096/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[r0]",
+          "size": 8192,
+          "start": 2,
+          "end": 8,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "32x4096/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "32x4096/aiv48/core0/life/2",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r0] · slot 0",
+          "size": 8192,
+          "start": 3,
+          "end": 9,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "32x4096/aiv48/core0/event/3",
+          "line": 116,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 158,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "32x4096/aiv48/core0/life/3",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r0] · slot 0",
+          "size": 8192,
+          "start": 5,
+          "end": 9,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "32x4096/aiv48/core0/event/5",
+          "line": 140,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 158,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "32x4096/aiv48/core0/life/4",
+          "buffer": "weightHalfBuf",
+          "name": "γ FP16",
+          "size": 8192,
+          "start": 0,
+          "end": 2,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "32x4096/aiv48/core0/event/0",
+          "line": 80,
+          "semantics": "content use",
+          "freeLine": 281,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "32x4096/aiv48/core0/life/5",
+          "buffer": "weightFp32Buf",
+          "name": "γ FP32 · 当前核",
+          "size": 16384,
+          "start": 1,
+          "end": 9,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "32x4096/aiv48/core0/event/1",
+          "line": 281,
+          "semantics": "content retained across rows",
+          "freeLine": 158,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 16384,
+        "inQueRes": 16384,
+        "outQueY": 16384,
+        "outQueResOut": 16384,
+        "weightHalfBuf": 8192,
+        "weightFp32Buf": 16384,
+        "resoFp32Buf": 16384,
+        "sqBuf": 16384,
+        "meanBuf": 16384,
+        "nrBuf": 16384,
+        "resOutHalfBuf0": 8192,
+        "resOutHalfBuf1": 8192,
+        "yHalfBuf0": 8192,
+        "yHalfBuf1": 8192,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 188480,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 116
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "slots",
+          "title": "显式输出槽与输入队列不同",
+          "text": "输出按 row & 1 选 TBuf，隔两次迭代等待 MTE3 后复用；输入由 TQue 分配，不推定物理槽号。",
+          "line": 96
+        }
+      ],
+      "requestBytes": {
+        "x": 262144,
+        "residual": 262144,
+        "gamma": 262144,
+        "outputs": 524288
+      }
+    },
+    {
+      "id": "256x1024/aiv48/core0",
+      "shape": [
+        256,
+        1024
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "public",
+      "aligned": 1024,
+      "tile": 1024,
+      "whole": true,
+      "start": 0,
+      "end": 6,
+      "shown": [
+        0,
+        1,
+        2
+      ],
+      "ticks": 23,
+      "events": [
+        {
+          "id": "256x1024/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "γ → UB",
+          "kind": "weight",
+          "row": null,
+          "chunk": null,
+          "line": 80,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "γ FP16 → FP32",
+          "kind": "cast",
+          "row": null,
+          "chunk": null,
+          "line": 281,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 0,
+          "label": "r0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": null,
+          "line": 89,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 0,
+          "label": "r1 X + R 预取",
+          "kind": "input",
+          "row": 1,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "r0 Add FP16",
+          "kind": "add",
+          "row": 0,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "256x1024/aiv48/core0/event/2"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 1,
+          "label": "r0 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "256x1024/aiv48/core0/event/4"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 1,
+          "label": "r0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "256x1024/aiv48/core0/event/5"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 2,
+          "label": "r0 R_out + Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "256x1024/aiv48/core0/event/6"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 3,
+          "label": "r0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/9",
+          "index": 9,
+          "lane": 0,
+          "label": "r2 X + R 预取",
+          "kind": "input",
+          "row": 2,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/10",
+          "index": 10,
+          "lane": 1,
+          "label": "r1 Add FP16",
+          "kind": "add",
+          "row": 1,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "256x1024/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/11",
+          "index": 11,
+          "lane": 1,
+          "label": "r1 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 1,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "256x1024/aiv48/core0/event/10"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/12",
+          "index": 12,
+          "lane": 1,
+          "label": "r1 × γ → Y",
+          "kind": "norm",
+          "row": 1,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "256x1024/aiv48/core0/event/11"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/13",
+          "index": 13,
+          "lane": 2,
+          "label": "r1 R_out + Y → GM",
+          "kind": "write",
+          "row": 1,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "256x1024/aiv48/core0/event/12"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/14",
+          "index": 14,
+          "lane": 3,
+          "label": "r1 Free X / R",
+          "kind": "free",
+          "row": 1,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/15",
+          "index": 15,
+          "lane": 0,
+          "label": "r3 X + R 预取",
+          "kind": "input",
+          "row": 3,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/16",
+          "index": 16,
+          "lane": 3,
+          "label": "等待槽 0 写回",
+          "kind": "wait",
+          "row": 2,
+          "chunk": null,
+          "line": 110,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/17",
+          "index": 17,
+          "lane": 1,
+          "label": "r2 Add FP16",
+          "kind": "add",
+          "row": 2,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "256x1024/aiv48/core0/event/9"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/18",
+          "index": 18,
+          "lane": 1,
+          "label": "r2 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 2,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "256x1024/aiv48/core0/event/17"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/19",
+          "index": 19,
+          "lane": 1,
+          "label": "r2 × γ → Y",
+          "kind": "norm",
+          "row": 2,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "256x1024/aiv48/core0/event/18"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/20",
+          "index": 20,
+          "lane": 2,
+          "label": "r2 R_out + Y → GM",
+          "kind": "write",
+          "row": 2,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "256x1024/aiv48/core0/event/19"
+          ]
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/21",
+          "index": 21,
+          "lane": 3,
+          "label": "r2 Free X / R",
+          "kind": "free",
+          "row": 2,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "256x1024/aiv48/core0/event/22",
+          "index": 22,
+          "lane": 3,
+          "label": "视窗截断 · 后续行继续",
+          "kind": "window",
+          "row": null,
+          "chunk": null,
+          "line": 95,
+          "parents": []
+        }
+      ],
+      "life": [
+        {
+          "id": "256x1024/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[r0]",
+          "size": 2048,
+          "start": 2,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[r0]",
+          "size": 2048,
+          "start": 2,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/2",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r0] · slot 0",
+          "size": 2048,
+          "start": 4,
+          "end": 17,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/4",
+          "line": 116,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 110,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/3",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r0] · slot 0",
+          "size": 2048,
+          "start": 6,
+          "end": 17,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/6",
+          "line": 140,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 110,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/4",
+          "buffer": "inQueX",
+          "name": "X[r1]",
+          "size": 2048,
+          "start": 3,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 1,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/3",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 2048,
+          "displayBand": 1
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/5",
+          "buffer": "inQueRes",
+          "name": "R[r1]",
+          "size": 2048,
+          "start": 3,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 1,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/3",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 2048,
+          "displayBand": 1
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/6",
+          "buffer": "resOutHalfBuf1",
+          "name": "R_out[r1] · slot 1",
+          "size": 2048,
+          "start": 10,
+          "end": 23,
+          "role": "activation",
+          "slot": 1,
+          "row": 1,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/10",
+          "line": 116,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/7",
+          "buffer": "yHalfBuf1",
+          "name": "Y[r1] · slot 1",
+          "size": 2048,
+          "start": 12,
+          "end": 23,
+          "role": "activation",
+          "slot": 1,
+          "row": 1,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/12",
+          "line": 140,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/8",
+          "buffer": "inQueX",
+          "name": "X[r2]",
+          "size": 2048,
+          "start": 9,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 2,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/9",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/9",
+          "buffer": "inQueRes",
+          "name": "R[r2]",
+          "size": 2048,
+          "start": 9,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 2,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/9",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/10",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r2] · slot 0",
+          "size": 2048,
+          "start": 17,
+          "end": 23,
+          "role": "activation",
+          "slot": 0,
+          "row": 2,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/17",
+          "line": 116,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/11",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r2] · slot 0",
+          "size": 2048,
+          "start": 19,
+          "end": 23,
+          "role": "activation",
+          "slot": 0,
+          "row": 2,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/19",
+          "line": 140,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/12",
+          "buffer": "inQueX",
+          "name": "X[r3] · 窗口外预取",
+          "size": 2048,
+          "start": 15,
+          "end": 23,
+          "role": "activation",
+          "slot": null,
+          "row": 3,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/15",
+          "line": 102,
+          "semantics": "allocation continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 2048,
+          "displayBand": 1
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/13",
+          "buffer": "inQueRes",
+          "name": "R[r3] · 窗口外预取",
+          "size": 2048,
+          "start": 15,
+          "end": 23,
+          "role": "activation",
+          "slot": null,
+          "row": 3,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/15",
+          "line": 102,
+          "semantics": "allocation continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 2048,
+          "displayBand": 1
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/14",
+          "buffer": "weightHalfBuf",
+          "name": "γ FP16",
+          "size": 2048,
+          "start": 0,
+          "end": 2,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/0",
+          "line": 80,
+          "semantics": "content use",
+          "freeLine": 281,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "256x1024/aiv48/core0/life/15",
+          "buffer": "weightFp32Buf",
+          "name": "γ FP32 · 当前核",
+          "size": 4096,
+          "start": 1,
+          "end": 23,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "256x1024/aiv48/core0/event/1",
+          "line": 281,
+          "semantics": "content retained across rows",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 4096,
+        "inQueRes": 4096,
+        "outQueY": 4096,
+        "outQueResOut": 4096,
+        "weightHalfBuf": 2048,
+        "weightFp32Buf": 4096,
+        "resoFp32Buf": 4096,
+        "sqBuf": 4096,
+        "meanBuf": 4096,
+        "nrBuf": 4096,
+        "resOutHalfBuf0": 2048,
+        "resOutHalfBuf1": 2048,
+        "yHalfBuf0": 2048,
+        "yHalfBuf1": 2048,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 47168,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 116
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "slots",
+          "title": "显式输出槽与输入队列不同",
+          "text": "输出按 row & 1 选 TBuf，隔两次迭代等待 MTE3 后复用；输入由 TQue 分配，不推定物理槽号。",
+          "line": 96
+        }
+      ],
+      "requestBytes": {
+        "x": 524288,
+        "residual": 524288,
+        "gamma": 88064,
+        "outputs": 1048576
+      }
+    },
+    {
+      "id": "1x4096/aiv48/core0",
+      "shape": [
+        1,
+        4096
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "public",
+      "aligned": 4096,
+      "tile": 4096,
+      "whole": true,
+      "start": 0,
+      "end": 1,
+      "shown": [
+        0
+      ],
+      "ticks": 9,
+      "events": [
+        {
+          "id": "1x4096/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "γ → UB",
+          "kind": "weight",
+          "row": null,
+          "chunk": null,
+          "line": 80,
+          "parents": []
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "γ FP16 → FP32",
+          "kind": "cast",
+          "row": null,
+          "chunk": null,
+          "line": 281,
+          "parents": []
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 0,
+          "label": "r0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": null,
+          "line": 89,
+          "parents": []
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 1,
+          "label": "r0 Add FP16",
+          "kind": "add",
+          "row": 0,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "1x4096/aiv48/core0/event/2"
+          ]
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "r0 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "1x4096/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 1,
+          "label": "r0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "1x4096/aiv48/core0/event/4"
+          ]
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 2,
+          "label": "r0 R_out + Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "1x4096/aiv48/core0/event/5"
+          ]
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 3,
+          "label": "r0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "1x4096/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 3,
+          "label": "Drain · 等待末两次写回",
+          "kind": "drain",
+          "row": null,
+          "chunk": null,
+          "line": 158,
+          "parents": []
+        }
+      ],
+      "life": [
+        {
+          "id": "1x4096/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[r0]",
+          "size": 8192,
+          "start": 2,
+          "end": 8,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1x4096/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1x4096/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[r0]",
+          "size": 8192,
+          "start": 2,
+          "end": 8,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1x4096/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1x4096/aiv48/core0/life/2",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r0] · slot 0",
+          "size": 8192,
+          "start": 3,
+          "end": 9,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1x4096/aiv48/core0/event/3",
+          "line": 116,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 158,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1x4096/aiv48/core0/life/3",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r0] · slot 0",
+          "size": 8192,
+          "start": 5,
+          "end": 9,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1x4096/aiv48/core0/event/5",
+          "line": 140,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 158,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1x4096/aiv48/core0/life/4",
+          "buffer": "weightHalfBuf",
+          "name": "γ FP16",
+          "size": 8192,
+          "start": 0,
+          "end": 2,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "1x4096/aiv48/core0/event/0",
+          "line": 80,
+          "semantics": "content use",
+          "freeLine": 281,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1x4096/aiv48/core0/life/5",
+          "buffer": "weightFp32Buf",
+          "name": "γ FP32 · 当前核",
+          "size": 16384,
+          "start": 1,
+          "end": 9,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "1x4096/aiv48/core0/event/1",
+          "line": 281,
+          "semantics": "content retained across rows",
+          "freeLine": 158,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 16384,
+        "inQueRes": 16384,
+        "outQueY": 16384,
+        "outQueResOut": 16384,
+        "weightHalfBuf": 8192,
+        "weightFp32Buf": 16384,
+        "resoFp32Buf": 16384,
+        "sqBuf": 16384,
+        "meanBuf": 16384,
+        "nrBuf": 16384,
+        "resOutHalfBuf0": 8192,
+        "resOutHalfBuf1": 8192,
+        "yHalfBuf0": 8192,
+        "yHalfBuf1": 8192,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 188480,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 116
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "slots",
+          "title": "显式输出槽与输入队列不同",
+          "text": "输出按 row & 1 选 TBuf，隔两次迭代等待 MTE3 后复用；输入由 TQue 分配，不推定物理槽号。",
+          "line": 96
+        }
+      ],
+      "requestBytes": {
+        "x": 8192,
+        "residual": 8192,
+        "gamma": 8192,
+        "outputs": 16384
+      }
+    },
+    {
+      "id": "1997x3037/aiv48/core0",
+      "shape": [
+        1997,
+        3037
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "public",
+      "aligned": 3040,
+      "tile": 3040,
+      "whole": true,
+      "start": 0,
+      "end": 42,
+      "shown": [
+        0,
+        1,
+        2
+      ],
+      "ticks": 23,
+      "events": [
+        {
+          "id": "1997x3037/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "γ → UB",
+          "kind": "weight",
+          "row": null,
+          "chunk": null,
+          "line": 80,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "γ FP16 → FP32",
+          "kind": "cast",
+          "row": null,
+          "chunk": null,
+          "line": 281,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 0,
+          "label": "r0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": null,
+          "line": 89,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 0,
+          "label": "r1 X + R 预取",
+          "kind": "input",
+          "row": 1,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "r0 Add FP16",
+          "kind": "add",
+          "row": 0,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "1997x3037/aiv48/core0/event/2"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 1,
+          "label": "r0 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "1997x3037/aiv48/core0/event/4"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 1,
+          "label": "r0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "1997x3037/aiv48/core0/event/5"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 2,
+          "label": "r0 R_out + Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "1997x3037/aiv48/core0/event/6"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 3,
+          "label": "r0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/9",
+          "index": 9,
+          "lane": 0,
+          "label": "r2 X + R 预取",
+          "kind": "input",
+          "row": 2,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/10",
+          "index": 10,
+          "lane": 1,
+          "label": "r1 Add FP16",
+          "kind": "add",
+          "row": 1,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "1997x3037/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/11",
+          "index": 11,
+          "lane": 1,
+          "label": "r1 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 1,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "1997x3037/aiv48/core0/event/10"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/12",
+          "index": 12,
+          "lane": 1,
+          "label": "r1 × γ → Y",
+          "kind": "norm",
+          "row": 1,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "1997x3037/aiv48/core0/event/11"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/13",
+          "index": 13,
+          "lane": 2,
+          "label": "r1 R_out + Y → GM",
+          "kind": "write",
+          "row": 1,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "1997x3037/aiv48/core0/event/12"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/14",
+          "index": 14,
+          "lane": 3,
+          "label": "r1 Free X / R",
+          "kind": "free",
+          "row": 1,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/15",
+          "index": 15,
+          "lane": 0,
+          "label": "r3 X + R 预取",
+          "kind": "input",
+          "row": 3,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/16",
+          "index": 16,
+          "lane": 3,
+          "label": "等待槽 0 写回",
+          "kind": "wait",
+          "row": 2,
+          "chunk": null,
+          "line": 110,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/17",
+          "index": 17,
+          "lane": 1,
+          "label": "r2 Add FP16",
+          "kind": "add",
+          "row": 2,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "1997x3037/aiv48/core0/event/9"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/18",
+          "index": 18,
+          "lane": 1,
+          "label": "r2 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 2,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "1997x3037/aiv48/core0/event/17"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/19",
+          "index": 19,
+          "lane": 1,
+          "label": "r2 × γ → Y",
+          "kind": "norm",
+          "row": 2,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "1997x3037/aiv48/core0/event/18"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/20",
+          "index": 20,
+          "lane": 2,
+          "label": "r2 R_out + Y → GM",
+          "kind": "write",
+          "row": 2,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "1997x3037/aiv48/core0/event/19"
+          ]
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/21",
+          "index": 21,
+          "lane": 3,
+          "label": "r2 Free X / R",
+          "kind": "free",
+          "row": 2,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "1997x3037/aiv48/core0/event/22",
+          "index": 22,
+          "lane": 3,
+          "label": "视窗截断 · 后续行继续",
+          "kind": "window",
+          "row": null,
+          "chunk": null,
+          "line": 95,
+          "parents": []
+        }
+      ],
+      "life": [
+        {
+          "id": "1997x3037/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[r0]",
+          "size": 6080,
+          "start": 2,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[r0]",
+          "size": 6080,
+          "start": 2,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/2",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r0] · slot 0",
+          "size": 6080,
+          "start": 4,
+          "end": 17,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/4",
+          "line": 116,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 110,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/3",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r0] · slot 0",
+          "size": 6080,
+          "start": 6,
+          "end": 17,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/6",
+          "line": 140,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 110,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/4",
+          "buffer": "inQueX",
+          "name": "X[r1]",
+          "size": 6080,
+          "start": 3,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 1,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/3",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 6080,
+          "displayBand": 1
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/5",
+          "buffer": "inQueRes",
+          "name": "R[r1]",
+          "size": 6080,
+          "start": 3,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 1,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/3",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 6080,
+          "displayBand": 1
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/6",
+          "buffer": "resOutHalfBuf1",
+          "name": "R_out[r1] · slot 1",
+          "size": 6080,
+          "start": 10,
+          "end": 23,
+          "role": "activation",
+          "slot": 1,
+          "row": 1,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/10",
+          "line": 116,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/7",
+          "buffer": "yHalfBuf1",
+          "name": "Y[r1] · slot 1",
+          "size": 6080,
+          "start": 12,
+          "end": 23,
+          "role": "activation",
+          "slot": 1,
+          "row": 1,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/12",
+          "line": 140,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/8",
+          "buffer": "inQueX",
+          "name": "X[r2]",
+          "size": 6080,
+          "start": 9,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 2,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/9",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/9",
+          "buffer": "inQueRes",
+          "name": "R[r2]",
+          "size": 6080,
+          "start": 9,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 2,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/9",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/10",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r2] · slot 0",
+          "size": 6080,
+          "start": 17,
+          "end": 23,
+          "role": "activation",
+          "slot": 0,
+          "row": 2,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/17",
+          "line": 116,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/11",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r2] · slot 0",
+          "size": 6080,
+          "start": 19,
+          "end": 23,
+          "role": "activation",
+          "slot": 0,
+          "row": 2,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/19",
+          "line": 140,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/12",
+          "buffer": "inQueX",
+          "name": "X[r3] · 窗口外预取",
+          "size": 6080,
+          "start": 15,
+          "end": 23,
+          "role": "activation",
+          "slot": null,
+          "row": 3,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/15",
+          "line": 102,
+          "semantics": "allocation continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 6080,
+          "displayBand": 1
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/13",
+          "buffer": "inQueRes",
+          "name": "R[r3] · 窗口外预取",
+          "size": 6080,
+          "start": 15,
+          "end": 23,
+          "role": "activation",
+          "slot": null,
+          "row": 3,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/15",
+          "line": 102,
+          "semantics": "allocation continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 6080,
+          "displayBand": 1
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/14",
+          "buffer": "weightHalfBuf",
+          "name": "γ FP16",
+          "size": 6080,
+          "start": 0,
+          "end": 2,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/0",
+          "line": 80,
+          "semantics": "content use",
+          "freeLine": 281,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "1997x3037/aiv48/core0/life/15",
+          "buffer": "weightFp32Buf",
+          "name": "γ FP32 · 当前核",
+          "size": 12160,
+          "start": 1,
+          "end": 23,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "1997x3037/aiv48/core0/event/1",
+          "line": 281,
+          "semantics": "content retained across rows",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 12160,
+        "inQueRes": 12160,
+        "outQueY": 12160,
+        "outQueResOut": 12160,
+        "weightHalfBuf": 6080,
+        "weightFp32Buf": 12160,
+        "resoFp32Buf": 12160,
+        "sqBuf": 12160,
+        "meanBuf": 12160,
+        "nrBuf": 12160,
+        "resOutHalfBuf0": 6080,
+        "resOutHalfBuf1": 6080,
+        "yHalfBuf0": 6080,
+        "yHalfBuf1": 6080,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 139904,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 116
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "slots",
+          "title": "显式输出槽与输入队列不同",
+          "text": "输出按 row & 1 选 TBuf，隔两次迭代等待 MTE3 后复用；输入由 TQue 分配，不推定物理槽号。",
+          "line": 96
+        },
+        {
+          "id": "tail",
+          "title": "尾部 padding 3 个 FP16",
+          "text": "每行有效 6074 B；行对齐 6080 B。整行归约长度传 H。写回仅传有效元素。",
+          "line": 123
+        }
+      ],
+      "requestBytes": {
+        "x": 12129778,
+        "residual": 12129778,
+        "gamma": 291552,
+        "outputs": 24259556
+      }
+    },
+    {
+      "id": "2048x4096/aiv48/core0",
+      "shape": [
+        2048,
+        4096
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "public",
+      "aligned": 4096,
+      "tile": 4096,
+      "whole": true,
+      "start": 0,
+      "end": 43,
+      "shown": [
+        0,
+        1,
+        2
+      ],
+      "ticks": 23,
+      "events": [
+        {
+          "id": "2048x4096/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "γ → UB",
+          "kind": "weight",
+          "row": null,
+          "chunk": null,
+          "line": 80,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "γ FP16 → FP32",
+          "kind": "cast",
+          "row": null,
+          "chunk": null,
+          "line": 281,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 0,
+          "label": "r0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": null,
+          "line": 89,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 0,
+          "label": "r1 X + R 预取",
+          "kind": "input",
+          "row": 1,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "r0 Add FP16",
+          "kind": "add",
+          "row": 0,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "2048x4096/aiv48/core0/event/2"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 1,
+          "label": "r0 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "2048x4096/aiv48/core0/event/4"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 1,
+          "label": "r0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "2048x4096/aiv48/core0/event/5"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 2,
+          "label": "r0 R_out + Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "2048x4096/aiv48/core0/event/6"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 3,
+          "label": "r0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/9",
+          "index": 9,
+          "lane": 0,
+          "label": "r2 X + R 预取",
+          "kind": "input",
+          "row": 2,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/10",
+          "index": 10,
+          "lane": 1,
+          "label": "r1 Add FP16",
+          "kind": "add",
+          "row": 1,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "2048x4096/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/11",
+          "index": 11,
+          "lane": 1,
+          "label": "r1 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 1,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "2048x4096/aiv48/core0/event/10"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/12",
+          "index": 12,
+          "lane": 1,
+          "label": "r1 × γ → Y",
+          "kind": "norm",
+          "row": 1,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "2048x4096/aiv48/core0/event/11"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/13",
+          "index": 13,
+          "lane": 2,
+          "label": "r1 R_out + Y → GM",
+          "kind": "write",
+          "row": 1,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "2048x4096/aiv48/core0/event/12"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/14",
+          "index": 14,
+          "lane": 3,
+          "label": "r1 Free X / R",
+          "kind": "free",
+          "row": 1,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/15",
+          "index": 15,
+          "lane": 0,
+          "label": "r3 X + R 预取",
+          "kind": "input",
+          "row": 3,
+          "chunk": null,
+          "line": 102,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/16",
+          "index": 16,
+          "lane": 3,
+          "label": "等待槽 0 写回",
+          "kind": "wait",
+          "row": 2,
+          "chunk": null,
+          "line": 110,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/17",
+          "index": 17,
+          "lane": 1,
+          "label": "r2 Add FP16",
+          "kind": "add",
+          "row": 2,
+          "chunk": null,
+          "line": 116,
+          "parents": [
+            "2048x4096/aiv48/core0/event/9"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/18",
+          "index": 18,
+          "lane": 1,
+          "label": "r2 Σ / Rsqrt / NR",
+          "kind": "reduce",
+          "row": 2,
+          "chunk": null,
+          "line": 123,
+          "parents": [
+            "2048x4096/aiv48/core0/event/17"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/19",
+          "index": 19,
+          "lane": 1,
+          "label": "r2 × γ → Y",
+          "kind": "norm",
+          "row": 2,
+          "chunk": null,
+          "line": 140,
+          "parents": [
+            "2048x4096/aiv48/core0/event/18"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/20",
+          "index": 20,
+          "lane": 2,
+          "label": "r2 R_out + Y → GM",
+          "kind": "write",
+          "row": 2,
+          "chunk": null,
+          "line": 148,
+          "parents": [
+            "2048x4096/aiv48/core0/event/19"
+          ]
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/21",
+          "index": 21,
+          "lane": 3,
+          "label": "r2 Free X / R",
+          "kind": "free",
+          "row": 2,
+          "chunk": null,
+          "line": 154,
+          "parents": []
+        },
+        {
+          "id": "2048x4096/aiv48/core0/event/22",
+          "index": 22,
+          "lane": 3,
+          "label": "视窗截断 · 后续行继续",
+          "kind": "window",
+          "row": null,
+          "chunk": null,
+          "line": 95,
+          "parents": []
+        }
+      ],
+      "life": [
+        {
+          "id": "2048x4096/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[r0]",
+          "size": 8192,
+          "start": 2,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[r0]",
+          "size": 8192,
+          "start": 2,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/2",
+          "line": 89,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/2",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r0] · slot 0",
+          "size": 8192,
+          "start": 4,
+          "end": 17,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/4",
+          "line": 116,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 110,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/3",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r0] · slot 0",
+          "size": 8192,
+          "start": 6,
+          "end": 17,
+          "role": "activation",
+          "slot": 0,
+          "row": 0,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/6",
+          "line": 140,
+          "semantics": "explicit TBuf content until reuse wait",
+          "freeLine": 110,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/4",
+          "buffer": "inQueX",
+          "name": "X[r1]",
+          "size": 8192,
+          "start": 3,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 1,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/3",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 8192,
+          "displayBand": 1
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/5",
+          "buffer": "inQueRes",
+          "name": "R[r1]",
+          "size": 8192,
+          "start": 3,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 1,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/3",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 8192,
+          "displayBand": 1
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/6",
+          "buffer": "resOutHalfBuf1",
+          "name": "R_out[r1] · slot 1",
+          "size": 8192,
+          "start": 10,
+          "end": 23,
+          "role": "activation",
+          "slot": 1,
+          "row": 1,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/10",
+          "line": 116,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/7",
+          "buffer": "yHalfBuf1",
+          "name": "Y[r1] · slot 1",
+          "size": 8192,
+          "start": 12,
+          "end": 23,
+          "role": "activation",
+          "slot": 1,
+          "row": 1,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/12",
+          "line": 140,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/8",
+          "buffer": "inQueX",
+          "name": "X[r2]",
+          "size": 8192,
+          "start": 9,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 2,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/9",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/9",
+          "buffer": "inQueRes",
+          "name": "R[r2]",
+          "size": 8192,
+          "start": 9,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 2,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/9",
+          "line": 102,
+          "semantics": "allocation",
+          "freeLine": 154,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/10",
+          "buffer": "resOutHalfBuf0",
+          "name": "R_out[r2] · slot 0",
+          "size": 8192,
+          "start": 17,
+          "end": 23,
+          "role": "activation",
+          "slot": 0,
+          "row": 2,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/17",
+          "line": 116,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/11",
+          "buffer": "yHalfBuf0",
+          "name": "Y[r2] · slot 0",
+          "size": 8192,
+          "start": 19,
+          "end": 23,
+          "role": "activation",
+          "slot": 0,
+          "row": 2,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/19",
+          "line": 140,
+          "semantics": "content continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/12",
+          "buffer": "inQueX",
+          "name": "X[r3] · 窗口外预取",
+          "size": 8192,
+          "start": 15,
+          "end": 23,
+          "role": "activation",
+          "slot": null,
+          "row": 3,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/15",
+          "line": 102,
+          "semantics": "allocation continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 8192,
+          "displayBand": 1
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/13",
+          "buffer": "inQueRes",
+          "name": "R[r3] · 窗口外预取",
+          "size": 8192,
+          "start": 15,
+          "end": 23,
+          "role": "activation",
+          "slot": null,
+          "row": 3,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/15",
+          "line": 102,
+          "semantics": "allocation continues beyond display window",
+          "freeLine": 95,
+          "displayOffset": 8192,
+          "displayBand": 1
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/14",
+          "buffer": "weightHalfBuf",
+          "name": "γ FP16",
+          "size": 8192,
+          "start": 0,
+          "end": 2,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/0",
+          "line": 80,
+          "semantics": "content use",
+          "freeLine": 281,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "2048x4096/aiv48/core0/life/15",
+          "buffer": "weightFp32Buf",
+          "name": "γ FP32 · 当前核",
+          "size": 16384,
+          "start": 1,
+          "end": 23,
+          "role": "weight",
+          "slot": null,
+          "row": null,
+          "chunk": null,
+          "eventId": "2048x4096/aiv48/core0/event/1",
+          "line": 281,
+          "semantics": "content retained across rows",
+          "freeLine": 95,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 16384,
+        "inQueRes": 16384,
+        "outQueY": 16384,
+        "outQueResOut": 16384,
+        "weightHalfBuf": 8192,
+        "weightFp32Buf": 16384,
+        "resoFp32Buf": 16384,
+        "sqBuf": 16384,
+        "meanBuf": 16384,
+        "nrBuf": 16384,
+        "resOutHalfBuf0": 8192,
+        "resOutHalfBuf1": 8192,
+        "yHalfBuf0": 8192,
+        "yHalfBuf1": 8192,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 188480,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 116
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "slots",
+          "title": "显式输出槽与输入队列不同",
+          "text": "输出按 row & 1 选 TBuf，隔两次迭代等待 MTE3 后复用；输入由 TQue 分配，不推定物理槽号。",
+          "line": 96
+        }
+      ],
+      "requestBytes": {
+        "x": 16777216,
+        "residual": 16777216,
+        "gamma": 393216,
+        "outputs": 33554432
+      }
+    },
+    {
+      "id": "4x4097/aiv48/core0",
+      "shape": [
+        4,
+        4097
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "source-boundary",
+      "aligned": 4112,
+      "tile": 4096,
+      "whole": false,
+      "start": 0,
+      "end": 1,
+      "shown": [
+        0
+      ],
+      "ticks": 25,
+      "events": [
+        {
+          "id": "4x4097/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "c0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": 0,
+          "line": 190,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "c0 Cast → Add FP32 → Σ",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 0,
+          "line": 203,
+          "parents": [
+            "4x4097/aiv48/core0/event/0"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 3,
+          "label": "c0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 0,
+          "line": 207,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 0,
+          "label": "c1 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": 1,
+          "line": 190,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "c1 Cast → Add FP32 → Σ",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 1,
+          "line": 203,
+          "parents": [
+            "4x4097/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 3,
+          "label": "c1 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 1,
+          "line": 207,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 3,
+          "label": "sumSq / H + eps",
+          "kind": "scalar",
+          "row": 0,
+          "chunk": null,
+          "line": 211,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 0,
+          "label": "c0 X + R 再读",
+          "kind": "reread",
+          "row": 0,
+          "chunk": 0,
+          "line": 218,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 1,
+          "label": "c0 Add FP32",
+          "kind": "add",
+          "row": 0,
+          "chunk": 0,
+          "line": 227,
+          "parents": [
+            "4x4097/aiv48/core0/event/7"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/9",
+          "index": 9,
+          "lane": 3,
+          "label": "c0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 0,
+          "line": 229,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/10",
+          "index": 10,
+          "lane": 1,
+          "label": "c0 Cast → R_out",
+          "kind": "cast",
+          "row": 0,
+          "chunk": 0,
+          "line": 232,
+          "parents": [
+            "4x4097/aiv48/core0/event/8"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/11",
+          "index": 11,
+          "lane": 2,
+          "label": "c0 R_out → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 0,
+          "line": 236,
+          "parents": [
+            "4x4097/aiv48/core0/event/8"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/12",
+          "index": 12,
+          "lane": 1,
+          "label": "c0 Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 0,
+          "line": 240,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/13",
+          "index": 13,
+          "lane": 0,
+          "label": "c0 γ → UB",
+          "kind": "weight",
+          "row": 0,
+          "chunk": 0,
+          "line": 256,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/14",
+          "index": 14,
+          "lane": 1,
+          "label": "c0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": 0,
+          "line": 257,
+          "parents": [
+            "4x4097/aiv48/core0/event/13",
+            "4x4097/aiv48/core0/event/12"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/15",
+          "index": 15,
+          "lane": 2,
+          "label": "c0 Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 0,
+          "line": 264,
+          "parents": [
+            "4x4097/aiv48/core0/event/14"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/16",
+          "index": 16,
+          "lane": 0,
+          "label": "c1 X + R 再读",
+          "kind": "reread",
+          "row": 0,
+          "chunk": 1,
+          "line": 218,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/17",
+          "index": 17,
+          "lane": 1,
+          "label": "c1 Add FP32",
+          "kind": "add",
+          "row": 0,
+          "chunk": 1,
+          "line": 227,
+          "parents": [
+            "4x4097/aiv48/core0/event/16"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/18",
+          "index": 18,
+          "lane": 3,
+          "label": "c1 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 1,
+          "line": 229,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/19",
+          "index": 19,
+          "lane": 1,
+          "label": "c1 Cast → R_out",
+          "kind": "cast",
+          "row": 0,
+          "chunk": 1,
+          "line": 232,
+          "parents": [
+            "4x4097/aiv48/core0/event/17"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/20",
+          "index": 20,
+          "lane": 2,
+          "label": "c1 R_out → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 1,
+          "line": 236,
+          "parents": [
+            "4x4097/aiv48/core0/event/17"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/21",
+          "index": 21,
+          "lane": 1,
+          "label": "c1 Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 1,
+          "line": 240,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/22",
+          "index": 22,
+          "lane": 0,
+          "label": "c1 γ → UB",
+          "kind": "weight",
+          "row": 0,
+          "chunk": 1,
+          "line": 256,
+          "parents": []
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/23",
+          "index": 23,
+          "lane": 1,
+          "label": "c1 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": 1,
+          "line": 257,
+          "parents": [
+            "4x4097/aiv48/core0/event/22",
+            "4x4097/aiv48/core0/event/21"
+          ]
+        },
+        {
+          "id": "4x4097/aiv48/core0/event/24",
+          "index": 24,
+          "lane": 2,
+          "label": "c1 Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 1,
+          "line": 264,
+          "parents": [
+            "4x4097/aiv48/core0/event/23"
+          ]
+        }
+      ],
+      "life": [
+        {
+          "id": "4x4097/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[c0] · 第一遍",
+          "size": 8192,
+          "start": 0,
+          "end": 3,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/0",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[c0] · 第一遍",
+          "size": 8192,
+          "start": 0,
+          "end": 3,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/0",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/2",
+          "buffer": "inQueX",
+          "name": "X[c1] · 第一遍",
+          "size": 32,
+          "start": 3,
+          "end": 6,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/3",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/3",
+          "buffer": "inQueRes",
+          "name": "R[c1] · 第一遍",
+          "size": 32,
+          "start": 3,
+          "end": 6,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/3",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/4",
+          "buffer": "inQueX",
+          "name": "X[c0] · 第二遍",
+          "size": 8192,
+          "start": 7,
+          "end": 10,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/7",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/5",
+          "buffer": "inQueRes",
+          "name": "R[c0] · 第二遍",
+          "size": 8192,
+          "start": 7,
+          "end": 10,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/7",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/6",
+          "buffer": "outQueResOut",
+          "name": "R_out[c0]",
+          "size": 8192,
+          "start": 10,
+          "end": 12,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/10",
+          "line": 232,
+          "semantics": "allocation",
+          "freeLine": 236,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/7",
+          "buffer": "outQueY",
+          "name": "Y[c0]",
+          "size": 8192,
+          "start": 14,
+          "end": 16,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/14",
+          "line": 257,
+          "semantics": "allocation",
+          "freeLine": 264,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/8",
+          "buffer": "weightFp32Buf",
+          "name": "γ[c0] FP32",
+          "size": 16384,
+          "start": 13,
+          "end": 15,
+          "role": "weight",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x4097/aiv48/core0/event/13",
+          "line": 256,
+          "semantics": "content use",
+          "freeLine": 257,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/9",
+          "buffer": "inQueX",
+          "name": "X[c1] · 第二遍",
+          "size": 32,
+          "start": 16,
+          "end": 19,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/16",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/10",
+          "buffer": "inQueRes",
+          "name": "R[c1] · 第二遍",
+          "size": 32,
+          "start": 16,
+          "end": 19,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/16",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/11",
+          "buffer": "outQueResOut",
+          "name": "R_out[c1]",
+          "size": 32,
+          "start": 19,
+          "end": 21,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/19",
+          "line": 232,
+          "semantics": "allocation",
+          "freeLine": 236,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/12",
+          "buffer": "outQueY",
+          "name": "Y[c1]",
+          "size": 32,
+          "start": 23,
+          "end": 25,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/23",
+          "line": 257,
+          "semantics": "allocation",
+          "freeLine": 264,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x4097/aiv48/core0/life/13",
+          "buffer": "weightFp32Buf",
+          "name": "γ[c1] FP32",
+          "size": 64,
+          "start": 22,
+          "end": 24,
+          "role": "weight",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x4097/aiv48/core0/event/22",
+          "line": 256,
+          "semantics": "content use",
+          "freeLine": 257,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 16384,
+        "inQueRes": 16384,
+        "outQueY": 16384,
+        "outQueResOut": 16384,
+        "weightHalfBuf": 8192,
+        "weightFp32Buf": 16384,
+        "resoFp32Buf": 16384,
+        "sqBuf": 16384,
+        "meanBuf": 16384,
+        "nrBuf": 16384,
+        "resOutHalfBuf0": 8192,
+        "resOutHalfBuf1": 8192,
+        "yHalfBuf0": 8192,
+        "yHalfBuf1": 8192,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 188480,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 199
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "tail",
+          "title": "尾部 padding 15 个 FP16",
+          "text": "每行有效 8194 B；行对齐 8224 B。尾块归约长度传 n，按 nAlign 对齐。写回仅传有效元素。",
+          "line": 203
+        }
+      ],
+      "requestBytes": {
+        "x": 65552,
+        "residual": 65552,
+        "gamma": 32776,
+        "outputs": 65552
+      }
+    },
+    {
+      "id": "4x8193/aiv48/core0",
+      "shape": [
+        4,
+        8193
+      ],
+      "cores": 48,
+      "core": 0,
+      "origin": "source-boundary",
+      "aligned": 8208,
+      "tile": 4096,
+      "whole": false,
+      "start": 0,
+      "end": 1,
+      "shown": [
+        0
+      ],
+      "ticks": 37,
+      "events": [
+        {
+          "id": "4x8193/aiv48/core0/event/0",
+          "index": 0,
+          "lane": 0,
+          "label": "c0 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": 0,
+          "line": 190,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/1",
+          "index": 1,
+          "lane": 1,
+          "label": "c0 Cast → Add FP32 → Σ",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 0,
+          "line": 203,
+          "parents": [
+            "4x8193/aiv48/core0/event/0"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/2",
+          "index": 2,
+          "lane": 3,
+          "label": "c0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 0,
+          "line": 207,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/3",
+          "index": 3,
+          "lane": 0,
+          "label": "c1 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": 1,
+          "line": 190,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/4",
+          "index": 4,
+          "lane": 1,
+          "label": "c1 Cast → Add FP32 → Σ",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 1,
+          "line": 203,
+          "parents": [
+            "4x8193/aiv48/core0/event/3"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/5",
+          "index": 5,
+          "lane": 3,
+          "label": "c1 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 1,
+          "line": 207,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/6",
+          "index": 6,
+          "lane": 0,
+          "label": "c2 X + R 首读",
+          "kind": "input",
+          "row": 0,
+          "chunk": 2,
+          "line": 190,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/7",
+          "index": 7,
+          "lane": 1,
+          "label": "c2 Cast → Add FP32 → Σ",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 2,
+          "line": 203,
+          "parents": [
+            "4x8193/aiv48/core0/event/6"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/8",
+          "index": 8,
+          "lane": 3,
+          "label": "c2 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 2,
+          "line": 207,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/9",
+          "index": 9,
+          "lane": 3,
+          "label": "sumSq / H + eps",
+          "kind": "scalar",
+          "row": 0,
+          "chunk": null,
+          "line": 211,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/10",
+          "index": 10,
+          "lane": 0,
+          "label": "c0 X + R 再读",
+          "kind": "reread",
+          "row": 0,
+          "chunk": 0,
+          "line": 218,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/11",
+          "index": 11,
+          "lane": 1,
+          "label": "c0 Add FP32",
+          "kind": "add",
+          "row": 0,
+          "chunk": 0,
+          "line": 227,
+          "parents": [
+            "4x8193/aiv48/core0/event/10"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/12",
+          "index": 12,
+          "lane": 3,
+          "label": "c0 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 0,
+          "line": 229,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/13",
+          "index": 13,
+          "lane": 1,
+          "label": "c0 Cast → R_out",
+          "kind": "cast",
+          "row": 0,
+          "chunk": 0,
+          "line": 232,
+          "parents": [
+            "4x8193/aiv48/core0/event/11"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/14",
+          "index": 14,
+          "lane": 2,
+          "label": "c0 R_out → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 0,
+          "line": 236,
+          "parents": [
+            "4x8193/aiv48/core0/event/11"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/15",
+          "index": 15,
+          "lane": 1,
+          "label": "c0 Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 0,
+          "line": 240,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/16",
+          "index": 16,
+          "lane": 0,
+          "label": "c0 γ → UB",
+          "kind": "weight",
+          "row": 0,
+          "chunk": 0,
+          "line": 256,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/17",
+          "index": 17,
+          "lane": 1,
+          "label": "c0 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": 0,
+          "line": 257,
+          "parents": [
+            "4x8193/aiv48/core0/event/16",
+            "4x8193/aiv48/core0/event/15"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/18",
+          "index": 18,
+          "lane": 2,
+          "label": "c0 Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 0,
+          "line": 264,
+          "parents": [
+            "4x8193/aiv48/core0/event/17"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/19",
+          "index": 19,
+          "lane": 0,
+          "label": "c1 X + R 再读",
+          "kind": "reread",
+          "row": 0,
+          "chunk": 1,
+          "line": 218,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/20",
+          "index": 20,
+          "lane": 1,
+          "label": "c1 Add FP32",
+          "kind": "add",
+          "row": 0,
+          "chunk": 1,
+          "line": 227,
+          "parents": [
+            "4x8193/aiv48/core0/event/19"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/21",
+          "index": 21,
+          "lane": 3,
+          "label": "c1 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 1,
+          "line": 229,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/22",
+          "index": 22,
+          "lane": 1,
+          "label": "c1 Cast → R_out",
+          "kind": "cast",
+          "row": 0,
+          "chunk": 1,
+          "line": 232,
+          "parents": [
+            "4x8193/aiv48/core0/event/20"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/23",
+          "index": 23,
+          "lane": 2,
+          "label": "c1 R_out → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 1,
+          "line": 236,
+          "parents": [
+            "4x8193/aiv48/core0/event/20"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/24",
+          "index": 24,
+          "lane": 1,
+          "label": "c1 Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 1,
+          "line": 240,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/25",
+          "index": 25,
+          "lane": 0,
+          "label": "c1 γ → UB",
+          "kind": "weight",
+          "row": 0,
+          "chunk": 1,
+          "line": 256,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/26",
+          "index": 26,
+          "lane": 1,
+          "label": "c1 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": 1,
+          "line": 257,
+          "parents": [
+            "4x8193/aiv48/core0/event/25",
+            "4x8193/aiv48/core0/event/24"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/27",
+          "index": 27,
+          "lane": 2,
+          "label": "c1 Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 1,
+          "line": 264,
+          "parents": [
+            "4x8193/aiv48/core0/event/26"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/28",
+          "index": 28,
+          "lane": 0,
+          "label": "c2 X + R 再读",
+          "kind": "reread",
+          "row": 0,
+          "chunk": 2,
+          "line": 218,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/29",
+          "index": 29,
+          "lane": 1,
+          "label": "c2 Add FP32",
+          "kind": "add",
+          "row": 0,
+          "chunk": 2,
+          "line": 227,
+          "parents": [
+            "4x8193/aiv48/core0/event/28"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/30",
+          "index": 30,
+          "lane": 3,
+          "label": "c2 Free X / R",
+          "kind": "free",
+          "row": 0,
+          "chunk": 2,
+          "line": 229,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/31",
+          "index": 31,
+          "lane": 1,
+          "label": "c2 Cast → R_out",
+          "kind": "cast",
+          "row": 0,
+          "chunk": 2,
+          "line": 232,
+          "parents": [
+            "4x8193/aiv48/core0/event/29"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/32",
+          "index": 32,
+          "lane": 2,
+          "label": "c2 R_out → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 2,
+          "line": 236,
+          "parents": [
+            "4x8193/aiv48/core0/event/29"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/33",
+          "index": 33,
+          "lane": 1,
+          "label": "c2 Rsqrt / NR",
+          "kind": "reduce",
+          "row": 0,
+          "chunk": 2,
+          "line": 240,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/34",
+          "index": 34,
+          "lane": 0,
+          "label": "c2 γ → UB",
+          "kind": "weight",
+          "row": 0,
+          "chunk": 2,
+          "line": 256,
+          "parents": []
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/35",
+          "index": 35,
+          "lane": 1,
+          "label": "c2 × γ → Y",
+          "kind": "norm",
+          "row": 0,
+          "chunk": 2,
+          "line": 257,
+          "parents": [
+            "4x8193/aiv48/core0/event/34",
+            "4x8193/aiv48/core0/event/33"
+          ]
+        },
+        {
+          "id": "4x8193/aiv48/core0/event/36",
+          "index": 36,
+          "lane": 2,
+          "label": "c2 Y → GM",
+          "kind": "write",
+          "row": 0,
+          "chunk": 2,
+          "line": 264,
+          "parents": [
+            "4x8193/aiv48/core0/event/35"
+          ]
+        }
+      ],
+      "life": [
+        {
+          "id": "4x8193/aiv48/core0/life/0",
+          "buffer": "inQueX",
+          "name": "X[c0] · 第一遍",
+          "size": 8192,
+          "start": 0,
+          "end": 3,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/0",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/1",
+          "buffer": "inQueRes",
+          "name": "R[c0] · 第一遍",
+          "size": 8192,
+          "start": 0,
+          "end": 3,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/0",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/2",
+          "buffer": "inQueX",
+          "name": "X[c1] · 第一遍",
+          "size": 8192,
+          "start": 3,
+          "end": 6,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/3",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/3",
+          "buffer": "inQueRes",
+          "name": "R[c1] · 第一遍",
+          "size": 8192,
+          "start": 3,
+          "end": 6,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/3",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/4",
+          "buffer": "inQueX",
+          "name": "X[c2] · 第一遍",
+          "size": 32,
+          "start": 6,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/6",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/5",
+          "buffer": "inQueRes",
+          "name": "R[c2] · 第一遍",
+          "size": 32,
+          "start": 6,
+          "end": 9,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/6",
+          "line": 190,
+          "semantics": "allocation",
+          "freeLine": 207,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/6",
+          "buffer": "inQueX",
+          "name": "X[c0] · 第二遍",
+          "size": 8192,
+          "start": 10,
+          "end": 13,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/10",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/7",
+          "buffer": "inQueRes",
+          "name": "R[c0] · 第二遍",
+          "size": 8192,
+          "start": 10,
+          "end": 13,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/10",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/8",
+          "buffer": "outQueResOut",
+          "name": "R_out[c0]",
+          "size": 8192,
+          "start": 13,
+          "end": 15,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/13",
+          "line": 232,
+          "semantics": "allocation",
+          "freeLine": 236,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/9",
+          "buffer": "outQueY",
+          "name": "Y[c0]",
+          "size": 8192,
+          "start": 17,
+          "end": 19,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/17",
+          "line": 257,
+          "semantics": "allocation",
+          "freeLine": 264,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/10",
+          "buffer": "weightFp32Buf",
+          "name": "γ[c0] FP32",
+          "size": 16384,
+          "start": 16,
+          "end": 18,
+          "role": "weight",
+          "slot": null,
+          "row": 0,
+          "chunk": 0,
+          "eventId": "4x8193/aiv48/core0/event/16",
+          "line": 256,
+          "semantics": "content use",
+          "freeLine": 257,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/11",
+          "buffer": "inQueX",
+          "name": "X[c1] · 第二遍",
+          "size": 8192,
+          "start": 19,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/19",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/12",
+          "buffer": "inQueRes",
+          "name": "R[c1] · 第二遍",
+          "size": 8192,
+          "start": 19,
+          "end": 22,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/19",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/13",
+          "buffer": "outQueResOut",
+          "name": "R_out[c1]",
+          "size": 8192,
+          "start": 22,
+          "end": 24,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/22",
+          "line": 232,
+          "semantics": "allocation",
+          "freeLine": 236,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/14",
+          "buffer": "outQueY",
+          "name": "Y[c1]",
+          "size": 8192,
+          "start": 26,
+          "end": 28,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/26",
+          "line": 257,
+          "semantics": "allocation",
+          "freeLine": 264,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/15",
+          "buffer": "weightFp32Buf",
+          "name": "γ[c1] FP32",
+          "size": 16384,
+          "start": 25,
+          "end": 27,
+          "role": "weight",
+          "slot": null,
+          "row": 0,
+          "chunk": 1,
+          "eventId": "4x8193/aiv48/core0/event/25",
+          "line": 256,
+          "semantics": "content use",
+          "freeLine": 257,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/16",
+          "buffer": "inQueX",
+          "name": "X[c2] · 第二遍",
+          "size": 32,
+          "start": 28,
+          "end": 31,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/28",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/17",
+          "buffer": "inQueRes",
+          "name": "R[c2] · 第二遍",
+          "size": 32,
+          "start": 28,
+          "end": 31,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/28",
+          "line": 218,
+          "semantics": "allocation",
+          "freeLine": 229,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/18",
+          "buffer": "outQueResOut",
+          "name": "R_out[c2]",
+          "size": 32,
+          "start": 31,
+          "end": 33,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/31",
+          "line": 232,
+          "semantics": "allocation",
+          "freeLine": 236,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/19",
+          "buffer": "outQueY",
+          "name": "Y[c2]",
+          "size": 32,
+          "start": 35,
+          "end": 37,
+          "role": "activation",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/35",
+          "line": 257,
+          "semantics": "allocation",
+          "freeLine": 264,
+          "displayOffset": 0,
+          "displayBand": 0
+        },
+        {
+          "id": "4x8193/aiv48/core0/life/20",
+          "buffer": "weightFp32Buf",
+          "name": "γ[c2] FP32",
+          "size": 64,
+          "start": 34,
+          "end": 36,
+          "role": "weight",
+          "slot": null,
+          "row": 0,
+          "chunk": 2,
+          "eventId": "4x8193/aiv48/core0/event/34",
+          "line": 256,
+          "semantics": "content use",
+          "freeLine": 257,
+          "displayOffset": 0,
+          "displayBand": 0
+        }
+      ],
+      "capacities": {
+        "inQueX": 16384,
+        "inQueRes": 16384,
+        "outQueY": 16384,
+        "outQueResOut": 16384,
+        "weightHalfBuf": 8192,
+        "weightFp32Buf": 16384,
+        "resoFp32Buf": 16384,
+        "sqBuf": 16384,
+        "meanBuf": 16384,
+        "nrBuf": 16384,
+        "resOutHalfBuf0": 8192,
+        "resOutHalfBuf1": 8192,
+        "yHalfBuf0": 8192,
+        "yHalfBuf1": 8192,
+        "scalarBuf": 32,
+        "reduceTmpBuf": 32
+      },
+      "reserved": 188480,
+      "findings": [
+        {
+          "id": "precision",
+          "title": "分支相加精度不同",
+          "text": "整行分支先 FP16 Add，再转 FP32；分块分支先转 FP32，再 Add。需要在 H=4096/4097 边界做误差对照。",
+          "line": 199
+        },
+        {
+          "id": "coverage",
+          "title": "公开用例没有覆盖分块分支",
+          "text": "五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。",
+          "line": 65
+        },
+        {
+          "id": "tail",
+          "title": "尾部 padding 15 个 FP16",
+          "text": "每行有效 16386 B；行对齐 16416 B。尾块归约长度传 n，按 nAlign 对齐。写回仅传有效元素。",
+          "line": 203
+        }
+      ],
+      "requestBytes": {
+        "x": 131088,
+        "residual": 131088,
+        "gamma": 65544,
+        "outputs": 131088
+      }
+    }
+  ],
+  "contract": {
+    "axis": "source order; equal steps; not measured time",
+    "cores": "48 AIV is an editable analysis parameter, not a discovered device count",
+    "window": "whole: first three rows of selected core, next prefetch retained; chunk: first row",
+    "performance": "950 engine intentionally not invoked for 910B"
+  },
+  "adapter": "manual source adapter at fixed revision; not a general C++ parser"
+}

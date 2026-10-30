@@ -33,6 +33,17 @@ def validate(data):
         target = (ROOT / p).resolve()
         assert target.is_relative_to(ROOT) and target.is_file(), 'content file missing or outside repository'
         assert not any(s.startswith('.local') for s in p.parts), 'local-only content forbidden'
+        if 'entries' in a:
+            assert isinstance(a['entries'], list) and len(a['entries']) >= 2, 'group requires multiple entries'
+            paths = set()
+            for entry in a['entries']:
+                assert all(isinstance(entry.get(k), str) and entry[k].strip() for k in ('label', 'description', 'content')), 'entry fields required'
+                ep = Path(entry['content'])
+                assert not ep.is_absolute() and not any(part.startswith('.') for part in ep.parts), 'entry must be portable'
+                target = (ROOT / ep).resolve()
+                assert target.is_relative_to(ROOT) and target.is_file(), 'entry missing or outside repository'
+                assert entry['content'] not in paths, 'duplicate group entry'
+                paths.add(entry['content'])
         assert isinstance(a.get('sources'), list) and a['sources'], 'sources required'
         for source in a['sources']:
             for key in ('repository', 'path'):

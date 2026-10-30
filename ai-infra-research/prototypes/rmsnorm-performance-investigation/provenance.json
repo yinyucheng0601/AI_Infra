@@ -7,8 +7,8 @@
   },
   "tensor": {
     "path": "reports/llm-compute/training-parallel-communication-v1.html",
-    "sha256": "a72446dbe597fb26199fc0f2ffdd62931f232e8934e0982c8d4ab624f109b4d2",
-    "variant": "tensorNode + dataTiles / text over role grid; host adapter fixes equal 5-unit inset with square cells and distributed grid gaps",
+    "sha256": "d15171048b433886355d1c786afa56f5d8f5f96582ec0ed81161e5e5acb6bc07",
+    "variant": "tensorNode + dataTiles / text over role grid; shared source uses equal 5-unit inset with square cells and distributed grid gaps",
     "role_colors": {
       "source": "reports/llm-compute/diagram-legend-library/visual-system.js",
       "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8",

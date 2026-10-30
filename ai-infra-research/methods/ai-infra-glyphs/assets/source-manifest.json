@@ -4,12 +4,12 @@
     {
       "file": "legend-library.html",
       "source": "reports/llm-compute/diagram-legend-library/index.html",
-      "sha256": "c928c0aac67870eee472dcf621df5b39001666d1512a7c9a0c7b6d44979e6f2f"
+      "sha256": "78928259b474981c7dfb7eb617729d81485262ea328dd903286ccd5124a2ef1f"
     },
     {
       "file": "inventory.json",
       "source": "reports/llm-compute/diagram-legend-library/inventory.json",
-      "sha256": "43c8c3420df4a3656711b54bae2ab14af267e5a512a5c1ae5f3cd969c981106c"
+      "sha256": "709ef79edc003bb7d7b4fbeeba3a5a07d03fd2c706005323bfdc1bef770b5fe5"
     },
     {
       "file": "visual-system.js",
@@ -26,7 +26,7 @@
     {
       "file": "sample-system-value.svg",
       "item": "system-value",
-      "sha256": "ffce4f52da4aa9c300763bbc5f824fcffd66edfaba511a3739ec6e3980ae560b"
+      "sha256": "83708624373bdef7cf49debbfc09f07aa92311a3da5a2591b1ebabc40fc671ff"
     },
     {
       "file": "sample-system-op.svg",

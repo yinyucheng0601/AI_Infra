@@ -18,11 +18,11 @@
     'rsfa-performance-comparison':{src:'__RSFA_PERFORMANCE_COVER__',alt:'RSFA：实现耗时比率与观测波动区间'},
     'unpack-layout-inspector':{src:'__UNPACK_MAPPING_COVER__',alt:'Unpack：输入、Task、输出与 Core 分配连线'},
     'expand-broadcast-inspector':{src:'__EXPAND_MAPPING_COVER__',alt:'Expand：一对多广播的输入输出关联'},
-    'reduction-memory-inspector':{src:'web/media/reduction-memory-inspector-cover.png',alt:'归约访存检查：输出、输入与 GM / UB / work 联动映射'},
-    'paged-attention-graph':{src:'web/media/paged-attention-graph-cover.png',alt:'Paged Attention 计算图与橙色同步卡片'},
-    'model-architecture-v41':{src:'web/media/model-architecture-v41-cover.png',alt:'DeepSeek V4.1 L24 架构截图'},
-    'model-architecture-v4':{src:'web/media/model-architecture-v4-cover.jpg',alt:'DeepSeek V4 模型架构与 mHC 残差路径'},
-    'csa-swimlane':{src:'web/media/csa-swimlane-cover.png?v=20261022-1601',alt:'Swimlane View 多 Rank 执行泳道'},
+    'reduction-memory-inspector':{src:'__REDUCTION_MEMORY_INSPECTOR_COVER__',alt:'归约访存检查：输出、输入与 GM / UB / work 联动映射'},
+    'paged-attention-graph':{src:'__PAGED_ATTENTION_GRAPH_COVER__',alt:'Paged Attention 计算图与橙色同步卡片'},
+    'model-architecture-v41':{src:'__MODEL_ARCHITECTURE_V41_COVER__',alt:'DeepSeek V4.1 L24 架构截图'},
+    'model-architecture-v4':{src:'__MODEL_ARCHITECTURE_V4_COVER__',alt:'DeepSeek V4 模型架构与 mHC 残差路径'},
+    'csa-swimlane':{src:'__CSA_SWIMLANE_COVER__',alt:'Swimlane View 多 Rank 执行泳道'},
     'critical-path-swimlane':{src:'__CRITICAL_PATH_SWIMLANE_COVER__',alt:'Inference Request：Host 与 Device 共享时间轴及最晚进入路径'},
     'pass-observability-guide':{src:'__PASS_OBSERVABILITY_COVER__',alt:'六环节编译流程、观测对象与视图关系总览'},
     'memory-inspector':{src:'__MEMORY_INSPECTOR_COVER__',alt:'Memory Inspector：函数内存地址与静态生命周期图'},
@@ -87,9 +87,12 @@
   function renderCard(a) {
     const source=`${a.author} · ${a.sources[0].url?'官网':C.projects[a.sources[0].repository]}`;
     const href=a.type==='method'&&!/^https?:\/\//i.test(a.sources[0].url||'')?detailHref(a):C.sourceHref(a,config);
-    return `<article class="card-demo report-card">
+    const entries=a.entries||[];
+    const entryLinks=entries.map(e=>`<a class="card-entry" href="${esc((config.mode==='pto'?config.serviceBase:'')+C.encodePath(e.content))}" aria-label="${esc(e.description)}"><span>${esc(e.label)}</span><span class="entry-tip" role="tooltip">${esc(e.description)}</span></a>`).join('');
+    return `<article class="card-demo report-card${entries.length?' has-entries':''}">
       <div class="card-demo-header"><h3 class="card-demo-title"><a href="${esc(href)}">${esc(a.title)}</a>${isSkills&&a.skillRole?`<span class="skill-role">${esc(a.skillRole)}</span>`:''}</h3><span class="card-kind">${esc(a.form)}</span></div>
       <a class="card-visual-link" href="${esc(href)}" tabindex="-1" aria-hidden="true"><div class="card-visual">${coverArt(a)}</div></a>
+      ${entries.length?`<nav class="card-entries" aria-label="${esc(a.title)} · 页面入口">${entryLinks}</nav>`:''}
       <div class="card-demo-footer card-footer"><span class="card-source">${esc(source)}</span></div></article>`;
   }
   function syncUrl(push=false) {

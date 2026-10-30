@@ -157,6 +157,8 @@ class Preview:
         self.assets = json.loads((ROOT / 'catalog/assets.json').read_text())['assets']
         self.files, self.diagnostics, self.asset_checks = {}, {}, {}
         report_entries = [a['sources'][0]['path'].removeprefix('ai-infra-research/') for a in self.assets if a['sources'][0]['repository'] == 'ai-infra' and a['sources'][0]['path'].startswith(('ai-infra-research/reports/', 'ai-infra-research/patterns/'))]
+        report_entries.extend(a['content'] for a in self.assets if a['type'] == 'pattern')
+        report_entries.extend(e['content'] for a in self.assets for e in a.get('entries', []))
         report_files, _, _ = collect_files(ROOT, report_entries)
         self.files.update({'/' + p: file for p, file in report_files.items()})
         skill_files = ['patterns.html', 'skills.html', 'methods/llm-compute-diagrams.zip', 'methods/llm-compute-diagrams/assets/reference-guide.html']
@@ -245,6 +247,8 @@ def handler_for(preview):
                 # Recheck containment in case a file was replaced by an out-of-root symlink.
                 if route.startswith('/design-system/'):
                     base, rel = preview.config.get('designSystem'), route[len('/design-system/'):]
+                elif not route.startswith('/sources/'):
+                    base, rel = ROOT, route.lstrip('/')
                 else:
                     _, _, repo, rel = route.split('/', 3)
                     base = preview.config['repositories'].get(repo)

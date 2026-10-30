@@ -362,3 +362,13 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
 @media(max-width:700px){.skill-readme{padding:24px 20px}.skill-readme h1{font-size:25px}.skill-readme h2{font-size:19px}}
 
 .readme-figure{margin:22px 0 30px}.readme-figure img{display:block;width:100%;height:auto;max-height:480px;object-fit:contain;border:1px solid var(--border-subtle);border-radius:8px;background:#111}.readme-figure img[src$=".svg"]{max-height:280px;padding:12px}.readme-figure figcaption{font-size:12px;line-height:1.7;color:var(--foreground-secondary);margin-top:9px}
+
+/* One asset group, multiple independently addressable demos. */
+.report-card.has-entries{grid-template-rows:72px auto auto 36px}
+.has-entries .card-demo-title a::after{display:none}
+.card-entries{display:flex;flex-wrap:wrap;gap:8px;padding:8px var(--space-4);position:relative;z-index:1}
+.card-entry{position:relative;display:inline-flex;align-items:center;min-height:32px;padding:6px 12px;border:0;border-radius:var(--radius-pill);background:var(--surface-2);color:var(--foreground);font-size:12px;line-height:1.4;text-decoration:none}
+.card-entry:hover,.card-entry:focus-visible{background:#111;color:#fff;outline:none;box-shadow:none}
+.has-entries:focus-within{box-shadow:var(--shadow-sm)}
+.entry-tip{display:none;position:absolute;bottom:calc(100% + 8px);left:0;width:max-content;max-width:240px;padding:8px 10px;border-radius:8px;background:var(--foreground);color:var(--background);font-size:12px;pointer-events:none;z-index:2}
+.card-entry:hover .entry-tip,.card-entry:focus-visible .entry-tip{display:block}

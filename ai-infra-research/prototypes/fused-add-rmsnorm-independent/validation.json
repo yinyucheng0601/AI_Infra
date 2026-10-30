@@ -1,0 +1,11 @@
+{
+  "checks": 973,
+  "status": "pass",
+  "coverage": "7 UI cases; partition at 4 row counts and 4 core counts; both source branches; tail requests; source blob integrity",
+  "device_run": false,
+  "automatic_cpp_extraction": false,
+  "precision_example": {
+    "fp16_add": 1.0,
+    "fp32_add": 1.0004000663757324
+  }
+}

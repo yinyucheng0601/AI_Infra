@@ -1,0 +1,60 @@
+{
+  "viewport": [
+    1164,
+    656
+  ],
+  "tested": [
+    "default whole-row split rendering",
+    "2048x4096 input event to source L89, unique event ID",
+    "1997x3037 tail finding: 6074B valid,6080B aligned",
+    "4097 source-boundary case switches to chunked model",
+    "audit locate and reopen preserves all 4 applicable findings",
+    "split enter resets75percent; exit restores pre-entry86percent",
+    "queue X[r1] selection maps to source step4 prefetch and highlights exact lifecycle"
+  ],
+  "not_verified": [
+    "NPU correctness",
+    "actual DMA overlap",
+    "live device core count",
+    "all7cases browser operation chains",
+    "full visual acceptance at user screenshot resolution",
+    "file protocol browser opening"
+  ],
+  "artifact": "preview.png",
+  "status": "representative smoke passed; user visual acceptance pending",
+  "ui_repair": {
+    "viewport": [
+      1070,
+      1040
+    ],
+    "tested": [
+      "audit side panel opens without centered modal",
+      "locate keeps all three findings visible",
+      "continue investigation includes editable question and pinned source",
+      "Info value/use/extend/methods sections",
+      "Info prompt copy reports success",
+      "liquid controls and panel visually checked"
+    ],
+    "artifact": "preview-ui-fixed.png",
+    "model_checks": 973
+  },
+  "hardware_910b": {
+    "tested": [
+      "shared ascend910b AIV local rendering without AIC draft",
+      "Vector selection updates UB/Vector readout",
+      "MTE3 write selection updates route/readout via keyboard",
+      "4097 boundary configuration renders MTE2 hardware path",
+      "close/reopen preserves selected event and main view"
+    ],
+    "device_run": false,
+    "ui_followup": {
+      "tested": [
+        "hardware control adjacent to memory reuse in shared footer",
+        "Add and normalization selections visibly color UB and Vector",
+        "MTE2 selection clears Vector active state",
+        "ancestor grayscale removed from AIV container"
+      ],
+      "artifact": "preview-hardware-linked.png"
+    }
+  }
+}

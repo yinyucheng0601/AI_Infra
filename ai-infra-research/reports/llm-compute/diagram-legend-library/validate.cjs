@@ -82,12 +82,16 @@ console.log('PASS: arithmetic diameter/symbol strokes and task/instruction dimen
 assert.deepEqual(data.items.slice(0,5).map(e=>e.id),['system-value','token','system-op','system-add','expert']);
 assert(!data.items.some(e=>['data-roles','tile-cache','block-progress'].includes(e.id)));
 for(const id of ['weight','aggregate','gradient','optimizer','tile','kv','completed-block','pending-block'])assert(data.coverage[id].includes('system-value'));
-assert.equal(decodeVariants('system-value').length,8);
+const tensorCard=data.items.find(e=>e.id==='system-value');
+assert.equal(tensorCard.tiles.length,7);
+assert.equal(tensorCard.tiles[0].title,'数据角色');
+assert.equal(tensorCard.svg,tensorCard.tiles[0].svg);
+assert(!tensorCard.tiles.some(t=>t.title==='折叠值 / Tile'));
 
 const approval=JSON.parse(fs.readFileSync(path.join(__dirname,'style-approval.json'),'utf8'));
 assert.equal(approval.items.filter(e=>e.decision==='approved').length,13);
 assert.equal(approval.items.filter(e=>e.decision==='revise').length,3);
-for(const e of approval.items.filter(e=>!['system-memref','system-storage','system-op'].includes(e.id)))assert.equal(data.items.find(x=>x.id===e.id).svg,e.decision==='approved'?e.candidate:e.before);
+for(const e of approval.items.filter(e=>!['system-memref','system-storage','system-op','system-value'].includes(e.id)))assert.equal(data.items.find(x=>x.id===e.id).svg,e.decision==='approved'?e.candidate:e.before);
 for(const [id,color,label] of [['system-memref','#2d2d2d','15 addressed'],['system-storage','#087CFA','16/64KB']]){const svg=data.items.find(e=>e.id===id).svg;assert(svg.includes(color));assert(svg.includes(label));assert.equal((svg.match(/<rect /g)||[]).length,86);}
 console.log('PASS: prior snapshots preserved except user-requested memory replacements; both memory cards have 85 texture cells and explicit metadata.');
 

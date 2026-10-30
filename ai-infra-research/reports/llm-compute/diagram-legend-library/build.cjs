@@ -144,15 +144,15 @@ add('training-data-roles','数据与状态','Tensor · 数据节点','训练报�
  "[[B,'activation','激活 X · [T,H]'],[G,'weight','参数 W · [H,F]'],[P,'grad','参数梯度 G · [H,F]'],[O,'optimizer','优化器状态 m · [H,F]']].map(([c,k,label],i)=>tensorNode(20,5+i*45,280,label,c,k)).join('')",[ref(T,'vocab')]);
 const roleSvg=rows.find(r=>r.id==='training-data-roles').svg;
 const dataTiles=[
- ['折叠值 / Tile',V.wrap(V.data({id:'value-0',label:'X',role:'activation',shape:[2,4]},80,58),320,180)],['展开矩阵',byId.matrix.svg],['数值向量',byId.vector.svg],
- ['数据角色',roleSvg],['KV cache',byId.kv.svg],['分块状态',montage([['归约完成',byId['completed-block'].svg],['未完成归约',byId['pending-block'].svg]])],
+ ['数据角色',roleSvg],['展开矩阵',byId.matrix.svg],['数值向量',byId.vector.svg],
+ ['KV cache',byId.kv.svg],['分块状态',montage([['归约完成',byId['completed-block'].svg],['未完成归约',byId['pending-block'].svg]])],
  ['局部异常采样',samples[0].svg],['灰度采样矩阵',samples[1].svg]
 ];
 dataCard.tiles=dataTiles.map(([title,svg],i)=>({id:`data-${i+1}`,title,svg}));
-dataCard.svg=montage(dataTiles,3);
+dataCard.svg=roleSvg;
 dataCard.refs.push({id:'layer-stack-demo'});
 dataCard.variants.push(...samples.map(e=>({id:e.id,title:e.title,desc:e.desc})));
-dataCard.note='同一数据对象的表示与角色集中展示；Tile 的形状和类型属于值的元数据。角色网格不编码元素数量；展开矩阵与数值向量保留各自尺度。采样示例不代表完整张量或实测数据。';
+dataCard.note='默认采用数据角色 Tensor 网格图元；不再提供折叠值 / Tile 卡片。角色网格不编码元素数量；展开矩阵与数值向量保留各自尺度。采样示例不代表完整张量或实测数据。';
 dataCard.incorporated=samples.map(e=>({id:e.id,svg:e.svg,provenance:e.provenance}));
 for(const e of samples)system.splice(system.findIndex(x=>x.id===e.id),1);
 

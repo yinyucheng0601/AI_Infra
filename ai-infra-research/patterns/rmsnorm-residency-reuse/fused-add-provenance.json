@@ -1,0 +1,37 @@
+{
+  "revision": "7729cdf7bc37d77bd3c82448414b77cea3e96637",
+  "sources": {
+    "kernel": {
+      "path": "src/ascendc/op_kernel/fused_add_rms_norm.cpp",
+      "blob": "a1cf48e0c235adbb8238db8f98f1d763a13ec5d4"
+    },
+    "host": {
+      "path": "src/ascendc/op_host/fused_add_rms_norm.cpp",
+      "blob": "7182ed91a1b4d6b40b732853416a956fd035b274"
+    },
+    "cases": {
+      "path": "checker/case_specs.py",
+      "blob": "7b1975d91b8bfbb9118eea084e1f9a67b38c95e3"
+    }
+  },
+  "reuse": {
+    "source": "../rmsnorm-performance-investigation/index.html",
+    "sha256": "1b4bedb25edc948e013c26bc7d3af1708054b0a50215c79d5ad5b1f28bbe79b3",
+    "parts": [
+      "PtoSwimlaneTaskPattern",
+      "GridTensor",
+      "PtoMemoryReuseViewer",
+      "LiquidGlassControls control/icon/panel"
+    ],
+    "layout": "source-order lanes, linked tensor use/allocation intervals, parallel memory view, viewport restoration"
+  },
+  "hardware": {
+    "preset": "ascend910b",
+    "source": "https://asc.gitcode.com/guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_2201.html",
+    "ub_bytes": 196608,
+    "core_count": "analysis parameter, not device detection"
+  },
+  "adapter": "model.py - manually grounded fixed-version adapter",
+  "performance_engine": "not invoked: 910B does not match calibrated 950 engine",
+  "device_validation": false
+}
