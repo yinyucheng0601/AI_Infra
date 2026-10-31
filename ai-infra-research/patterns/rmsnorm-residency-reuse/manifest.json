@@ -1,11 +1,11 @@
 {
   "authoritativeSource": "prototypes/rmsnorm-performance-investigation/index.html",
-  "sourceSha256": "1b4bedb25edc948e013c26bc7d3af1708054b0a50215c79d5ad5b1f28bbe79b3",
+  "sourceSha256": "4abcfe206111b91fa3cdeabdcb93f42c0f109f714c1da0111285d374a35d4fbf",
   "files": {
-    "index.html": "1b4bedb25edc948e013c26bc7d3af1708054b0a50215c79d5ad5b1f28bbe79b3",
-    "provenance.json": "10a891c18f0223db46886ffaab10b256ff5058062dd684ba352347f8c0b1ad2c",
-    "fused-add.html": "f8f2aed6fa6d9fe391a5d71c9e6dc5ec2720199782176eb944d3f57ffada6341",
-    "fused-add-provenance.json": "276d15ec2c8a9ea4d971e96d83c993938b218c00c04dd196876332bbe9c4387f"
+    "index.html": "4abcfe206111b91fa3cdeabdcb93f42c0f109f714c1da0111285d374a35d4fbf",
+    "provenance.json": "feff733c4bd8adc5b1fae0ed36518e4d1966604f2c63432d3255e48ee358f50a",
+    "fused-add.html": "23756ca27044067fde1a6fa43ceda6f250cbb9c0f98a5b7cfe76a2dd1c09c869",
+    "fused-add-provenance.json": "e46e9d382f8c64468bac9dca73c8fb185d7314554cc47cbf0f741dedc7e4c4f4"
   },
   "groupEntries": [
     {

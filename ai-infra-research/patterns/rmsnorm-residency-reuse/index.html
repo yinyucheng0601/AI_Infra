@@ -3060,9 +3060,9 @@ body.hardware-open #inspector,body.hardware-open #auditPanel{max-height:max(180p
 #reuseWindow{padding:14px;max-height:calc(100vh - 40px)}#reuseWindow>.head{min-height:32px;margin-bottom:6px}#reuseWindow>.head strong{font-size:14px}.reuse-window-actions{display:flex;align-items:center;gap:6px}.reuse-window-actions button{height:32px;min-height:32px;padding:0 10px}.reuse-window-actions .reuse-split-button{width:32px;padding:6px;display:grid;place-items:center;border-radius:50%}.reuse-split-button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5}#reuseHost{gap:6px}.queue-column h3{height:28px;padding:4px 12px}.queue-tools{min-height:32px}#queueHelp{padding:10px 12px;background:#171717;border-radius:8px}.queue-legend{display:flex;gap:16px;flex-wrap:wrap;margin:8px 0 0}.queue-legend span{display:flex;gap:6px;align-items:center;color:#bbb}.queue-legend i{display:inline-block;width:12px;height:12px;border-radius:2px}.queue-legend .peak-key{height:2px;background:#aaa}
 body.reuse-split #canvas{width:50vw;right:auto}body.reuse-split #reuseWindow{position:fixed;inset:64px 14px 80px auto;margin:0;width:calc(50vw - 20px);height:calc(100vh - 144px);max-height:none;max-width:none;border-radius:14px;z-index:9;display:flex;flex-direction:column}body.reuse-split #reuseHost{height:auto;min-height:0;flex:1}body.reuse-split .queue-tools{flex-wrap:wrap;gap:6px}body.reuse-split .queue-tools strong{display:none}body.reuse-split .queue-tools>span{height:26px;min-height:26px;font-size:10px}body.reuse-split #inspector,body.reuse-split #auditPanel{right:calc(50vw + 14px);width:min(380px,calc(50vw - 32px))}body.reuse-split #sourcePanel{width:calc(50vw - 42px)}body.reuse-split .configuration{max-width:calc(50vw - 40px)}body.reuse-split .legend{display:none}
 
-#memoryReuseButton{position:absolute;z-index:3;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:max-content;height:32px;min-height:32px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:500;color:#ddd;background:#292929;white-space:nowrap}#memoryReuseButton[hidden]{display:none}#memoryReuseButton svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}#memoryReuseButton:hover,#memoryReuseButton:focus-visible{background:#383838;color:#fff}
+#memoryReuseButton{position:static;z-index:3;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:max-content;height:32px;min-height:32px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:500;color:#ddd;background:#292929;white-space:nowrap}#memoryReuseButton[hidden]{display:none}#memoryReuseButton svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}#memoryReuseButton:hover,#memoryReuseButton:focus-visible{background:#383838;color:#fff}
 
-body.reuse-split #canvas{left:0;top:0;bottom:0;width:50vw;height:100vh}body.reuse-split #reuseWindow{position:fixed;left:50vw;right:0;top:0;bottom:0;inset:0 0 0 50vw;width:50vw;height:100vh;max-width:none;max-height:none;margin:0;padding:16px;border:0;border-left:1px solid #ffffff12;border-radius:0;box-shadow:none;background:#141414;display:flex;flex-direction:column}body.reuse-split #reuseWindow>.head{margin:0 0 8px;height:32px;flex-shrink:0}body.reuse-split .top-actions{right:calc(50vw + 24px)}body.reuse-split .zoom-controls{right:calc(50vw + 24px)}body.reuse-split #memoryReuseButton{display:none}body.reuse-split #reuseHost{flex:1;height:auto;min-height:0}body.reuse-split #hardwarePanel{right:calc(50vw + 24px);width:min(470px,calc(50vw - 48px))}
+body.reuse-split #canvas{left:0;top:0;bottom:0;width:50vw;height:100vh}body.reuse-split #reuseWindow{position:fixed;left:50vw;right:0;top:0;bottom:0;inset:0 0 0 50vw;width:50vw;height:100vh;max-width:none;max-height:none;margin:0;padding:16px;border:0;border-left:1px solid #ffffff12;border-radius:0;box-shadow:none;background:#141414;display:flex;flex-direction:column}body.reuse-split #reuseWindow>.head{margin:0 0 8px;height:32px;flex-shrink:0}body.reuse-split .top-actions{right:calc(50vw + 24px)}body.reuse-split .zoom-controls{right:calc(50vw + 24px)}body.reuse-split #reuseHost{flex:1;height:auto;min-height:0}body.reuse-split #hardwarePanel{right:calc(50vw + 24px);width:min(470px,calc(50vw - 48px))}
 
 body *,body *::before,body *::after{text-shadow:none!important}#reuseSplit[aria-pressed=true],#reuseSplit[aria-pressed=true] svg{color:#111!important;stroke:#111!important}.reuse-window-actions #queueInfo{width:32px;min-width:32px;padding:0;display:grid;place-items:center;border-radius:50%;background:#292929;color:#ddd;font:14px sans-serif}#queueHelp .queue-info-metrics{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:8px;color:#bbb}#queueHelp .queue-info-metrics b{color:#ddd;margin-left:5px}
 
@@ -3072,6 +3072,19 @@ body.reuse-split .scene .muted,body.reuse-split .scene .life-label,body.reuse-sp
 .scene [role="note"]{outline:none;cursor:help}.scene [role="note"]:focus-visible rect,.scene [role="note"]:hover rect{fill:#ffffff18}
 .scene .muted,.scene .local-sub,.scene .lane-meta,.scene .life-label{fill:#bbb}.panel p,.usage-body p,.usage-body li{color:#c5c5c5}.queue-column h3 small{color:#bbb}.queue-legend .peak-key{height:2px;background:#fff}.scene [role="note"]:focus-visible rect,.scene [role="note"]:hover rect{fill:transparent}.scene [role="note"]:focus-visible{outline:none}
 #audit{position:relative}#auditBadge{position:absolute;right:-3px;top:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#D4D4D4;color:#111;font:600 10px/16px -apple-system,sans-serif;text-align:center;pointer-events:none}#auditBadge[hidden]{display:none}.scene [data-object="estimate"] .local-label,.scene [data-object="estimate"] .local-sub{fill:#eee;text-anchor:end}.scene [data-object="estimate"].picked .hit{fill:#333}
+
+.scene [data-object="ub"].picked .hit,.scene [data-object="ub"].picked:hover .hit{fill:var(--hi)}
+.scene [data-object="ub"].picked .local-label{fill:#111}
+
+/* SVG header focus uses neutral fill, never the browser outline. */
+svg g[role="note"][tabindex]:focus{outline:none}
+svg g[role="note"][tabindex]:focus-visible>rect:first-child{fill:#ffffff14}
+svg g[tabindex]:focus{outline:none}svg g[tabindex]:focus-visible{opacity:.72}
+/* Hardware association is a visible fill change, without an outline. */
+#architectureHost .is-hardware-active:not(.pto-mem950__core-slot):not(.pto-mem950__rail){background:#d4d4d4!important;color:#111!important;border-color:transparent!important}
+#architectureHost .is-hardware-active :is(.pto-aiv-core__buffer-label,.pto-aiv-core__cache-label,.pto-aiv-core__exec-label,.pto-aiv-core__vector-label){color:#111!important}
+#hardwarePanel{left:24px!important;right:auto!important;top:auto!important;bottom:86px!important}
+#computeView[aria-pressed="true"],#memoryReuseButton[aria-pressed="true"],#chipView[aria-pressed="true"]{background:#d4d4d4!important;color:#111!important;box-shadow:none!important;border:0!important}#computeView{border-radius:999px}
 </style>
 <header><small>ASCEND 950 · DAV_3510 · MODEL ESTIMATE</small><h1>RMSNorm <span style="color:#aaa">驻留与重读</span></h1><p id="identity"></p></header>
 <div class="top-actions">
@@ -3080,13 +3093,13 @@ body.reuse-split .scene .muted,body.reuse-split .scene .life-label,body.reuse-sp
 <button class="icon" id="source" data-liquid-glass="icon" aria-label="查看源码与原始结果"><svg viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-14-2 16"/></svg></button>
 <button class="icon" id="info" data-liquid-glass="icon" aria-label="打开教程与来源"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></svg></button></div>
 <main id="canvas" class="canvas" aria-label="可平移缩放的 RMSNorm 关系画布"><svg id="workspace"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" stroke="#999" fill="none"/></marker></defs><g id="scene"><g id="business" class="scene"></g></g></svg></main>
-<dialog id="reuseWindow"><div class="head"><strong>内存复用</strong><div class="reuse-window-actions"><button id="queueInfo" class="queue-info" aria-label="队列总览说明" aria-expanded="false" data-tip="查看内存复用说明、图例与容量指标">i</button><button id="reuseSplit" class="reuse-split-button" aria-label="分屏查看主体与内存复用" aria-pressed="false" data-tip="与主体并排展示，选择事件或内存区间双向联动"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></svg></button><button id="reuseClose" aria-label="关闭队列复用">关闭</button></div></div><div id="reuseHost"></div></dialog><aside id="hardwarePanel" class="panel" data-liquid-glass="panel" hidden><div class="head"><strong>Ascend 950 · AIV ×2</strong><button data-close="hardwarePanel" aria-label="关闭硬件映射">关闭</button></div><div id="hardwareMiniViewport"><div id="architectureHost"></div></div><div id="hardwareReadout"></div></aside><button id="memoryReuseButton" data-liquid-glass="control" aria-label="打开内存复用总览" data-tip="查看内存申请、释放与复用"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="12" height="8" rx="2"/><path d="M8 16h10a3 3 0 0 0 0-6h-1M8 13l-3 3 3 3"/></svg><span>内存复用</span></button><div class="legend">Ascend950 / 9589 · 模型估算<br>拖动画布 / 滚轮缩放 / 点击对象核对来源</div>
-<nav class="configuration" data-liquid-glass="control" aria-label="输入、实现与硬件映射"><div class="dropdown"><button id="caseTrigger" class="config-trigger" aria-haspopup="listbox" aria-expanded="false"><span id="caseName"></span><svg viewBox="0 0 16 16"><path d="m3 6 5 5 5-5"/></svg></button><div id="caseMenu" class="menu" role="listbox" aria-label="RMSNorm 配置" hidden></div></div><span class="dock-separator"></span><div class="dropdown" id="implementationPicker"><button id="implementationTrigger" aria-haspopup="listbox" aria-expanded="false" data-tip="选择当前输入下可估算的实现"></button><div id="implementationMenu" class="menu" role="listbox" aria-label="RMSNorm 实现" hidden></div></div><span id="implementationFixed"></span><span class="dock-separator"></span><button id="chipView" aria-pressed="false" data-tip="打开角落的 950 硬件联动窗口">硬件映射</button></nav>
+<dialog id="reuseWindow"><div class="head"><strong>缓冲生命周期</strong><div class="reuse-window-actions"><button id="queueInfo" class="queue-info" aria-label="队列总览说明" aria-expanded="false" data-tip="查看缓冲生命周期说明、图例与容量指标">i</button><button id="reuseSplit" class="reuse-split-button" aria-label="分屏查看主体与缓冲生命周期" aria-pressed="false" data-tip="与主体并排展示，选择事件或内存区间双向联动"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></svg></button><button id="reuseClose" aria-label="关闭队列复用">关闭</button></div></div><div id="reuseHost"></div></dialog><aside id="hardwarePanel" class="panel" data-liquid-glass="panel" hidden><div class="head"><strong>Ascend 950 · AIV ×2</strong><button data-close="hardwarePanel" aria-label="关闭硬件映射">关闭</button></div><div id="hardwareMiniViewport"><div id="architectureHost"></div></div><div id="hardwareReadout"></div></aside>
+<nav class="configuration" data-liquid-glass="control" aria-label="输入、实现与硬件映射"><div class="dropdown"><button id="caseTrigger" class="config-trigger" aria-haspopup="listbox" aria-expanded="false"><span id="caseName"></span><svg viewBox="0 0 16 16"><path d="m3 6 5 5 5-5"/></svg></button><div id="caseMenu" class="menu" role="listbox" aria-label="RMSNorm 配置" hidden></div></div><span class="dock-separator"></span><div class="dropdown" id="implementationPicker"><button id="implementationTrigger" aria-haspopup="listbox" aria-expanded="false" data-tip="选择当前输入下可估算的实现"></button><div id="implementationMenu" class="menu" role="listbox" aria-label="RMSNorm 实现" hidden></div></div><span id="implementationFixed"></span><span class="dock-separator"></span><button id="computeView" aria-pressed="true" data-tip="显示或收起计算图，重新适应可见主体">计算图</button><span class="dock-separator"></span><button id="memoryReuseButton" aria-label="打开缓冲生命周期总览" data-tip="显示或收起同轴缓冲与队列使用范围"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="12" height="8" rx="2"/><path d="M8 16h10a3 3 0 0 0 0-6h-1M8 13l-3 3 3 3"/></svg><span>缓冲生命周期</span></button><span class="dock-separator"></span><button id="chipView" aria-pressed="false" data-tip="打开角落的 950 硬件联动窗口">硬件映射</button></nav>
 <div class="zoom-controls" data-liquid-glass="control"><button id="minus" aria-label="缩小画布">−</button><output id="zoom">100%</output><button id="plus" aria-label="放大画布">＋</button><button id="fit" class="fit" aria-label="适应全部对象">适应</button></div>
 <aside id="inspector" class="panel" data-liquid-glass="panel" hidden><div class="head"><strong>当前选择</strong><button data-close="inspector" aria-label="关闭当前选择">关闭</button></div><div id="detail"></div><label class="question">继续调查<textarea id="question" aria-label="编辑当前对象的调查问题">请核对当前模型与 Kernel 的差异，给出最小上板验证方案，不修改标定常量。</textarea></label><details><summary aria-label="展开当前选择的交接预览">交接预览</summary><pre id="handoff"></pre></details><button id="copy" class="primary" aria-label="复制当前选择和问题">复制证据</button><button id="export" aria-label="导出当前选择为 JSON">导出 JSON</button><div id="copyStatus" class="status" role="status"></div></aside>
 <aside id="auditPanel" class="panel" data-liquid-glass="panel" hidden><div class="head"><strong>模型 ↔ Kernel</strong><button data-close="auditPanel" aria-label="关闭核查列表">关闭</button></div><div id="audits"></div></aside>
 <aside id="sourcePanel" class="panel" data-liquid-glass="panel" hidden><div class="head"><strong>固定提交 · <span id="revision"></span></strong><button data-close="sourcePanel" aria-label="关闭源码窗口">关闭</button></div><div class="source-tabs"><button data-src="kernel">Kernel</button><button data-src="flow">计算流</button><button data-src="engine">引擎</button><button data-src="hardware">硬件标定</button><button data-src="instructions">指令表</button><button data-src="bench">带宽微基准</button><button data-src="overlap">重叠原始记录</button><button data-src="raw">原始结果</button></div><div id="sourceMeta"></div><pre id="sourceCode" class="source-code"></pre></aside>
-<dialog id="usageWindow" aria-labelledby="usageTitle"><div class="head"><strong id="usageTitle">RMSNorm · 使用与扩展</strong><button id="usageClose" aria-label="关闭教程">关闭</button></div><div class="usage-body"><h3>CANNBot 增强了什么</h3><p>本工具使用 CANNBot 的 <a href="https://github.com/hicann/cannbot-skills/tree/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ops-theoretical-performance-estimation" target="_blank" rel="noopener" data-tip="打开本工具使用的 CANNBot Skill 固定版本"><code>ops-theoretical-performance-estimation</code> ↗</a>。它补充的是 Codex 原本没有随带的硬件标定数据与可执行性能模型，让源码中的计算、搬运和容量条件能够得到有依据、可复算的性能估算。</p><p>Codex 可以读取 Kernel、推导计算量与读写量，也可以编写 Roofline 公式。但没有对应硬件的测量记录时，无法仅凭源码可靠确定指令实际吞吐、不同搬运规模下的带宽，以及指令和流水之间能重叠多少。这些参数需要硬件测量或其他明确来源，不能由推理替代。</p><ul><li><strong>有来源的硬件参数：</strong>使用仓库保存的指令吞吐、读写带宽曲线和重叠标定记录；具体字段仍区分实测、公开表与推导默认值。</li><li><strong>可执行的定量估算：</strong>原引擎接收计算流、数据量、UB 使用和核分配，输出 MTE2、Vector、MTE3 的资源总需求、瓶颈分类与理论时延。页面因此能够比较方案的性能代价，而不只展示“多读一次”。</li><li><strong>可复算与核对：</strong>开源 RMSNorm Kernel、计算流定义、标定一致性和回归检查，提供从图中数值追溯到实现、模型输入及参数来源的依据。</li></ul><h3>源码来自哪里</h3><p>当前源码使用的是 CANNBot Skill 自带的性能验证样例：<a href="https://github.com/hicann/cannbot-skills/tree/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ops-theoretical-performance-estimation/tests/onboard/kernels/rms_norm" target="_blank" rel="noopener" data-tip="查看 Skill 自带的 RMSNorm 性能验证样例">tests/onboard/kernels/rms_norm ↗</a>，包括 <code>rms_norm_full</code> 与 <code>rms_norm_split</code>。本工具对照这些样例的 Kernel 与计算流，组织执行事件、Tensor 驻留及队列申请／释放视图；性能数值来自离线调用该 Skill 的估算引擎，当前页面没有本机 NPU 实测。</p><h3>在本工具中的具体结果</h3><p>例如 FP32 <code>[2048,16384]</code>：整行模型 live 为 <strong>320 KiB</strong>，超过可用 UB <strong>248 KiB</strong>，因此选择两遍分块，并计入 <strong>128 MiB 的额外 X 重读</strong>。原引擎结合对应带宽与资源重叠模型，得到 <strong>179.024 µs</strong> 的理论时延，并将瓶颈归为 <code>mte2_bound</code>。这些性能结果依赖 CANNBot 提供的数据和执行模型；字节数与容量条件本身则可由源码独立推导核对。</p><p>本页先离线调用原引擎，再保存各配置的输入、输出与固定版本来源。切换配置时展示对应结果；浏览器没有临时猜测硬件参数，也没有修改标定常量来迎合预期。事件顺序和队列申请／释放来自 Kernel 核对，未把资源总耗时拆成虚构的逐事件时间戳。</p><h3>使用</h3><p>从左下选择输入；有两种可行实现时可切换，只有一种时显示当前实现。“硬件映射”打开角落的 950 架构联动窗口。点击执行事件或 Tensor 查看来源；“队列复用”按 AllocTensor / FreeTensor 展示队列的多次申请和释放。右上依次为核查、当前选择、源码、教程。检查器允许编辑问题、复制与导出；平移和缩放不会改变选择。</p><div class="prompt"><button id="promptCopy" class="icon" aria-label="复制继续调查 prompt"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5H3v13h5"/></svg></button><pre id="usagePrompt">使用 ai-infra-investigation，读取本页导出的 RMSNorm 选择与固定提交源码。核对 flow 与 rms_norm_full / rms_norm_split 的 gamma 请求、UB 分配、VF 与分块归约对应关系。保留原标定常量，区分模型差异、源码参数和设备观测；提出最小上板对照实验。</pre></div><div id="promptStatus" class="status" role="status"></div><h3>扩展</h3><p>本页保存五个上游配置与两个 FP32 驻留边界实验。新 shape 或硬件需通过 collect.py 重新调用原引擎；浏览器不冒充实时 Python 引擎。BF16 只核对 flow，附带直调 Kernel 为 FP32。设备结果可按上游 compare.py 接入，当前页面没有本机 NPU 测量。PTO 图为 950B 局部拓扑，估算参数来自固定 9589 数据；图中的 AIC 与 AIV 1/2 不表示全部 64 个 VectorCore。</p><h3>方法与边界</h3><p>CANNBot 使本机没有 NPU 时也能运行这套估算与离线检查，但不等于已验证预测精度。当前没有本机 NPU 实测；理论时延和瓶颈分类仍需独立上板对照。资源数值表示模型总需求，不是实际执行时间轴。稳态重叠与填充排空由引擎计算，不能把三条耗时直接相加。核查项反映源码与抽象模型的粒度差异，不等于设备故障。来源数据包含测量、公开表和推导默认值，按具体字段溯源。</p><p id="upstreamLink"></p></div></dialog><div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+<dialog id="usageWindow" aria-labelledby="usageTitle"><div class="head"><strong id="usageTitle">RMSNorm · 使用与扩展</strong><button id="usageClose" aria-label="关闭教程">关闭</button></div><div class="usage-body"><h3>CANNBot 增强了什么</h3><p>本工具使用 CANNBot 的 <a href="https://github.com/hicann/cannbot-skills/tree/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ops-theoretical-performance-estimation" target="_blank" rel="noopener" data-tip="打开本工具使用的 CANNBot Skill 固定版本"><code>ops-theoretical-performance-estimation</code> ↗</a>。它补充的是 Codex 原本没有随带的硬件标定数据与可执行性能模型，让源码中的计算、搬运和容量条件能够得到有依据、可复算的性能估算。</p><p>Codex 可以读取 Kernel、推导计算量与读写量，也可以编写 Roofline 公式。但没有对应硬件的测量记录时，无法仅凭源码可靠确定指令实际吞吐、不同搬运规模下的带宽，以及指令和流水之间能重叠多少。这些参数需要硬件测量或其他明确来源，不能由推理替代。</p><ul><li><strong>有来源的硬件参数：</strong>使用仓库保存的指令吞吐、读写带宽曲线和重叠标定记录；具体字段仍区分实测、公开表与推导默认值。</li><li><strong>可执行的定量估算：</strong>原引擎接收计算流、数据量、UB 使用和核分配，输出 MTE2、Vector、MTE3 的资源总需求、瓶颈分类与理论时延。页面因此能够比较方案的性能代价，而不只展示“多读一次”。</li><li><strong>可复算与核对：</strong>开源 RMSNorm Kernel、计算流定义、标定一致性和回归检查，提供从图中数值追溯到实现、模型输入及参数来源的依据。</li></ul><h3>源码来自哪里</h3><p>当前源码使用的是 CANNBot Skill 自带的性能验证样例：<a href="https://github.com/hicann/cannbot-skills/tree/f305e200aa4b1e1fed73cd21ff1f083b8df25a1e/ops/ops-theoretical-performance-estimation/tests/onboard/kernels/rms_norm" target="_blank" rel="noopener" data-tip="查看 Skill 自带的 RMSNorm 性能验证样例">tests/onboard/kernels/rms_norm ↗</a>，包括 <code>rms_norm_full</code> 与 <code>rms_norm_split</code>。本工具对照这些样例的 Kernel 与计算流，组织执行事件、Tensor 驻留及队列申请／释放视图；性能数值来自离线调用该 Skill 的估算引擎，当前页面没有本机 NPU 实测。</p><h3>在本工具中的具体结果</h3><p>例如 FP32 <code>[2048,16384]</code>：整行模型 live 为 <strong>320 KiB</strong>，超过可用 UB <strong>248 KiB</strong>，因此选择两遍分块，并计入 <strong>128 MiB 的额外 X 重读</strong>。原引擎结合对应带宽与资源重叠模型，得到 <strong>179.024 µs</strong> 的理论时延，并将瓶颈归为 <code>mte2_bound</code>。这些性能结果依赖 CANNBot 提供的数据和执行模型；字节数与容量条件本身则可由源码独立推导核对。</p><p>本页先离线调用原引擎，再保存各配置的输入、输出与固定版本来源。切换配置时展示对应结果；浏览器没有临时猜测硬件参数，也没有修改标定常量来迎合预期。事件顺序和队列申请／释放来自 Kernel 核对，未把资源总耗时拆成虚构的逐事件时间戳。</p><h3>使用</h3><p>从左下选择输入；有两种可行实现时可切换，只有一种时显示当前实现。“硬件映射”打开角落的 950 架构联动窗口。点击执行事件或 Tensor 查看来源；“队列复用”按 AllocTensor / FreeTensor 展示队列的多次申请和释放。右上依次为核查、当前选择、源码、教程。检查器允许编辑问题、复制与导出；平移和缩放不会改变选择。</p><div class="prompt"><button id="promptCopy" class="icon" aria-label="复制继续调查 prompt"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5H3v13h5"/></svg></button><pre id="usagePrompt">使用 ai-infra-investigation，读取本页导出的 RMSNorm 选择与固定提交源码。核对 flow 与 rms_norm_full / rms_norm_split 的 gamma 请求、UB 分配、VF 与分块归约对应关系。保留原标定常量，区分模型差异、源码参数和设备观测；提出最小上板对照实验。</pre></div><div id="promptStatus" class="status" role="status"></div><h3>扩展</h3><p>本页保存五个上游配置与两个 FP32 驻留边界实验。新 shape 或硬件需通过 collect.py 重新调用原引擎；浏览器不冒充实时 Python 引擎。BF16 只核对 flow，附带直调 Kernel 为 FP32。设备结果可按上游 compare.py 接入，当前页面没有本机 NPU 测量。PTO 图为 950B 局部拓扑，估算参数来自固定 9589 数据；图中的 AIC 与 AIV 1/2 不表示全部 64 个 VectorCore。</p><h3>应用场景 · 编译前的算子开发分析</h3><p>本案例使用源码与 CANNBot 性能模型，辅助理解计算语义、分块策略、搬运量与缓冲复用关系。它对应开发阶段的设计与分析任务。</p><h3>当前支持 · 编译前分析</h3><p>本页已支持源码计算图与步骤联动、分块及缓冲使用关系分析、性能模型估算，以及本机 CPU Golden 参考计算。泳道表示源码步骤顺序，不是设备执行 trace；估算时延不是该案例的上板实测。</p><h3>后续接入方向 · 尚未实现</h3><table><thead><tr><th>阶段</th><th>所需输入产物</th><th>本页支持状态</th></tr></thead><tbody><tr><td>编译后地址布局</td><td>匹配版本的编译器分配报告、生成指令及源码映射</td><td>尚未接入；当前 UB 地址为 Mock</td></tr><tr><td>上板后执行与访存观测</td><td>设备执行、访存 trace</td><td>尚未实现解析与展示</td></tr><tr><td>上板后数值校验</td><td>匹配输入的真实 NPU 输出及测试规范</td><td>尚未实现真实输出导入与绑定；当前使用 Mock 样本</td></tr></tbody></table><p>本页目前不能判断设备实际如何执行，也不能据此验收上板性能或正确性。Mock 数值的通过／超差仅验证对照交互和判定规则，不代表设备结论。</p><h3>为什么要区分工程阶段</h3><p>工具需要与问题和工程阶段匹配：编译前分析消费源码、输入配置及模型；真实地址核查需要编译产物；实际执行观测需要运行产物。后两类证据由相应流程产生，不是源码仓库天然应附带的数据。当前案例定位于编译前分析，不应以缺少后续阶段产物来判断这一阶段的工具是否可用；也不能因此声称本页已经支持后续阶段。</p><p>UB 地址及 NPU 输出的 Mock 用于预览后续交互，接入真实报告、trace 和设备数组仍需实现相应适配器。CPU Golden 是按固定源码在本机计算的参考值。</p><p>CANNBot 上游包含编译与上板脚本，本页使用其编译前分析能力，未执行该案例的编译和上板流程；模型引用的已有硬件标定也不代表该案例已运行。</p><h3>方法与边界</h3><p>CANNBot 使本机没有 NPU 时也能运行这套估算与离线检查，但不等于已验证预测精度。当前没有本机 NPU 实测；理论时延和瓶颈分类仍需独立上板对照。资源数值表示模型总需求，不是实际执行时间轴。稳态重叠与填充排空由引擎计算，不能把三条耗时直接相加。核查项反映源码与抽象模型的粒度差异，不等于设备故障。来源数据包含测量、公开表和推导默认值，按具体字段溯源。</p><p id="upstreamLink"></p></div></dialog><div id="tooltip" class="tooltip" role="tooltip" hidden></div>
 <script>(function registerPtoAicCorePattern(global) {
   'use strict';
 
@@ -8513,7 +8526,7 @@ body.reuse-split .scene .muted,body.reuse-split .scene .life-label,body.reuse-sp
       ctx.font = '10px sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'bottom';
-      ctx.fillText(`peak ${fmtKB(peak)}`, peakX + 6, peakY - 2);
+      ctx.fillText(`最大持有 ${fmtKB(peak)}`, peakX + 6, peakY - 2);
       ctx.restore();
     }
 
@@ -8542,19 +8555,19 @@ body.reuse-split .scene .muted,body.reuse-split .scene .life-label,body.reuse-sp
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
         ctx.fillStyle = this.cssVar('--reuse-viewer-grid-text', 'rgba(255,255,255,0.48)');
-        ctx.fillText(fmtHex(bytes), x, plot.y - 9);
+
         ctx.fillStyle = this.cssVar('--reuse-viewer-ruler-text', 'rgba(255,255,255,0.72)');
         ctx.fillText(fmtKB(bytes), x, plot.y - 21);
       }
       ctx.fillStyle = this.cssVar('--reuse-viewer-axis-text', 'rgba(255,255,255,0.58)');
       ctx.font = '11px sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText('单次请求尺寸 →', plot.x, plot.y - 35);
+      ctx.fillText('逻辑占位 / B（非地址）→', plot.x, plot.y - 35);
       ctx.save();
       ctx.translate(14, plot.y + plot.h / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.textAlign = 'center';
-      ctx.fillText('指令生命周期 tick', 0, 0);
+      ctx.fillText('源码步骤（非时间）', 0, 0);
       ctx.restore();
       ctx.restore();
     }
@@ -8660,7 +8673,350 @@ body.reuse-split .scene .muted,body.reuse-split .scene .life-label,body.reuse-sp
     sampleData: createDemoData(),
   };
 })(window);
-</script><script>const GridTensor=(()=>{const B='#B1EF6B',esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const txt=(x,y,t,cls,anchor,color)=>`<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}" style="fill:${color==='#858585'?'#DDD':color}">${esc(t)}</text>`;const hit=(key,body)=>body;function dataTiles(x,y,w,h,color,opacity=.22){const pad=5,cell=Math.min(11,w-2*pad,h-2*pad),baseGap=3,iw=w-2*pad,ih=h-2*pad;if(cell<=0)return '';const cols=Math.max(1,Math.floor((iw+baseGap)/(cell+baseGap))),rows=Math.max(1,Math.floor((ih+baseGap)/(cell+baseGap))),gx=cols>1?(iw-cols*cell)/(cols-1):0,gy=rows>1?(ih-rows*cell)/(rows-1):0,x0=x+pad+(cols===1?(iw-cell)/2:0),y0=y+pad+(rows===1?(ih-cell)/2:0);let b='';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=`<rect class="data-tile" x="${x0+c*(cell+gx)}" y="${y0+r*(cell+gy)}" width="${cell}" height="${cell}" fill="${color}" opacity="${opacity}"/>`;return `<g pointer-events="none">${b}</g>`}
+
+/* Host adapter for MI-01 FunctionMemoryMap: transpose lifecycle to X.
+   Rectangle and clipped two-line label contract follows the canonical component.
+   Source: PyPTO3-main/Design/pass-error-cases/src/FunctionMemoryMap.jsx.
+   No byte-address geometry is supplied: Y is request size within a named buffer.
+   Host selection overrides MI-01 blue with neutral fill per AGENTS.md. */
+const MemoryInspectorBlock=(()=>{
+ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function render({x,y,width,height,name,size,line,endLine,color,selected=false,related=false}){
+  const w=Math.max(2,width),h=Math.max(.05,height),fill=selected?'#f0f0f0':color,ink=color==='#666'?'#ddd':'#111',bytes=n=>n<1024?n+' B':Number((n/1024).toFixed(2))+' KiB';
+  return `<rect class="mi-allocation" x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${fill}"/>`+(w>44&&h>14?`<svg x="${x+4}" y="${y+2}" width="${Math.max(0,w-8)}" height="${Math.max(0,h-4)}" overflow="hidden" pointer-events="none"><text y="12" fill="${ink}" style="fill:${ink}" font-size="11" font-family="ui-monospace,monospace" font-weight="600">${escape(name)}</text>${h>30?`<text y="26" fill="${ink}" style="fill:${ink}" font-size="10" font-family="ui-monospace,monospace">${escape(bytes(size))} · L${line}–L${endLine}</text>`:''}</svg>`:'');
+ }
+ return {render};
+})();
+
+window.PtoOpIcons = [
+  {
+    "id": "add",
+    "name": "Residual Add",
+    "description": "残差相加",
+    "path": "M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0 M7 12h10 M12 7v10"
+  },
+  {
+    "id": "matmul",
+    "name": "MatMul",
+    "description": "矩阵乘法",
+    "path": "M3 4h4M3 4v16h4M21 4h-4M21 4v16h-4M8 7h3v3H8zM14 7h3v3h-3zM8 14h3v3H8zM14 14h3v3h-3z"
+  },
+  {
+    "id": "linear",
+    "name": "Linear Projection",
+    "description": "线性投影",
+    "path": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2"
+  },
+  {
+    "id": "norm",
+    "name": "RMSNorm",
+    "description": "归一化",
+    "path": "M4 6h16M7 12h10M9 18h6"
+  },
+  {
+    "id": "embedding",
+    "name": "Embedding",
+    "description": "嵌入查表",
+    "path": "M4 4h9v16H4zM4 9h9M4 15h9M16 12h5M19 10l2 2-2 2"
+  },
+  {
+    "id": "attention",
+    "name": "Attention",
+    "description": "注意力计算",
+    "path": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6"
+  },
+  {
+    "id": "rope",
+    "name": "RoPE",
+    "description": "旋转位置编码",
+    "path": "M5 8a8 8 0 0 1 14 0M19 4v4h-4M19 16a8 8 0 0 1-14 0M5 20v-4h4"
+  },
+  {
+    "id": "compress",
+    "name": "Compress",
+    "description": "压缩聚合",
+    "path": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
+  },
+  {
+    "id": "expand",
+    "name": "Expand",
+    "description": "展开广播",
+    "path": "M10 10L4 4M14 10l6-6M10 14l-6 6M14 14l6 6M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
+  },
+  {
+    "id": "mix",
+    "name": "HC Mix",
+    "description": "流间混合",
+    "path": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16"
+  },
+  {
+    "id": "gate",
+    "name": "Gate / Multiply",
+    "description": "门控乘法",
+    "path": "M3 7h6M3 17h6M9 5v14h4a7 7 0 0 0 0-14H9M20 12h3"
+  },
+  {
+    "id": "activation",
+    "name": "SiLU",
+    "description": "激活函数",
+    "path": "M4 19h16M5 19V4M5 16c8 4 7-8 14-12"
+  },
+  {
+    "id": "softmax",
+    "name": "Softmax",
+    "description": "归一化概率",
+    "path": "M5 20v-5M12 20V5M19 20v-9M3 3h18"
+  },
+  {
+    "id": "topk",
+    "name": "Top-K",
+    "description": "候选选择",
+    "path": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6"
+  },
+  {
+    "id": "router",
+    "name": "Router / MoE",
+    "description": "专家路由",
+    "path": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"
+  },
+  {
+    "id": "concat",
+    "name": "Concat",
+    "description": "拼接",
+    "path": "M3 5h6v5H3zM15 5h6v5h-6zM6 10v4h12v-4M12 14v6M8 20h8"
+  },
+  {
+    "id": "split",
+    "name": "Split",
+    "description": "分支拆分",
+    "path": "M12 3v7M5 20v-5l7-5 7 5v5M3 18l2 2 2-2M17 18l2 2 2-2"
+  },
+  {
+    "id": "reshape",
+    "name": "Reshape",
+    "description": "形状变换",
+    "path": "M4 4h10v7H4zM10 15h10v5H10zM18 5h3v7M3 14v6h4"
+  },
+  {
+    "id": "transpose",
+    "name": "Transpose",
+    "description": "维度交换",
+    "path": "M4 7h15M16 4l3 3-3 3M7 20V5M4 8l3-3 3 3"
+  },
+  {
+    "id": "reduce",
+    "name": "Reduce / Pool",
+    "description": "规约汇聚",
+    "path": "M4 4l8 8 8-8M4 10l8 8 8-8M12 18v3"
+  },
+  {
+    "id": "cache",
+    "name": "KV Read / Write",
+    "description": "状态读写",
+    "path": "M5 4h14v16H5zM5 8h14M9 12h6M9 16h6"
+  },
+  {
+    "id": "conv",
+    "name": "Conv / Patch",
+    "description": "卷积与分块",
+    "path": "M4 4h16v16H4zM4 10h16M10 4v16M14 14h6M14 14v6"
+  },
+  {
+    "id": "exchange",
+    "name": "All-to-All",
+    "description": "通信交换",
+    "path": "M3 8h17M16 4l4 4-4 4M21 16H4M8 12l-4 4 4 4"
+  },
+  {
+    "id": "sample",
+    "name": "Sampling",
+    "description": "采样选择",
+    "path": "M5 5h2M11 5h2M17 5h2M5 11h2M17 11h2M5 17h2M11 17h2M17 17h2M10 10l6 3-3 1-1 3z"
+  }
+];
+
+window.PtoOpIconFor = function(label){
+ const rules=[['add',/residual.*(add|merge)|add shared/i],['embedding',/embedding|lookup|engram|hash/i],['attention',/attention|sdpa/i],['topk',/top.?k|candidate|filter|sort/i],['router',/router|routed|expert|moe/i],['compress',/compress/i],['expand',/expand/i],['mix',/hc pre|mix|sinkhorn/i],['norm',/norm/i],['rope',/rope/i],['concat',/concat|merge/i],['softmax',/softmax/i],['gate',/gate|weight/i],['activation',/silu|swiglu|gelu|relu|softplus|clamp/i],['reduce',/reduce|mean|pool|sum/i],['conv',/patch|conv/i],['reshape',/unfold|pad|resize/i],['sample',/sample|sampling|draft input/i],['cache',/kv|cache|mask/i],['linear',/projection|linear|head|aligner/i]];
+ const id=rules.find(([,r])=>r.test(label))?.[0]||'linear';return window.PtoOpIcons.find(i=>i.id===id);
+};
+
+const LibraryOpGlyph=(i,x,y)=>`<path d="${i.path}" transform="translate(${x} ${y}) scale(1.25)" fill="none" stroke="#eee" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+const LibraryOpNode=(i,x,y)=>i.id==='add'?`<circle cx="${x+180}" cy="${y+32}" r="30" fill="#101010" stroke="#aaa" stroke-width="2"/><path d="M${x+168} ${y+32}h24M${x+180} ${y+20}v24" stroke="#eee" stroke-width="2.5"/>`:`<rect x="${x}" y="${y}" width="360" height="64" rx="32" fill="#4f4f4f"/><circle cx="${x+38}" cy="${y+32}" r="22" fill="#101010"/>${LibraryOpGlyph(i,x+23,y+17)}<text x="${x+180}" y="${y+33}" fill="#eee" font-size="20" text-anchor="middle" dominant-baseline="middle">${esc(i.name)}</text>`;
+const CPU_GOLDEN={
+  "kind": "locally regenerated CPU Golden; not captured device output",
+  "revision": "f305e200aa4b1e1fed73cd21ff1f083b8df25a1e",
+  "source": "tests/onboard/kernels/rms_norm/rms_norm_direct.asc",
+  "source_sha256": "cd06647ed0a2b1a598486503c97ee511692af553672ea46cc566945a4d27674e",
+  "function_sha256": "42dceaa006e52e18355c69acd408a76da5099b326936edf37da84bc00c053c29",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.0.123.102)",
+  "random": "local C++ standard-library mt19937(12345), uniform_real_distribution<float>(-2,2); full X then gamma; distribution implementation may differ across platforms",
+  "epsilon": 1e-06,
+  "window": {
+    "rows": 4,
+    "cols": 6
+  },
+  "cases": {
+    "rms_norm_s_512x4096": [
+      -1.44901943,
+      0.911588669,
+      0.909411728,
+      -1.84124696,
+      0.746480286,
+      -0.71035111,
+      1.00816441,
+      -0.0659753233,
+      1.96847129,
+      1.87955487,
+      -0.5718624,
+      -0.119083337,
+      0.0528911054,
+      -0.323132277,
+      -2.21197963,
+      -0.193906784,
+      0.957934558,
+      0.000348343747,
+      -1.21092093,
+      0.262255609,
+      0.579991758,
+      1.56391394,
+      -0.266378313,
+      -0.299101889
+    ],
+    "rms_norm_m_4096x4096": [
+      2.7858727,
+      2.0883131,
+      -0.140645057,
+      -1.22606885,
+      0.0670364052,
+      -1.01768064,
+      -1.93828857,
+      -0.151139572,
+      -0.304433882,
+      1.25157773,
+      -0.0513551384,
+      -0.170604095,
+      -0.101687998,
+      -0.740247667,
+      0.342093676,
+      -0.129120678,
+      0.0860256925,
+      0.00049905281,
+      2.32810664,
+      0.600788295,
+      -0.0896986127,
+      1.04139543,
+      -0.0239216555,
+      -0.428506702
+    ],
+    "rms_norm_l_16384x8192": [
+      -0.7494573,
+      0.0242763255,
+      1.2606132,
+      -2.30164194,
+      -1.13825655,
+      0.382865191,
+      0.027426973,
+      -0.0086275395,
+      -3.07414937,
+      -0.243019551,
+      -1.46446896,
+      -0.000188236314,
+      0.352239192,
+      -0.0197016634,
+      -0.770115077,
+      -2.26084995,
+      -0.127406448,
+      -0.139723882,
+      0.288930744,
+      0.00750722643,
+      -3.06578064,
+      2.68034744,
+      1.01959169,
+      0.0939624682
+    ],
+    "rms_norm_xl_2048x16384_nonresident": [
+      -2.23573184,
+      -0.179095939,
+      0.453137249,
+      1.54685175,
+      -0.827660859,
+      -1.61782622,
+      1.05398405,
+      0.145790473,
+      -0.277668774,
+      1.52407455,
+      -0.0929238424,
+      0.592215955,
+      -1.14767838,
+      -0.216874748,
+      -0.128067851,
+      -1.51184392,
+      -0.297530204,
+      -0.122443438,
+      2.40155625,
+      -0.0205889624,
+      -0.551015079,
+      0.750298738,
+      0.700528204,
+      1.66502535
+    ],
+    "boundary_2048x12672": [
+      2.21290684,
+      -0.503860891,
+      0.769719601,
+      1.25719512,
+      -1.14346302,
+      1.87882507,
+      1.28874826,
+      0.0832735598,
+      2.05030155,
+      1.11698937,
+      -1.23837233,
+      1.40184176,
+      0.532569468,
+      0.401374012,
+      1.43994045,
+      1.52444935,
+      1.56757879,
+      -1.58079004,
+      2.03883338,
+      -0.116040573,
+      -0.438525587,
+      -1.51664066,
+      -1.67855394,
+      -0.807160139
+    ],
+    "boundary_2048x12704": [
+      1.02133107,
+      -1.24435437,
+      1.09645915,
+      -1.87972486,
+      -0.811184466,
+      -1.01002979,
+      0.438034356,
+      0.488671869,
+      0.308948994,
+      0.852860689,
+      -0.262097657,
+      0.427174151,
+      0.263056934,
+      0.447965026,
+      -0.544896066,
+      -0.151105985,
+      0.426495999,
+      -0.81414634,
+      -0.977808535,
+      0.235668272,
+      0.154670954,
+      -2.20960021,
+      -0.117934622,
+      -0.886717141
+    ]
+  },
+  "npu_values": null,
+  "validation_result": null
+}
+;</script><script>const GridTensor=(()=>{const B='#B1EF6B',esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const txt=(x,y,t,cls,anchor,color)=>`<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}" style="fill:${color==='#858585'?'#DDD':color}">${esc(t)}</text>`;const hit=(key,body)=>body;function dataTiles(x,y,w,h,color,opacity=.22){const pad=5,cell=Math.min(11,w-2*pad,h-2*pad),baseGap=3,iw=w-2*pad,ih=h-2*pad;if(cell<=0)return '';const cols=Math.max(1,Math.floor((iw+baseGap)/(cell+baseGap))),rows=Math.max(1,Math.floor((ih+baseGap)/(cell+baseGap))),gx=cols>1?(iw-cols*cell)/(cols-1):0,gy=rows>1?(ih-rows*cell)/(rows-1):0,x0=x+pad+(cols===1?(iw-cell)/2:0),y0=y+pad+(rows===1?(ih-cell)/2:0);let b='';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=`<rect class="data-tile" x="${x0+c*(cell+gx)}" y="${y0+r*(cell+gy)}" width="${cell}" height="${cell}" fill="${color}" opacity="${opacity}"/>`;return `<g pointer-events="none">${b}</g>`}
 function tensorNode(x,y,w,label,color=B,key='activation',title,desc,state='normal'){if(/^\d+$/.test(String(label)))return vector(x+(w-26)/2,y+4,[Number(label)],color,key,title,state);const isData=key!=='rank',strong=state==='complete'||state==='focus',weak=state==='pending'||state==='muted';return hit(key,`<rect class="outline ${isData?'data-block tensor-node':''}" x="${x}" y="${y}" width="${w}" height="35" rx="6" fill="#131313" stroke="${color}" stroke-width="${strong?2.4:1.2}" stroke-opacity="${weak?.62:1}"/>${isData?dataTiles(x,y,w,35,color,strong?.32:.22):''}<g class="data-label" style="paint-order:stroke;stroke:#131313;stroke-width:2.5px;stroke-linejoin:round">${txt(x+w/2,y+23,label,'small','middle',color)}</g>`,title,desc)};return {render:tensorNode};})();</script><script>/* Reusable SVG grammar. No DOM or report runtime dependency. */
 (function(root){
 'use strict';
@@ -12230,35 +12586,45 @@ function toggleHardwareWindow(){const panel=$('hardwarePanel');panel.hidden=!pan
 
 function focusHardware(){const h=architecture.helper,core='#mem950-aiv2 ',ub=core+'[data-aiv-node="buffer:UB"]',vec=core+'[data-aiv-node="vector:Vector"]',reg=core+'[data-aiv-node="register:SIMD"]',simd=core+'[data-aiv-node="exec:SIMD"]';
  if(state.object==='hardware'&&state.hardware){const d=state.hardware,field=d.coreKind==='aiv'?'data-aiv-node':d.coreKind==='aic'?'data-aic-node':'data-mem950-node';h.setPathFocus($('architectureHost'),architecture.key,{selectors:[(d.coreId?'#'+d.coreId+' ':'')+'['+field+'="'+d.node+'"]'],routes:[]});return}
+ const lane=executionModel().events[executionStep]?.lane;
  let selectors=['[data-mem950-node="rail:GM"]','[data-mem950-node="rail:L2"]',ub,reg,simd,vec],routes=['l2-to-aiv2','aiv2-to-l2'];
- if(['vf','scale','vector'].includes(state.object)){selectors=[ub,reg,simd,vec];routes=[]}
- else if(['x','weight','reread','mte2'].includes(state.object)){selectors=['[data-mem950-node="rail:GM"]','[data-mem950-node="rail:L2"]',core+'[data-aiv-node="transport:MTE2"]',ub];routes=['l2-to-aiv2']}
- else if(['y','mte3'].includes(state.object)){selectors=[ub,core+'[data-aiv-node="transport:MTE3"]','[data-mem950-node="rail:L2"]','[data-mem950-node="rail:GM"]'];routes=['aiv2-to-l2']}
+ if(lane===1){selectors=[ub,reg,simd,vec];routes=[]}
+ else if(lane===0){selectors=['[data-mem950-node="rail:GM"]','[data-mem950-node="rail:L2"]',core+'[data-aiv-node="transport:MTE2"]',ub];routes=['l2-to-aiv2']}
+ else if(lane===2){selectors=[ub,core+'[data-aiv-node="transport:MTE3"]','[data-mem950-node="rail:L2"]','[data-mem950-node="rail:GM"]'];routes=['aiv2-to-l2']}
  h.setPathFocus($('architectureHost'),architecture.key,{selectors,routes});$('architectureHost').querySelectorAll('.is-object-selected').forEach(e=>e.classList.remove('is-object-selected'));const chosen={ub:ub,vector:vec,vf:simd,scale:simd}[state.object];if(chosen)hardware(chosen)?.classList.add('is-object-selected');
 }
 function render(){prepareExecution();renderComparison();syncHardwareWindow();syncQueueSelection();const count=auditFindings().length;$('auditBadge').textContent=count;$('auditBadge').hidden=!count;$('audit').setAttribute('aria-label',`核查模型与实现，${count}项待核对差异`);}
 
+function headerTip(x,y,w,h,body,tip){return `<g tabindex="0" role="note" data-tip="${esc(tip)}"><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent" pointer-events="all"/>${body}</g>`}
 /* Source-ordered events: no per-event clock or overlap is inferred. */
+let showBufferLife=false,hasExecutionSelection=true;
 let executionStep=0,executionKey='',reuseViewer=[],lastQueueTensor=null,reuseSplit=false,reuseMainView=null,queueCursorTick=null,reuseDataKey='';
 const eventBarCache=new Map();
 function executionModel(){
  const c=config(),split=selected().template==='row_split_2pass',cols=c.shape[1],b=c.dtype==='fp32'?4:2,n=split&&c.dtype==='fp32'?Math.ceil(cols/4096):1,events=[],life=[];
- const add=(lane,label,id,extra={})=>{const e={lane,label,id,...extra};events.push(e);return events.length-1};
+ const add=(lane,label,id,extra={})=>{const compute={x:['x'],reread:['x'],weight:['gamma'],scale:['norm','normGamma'],y:['output'],vf:['square','mean','epsilon','rsqrt']}[id];const e={lane,label,id,compute_node_ids:compute,...extra};e.event_id=`${split?'split':'full'}/${id}/${extra.phase||'main'}/${extra.chunk??0}`;e.source_location={path:K,line:split?({weight:281,x:264,reread:278,scale:286,y:291}[id]||(extra.phase==='rstd'?270:267)):({weight:189,x:205,vf:210,scale:213,y:218}[id]||198),revision:DATA.revision};events.push(e);return events.length-1};
  if(!split){
  add(0,'γ → UB','weight');const start=add(0,'X → UB','x',{bytes:cols*b});add(1,'Σx² → rstd','vf');const norm=add(1,'X · rstd · γ','scale');const out=add(2,'Y → GM','y');
  life.push({name:'X · 保留并复用',start,end:norm+1,size:cols*b,id:'x'},{name:'γ · 常驻当前核',start:0,end:events.length,size:cols*b,id:'weight'},{name:'rstd',start:2,end:norm+1,size:4,id:'vf'},{name:'Y',start:norm,end:out+1,size:cols*b,id:'y'});
  }else{
- for(let k=0;k<n;k++){const size=Math.min(c.dtype==='fp32'?4096:cols,cols-k*(c.dtype==='fp32'?4096:cols))*b,start=add(0,`X[${k}] 首读`,'x',{bytes:size,chunk:k});add(1,`Σx[${k}]²`,'vf');life.push({name:`X[${k}] · 第一遍`,start,end:events.length,size,id:'x'});}
- const reduction=add(1,'合并 → rstd','vf');life.push({name:'部分和 → rstd',start:1,end:0,size:n*4+4,id:'vf'});
- for(let k=0;k<n;k++){const size=Math.min(c.dtype==='fp32'?4096:cols,cols-k*(c.dtype==='fp32'?4096:cols))*b,start=add(0,`X[${k}] 再读`,'reread',{bytes:size,reread:true,chunk:k});const g=add(0,`γ[${k}] → UB`,'weight');const norm=add(1,`X[${k}] · rstd · γ`,'scale');const out=add(2,`Y[${k}] → GM`,'y');life.push({name:`X[${k}] · 第二遍`,start,end:norm+1,size,id:'reread'},{name:`γ[${k}]`,start:g,end:norm+1,size,id:'weight'},{name:`Y[${k}]`,start:norm,end:out+1,size,id:'y'});}
+ for(let k=0;k<n;k++){const size=Math.min(c.dtype==='fp32'?4096:cols,cols-k*(c.dtype==='fp32'?4096:cols))*b,start=add(0,`X[${k}] 首读`,'x',{bytes:size,chunk:k});add(1,`Σx[${k}]²`,'vf',{chunk:k,phase:'partial',compute_node_ids:['square','mean']});life.push({name:`X[${k}] · 第一遍`,start,end:events.length,size,id:'x'});}
+ const reduction=add(1,'合并 → rstd','vf',{phase:'rstd',compute_node_ids:['mean','epsilon','rsqrt']});life.push({name:'部分和 → rstd',start:1,end:0,size:n*4+4,id:'vf'});
+ for(let k=0;k<n;k++){const size=Math.min(c.dtype==='fp32'?4096:cols,cols-k*(c.dtype==='fp32'?4096:cols))*b,start=add(0,`X[${k}] 再读`,'reread',{bytes:size,reread:true,chunk:k});const g=add(0,`γ[${k}] → UB`,'weight',{chunk:k});const norm=add(1,`X[${k}] · rstd · γ`,'scale',{chunk:k});const out=add(2,`Y[${k}] → GM`,'y',{chunk:k});life.push({name:`X[${k}] · 第二遍`,start,end:norm+1,size,id:'reread'},{name:`γ[${k}]`,start:g,end:norm+1,size,id:'weight'},{name:`Y[${k}]`,start:norm,end:out+1,size,id:'y'});}
  life.find(l=>l.end===0).end=events.length;
  }
  return {events,life,split,n};
 }
 const hardwareColors={storage:'#3B79D2',transfer:'#FFE300',compute:'#0BB48E'};
 function taskImage(label,w,active,reread,lane){const key=[label,w,active,reread,lane].join('|');if(eventBarCache.has(key))return eventBarCache.get(key);const canvas=document.createElement('canvas');canvas.width=Math.ceil(w*2);canvas.height=72;const ctx=canvas.getContext('2d');ctx.scale(2,2);PtoSwimlaneTaskPattern.drawTaskBar(ctx,{x:0,y:0,width:w,height:36,task:{label},baseColor:active?(lane===1?hardwareColors.compute:hardwareColors.transfer):'#55595d',fontFamily:'monospace'});const data=canvas.toDataURL();eventBarCache.set(key,data);return data}
-function setExecutionStep(i,fromQueue=false){if(!fromQueue){lastQueueTensor=null;queueCursorTick=null}state.finding=null;state.queueSource=null;executionStep=Math.max(0,Math.min(executionModel().events.length-1,i));state.object=executionModel().events[executionStep].id;render()}
+function setExecutionStep(i,fromQueue=false){hasExecutionSelection=true;if(!fromQueue){lastQueueTensor=null;queueCursorTick=null}state.finding=null;state.queueSource=null;executionStep=Math.max(0,Math.min(executionModel().events.length-1,i));state.object=executionModel().events[executionStep].id;render()}
 
+// Constructed byte layout: separate aligned reservations; first-fit reuse within each.
+function mockUBLayout(){const data=queueLifetimeData();if(!data)return null;const count=executionModel().events.length,split=selected().template==='row_split_2pass',buffers=[],tensors=[];let base=0;
+ for(const b of data.buffers){base=Math.ceil(base/32)*32;buffers.push({...b,base});const active=[];let cursor=0;const ts=data.tensors.filter(t=>t.buffer===b.name&&(split||!t.name.includes('行组')||t.name.endsWith('行组 0'))).map(t=>({...t,start:Math.min(t.allocTick,count-1),end:Math.min(t.freeTick,count)})).sort((a,b)=>a.start-b.start);
+ for(const t of ts){const occupied=active.filter(a=>a.end>t.start).sort((a,b)=>a.local-b.local);const candidates=[0,...occupied.map(a=>Math.ceil((a.local+a.size)/32)*32)];const fits=local=>local+t.size<=b.capacity&&occupied.every(a=>local+t.size<=a.local||local>=a.local+a.size);const local=candidates.find(fits);if(local===undefined)throw Error('Mock reservation overflow: '+b.name);t.local=local;t.mockAddress=base+local;cursor=Math.ceil((local+t.size)/32)*32;if(cursor>=b.capacity)cursor=0;active.push(t);tensors.push(t);}base+=b.capacity;}
+ return {buffers,tensors,capacity:Math.ceil(base/32768)*32768,evidence:'mock'};
+}
+function selectBufferStep(el){const id=el.dataset.bufferId,t=mockUBLayout()?.tensors.find(t=>t.id===id);if(t){if(lastQueueTensor?.id===t.id){lastQueueTensor=null;hasExecutionSelection=false;$('inspector').hidden=true;render();return true}$('inspector').hidden=false;lastQueueTensor=t;state.queueSource=[t.srcLineStart,t.srcLineEnd];setExecutionStep(+el.dataset.step,true);state.queueSource=[t.srcLineStart,t.srcLineEnd];$('detail').insertAdjacentHTML('afterbegin',`<section><h3>Mock UB 地址 · ${esc(t.buffer)}</h3><p>[0x${t.mockAddress.toString(16)}, 0x${(t.mockAddress+t.size).toString(16)}) · ${kib(t.size)}</p><p>本页构造的 32 B 对齐分配；非编译器或设备地址。</p></section>`);if(!$('sourcePanel').hidden)sourceRecord();return true}return false}
 function executionAction(action){if(action==='reuse')openQueueViewer()}
 function queueLifetimeData(){
  const c=config(),a=selected(),split=a.template==='row_split_2pass',k=a.kernel;if(c.dtype!=='fp32'||!k)return null;
@@ -12267,8 +12633,8 @@ function queueLifetimeData(){
  const ticks=split?events.length:1+4*shownGroups,tensors=[],last={};
  function add(buffer,name,size,start,end,line,freeLine,event,kind='temp'){
   const id=buffer+'-'+tensors.length,previous=last[buffer],reuse=previous&&previous.freeTick<=start?previous:null;
-  const item={id,name,buffer,offset:0,size,allocTick:start,freeTick:end,kind,reuseOf:reuse?.id||null,reusedBy:[],srcFile:K,srcLineStart:line,srcLineEnd:freeLine||line,srcHotLine:line,eventIndex:event,relation:'same queue allocator; physical slot is not resolved',code:DATA.sources[K].text.split('\n').slice(line-1,line+1).join('\n')+(freeLine?'\n…\n'+DATA.sources[K].text.split('\n')[freeLine-1]:''),cce:''};
-  if(reuse)reuse.reusedBy.push(id);tensors.push(item);last[buffer]=item;
+  const item={id,name,buffer,offset:0,size,allocTick:start,freeTick:end,kind,reuseOf:null,reusedBy:[],srcFile:K,srcLineStart:line,srcLineEnd:freeLine||line,srcHotLine:line,eventIndex:event,relation:'same queue allocator; physical slot is not resolved',code:DATA.sources[K].text.split('\n').slice(line-1,line+1).join('\n')+(freeLine?'\n…\n'+DATA.sources[K].text.split('\n')[freeLine-1]:''),cce:''};
+  tensors.push(item);last[buffer]=item;
  }
  if(split){
   for(const l of life){if(l.id==='vf')continue;const buffer=l.id==='weight'?'gQ':l.id==='y'?'outQ':'inQ',second=l.id==='reread',ln=l.id==='weight'?280:l.id==='y'?285:second?277:263,fr=l.id==='weight'?289:l.id==='y'?292:second?288:268;
@@ -12283,23 +12649,15 @@ function queueLifetimeData(){
 }
 
 function destroyQueueOverview(){reuseViewer.forEach(v=>v.destroy());reuseViewer=[];}
-function openQueueViewer(){
- const data=queueLifetimeData();if(!data)return;destroyQueueOverview();lastQueueTensor=null;queueCursorTick=null;reuseDataKey=executionKey;if(!reuseSplit){reuseMainView={...view};reuseSplit=true;document.body.classList.add('reuse-split');$('reuseWindow').show();fit();}
- const reserved=data.buffers.reduce((n,b)=>n+b.capacity,0),peak=Math.max(...Array.from({length:data.ticks},(_,i)=>data.tensors.filter(t=>t.allocTick<=i&&i<t.freeTick).reduce((n,t)=>n+t.size,0)));
- $('reuseHost').innerHTML=`<div id="queueHelp" hidden><div class="queue-info-metrics"><span>预留 <b>${kib(reserved)}</b></span><span>最大同时申请 <b>${kib(peak)}</b></span></div><p>横向区分队列，纵向共用源码步骤。每个区间表示一次申请到释放；同队列再次申请不指定物理槽号。</p><p>横轴各列为独立队列，每列从0比较请求尺寸；横向滚动查看全部队列。峰值曲线表示当前步骤的申请量，不表示告警。点击区间联动主体事件；Ctrl / ⌘ 滚轮不改变各列的共同纵轴。</p><div class="queue-legend"><span><i style="background:#858585"></i>未关联申请</span><span><i style="background:#B1EF6B"></i>X / Y</span><span><i style="background:#BCA0F3"></i>γ</span><span><i style="background:#F2C45F"></i>部分和 / rstd</span><span><i class="peak-key"></i>当前申请量</span></div></div><div class="queue-scroll" tabindex="0" aria-label="横向滚动查看全部队列"><div class="queue-columns">${data.buffers.map((b,i)=>`<section class="queue-column"><h3>${esc(b.name)} <small>预留 ${b.capacity<1024?b.capacity+' B':kib(b.capacity)}</small></h3><div id="queuePlot${i}" class="queue-plot"></div></section>`).join('')}</div></div>`;
- data.buffers.forEach((buffer,i)=>{const subset={...data,buffers:[buffer],tensors:data.tensors.filter(t=>t.buffer===buffer.name)};const v=PtoMemoryReuseViewer.render($('queuePlot'+i),subset,{initialBuffer:buffer.name});reuseViewer.push(v);v.state.showPeak=true;v.root.querySelector('[data-reuse-toggle="peak"]')?.remove();v.root.querySelectorAll('[title]').forEach(el=>el.removeAttribute('title'));});
- $('queueInfo').onclick=()=>{$('queueHelp').hidden=!$('queueHelp').hidden;$('queueInfo').setAttribute('aria-expanded',String(!$('queueHelp').hidden))};
- const scroll=$('reuseHost').querySelector('.queue-scroll');scroll.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();scroll.scrollLeft=e.key==='Home'?0:e.key==='End'?scroll.scrollWidth:scroll.scrollLeft+(e.key==='ArrowRight'?1:-1)*scroll.clientWidth*.8}});scroll.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();e.stopImmediatePropagation();return}if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){scroll.scrollLeft+=e.deltaY;e.preventDefault();e.stopImmediatePropagation()}},{capture:true,passive:false});
- requestAnimationFrame(()=>{reuseViewer.forEach(v=>v.resize());syncQueueSelection()});
-}
+function openQueueViewer(){showBufferLife=!showBufferLife;render();}
 $('reuseHost').addEventListener('pto-memory-reuse-open-source',e=>{if(!reuseSplit)closeQueueOverview();state.object=e.detail.tensor?.buffer==='gQ'||e.detail.tensor?.buffer==='gammaQ'?'weight':'ub';state.source='kernel';state.queueSource=e.detail.tensor?[e.detail.tensor.srcLineStart,e.detail.tensor.srcLineEnd]:null;$('sourcePanel').hidden=false;sourceRecord()});
 $('reuseHost').addEventListener('pto-memory-reuse-tensor-select',e=>{lastQueueTensor=e.detail.tensor;queueCursorTick=lastQueueTensor?.allocTick;const i=e.detail.tensor?.eventIndex;if(Number.isInteger(i)){setExecutionStep(i,true);if(reuseSplit){const x=220+(executionStep+.5)*1400/executionModel().events.length,screenX=view.x+x*view.scale;if(screenX<24||screenX>innerWidth*.5-24){view.x=innerWidth*.25-x*view.scale;transform()}}}});
 
-function eventSourceLine(e){const split=selected().template==='row_split_2pass';return split?({weight:281,x:264,reread:278,scale:286,y:291}[e.id]||(e.label.includes('合并')?270:267)):({weight:189,x:205,vf:210,scale:213,y:218}[e.id]||198)}
+function eventSourceLine(e){return e.source_location.line}
 function eventHardwarePath(){const e=executionModel().events[executionStep];return !e?'':e.lane===0?'GM → L2 → MTE2 → UB':e.lane===1?'UB ↔ SIMD / Vector':'UB → MTE3 → L2 → GM'}
 function syncImplementation(){const c=config(),a=selected(),options=c.alternatives.filter(v=>v.feasible),control=$('implementationPicker'),fixed=$('implementationFixed');control.hidden=options.length<2;fixed.hidden=options.length>1;if(options.length>1){$('implementationTrigger').textContent=a.template==='row_resident_1pass'?'整行驻留':'两遍分块';$('implementationMenu').innerHTML=options.map(v=>`<button role="option" aria-selected="${v.template===a.template}" data-mode="${v.template==='row_resident_1pass'?'full':'split'}" data-tip="切换到${v.template==='row_resident_1pass'?'整行驻留':'两遍分块'}实现">${v.template==='row_resident_1pass'?'整行驻留':'两遍分块'}</button>`).join('')}else{fixed.textContent='两遍分块';fixed.dataset.tip=`整行 live ${kib(c.resident_footprint_bytes)} 超过可用 UB ${kib(DATA.ub_bytes)}，当前仅有分块估算`;fixed.tabIndex=0}}
 
-function prepareExecution(){const key=config().shape.join()+'/'+config().dtype+'/'+selected().template;if(executionKey!==key){executionKey=key;executionStep=0;state.finding=null;state.queueSource=null;state.object=executionModel().events[0].id;}}
+function prepareExecution(){const key=config().shape.join()+'/'+config().dtype+'/'+selected().template;if(executionKey!==key){executionKey=key;executionStep=0;hasExecutionSelection=true;state.finding=null;state.queueSource=null;state.object=executionModel().events[0].id;}}
 
 function closeQueueOverview(){const win=$('reuseWindow'),restore=reuseSplit&&reuseMainView?{...reuseMainView}:null;win.close();reuseSplit=false;reuseMainView=null;document.body.classList.remove('reuse-split');if(restore){Object.assign(view,restore);transform()}$('reuseSplit').setAttribute('aria-pressed','false');destroyQueueOverview();}
 function syncQueueSelection(){
@@ -12311,42 +12669,118 @@ $('reuseSplit').hidden=true;$('reuseClose').onclick=closeQueueOverview;
 
 
 function renderComparison(){
- prepareExecution();const c=config(),a=selected(),{events,life,split,n}=executionModel();
+ prepareExecution();$('memoryReuseButton').setAttribute('aria-pressed',String(showBufferLife));const c=config(),a=selected(),{events,life,split,n}=executionModel();
  executionStep=Math.min(executionStep,events.length-1);const current=events[executionStep];
  $('identity').textContent=`${c.shape.join(' × ')} · ${c.dtype.toUpperCase()} · ${DATA.revision.slice(0,12)}`;$('caseName').textContent=`${c.shape.join(' × ')} / ${c.dtype.toUpperCase()}`;
  syncImplementation();
- const x0=220,ww=1400,cw=ww/events.length,at=i=>x0+i*cw,rh=104,ys=[140,140+rh,140+2*rh],my=ys[2]+rh+65;
+ const x0=220,ww=1400,cw=ww/events.length,at=i=>x0+i*cw,rh=state.object==='estimate'&&a.feasible?108:82,ys=[155,155+rh,155+2*rh],my=ys[2]+rh+40;
  let s=' '+tx(25,49,c.dtype==='fp32'?(split?`${n} chunks · 4096 elements / chunk`:'整行 X 保留至归一化'):'BF16 · flow 聚合依赖','muted');
  s+=hit('estimate',`<rect data-focus-target="estimate" class="hit" x="1245" y="-2" width="380" height="60" rx="7" fill="transparent"/>`+tx(1610,20,a.feasible?`${fmt(a.result.theoretical_time_us)} µs`:'容量不满足','lane-title local-label')+tx(1610,46,'全张量 · 模型估算','muted local-sub'),'核对整张量模型时延与带宽口径');
- const phase=(l,r,name)=>{s+=`<path d="M${at(l)} 79H${at(r)-8}" stroke="#505050"/>`+tx(at(l)+5,71,name,'phase-label')};
+ const phase=(l,r,name)=>{s+=`<path d="M${at(l)} 79H${at(r)-8}" stroke="#505050"/>`+headerTip(at(l),55,Math.max(30,at(r)-at(l)-8),27,tx(at(l)+5,71,name,'phase-label'),name==='rstd'?'rstd = 1 / sqrt(mean(X²) + ε)，由整行平方和计算的归一化系数。':name.includes('第一遍')?'读取各块并累加平方和，为整行计算归一化系数。':name.includes('第二遍')?'重新读取输入，乘以整行归一化系数及权重 γ，再写回输出。':'当前阶段按源码顺序排列；横向长度不表示实际耗时。')};
  if(split){phase(0,n*2,'第一遍 · 平方和');phase(n*2,n*2+1,'rstd');phase(n*2+1,events.length,'第二遍 · 重读与归一化')}else{phase(0,2,'装入');phase(2,4,'归约 → 归一化');phase(4,5,'写回')}
  for(let i=0;i<events.length;i++)s+=`<rect x="${at(i)}" y="88" width="${cw}" height="29" fill="${i===executionStep?getComputedStyle(document.documentElement).getPropertyValue('--hi').trim():'transparent'}"/><text x="${at(i)+cw/2}" y="108" text-anchor="middle" font-size="12" fill="${i===executionStep?'#111':'#aaa'}">${i+1}</text>`;
  if(state.object==='estimate')s+=`<rect data-focus-target="resources" x="18" y="128" width="1610" height="${3*rh-4}" fill="#ffffff0c"/>`;
+ s+=headerTip(20,86,195,36,tx(30,110,'指令执行','resource-label'),'按源码步骤排列的执行泳道；横向位置表示顺序，不表示实际耗时。');
  const names=['MTE2','Vector','MTE3'],subs=['GM → UB','归约 / 归一化','UB → GM'];
- names.forEach((name,k)=>{const y=ys[k];s+=`<rect x="18" y="${y-8}" width="1610" height="${rh-14}" fill="${state.object==='estimate'?'#292929':k%2?'#171717':'#141414'}"/>`+tx(30,y+19,name,'resource-label')+tx(30,y+43,subs[k],'muted');if(state.object==='estimate'&&a.feasible)s+=tx(30,y+75,fmt([a.result.mte2_time_us,a.result.vector_time_us,a.result.mte3_time_us][k])+' µs · 总需求','muted');
+ names.forEach((name,k)=>{const y=ys[k];s+=`<rect x="18" y="${y-23}" width="1610" height="${rh}" fill="${state.object==='estimate'?'#292929':k%2?'#1b1b1b':'#141414'}"/>`+headerTip(20,y-23,195,rh,tx(30,y+12,name,'life-label')+tx(30,y+34,subs[k],'muted'),['MTE2：将输入从全局内存 GM 搬入核内统一缓冲 UB。','Vector：执行平方和归约、倒平方根及归一化乘法。','MTE3：将 UB 中的输出写回全局内存 GM。'][k]);if(state.object==='estimate'&&a.feasible)s+=tx(30,y+62,fmt([a.result.mte2_time_us,a.result.vector_time_us,a.result.mte3_time_us][k])+' µs · 总需求','muted');
 
  });
- s+=`<g tabindex="0" role="note" aria-label="源码步骤轴说明" data-tip="源码步骤顺序，等宽排列，非时间轴；横向距离不表示耗时或重叠。"><rect x="220" y="55" width="1400" height="66" fill="transparent" pointer-events="all"/></g>`;
+ s+=`<g tabindex="0" role="note" aria-label="源码步骤轴说明" data-tip="源码步骤顺序，等宽排列，非时间轴；横向距离不表示耗时或重叠。"><rect x="220" y="88" width="1400" height="29" fill="transparent" pointer-events="all"/></g>`;
  // Only immediate dependencies of the selected source event are shown.
  for(const i of [executionStep-1,executionStep]){if(i<0||i>=events.length-1)continue;const e=events[i],d=events[i+1];s+=`<path d="M${at(i+1)-7} ${ys[e.lane]+17}H${at(i+1)}V${ys[d.lane]+17}H${at(i+1)+5}" fill="none" stroke="#bdbdbd" stroke-width="1.5" marker-end="url(#arrow)"/>`;}
  function short(e,i){if(!split)return e.id==='weight'?'γ → UB':e.id==='x'?'X → UB':e.id==='vf'?'Σx² → rstd':e.id==='scale'?'X · rstd · γ':'Y → GM';const m=e.label.match(/\[(\d+)\]/),k=m?m[1]:'';return e.id==='x'||e.id==='reread'?'X'+k:e.id==='weight'?'γ'+k:e.id==='y'?'Y'+k:e.id==='scale'?'×'+k:k!==''?'Σ'+k:'rstd'}
- events.forEach((e,i)=>{const w=cw-8,y=ys[e.lane],shortName=short(e,i);s+=`<g class="event-button" data-step="${i}" role="button" tabindex="0" aria-label="${esc(e.label)}" data-tip="${esc(e.label)} · 点击查看当前事件证据"><image x="${at(i)+4}" y="${y}" width="${w}" height="36" href="${taskImage(shortName,w,i===executionStep,e.reread,e.lane)}"/></g>`});
- s+=hit('ub',`<rect class="hit" x="20" y="${my-38}" width="215" height="38" rx="7" fill="transparent"/>`+tx(30,my-10,'UB · 数据驻留','resource-label local-label'),'定位 UB 数据驻留与队列复用');if(state.object==='ub')s+=tx(275,my-10,`模型 live ${kib(c.resident_footprint_bytes)} / 可用 ${kib(DATA.ub_bytes)} · Kernel ${a.kernel?kib(a.kernel.allocation_bytes):'—'}`,'caption');if(state.object==='ub')s+=`<rect data-focus-target="ub" x="20" y="${my+8}" width="1600" height="235" rx="6" fill="#ffffff14"/>`;
+ events.forEach((e,i)=>{const w=cw-8,y=ys[e.lane],shortName=short(e,i);s+=`<g class="event-button" data-step="${i}" role="button" tabindex="0" aria-label="${esc(e.label)}" data-tip="${esc(e.label)} · 点击查看当前事件证据"><image x="${at(i)+4}" y="${y}" width="${w}" height="36" href="${taskImage(shortName,w,hasExecutionSelection&&(i===executionStep||(goldenRelated&&goldenMatches(goldenRelated,e))),e.reread,e.lane)}"/></g>`});
+ s+=hit('ub',`<rect class="hit" x="20" y="${my-38}" width="215" height="38" rx="7" fill="transparent"/>`+tx(30,my-10,'UB · 数据驻留','resource-label local-label'),'定位 UB 数据驻留与队列复用');if(state.object==='ub')s+=tx(275,my-10,`模型 live ${kib(c.resident_footprint_bytes)} / 可用 ${kib(DATA.ub_bytes)} · Kernel ${a.kernel?kib(a.kernel.allocation_bytes):'—'}`,'caption');if(state.object==='ub')s+=`<rect data-focus-target="ub" x="20" y="${my+8}" width="1600" height="240" rx="6" fill="#ffffff14"/>`;
  state.memoryAnchor={x:1620,y:my-36};$('memoryReuseButton').hidden=c.dtype!=='fp32';
  const track=l=>l.id==='x'||l.id==='reread'?0:l.id==='weight'?1:l.id==='vf'?2:3;
- ['X','γ','部分和 / rstd','Y'].forEach((name,k)=>s+=tx(60,my+38+k*56,name,'life-label')+`<path d="M220 ${my+53+k*56}H1620" stroke="#292929"/>`);
- for(const l of life){const y=my+17+track(l)*56,w=(l.end-l.start)*cw-8,live=l.start<=executionStep&&executionStep<l.end;const match=l.name.match(/\[(\d+)\]/),label=match?(l.id==='weight'?'γ':l.id==='y'?'Y':'X')+match[0]:l.id==='x'?'X · 保留':l.id==='weight'?'γ · 常驻':l.id==='vf'?'部分和 → rstd':'Y';
+ ['X','γ · 权重','部分和 / rstd','Y'].forEach((name,k)=>s+=`<rect x="18" y="${my+9+k*60}" width="1610" height="60" fill="${k%2?'#1b1b1b':'#141414'}"/>`+headerTip(20,my+9+k*60,195,60,tx(30,my+45+k*60,name,'life-label'),['X：输入数据；两遍分块时同一块先用于平方和，再读入用于归一化。','γ（gamma）：逐元素缩放权重，不是输出 Y。','部分和：各块的平方和累加值；rstd = 1 / sqrt(mean(X²) + ε)，用于整行归一化。','Y：归一化并乘以 γ 后的输出。'][k]));
+ for(const l of life){const y=my+21.5+track(l)*60,w=(l.end-l.start)*cw-8,live=hasExecutionSelection&&l.start<=executionStep&&executionStep<l.end;const match=l.name.match(/\[(\d+)\]/),label=match?(l.id==='weight'?'γ':l.id==='y'?'Y':'X')+match[0]:l.id==='x'?'X · 保留':l.id==='weight'?'γ · 常驻':l.id==='vf'?'部分和 → rstd':'Y';
   s+=`<g data-step="${l.start}" class="event-button" role="button" tabindex="0" aria-label="检查 ${esc(l.name)} 存活区间" data-tip="${esc(l.name)} · ${kib(l.size)} · 步骤 ${l.start+1}—${l.end}">${live?`<rect class="tensor-live-marker" x="${at(l.start)}" y="${y-4}" width="${w+8}" height="43" rx="7"/>`:''}${GridTensor.render(at(l.start)+4,y,w,label,live?(l.id==='weight'?VisualSystem.tokens.role.weight:l.id==='vf'?VisualSystem.tokens.role.aggregate:VisualSystem.tokens.role.activation):'#858585',l.id)}</g>`;
  }
 
  const cm=current.label.match(/\[(\d+)\]/);if(split&&cm){const k=Number(cm[1]),first=life.find(l=>l.id==='x'&&l.name.includes(`[${k}]`)),second=life.find(l=>l.id==='reread'&&l.name.includes(`[${k}]`));if(first&&second){const left=at(first.end)-5,right=at(second.start)+5;s+=`<path d="M${left} ${my+18}V${my+3}H${right}V${my+18}" fill="none" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="3 4" pointer-events="none"/>`;}}
- const cx=at(executionStep)+cw/2;s+=`<path d="M${cx} 117V${my+235}" stroke="#bdbdbd" stroke-dasharray="2 5" opacity=".4"/>`;
- const read=events.slice(0,executionStep+1).reduce((s,e)=>s+(e.bytes||0),0),reread=events.slice(0,executionStep+1).filter(e=>e.reread).reduce((s,e)=>s+e.bytes,0);
- s+=tx(25,my+276,`步骤 ${executionStep+1} · ${current.label}`,'caption')+tx(25,my+303,`当前行 X 装入 ${kib(read)} · 其中再读 ${kib(reread)}`,'muted');
- const active=life.filter(l=>l.start<=executionStep&&executionStep<l.end);s+=tx(700,my+276,'UB 当前数据','caption')+tx(700,my+303,active.map(l=>l.name.replace(' · 第一遍','').replace(' · 第二遍','').replace(' · 保留并复用','').replace(' · 常驻当前核','')).join(' · ')||'等待装入','muted');
- s+=hit('reread',box(1290,my+252,330,60)+tx(1305,my+276,`全张量 X 再读 ${mib(split?c.shape[0]*c.shape[1]*(c.dtype==='fp32'?4:2):0)}`,'caption')+tx(1305,my+303,'包含在模型总读取量中','muted'),'核对重读量及模型容量分支');
- $('business').innerHTML=s;transform();if(!$('inspector').hidden)detail();if(!$('auditPanel').hidden)audits();if(!$('sourcePanel').hidden)sourceRecord();syncMenu();
+ let bufferBottom=my+249;
+ const mock=mockUBLayout();
+ if(showBufferLife&&mock){const top=my+300,sy=640/mock.capacity,plotEnd=Math.min(mock.capacity,Math.ceil(Math.max(...mock.tensors.map(t=>t.mockAddress+t.size))/8192)*8192),h=plotEnd*sy;bufferBottom=top+h;
+ for(let bytes=0;bytes<=plotEnd;bytes+=32768){const y=top+bytes*sy;s+=`<path d="M${x0} ${y}H${x0+ww}" stroke="#303030" stroke-width="1"/>`+tx(30,y+4,(bytes/1024)+' KiB · 0x'+bytes.toString(16),'muted');}
+ s+=headerTip(20,top-46,500,36,tx(30,top-20,'UB 地址 · 生命周期','resource-label'),'本案例用于编译前开发分析，地址数据来自 Mock。实际 UB 地址布局属于编译后观测，需接入编译器分配报告；这是应用阶段与输入产物的区别。');
+ for(let b=8192;b<plotEnd;b+=8192){if(b%32768===0)continue;const y=top+b*sy;s+=`<path d="M${x0} ${y}H${x0+ww}" stroke="#202020" stroke-width="1"/>`;}
+ for(let i=0;i<=events.length;i++){s+=`<path d="M${at(i)} ${top}V${top+h}" stroke="#252525" stroke-width="1"/>`;}
+
+ for(const t of mock.tensors){const start=t.start,end=t.end,y=top+t.mockAddress*sy,height=t.size*sy,roleColor=/gamma|gQ/.test(t.buffer)?'#BCA0F3':/rstd|work/.test(t.buffer)?'#F2C45F':'#79D4F2',e=events[executionStep],eventId=e?.id,live=start<=executionStep&&executionStep<end,sameChunk=!e?.label.match(/\[(\d+)\]/)||!t.name.match(/\[(\d+)\]/)||e.label.match(/\[(\d+)\]/)[1]===t.name.match(/\[(\d+)\]/)[1],uses=eventId==='scale'?true:eventId==='vf'?/inQ|rstd|work/.test(t.buffer):eventId==='weight'?/gamma|gQ/.test(t.buffer):eventId==='y'?t.buffer==='outQ':t.buffer==='inQ',related=hasExecutionSelection&&live&&sameChunk&&uses,color=related||lastQueueTensor?.id===t.id?roleColor:'#666';s+=`<g data-step="${t.eventIndex}" data-buffer-id="${t.id}" role="button" tabindex="0" aria-label="${esc(t.buffer+' / '+t.name)}" data-tip="${esc(t.buffer+' / '+t.name+' · Mock UB [0x'+t.mockAddress.toString(16)+', 0x'+(t.mockAddress+t.size).toString(16)+') · '+kib(t.size)+' · 源码 L'+t.srcLineStart+'—'+t.srcLineEnd)}">${MemoryInspectorBlock.render({x:at(start)+1,y,width:(end-start)*cw-2,height,name:t.name,size:t.size,line:t.srcLineStart,endLine:t.srcLineEnd,color,selected:false})}</g>`;}
+ }
+ const cx=at(executionStep)+cw/2;s+=`<path d="M${cx} 117V${bufferBottom}" stroke="#bdbdbd" stroke-dasharray="2 5" opacity=".4"/>`;
+ const read=events.slice(0,executionStep+1).reduce((s,e)=>s+(e.bytes||0),0),reread=events.slice(0,executionStep+1).filter(e=>e.reread).reduce((s,e)=>s+e.bytes,0),statusY=bufferBottom+44;
+ const active=life.filter(l=>l.start<=executionStep&&executionStep<l.end);
+ s+=headerTip(20,statusY-22,640,65,tx(25,statusY,`步骤 ${executionStep+1} · ${current.label}`,'caption')+tx(25,statusY+25,`本行累计装入 ${kib(read)} · 其中再读 ${kib(reread)}`,'muted'),`统计本行源码步骤 1—${executionStep+1} 的 X 搬运请求字节；再读包含在装入总量内。`);
+ s+=headerTip(680,statusY-22,560,65,tx(700,statusY,'关联 UB 数据','caption')+tx(700,statusY+25,active.map(l=>l.name.replace(' · 第一遍','').replace(' · 第二遍','').replace(' · 保留并复用','').replace(' · 常驻当前核','')).join(' · ')||'等待装入','muted'),'当前步骤对应的数据使用区间；不代表已采集到设备访存。');
+ s+=hit('reread',box(1290,statusY-22,330,65)+tx(1305,statusY,`全张量 X 再读 ${mib(split?c.shape[0]*c.shape[1]*(c.dtype==='fp32'?4:2):0)}`,'caption')+tx(1305,statusY+25,'全部行 · 完整执行累计','muted'),'全部行完成执行的 X 再读请求总量；点击核对模型容量分支');
+ $('business').innerHTML=(showComputeGraph?computeGoldenGraph():'')+`<g transform="translate(0 ${showComputeGraph?(goldenLayer?770:350):0})">${s}</g>`;transform();syncGoldenPanel();if(!$('inspector').hidden)detail();if(!$('auditPanel').hidden)audits();if(!$('sourcePanel').hidden)sourceRecord();syncMenu();
 }
+
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){hasExecutionSelection=false;lastQueueTensor=null;render()}});
+
+// The supplied HTML is an interaction reference, never a numeric result source.
+let showComputeGraph=true,goldenLayer=false,goldenPanel=null,goldenMode='golden',goldenCell=0,goldenRelated=null;
+function goldenMatches(id,e){return e.compute_node_ids.includes(id)}
+function computeGoldenGraph(){
+ const e=executionModel().events[executionStep],nodes=[['x','X',220,110],['square','X²',400,60],['mean','mean',580,60],['epsilon','+ ε',760,60],['rsqrt','rsqrt',940,60],['norm','× rstd',1120,110],['normGamma','× γ',1280,110],['gamma','γ',1280,220],['output','Y',1430,110]],ports={};
+ let s=headerTip(20,5,180,35,tx(30,30,'RMSNorm · 计算图','resource-label'),'计算依赖与源码执行步骤关联；数值层使用本机重算 CPU Golden。');
+ for(const [id,label,x,y] of nodes){const active=hasExecutionSelection&&(goldenMatches(id,e)||goldenRelated===id),tensor=['x','gamma','output'].includes(id),circle=['square','epsilon','norm','normGamma'].includes(id),w=tensor?100:circle?48:216,h=tensor?32:circle?48:38.4,left=x+50-w/2;ports[id]={left,right:left+w,top:y,bottom:y+h,cx:x+50,cy:y+h/2};let glyph;
+ if(id==='output'&&goldenLayer){ports[id]={left:220,right:1600,top:300,bottom:620,cx:910,cy:460};continue}
+ if(tensor)glyph=GridTensor.render(x,y,100,label,active?'#d4d4d4':'#858585',id==='gamma'?'weight':id==='output'?'y':'x');
+ else if(circle){glyph=VisualSystem.node(id==='epsilon'?'add':'multiply','compute-'+id,label,0,0);if(active)glyph=glyph.replace('fill="#111"','fill="#d4d4d4"').replaceAll('stroke="#eee"','stroke="#111"');glyph=`<g transform="translate(${left} ${y}) scale(1)">${glyph}</g>`+tx(x+82,y+69,label,'muted');}
+ else{const icon=window.PtoOpIcons.find(i=>i.id===(id==='mean'?'reduce':'norm'));glyph=LibraryOpNode({...icon,name:label},0,0).replace('font-size="20"','font-size="28"');if(active)glyph=glyph.replace('fill="#4f4f4f"','fill="#d4d4d4"').replace('fill="#eee" font-size','fill="#111" font-size');glyph=`<g transform="translate(${left} ${y}) scale(.6)">${glyph}</g>`;}
+ s+=`<g data-compute="${id}" role="button" tabindex="0" aria-label="${id==='output'?'查看 Y 的 Golden 对照':label+' · 定位执行块'}" data-tip="${id==='output'?'点击展开 Y，逐元素查看 CPU Golden、NPU Mock 和差值':label+'：定位关联源码执行步骤'}">${glyph}${id==='output'?tx(x,y+64,'查看 Golden 对照 ↗','muted'):''}</g>`;
+ }
+ const path=d=>`<path d="${d}" fill="none" stroke="#777" stroke-width="1.4" marker-end="url(#arrow)"/>`,edge=(a,b)=>path(`M${ports[a].right} ${ports[a].cy}H${ports[b].left}`);
+ let wires=path(`M${ports.x.right} ${ports.x.cy}H360V${ports.square.cy}H${ports.square.left}`)+edge('square','mean')+edge('mean','epsilon')+edge('epsilon','rsqrt')+path(`M${ports.rsqrt.right} ${ports.rsqrt.cy}H${ports.norm.cx}V${ports.norm.top}`)+path(`M${ports.x.cx} ${ports.x.bottom}V165H1080V${ports.norm.cy}H${ports.norm.left}`)+edge('norm','normGamma')+path(`M${ports.gamma.cx} ${ports.gamma.top}V${ports.normGamma.bottom}`)+(goldenLayer?path(`M${ports.normGamma.right} ${ports.normGamma.cy}H1480V${ports.output.top}`):edge('normGamma','output'));
+ s=wires+s;
+
+ if(goldenLayer)s+=`<g id="compute-output">${inlineGoldenGrid()}</g>`;
+ s+=path(`M${ports.output.right} ${ports.output.cy}H1638V${(goldenLayer?770:350)+155+2*(state.object==='estimate'&&selected().feasible?108:82)+18}H1616`);
+ return s;
+}
+function ensureGoldenPanel(){if($('goldenInspector'))return;const p=document.createElement('section');p.id='goldenInspector';p.hidden=true;p.setAttribute('aria-label','原位计算检查');document.body.append(p);const style=document.createElement('style');style.textContent=`#goldenInspector{position:fixed;z-index:12;width:440px;max-width:calc(100vw - 24px);max-height:50vh;overflow:auto;background:#242424;color:#ddd;border-radius:12px;padding:16px;font:12px/1.6 ui-monospace}#goldenInspector[hidden]{display:none}#goldenInspector header{display:flex;justify-content:space-between;font-size:14px}#goldenInspector button{border:0;background:#393939;color:#ddd;border-radius:16px;padding:5px 10px;cursor:pointer;font:inherit}#goldenInspector button[aria-pressed=true]{background:#d4d4d4;color:#111}#goldenInspector button:focus-visible{outline:0;text-decoration:underline}#goldenInspector .modes{display:flex;gap:6px;margin:12px 0}#goldenInspector .cells{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:12px 0}#goldenInspector .cells button{border-radius:3px;min-width:0;width:100%;padding:7px 0;font-size:10px;white-space:nowrap}#goldenInspector p{color:#bbb;margin:10px 0}`;document.head.append(style);
+ p.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;if(b.dataset.close!==undefined)goldenPanel=null;if(b.dataset.mode)goldenMode=b.dataset.mode;if(b.dataset.cell!==undefined)goldenCell=+b.dataset.cell;syncGoldenPanel()};
+}
+function syncGoldenPanel(){ensureGoldenPanel();const p=$('goldenInspector');p.hidden=!goldenPanel||goldenPanel==='output'||!showComputeGraph;if(p.hidden)return;const c=config(),output=goldenPanel==='output',e=executionModel().events[executionStep],values=CPU_GOLDEN.cases[c.id],value=i=>values?.[i],format=v=>v===undefined?'—':Number(v).toPrecision(7);
+ p.innerHTML=`<header><span>${output?'Y · 完整输出':esc(e.label)}</span><button data-close data-tip="关闭检查并保留选择与视角" aria-label="关闭原位检查">×</button></header>`+`<p>${e.id==='vf'?(e.phase==='partial'?'X² → 分块平方和 → 部分和':'合并部分和 → ÷ H → + ε → rsqrt'):e.id==='scale'?'X × rstd × γ → Y':e.id==='y'?'UB → MTE3 → 完整输出 Y 的对应分块':e.id==='weight'?'γ · GM → MTE2 → UB':'X · GM → MTE2 → UB'}</p><p>步骤 ${executionStep+1} · 源码顺序，不表示耗时</p><button data-compute="output" data-tip="检查所有写回块共用的完整输出 Y">完整输出 Y</button><p>${refs().map(([path,a,b])=>`<a style="color:#ccc" data-tip="打开当前事件固定版本源码" href="${DATA.sources[path].url}#L${a}-L${b}" target="_blank" rel="noopener">源码 L${a}–${b} ↗</a>`).join(' · ')}</p>`;
+ const target=output?document.querySelector('[data-compute="output"]'):document.querySelector('.event-button[data-step="'+executionStep+'"]');if(!target)return;const a=target.getBoundingClientRect(),w=p.offsetWidth,h=p.offsetHeight;let left=a.right+12,top=a.top;if(left+w>innerWidth-12)left=a.left-w-12;if(left<12){left=Math.max(12,Math.min(innerWidth-w-12,a.left));top=a.bottom+12}top=Math.max(75,Math.min(innerHeight-h-85,top));p.style.left=left+'px';p.style.top=top+'px';
+}
+function goldenClick(ev){const cell=ev.target.closest('[data-golden-cell]');if(cell){ev.preventDefault();ev.stopImmediatePropagation();goldenCell=+cell.dataset.goldenCell;render();return}const node=ev.target.closest('[data-compute]'),step=ev.target.closest('.event-button[data-step]');if(!node&&!step)return;if(typeof moved!=='undefined'&&moved)return;ev.preventDefault();ev.stopImmediatePropagation();$('inspector').hidden=true;$('tooltip').hidden=true;
+ if(node){const id=node.dataset.compute;if(id==='toggle'){goldenLayer=!goldenLayer;goldenMode=goldenLayer?'golden':'npu';goldenPanel=null;goldenRelated=goldenLayer?'output':null;render();fit();return}if(id==='output'){goldenLayer=!goldenLayer;goldenPanel=null;goldenRelated=goldenLayer?'output':null;render();fit();return}const events=executionModel().events;let ix=events.findIndex((e,i)=>i>=executionStep&&goldenMatches(id,e));if(ix<0)ix=events.findIndex(e=>goldenMatches(id,e));goldenPanel=null;goldenRelated=id;if(ix>=0)setExecutionStep(ix)}else{goldenRelated=null;goldenPanel='event';setExecutionStep(+step.dataset.step)}
+}
+document.addEventListener('click',goldenClick,true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){goldenPanel=null;syncGoldenPanel()}if(['Enter',' '].includes(e.key)&&e.target.matches('[data-compute],[data-golden-cell],.event-button[data-step]'))goldenClick(e)},true);
+
+// Explicitly constructed NPU values, never presented as device measurements.
+function mockNpuValue(g,i){return Math.fround(g*(1+((i%7)-3)*0.000012)+((i%3)-1)*0.000002)}
+function inlineGoldenGrid(){
+ const values=CPU_GOLDEN.cases[config().id];if(!values)return headerTip(220,300,1200,45,tx(230,325,'当前 dtype 无匹配 Golden 数组','caption'),'仅固定 FP32 host 源码具有本机重算结果。');
+ const verdict=goldenVerdict(values);
+ const text=(x,y,t,size=13,color='#bbb')=>`<text x="${x}" y="${y}" style="font-size:${size}px;fill:${color}">${esc(t)}</text>`;
+ let s=`<rect x="210" y="300" width="1395" height="435" rx="8" fill="#181818"/><g data-compute="output" tabindex="0" role="button" aria-label="收起 Y 数值 Tensor" data-tip="收起数值网格，恢复 Y Tensor"><rect x="1552" y="306" width="36" height="32" rx="5" fill="transparent"/><path d="M1562 316h7v7m0-7-8 8M1579 329h-7v-7m0 7 8-8" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>`+text(230,330,'Y · r[0:4], c[0:6]   NPU Mock / CPU Golden / Δ = NPU − Golden',16)+text(230,353,'相同索引直接对照 · NPU 为构造值，未执行设备校验',12);
+ for(let i=0;i<24;i++){const x=220+(i%6)*230,y=370+Math.floor(i/6)*56,g=Math.fround(values[i]),v=mockNpuValue(g,i),diff=v-g,active=i===goldenCell;
+ s+=`<g data-golden-cell="${i}" tabindex="0" role="button" aria-label="Y[${Math.floor(i/6)},${i%6}] NPU Mock ${v}，Golden ${g}，差值 ${diff}" data-tip="Y[${Math.floor(i/6)}, ${i%6}] · NPU Mock ${v.toPrecision(8)} · CPU Golden ${g.toPrecision(8)} · Δ ${diff.toExponential(3)}"><rect x="${x}" y="${y}" width="222" height="49" rx="3" fill="${active?'#d4d4d4':'#252525'}"/>${verdict.failed.includes(i)?`<rect x="${x+170}" y="${y+3}" width="48" height="17" rx="3" fill="var(--ss-anomaly, #FD5644)"/>${text(x+178,y+15,'超差',11,'#111')}`:''}${text(x+8,y+17,`[${Math.floor(i/6)},${i%6}]  ${v.toPrecision(6)}`,13,active?'#111':'#ddd')}${text(x+8,y+36,`G ${g.toPrecision(6)}  Δ ${diff.toExponential(1)}`,11,active?'#222':'#aaa')}</g>`;
+ }
+ const g=Math.fround(values[goldenCell]),v=mockNpuValue(g,goldenCell);return s+goldenRuleControls(verdict,text)+text(230,610,`Y[${Math.floor(goldenCell/6)},${goldenCell%6}]   NPU Mock ${v.toPrecision(8)}   Golden ${g.toPrecision(8)}   |Δ| ${Math.abs(v-g).toExponential(4)}`,13);
+}
+
+const goldenPolicies={};
+function currentGoldenPolicy(){return goldenPolicies[config().id]||(goldenPolicies[config().id]={mode:'source',atol:'',rtol:''})}
+function goldenVerdict(values){const p=currentGoldenPolicy(),configured=p.mode==='source'||(p.atol!==''&&p.rtol!==''&&Number.isFinite(+p.atol)&&Number.isFinite(+p.rtol)&&+p.atol>=0&&+p.rtol>=0);let maxAbs=0,maxRel=0,maxSourceRel=0;const failed=[];
+ values.forEach((raw,i)=>{const g=Math.fround(raw),n=mockNpuValue(g,i),d=Math.abs(n-g),rel=g===0?(d===0?0:Infinity):d/Math.abs(g),sourceRel=d/(Math.abs(g)+1e-6);maxAbs=Math.max(maxAbs,d);maxRel=Math.max(maxRel,rel);maxSourceRel=Math.max(maxSourceRel,sourceRel);if(configured&&!(p.mode==='source'?sourceRel<2e-3:d<=+p.atol+(+p.rtol)*Math.abs(g)))failed.push(i)});
+ return {configured,failed,maxAbs,maxRel,maxSourceRel};
+}
+function goldenRuleControls(v,text){const p=currentGoldenPolicy(),c=config(),summary=v.configured?`Mock 数值样本 ${v.failed.length?'数值超差':'通过'} · 失败 ${v.failed.length}/24`:'未判定 · 请设置 atol 与 rtol';
+ return text(230,636,`${summary} · maxAbs ${v.maxAbs.toExponential(3)} · maxRel ${v.maxRel.toExponential(3)}`,14)+text(230,657,`${c.shape.join(' × ')} / ${c.dtype.toUpperCase()} · 仅 r[0:4], c[0:6] / Tile 0；非全张量；橙红 = 数值超差，非性能判定`,12)+`<foreignObject x="230" y="670" width="1340" height="58"><div xmlns="http://www.w3.org/1999/xhtml" data-golden-policy="true" style="display:flex;align-items:center;gap:12px;color:#ccc;font:13px monospace"><select aria-label="样本判定规范" data-tip="固定源码相对误差规则，或自定义 allclose 容差" data-policy="mode" style="background:#333;color:#ddd;border:0;padding:7px"><option value="source" ${p.mode==='source'?'selected':''}>源码 FP32：|Δ| / (|G| + 1e-6) &lt; 0.002</option><option value="custom" ${p.mode==='custom'?'selected':''}>自定义：|Δ| ≤ atol + rtol × |G|</option></select>${p.mode==='custom'?`<label>atol <input aria-label="绝对容差 atol" data-tip="当前 Shape / Dtype 的自定义非负绝对容差" data-policy="atol" type="number" min="0" step="any" value="${esc(p.atol)}" style="width:110px;background:#333;color:#ddd;border:0;padding:7px"/></label><label>rtol <input aria-label="相对容差 rtol" data-tip="当前 Shape / Dtype 的自定义非负相对容差" data-policy="rtol" type="number" min="0" step="any" value="${esc(p.rtol)}" style="width:110px;background:#333;color:#ddd;border:0;padding:7px"/></label>`:''}</div></foreignObject>`;
+}
+document.addEventListener('change',e=>{if(!e.target.dataset.policy)return;currentGoldenPolicy()[e.target.dataset.policy]=e.target.value;render()});
+document.addEventListener('pointerdown',e=>{if(e.target.closest('[data-golden-policy]'))e.stopPropagation()},true);
+
+document.addEventListener('input',e=>{if(e.target.matches('input[data-policy]'))currentGoldenPolicy()[e.target.dataset.policy]=e.target.value});
+document.addEventListener('focusout',e=>{if(e.target.matches('input[data-policy]')){currentGoldenPolicy()[e.target.dataset.policy]=e.target.value;render()}});
 
 function refs(){if(state.finding)return state.finding.refs;if(state.queueSource)return[[K,...state.queueSource]];const split=selected().template==='row_split_2pass',id=state.object;if(id==='hardware')return[];const ev=executionModel().events[executionStep];if(ev&&ev.id===id&&config().dtype==='fp32'){const ln=eventSourceLine(ev);return [[K,ln,ln],[F,split?110:29,split?196:92]];}if(config().dtype!=='fp32')return[[F,13,212],[R,94,149],[E,636,675]];if(!selected().feasible)return[[R,94,149],[K,174,181],[K,381,389]];
  if(id==='ub')return[[R,94,149],[K,split?235:174,split?244:181],[K,38,40],[K,381,389]];
@@ -12385,12 +12819,13 @@ function audits(){
 function select(id,template){state.finding=null;state.queueSource=null;if(template)state.mode=template==='row_resident_1pass'?'full':'split';if(id.startsWith('choose-')){state.mode=id==='choose-full'?'full':'split';render();return}state.object=id;if(state.scope==='chip'&&!['hardware','estimate','ub'].includes(id)){const events=executionModel().events;const ix=events.findIndex(e=>e.id===id||(id==='vector'&&e.lane===1)||(id==='mte2'&&e.lane===0)||(id==='mte3'&&e.lane===2));if(ix>=0){executionStep=ix;state.object=events[ix].id}}if($('auditPanel').hidden)$('inspector').hidden=false;render()}
 function sourceRecord(){const a=selected();$('revision').textContent=DATA.revision.slice(0,12);$('sourcePanel').querySelectorAll('[data-src]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.src===state.source)));if(state.source==='raw'){$('sourceMeta').textContent='当前引擎输入与完整输出';$('sourceCode').textContent=JSON.stringify(a,null,2);return}const p={kernel:K,flow:F,engine:E,hardware:H,instructions:'references/vector_instruction_types.json',bench:'tests/calibration/bench_results/membw_bandwidth.csv',overlap:'tests/calibration/instruments/regbase-microbench/data/overlap_raw.jsonl'}[state.source],src=DATA.sources[p],range=refs().find(r=>r[0]===p);$('sourceMeta').innerHTML=`<a class="source-link" href="${src.url}${range?'#L'+range[1]:''}" data-tip="在 GitHub 打开当前源码" target="_blank" rel="noopener">${p} ↗</a><p>SHA-256 ${src.sha256}</p>`;$('sourceCode').innerHTML=src.text.split('\n').map((l,i)=>`<span class="${range&&i+1>=range[1]&&i+1<=range[2]?'active':''}"><em>${i+1}</em>${esc(l)}</span>`).join('');const active=$('sourceCode').querySelector('.active');if(active)$('sourceCode').scrollTop=active.offsetTop-$('sourceCode').offsetTop-12;}
 // Case05 viewport mechanism: selection is independent of view; all overlays preserve view.
-function positionMemoryButton(){const b=$('memoryReuseButton'),a=state.memoryAnchor;if(!a)return;const right=view.x+a.x*view.scale,top=view.y+a.y*view.scale,w=document.body.classList.contains('reuse-split')?innerWidth*.5:innerWidth;b.style.left=(right-b.offsetWidth)+'px';b.style.top=top+'px';b.style.visibility=right<0||right>w||top<45||top>innerHeight-70?'hidden':'visible'}
-$('memoryReuseButton').onclick=()=>openQueueViewer();
-function transform(){positionMemoryButton();$('scene').setAttribute('transform',`translate(${view.x} ${view.y}) scale(${view.scale})`);$('zoom').textContent=Math.round(view.scale*100)+'%'}
-function fit(){const h=860,split=document.body.classList.contains('reuse-split'),w=split?innerWidth*.5:innerWidth;view.scale=split?.75:Math.min((w-48)/1650,(innerHeight-175)/h,1.4);view.x=split?24:(w-1650*view.scale)/2;view.y=80;transform()}
+function positionMemoryButton(){}
+$('memoryReuseButton').onclick=()=>{openQueueViewer();fit()};$('computeView').onclick=()=>{showComputeGraph=!showComputeGraph;$('computeView').setAttribute('aria-pressed',String(showComputeGraph));goldenPanel=null;render();fit()};
+function transform(){positionMemoryButton();$('scene').setAttribute('transform',`translate(${view.x} ${view.y}) scale(${view.scale})`);$('zoom').textContent=Math.round(view.scale*100)+'%';if(typeof syncGoldenPanel==='function')syncGoldenPanel()}
+function fit(){const bounds=$('business').getBBox(),margin=28,top=82,bottom=100,w=innerWidth-2*margin,h=innerHeight-top-bottom;view.scale=Math.min(w/bounds.width,h/bounds.height);view.x=(innerWidth-bounds.width*view.scale)/2-bounds.x*view.scale;view.y=top+(h-bounds.height*view.scale)/2-bounds.y*view.scale;transform()}
+
 function zoomAt(f,x=innerWidth/2,y=innerHeight/2){const old=view.scale;view.scale=Math.max(.15,Math.min(4,old*f));view.x=x-(x-view.x)*view.scale/old;view.y=y-(y-view.y)*view.scale/old;transform()}
-let drag,moved=false;$('canvas').onpointerdown=e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,ox:view.x,oy:view.y};moved=false};$('canvas').onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)moved=true;if(moved){$('canvas').setPointerCapture(e.pointerId);view.x=drag.ox+dx;view.y=drag.oy+dy;transform();$('canvas').classList.add('dragging');$('tooltip').hidden=true}};window.addEventListener('pointerup',()=>{drag=null;$('canvas').classList.remove('dragging');setTimeout(()=>moved=false,0)});$('canvas').onclick=e=>{const step=e.target.closest('[data-step]');if(step&&!moved){if($('auditPanel').hidden&&$('sourcePanel').hidden&&$('hardwarePanel').hidden&&!document.body.classList.contains('reuse-split'))$('inspector').hidden=false;setExecutionStep(Number(step.dataset.step));return}const action=e.target.closest('[data-action]');if(action&&!moved){executionAction(action.dataset.action);return}const t=e.target.closest('[data-object]');if(t&&!moved)select(t.dataset.object,t.dataset.template)};$('canvas').onkeydown=e=>{if(['Enter',' '].includes(e.key)&&e.target.dataset.step!==undefined){e.preventDefault();if($('auditPanel').hidden&&$('sourcePanel').hidden&&$('hardwarePanel').hidden&&!document.body.classList.contains('reuse-split'))$('inspector').hidden=false;setExecutionStep(Number(e.target.dataset.step));return}if(['Enter',' '].includes(e.key)&&e.target.dataset.action){e.preventDefault();executionAction(e.target.dataset.action);return}if(['Enter',' '].includes(e.key)&&e.target.dataset.object){e.preventDefault();select(e.target.dataset.object,e.target.dataset.template)}};$('canvas').addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(-e.deltaY*.0015),e.clientX,e.clientY)},{passive:false});$('chipView').onclick=toggleHardwareWindow;$('plus').onclick=()=>zoomAt(1.2);$('minus').onclick=()=>zoomAt(1/1.2);$('fit').onclick=fit;
+let drag,moved=false;$('canvas').onpointerdown=e=>{if(e.button!==0)return;drag={x:e.clientX,y:e.clientY,ox:view.x,oy:view.y};moved=false};$('canvas').onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)moved=true;if(moved){$('canvas').setPointerCapture(e.pointerId);view.x=drag.ox+dx;view.y=drag.oy+dy;transform();$('canvas').classList.add('dragging');$('tooltip').hidden=true}};window.addEventListener('pointerup',()=>{drag=null;$('canvas').classList.remove('dragging');setTimeout(()=>moved=false,0)});$('canvas').onclick=e=>{const step=e.target.closest('[data-step]');if(step&&!moved){if(selectBufferStep(step))return;if($('auditPanel').hidden&&$('sourcePanel').hidden&&$('hardwarePanel').hidden&&!document.body.classList.contains('reuse-split'))$('inspector').hidden=false;setExecutionStep(Number(step.dataset.step));return}const action=e.target.closest('[data-action]');if(action&&!moved){executionAction(action.dataset.action);return}const t=e.target.closest('[data-object]');if(t&&!moved)select(t.dataset.object,t.dataset.template)};$('canvas').onkeydown=e=>{if(['Enter',' '].includes(e.key)&&e.target.dataset.step!==undefined){e.preventDefault();if(selectBufferStep(e.target))return;if($('auditPanel').hidden&&$('sourcePanel').hidden&&$('hardwarePanel').hidden&&!document.body.classList.contains('reuse-split'))$('inspector').hidden=false;setExecutionStep(Number(e.target.dataset.step));return}if(['Enter',' '].includes(e.key)&&e.target.dataset.action){e.preventDefault();executionAction(e.target.dataset.action);return}if(['Enter',' '].includes(e.key)&&e.target.dataset.object){e.preventDefault();select(e.target.dataset.object,e.target.dataset.template)}};$('canvas').addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(-e.deltaY*.0015),e.clientX,e.clientY)},{passive:false});$('chipView').onclick=toggleHardwareWindow;$('plus').onclick=()=>zoomAt(1.2);$('minus').onclick=()=>zoomAt(1/1.2);$('fit').onclick=fit;
 function syncMenu(){$('caseMenu').innerHTML=DATA.cases.map((c,i)=>`<button role="option" tabindex="-1" aria-selected="${i===state.index}" data-case="${i}" data-tip="切换到 ${c.shape.join(' × ')} ${c.dtype}${c.origin==='upstream'?' 上游用例':' 边界实验'}">${c.shape.join(' × ')} ${c.dtype.toUpperCase()}<span>${i===state.index?'✓':c.origin==='upstream'?'':'边界'}</span></button>`).join('');$('caseMenu').querySelectorAll('button').forEach(b=>b.onclick=()=>{state.index=+b.dataset.case;state.mode='auto';closeMenu();render();$('caseTrigger').focus()})}
 function closeMenu(){$('implementationMenu').hidden=true;$('implementationTrigger').setAttribute('aria-expanded','false');$('caseMenu').hidden=true;$('caseTrigger').setAttribute('aria-expanded','false')}
 function openMenu(){$('tooltip').hidden=true;$('caseMenu').hidden=false;$('caseTrigger').setAttribute('aria-expanded','true');$('caseMenu').querySelector('[aria-selected=true]').focus()}

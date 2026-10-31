@@ -2,7 +2,15 @@
   "default_canvas": {
     "type": "source-ordered execution swimlanes with linked tensor lifetimes",
     "renderer": "comparison.js",
-    "sha256": "5dc056193d943edad673b7037b376889d3785a08283659987fc9f0932b3c9365",
+    "compute_golden": {
+      "source": "compute-golden.js",
+      "sha256": "c897f96688363f0aca07be8be4286f62373a5fed5975ae5bede14d946c1ab4cf",
+      "numeric_data": "local CPU Golden windows; deterministic explicitly Mock NPU values and derived differences; no device validation",
+      "golden_sha256": "93650b3c8795b4ad9f179ad59cf013860c02f1a83f2a48947ed96c53a222bf2f",
+      "op_renderer": "diagram-legend-library/build.cjs opNode/opGlyph; visual-system.js add/multiply",
+      "op_renderer_sha256": "fba7dfa700cacca48f37e95f667117a5f9a13eca014423db9036932243650298"
+    },
+    "sha256": "a5e3e2b3fd824eed731b03af80360050ca6eb58dfe752a306d1250bda40049c6",
     "layout": "Device Perf Lane inline resource-row composition adapted to source-order axis; MTE2/Vector/MTE3 and UB lifetimes share coordinates; hardware mapping opens a linked 950B corner window; bottom-left input/implementation/mapping dock; playback removed; queue request lifetimes use actual Alloc/Free records"
   },
   "tensor": {
@@ -35,6 +43,12 @@
     "reuse": "shared 950B architecture mounted in a small draggable/resizable corner window; event selection drives setPathFocus; inactive topology remains neutral"
   },
   "selection_override": "Single host --hi (#D4D4D4), fill and dark text; tensor role colors stay independent",
+  "memory_inspector_adapter": {
+    "source": "PyPTO3-main/Design/pass-error-cases/src/FunctionMemoryMap.jsx",
+    "source_sha256": "c3bc962bf01ecaf366b671232663729a3be418e25504a61be09225dc7a90ede9",
+    "adapter_sha256": "2b587402ae8537d7f65e445d23820da874cef72e8e080502cfb08bcc8a24734a",
+    "contract": "solid rx=3 allocation rectangle, clipped name and size/source labels; lifecycle transposed to source steps; X=source steps, Y=constructed 32-byte-aligned UB address; first-fit reuse within separate reservations; neutral at rest, source-related intervals use role color after explicit selection; all generated addresses explicitly mock, not compiler/device evidence; neutral host selection"
+  },
   "queue_overview_adapter": "Five shared Memory Reuse Viewer instances in one horizontal figure with identical source-step axes, per-queue relative-size coordinates and unified toolbar. Local delivery adapter uses neutral kind tones, formats sub-KiB sizes in B and uses fill selection; shared upstream files unchanged.",
   "patterns": [
     {

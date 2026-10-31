@@ -1,0 +1,317 @@
+{
+  "checked_date": "2026-10-30",
+  "operator_revision": "7729cdf7bc37d77bd3c82448414b77cea3e96637",
+  "presets": {
+    "name": "CMakePresets.json",
+    "path": "src/ascendc/CMakePresets.json",
+    "sha": "21212bb54b25af1499b9031619e9bf8a2624b6b5",
+    "size": 2153,
+    "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/contents/src/ascendc/CMakePresets.json?ref=7729cdf7bc37d77bd3c82448414b77cea3e96637",
+    "html_url": "https://github.com/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/blob/7729cdf7bc37d77bd3c82448414b77cea3e96637/src/ascendc/CMakePresets.json",
+    "git_url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/21212bb54b25af1499b9031619e9bf8a2624b6b5",
+    "download_url": "https://raw.githubusercontent.com/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/7729cdf7bc37d77bd3c82448414b77cea3e96637/src/ascendc/CMakePresets.json",
+    "type": "file",
+    "content": "ewogICAgInZlcnNpb24iOiAxLAogICAgImNtYWtlTWluaW11bVJlcXVpcmVk\nIjogewogICAgICAgICJtYWpvciI6IDMsCiAgICAgICAgIm1pbm9yIjogMTYs\nCiAgICAgICAgInBhdGNoIjogMAogICAgfSwKICAgICJjb25maWd1cmVQcmVz\nZXRzIjogWwogICAgICAgIHsKICAgICAgICAgICAgIm5hbWUiOiAiZGVmYXVs\ndCIsCiAgICAgICAgICAgICJkaXNwbGF5TmFtZSI6ICJEZWZhdWx0IENvbmZp\nZyIsCiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJEZWZhdWx0IGJ1aWxk\nIHVzaW5nIFVuaXggTWFrZWZpbGVzIGdlbmVyYXRvciIsCiAgICAgICAgICAg\nICJnZW5lcmF0b3IiOiAiVW5peCBNYWtlZmlsZXMiLAogICAgICAgICAgICAi\nYmluYXJ5RGlyIjogIiR7c291cmNlRGlyfS9idWlsZF9vdXQiLAogICAgICAg\nICAgICAiY2FjaGVWYXJpYWJsZXMiOiB7CiAgICAgICAgICAgICAgICAiQ01B\nS0VfQlVJTERfVFlQRSI6IHsKICAgICAgICAgICAgICAgICAgICAidHlwZSI6\nICJTVFJJTkciLAogICAgICAgICAgICAgICAgICAgICJ2YWx1ZSI6ICJSZWxl\nYXNlIgogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJFTkFC\nTEVfU09VUkNFX1BBQ0tBR0UiOiB7CiAgICAgICAgICAgICAgICAgICAgInR5\ncGUiOiAiQk9PTCIsCiAgICAgICAgICAgICAgICAgICAgInZhbHVlIjogIlRy\ndWUiCiAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgIkVOQUJM\nRV9CSU5BUllfUEFDS0FHRSI6IHsKICAgICAgICAgICAgICAgICAgICAidHlw\nZSI6ICJCT09MIiwKICAgICAgICAgICAgICAgICAgICAidmFsdWUiOiAiVHJ1\nZSIKICAgICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICAiQVNDRU5E\nX0NPTVBVVEVfVU5JVCI6IHsKICAgICAgICAgICAgICAgICAgICAidHlwZSI6\nICJTVFJJTkciLAogICAgICAgICAgICAgICAgICAgICJ2YWx1ZSI6ICJhc2Nl\nbmQ5MTBiIgogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJF\nTkFCTEVfVEVTVCI6IHsKICAgICAgICAgICAgICAgICAgICAidHlwZSI6ICJC\nT09MIiwKICAgICAgICAgICAgICAgICAgICAidmFsdWUiOiAiVHJ1ZSIKICAg\nICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICAidmVuZG9yX25hbWUi\nOiB7CiAgICAgICAgICAgICAgICAgICAgInR5cGUiOiAiU1RSSU5HIiwKICAg\nICAgICAgICAgICAgICAgICAidmFsdWUiOiAiY3VzdG9taXplIgogICAgICAg\nICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJBU0NFTkRfQ0FOTl9QQUNL\nQUdFX1BBVEgiOiB7CiAgICAgICAgICAgICAgICAgICAgInR5cGUiOiAiUEFU\nSCIsCiAgICAgICAgICAgICAgICAgICAgInZhbHVlIjogIi91c3IvbG9jYWwv\nQXNjZW5kL2Nhbm4tOC41LjAiCiAgICAgICAgICAgICAgICB9LAogICAgICAg\nICAgICAgICAgIkFTQ0VORF9QWVRIT05fRVhFQ1VUQUJMRSI6IHsKICAgICAg\nICAgICAgICAgICAgICAidHlwZSI6ICJTVFJJTkciLAogICAgICAgICAgICAg\nICAgICAgICJ2YWx1ZSI6ICJweXRob24zIgogICAgICAgICAgICAgICAgfSwK\nICAgICAgICAgICAgICAgICJDTUFLRV9JTlNUQUxMX1BSRUZJWCI6IHsKICAg\nICAgICAgICAgICAgICAgICAidHlwZSI6ICJQQVRIIiwKICAgICAgICAgICAg\nICAgICAgICAidmFsdWUiOiAiJHtzb3VyY2VEaXJ9L2J1aWxkX291dCIKICAg\nICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICAiRU5BQkxFX0NST1NT\nX0NPTVBJTEUiOiB7CiAgICAgICAgICAgICAgICAgICAgInR5cGUiOiAiQk9P\nTCIsCiAgICAgICAgICAgICAgICAgICAgInZhbHVlIjogIkZhbHNlIgogICAg\nICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJDTUFLRV9DUk9TU19Q\nTEFURk9STV9DT01QSUxFUiI6IHsKICAgICAgICAgICAgICAgICAgICAidHlw\nZSI6ICJQQVRIIiwKICAgICAgICAgICAgICAgICAgICAidmFsdWUiOiAiL3Vz\nci9iaW4vYWFyY2g2NC1saW51eC1nbnUtZysrIgogICAgICAgICAgICAgICAg\nfSwKICAgICAgICAgICAgICAgICJBU0NFTkRfUEFDS19TSEFSRURfTElCUkFS\nWSI6IHsKICAgICAgICAgICAgICAgICAgICAidHlwZSI6ICJCT09MIiwKICAg\nICAgICAgICAgICAgICAgICAidmFsdWUiOiAiRmFsc2UiCiAgICAgICAgICAg\nICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICBdCn0=\n",
+    "encoding": "base64",
+    "_links": {
+      "self": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/contents/src/ascendc/CMakePresets.json?ref=7729cdf7bc37d77bd3c82448414b77cea3e96637",
+      "git": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/21212bb54b25af1499b9031619e9bf8a2624b6b5",
+      "html": "https://github.com/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/blob/7729cdf7bc37d77bd3c82448414b77cea3e96637/src/ascendc/CMakePresets.json"
+    }
+  },
+  "course_env": {
+    "name": "env.sh",
+    "path": "src/lab3p5/env.sh",
+    "sha": "d4275de4ef470f421f0ee296e4c1dbed8a307316",
+    "size": 3835,
+    "url": "https://api.github.com/repos/ZJUSCT/HPC101/contents/src/lab3p5/env.sh?ref=main",
+    "html_url": "https://github.com/ZJUSCT/HPC101/blob/main/src/lab3p5/env.sh",
+    "git_url": "https://api.github.com/repos/ZJUSCT/HPC101/git/blobs/d4275de4ef470f421f0ee296e4c1dbed8a307316",
+    "download_url": "https://raw.githubusercontent.com/ZJUSCT/HPC101/main/src/lab3p5/env.sh",
+    "type": "file",
+    "content": "IyEvdXNyL2Jpbi9lbnYgYmFzaAojIGxhYjMuNSBzdHVkZW50IGtpdCDigJQg\nZW52aXJvbm1lbnQgYWN0aXZhdGlvbi4KIyBTb3VyY2UgZnJvbSB0aGUga2l0\nIHJvb3Q6ICBzb3VyY2UgLi9lbnYuc2gKIwojIEFjdGl2YXRlcyB0aGUgc3lz\ndGVtIENBTk4gdG9vbGtpdCBhbmQgZW5zdXJlcyBweXRob24zIGlzIG9uIFBB\nVEguIFJlbGllcyBvbmx5CiMgb24gc3lzdGVtLWxldmVsIHBhdGhzIHVuZGVy\nIC91c3IvbG9jYWwvQXNjZW5kIGFuZCAvdXNyL2xvY2FsL3B5dGhvbiog4oCU\nIG5vCiMgaGFyZC1jb2RlZCBob21lIGRpcmVjdG9yaWVzLCBubyBjb21wZXRp\ndGlvbi1zcGVjaWZpYyBjb25kYSBlbnYuCiMKIyBOT1RFOiB0aGlzIGZpbGUg\naXMgKnNvdXJjZWQqIGludG8gYW4gaW50ZXJhY3RpdmUgc2hlbGwsIHNvIGRv\nIE5PVCBhZGQgYHNldCAtZWAKIyBoZXJlIOKAlCBpdCB3b3VsZCBsZWFrIGlu\ndG8gdGhlIGNhbGxlcidzIHNoZWxsIGFuZCB0ZXJtaW5hdGUgaXQgb24gdGhl\nIGZpcnN0CiMgbm9uLXplcm8gcmV0dXJuLgoKX0tJVF9ST09UPSIkKGNkIC0t\nICIkKGRpcm5hbWUgLS0gIiR7QkFTSF9TT1VSQ0VbMF19IikiICYmIHB3ZCki\nCgojIC0tLSAxLiBTeXN0ZW0gQ0FOTiB0b29sa2l0IC0tLS0tLS0tLS0tLS0t\nLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBUaGUgaW1h\nZ2UgbWF5IGV4cG9zZSBgbXNwcm9mYCB3aXRob3V0IHRoZSBmdWxsIHJ1bnRp\nbWUgbGlicmFyeSBwYXRocyAobm90YWJseQojIGxpYmhjY2wuc28pLiBUaGVy\nZWZvcmUgY29tbWFuZCBhdmFpbGFiaWxpdHkgaXMgbm90IGEgc3VmZmljaWVu\ndCBhY3RpdmF0aW9uCiMgY2hlY2suIFNvdXJjZSBzZXRfZW52LnNoIG9uY2Ug\ncGVyIHNoZWxsLCBwcmVmZXJyaW5nIHRoZSBgY2FubmAgc3ltbGluay4KaWYg\nW1sgLXogIiR7X0xBQjNQNV9DQU5OX0VOVl9TT1VSQ0VEOi19IiBdXTsgdGhl\nbgogICAgZm9yIF9zZXRfZW52IGluIFwKICAgICAgICAvdXNyL2xvY2FsL0Fz\nY2VuZC9jYW5uL3NldF9lbnYuc2ggXAogICAgICAgIC91c3IvbG9jYWwvQXNj\nZW5kL2FzY2VuZC10b29sa2l0L2xhdGVzdC9zZXRfZW52LnNoIFwKICAgICAg\nICAvdXNyL2xvY2FsL0FzY2VuZC9jYW5uLTguNS4wL3NldF9lbnYuc2g7IGRv\nCiAgICAgICAgaWYgW1sgLWYgIiRfc2V0X2VudiIgXV07IHRoZW4KICAgICAg\nICAgICAgIyBzaGVsbGNoZWNrIGRpc2FibGU9U0MxMDkwCiAgICAgICAgICAg\nIHNvdXJjZSAiJF9zZXRfZW52IgogICAgICAgICAgICBfTEFCM1A1X0NBTk5f\nRU5WX1NPVVJDRUQ9MQogICAgICAgICAgICBicmVhawogICAgICAgIGZpCiAg\nICBkb25lCiAgICB1bnNldCBfc2V0X2VudgpmaQoKIyAtLS0gMi4gTG9naWNh\nbCBOUFUgZGV2aWNlIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t\nLS0tLS0tLS0tLS0tLS0tLS0tLQpleHBvcnQgQVNDRU5EX0RFVklDRV9JRD0i\nJHtBU0NFTkRfREVWSUNFX0lEOi0wfSIKCiMgLS0tIDMuIHB5dGhvbjMgLS0t\nLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t\nLS0tLS0tLS0tLS0tLS0KIyBUaGUgc3lzdGVtIGludGVycHJldGVyIGxpdmVz\nIG91dHNpZGUgdGhlIGRlZmF1bHQgUEFUSCBvbiB0aGlzIGltYWdlOyBwdXQg\naXQKIyBiYWNrIGlmIHB5dGhvbjMgaXNuJ3QgYWxyZWFkeSByZXNvbHZhYmxl\nLiBUaGUga2l0IGRlcGVuZHMgb24gdG9yY2gvdG9yY2hfbnB1LAojIHdoaWNo\nIGxpdmUgaW4gdGhlIGNwMzExIHNpdGUtcGFja2FnZXMgdW5kZXIgL3Vzci9s\nb2NhbC9weXRob24zLjExLjE0IOKAlCBzbyBwcmVmZXIKIyB0aGF0IGludGVy\ncHJldGVyIGJlZm9yZSBmYWxsaW5nIGJhY2sgdG8gL3Vzci9iaW4vcHl0aG9u\nMyAodGhlIE9TIDMuMTAsIHdoaWNoCiMgaGFzIG5vbmUgb2YgdGhlIGtpdCBw\nYWNrYWdlcykuIC91c3IvbG9jYWwvYmluIGlzIGtlcHQgZm9yIGNtYWtlL25p\nbmphL3BpcC4KaWYgISBjb21tYW5kIC12IHB5dGhvbjMgPi9kZXYvbnVsbCAy\nPiYxIHx8ICEgcHl0aG9uMyAtYyAiaW1wb3J0IHRvcmNoLCB0b3JjaF9ucHUi\nID4vZGV2L251bGwgMj4mMTsgdGhlbgogICAgZm9yIF9weSBpbiAvdXNyL2xv\nY2FsL3B5dGhvbjMuMTEuMTQvYmluIC91c3IvbG9jYWwvYmluIC91c3IvYmlu\nOyBkbwogICAgICAgIGlmIFtbIC14ICIkX3B5L3B5dGhvbjMiIF1dOyB0aGVu\nCiAgICAgICAgICAgIGV4cG9ydCBQQVRIPSIkX3B5OiRQQVRIIgogICAgICAg\nICAgICBicmVhawogICAgICAgIGZpCiAgICBkb25lCiAgICB1bnNldCBfcHkK\nZmkKCiMgLS0tIDQuIEN1c3RvbSBvcGVyYXRvciBwYWNrYWdlIChidWlsdCBi\neSBidWlsZC5zaCkgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQojIHNldF9l\nbnYuYmFzaCBpcyBnZW5lcmF0ZWQgYXQgYnVpbGQgdGltZSBhbmQgYWxyZWFk\neSBleHBvcnRzCiMgQVNDRU5EX0NVU1RPTV9PUFBfUEFUSCBwbHVzIHByZXBl\nbmRzIG9wX2FwaS9saWIgdG8gTERfTElCUkFSWV9QQVRIIOKAlCBzbyB3ZQoj\nIG9ubHkgc291cmNlIGl0LiBHdWFyZCB3aXRoIGEgZmxhZyBzbyByZS1zb3Vy\nY2luZyBkb2Vzbid0IHBpbGUgdXAgZHVwbGljYXRlcy4KIyBDVVNUT01fT1BQ\nX0hPTUUgbWF0Y2hlcyBidWlsZC5zaCdzIC0taW5zdGFsbC1wYXRoIChvdmVy\ncmlkYWJsZSkuCmV4cG9ydCBDVVNUT01fT1BQX0hPTUU9IiR7Q1VTVE9NX09Q\nUF9IT01FOi0kSE9NRS9jdXN0b21fb3BwfSIKaWYgW1sgLXogIiR7Q1VTVE9N\nX09QUF9TT1VSQ0VEOi19IiBdXSAmJiBbWyAtZiAiJENVU1RPTV9PUFBfSE9N\nRS92ZW5kb3JzL2N1c3RvbWl6ZS9iaW4vc2V0X2Vudi5iYXNoIiBdXTsgdGhl\nbgogICAgIyBzaGVsbGNoZWNrIGRpc2FibGU9U0MxMDkxCiAgICBzb3VyY2Ug\nIiRDVVNUT01fT1BQX0hPTUUvdmVuZG9ycy9jdXN0b21pemUvYmluL3NldF9l\nbnYuYmFzaCIKICAgIGV4cG9ydCBDVVNUT01fT1BQX1NPVVJDRUQ9MQpmaQoK\nIyAtLS0gNS4gTWFrZSB0aGUga2l0IGltcG9ydGFibGUgLS0tLS0tLS0tLS0t\nLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyB0ZXN0X29wLnB5\nIGltcG9ydHMgYGNhc2Vfc3BlY3NgLCBgY3VzdG9tX29wc19saWJgLCBhbmQg\nYHNyYy48bGFuZz5gIGJ5IG5hbWUuCiMgYHNyY2AgbGl2ZXMgdW5kZXIgdGhl\nIGtpdCByb290OyBgY2FzZV9zcGVjc2AvYHRlc3Rfb3BgL2BnZXRfdGltZWAg\nbGl2ZSB1bmRlcgojIHRoZSBzaWJsaW5nIGBjaGVja2VyL2AgZGlyLiBQdXQg\nYm90aCBvbiBQWVRIT05QQVRIIHNvIGEgYmFyZQojIGBweXRob24zIGNoZWNr\nZXIvdGVzdF9vcC5weWAgcmVzb2x2ZXMgZXZlcnkgaW1wb3J0LgpleHBvcnQg\nUFlUSE9OUEFUSD0iJF9LSVRfUk9PVDokX0tJVF9ST09UL2NoZWNrZXIke1BZ\nVEhPTlBBVEg6KzokUFlUSE9OUEFUSH0iCgojIC0tLSA2LiBTYW5pdHkgY2hl\nY2tzIChsb3VkLCBub3Qgc2lsZW50KSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t\nLS0tLS0tLS0tLS0tLQppZiBbWyAteiAiJHtBU0NFTkRfVE9PTEtJVF9IT01F\nOi19IiBdXTsgdGhlbgogICAgZWNobyAiW2Vudi5zaF0gRVJST1I6IEFTQ0VO\nRF9UT09MS0lUX0hPTUUgaXMgdW5zZXQg4oCUIG5vIENBTk4gc2V0X2Vudi5z\naCBmb3VuZCB1bmRlciAvdXNyL2xvY2FsL0FzY2VuZCIgPiYyCmZpCmlmICEg\nY29tbWFuZCAtdiBweXRob24zID4vZGV2L251bGwgMj4mMTsgdGhlbgogICAg\nZWNobyAiW2Vudi5zaF0gRVJST1I6IHB5dGhvbjMgbm90IGZvdW5kIG9uIFBB\nVEgiID4mMgpmaQoKZWNobyAiW2Vudi5zaF0gQ0FOTj0ke0FTQ0VORF9UT09M\nS0lUX0hPTUU6LT99ICBkZXZpY2U9JHtBU0NFTkRfREVWSUNFX0lEfSAgcHl0\naG9uPSQoY29tbWFuZCAtdiBweXRob24zIHx8IGVjaG8gJz8nKSIKdW5zZXQg\nX0tJVF9ST09UCg==\n",
+    "encoding": "base64",
+    "_links": {
+      "self": "https://api.github.com/repos/ZJUSCT/HPC101/contents/src/lab3p5/env.sh?ref=main",
+      "git": "https://api.github.com/repos/ZJUSCT/HPC101/git/blobs/d4275de4ef470f421f0ee296e4c1dbed8a307316",
+      "html": "https://github.com/ZJUSCT/HPC101/blob/main/src/lab3p5/env.sh"
+    }
+  },
+  "repository_tree": {
+    "sha": "7729cdf7bc37d77bd3c82448414b77cea3e96637",
+    "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/7729cdf7bc37d77bd3c82448414b77cea3e96637",
+    "tree": [
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "af3a1a38c6c4490ebc9e0141407e8c9d467a2e5f",
+        "size": 100,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/af3a1a38c6c4490ebc9e0141407e8c9d467a2e5f"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2ce34fac7d0955ebd5b0a53b835e34fceaad30b6",
+        "size": 1058,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/2ce34fac7d0955ebd5b0a53b835e34fceaad30b6"
+      },
+      {
+        "path": "checker",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "f3f14918519f722d449639a5afa46ba9565bdb14",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/f3f14918519f722d449639a5afa46ba9565bdb14"
+      },
+      {
+        "path": "checker/__pycache__",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "0372070b6a449b28456b723dd6c0772daffdc30b",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/0372070b6a449b28456b723dd6c0772daffdc30b"
+      },
+      {
+        "path": "checker/__pycache__/case_specs.cpython-311.pyc",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6c2ab91e1659814c7d2c94faa23e78fc13524be3",
+        "size": 803,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/6c2ab91e1659814c7d2c94faa23e78fc13524be3"
+      },
+      {
+        "path": "checker/build.sh",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "887553a8cd8a097cbf824537dac91cbd90095ddc",
+        "size": 2763,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/887553a8cd8a097cbf824537dac91cbd90095ddc"
+      },
+      {
+        "path": "checker/case_specs.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7b1975d91b8bfbb9118eea084e1f9a67b38c95e3",
+        "size": 781,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/7b1975d91b8bfbb9118eea084e1f9a67b38c95e3"
+      },
+      {
+        "path": "checker/get_time.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a8d65cf82ff9840b35b7ce05b9b317036342f9a2",
+        "size": 1486,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/a8d65cf82ff9840b35b7ce05b9b317036342f9a2"
+      },
+      {
+        "path": "checker/profile.sh",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c4e8572df00153b29cea9176077a292f75352d51",
+        "size": 2875,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/c4e8572df00153b29cea9176077a292f75352d51"
+      },
+      {
+        "path": "checker/run.sh",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "134c1a7afd83047cf148ea71c832e452451c3d5b",
+        "size": 2123,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/134c1a7afd83047cf148ea71c832e452451c3d5b"
+      },
+      {
+        "path": "checker/test_op.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "02d23df07f882383e83927088f4fc6a161df6d9b",
+        "size": 6646,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/02d23df07f882383e83927088f4fc6a161df6d9b"
+      },
+      {
+        "path": "src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "bcee08151718119c1a5b3a270d06d342aba191e3",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/bcee08151718119c1a5b3a270d06d342aba191e3"
+      },
+      {
+        "path": "src/__init__.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "208a5474f54294b0c05dd5036a3fd347fa5be8a1",
+        "size": 67,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/208a5474f54294b0c05dd5036a3fd347fa5be8a1"
+      },
+      {
+        "path": "src/ascendc",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "dfa6ce46f0fb1d7c47310665dca437f6d892a3fb",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/dfa6ce46f0fb1d7c47310665dca437f6d892a3fb"
+      },
+      {
+        "path": "src/ascendc/CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aa891aa03ad1635626e1a0cf189cf8b9e2755ff4",
+        "size": 1328,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/aa891aa03ad1635626e1a0cf189cf8b9e2755ff4"
+      },
+      {
+        "path": "src/ascendc/CMakePresets.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "21212bb54b25af1499b9031619e9bf8a2624b6b5",
+        "size": 2153,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/21212bb54b25af1499b9031619e9bf8a2624b6b5"
+      },
+      {
+        "path": "src/ascendc/build_op.sh",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9759204f5631df578c17697f44179712a8f46907",
+        "size": 1278,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/9759204f5631df578c17697f44179712a8f46907"
+      },
+      {
+        "path": "src/ascendc/common",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ea7271b60f0f0901d608dad032d43404b21ae237",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/ea7271b60f0f0901d608dad032d43404b21ae237"
+      },
+      {
+        "path": "src/ascendc/common/pytorch_npu_helper.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6414dfa5f4d907cc11e50e85140b6254a609b105",
+        "size": 23063,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/6414dfa5f4d907cc11e50e85140b6254a609b105"
+      },
+      {
+        "path": "src/ascendc/extension",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "020da2e16de5534f46b90f59d9d85dabef23076a",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/020da2e16de5534f46b90f59d9d85dabef23076a"
+      },
+      {
+        "path": "src/ascendc/extension/custom_op.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6d803740b38322e366ae3bf48bb3e05085d12652",
+        "size": 2248,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/6d803740b38322e366ae3bf48bb3e05085d12652"
+      },
+      {
+        "path": "src/ascendc/op_host",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "10ac3f64a0e397132b94cdf6302a6afeacc03de6",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/10ac3f64a0e397132b94cdf6302a6afeacc03de6"
+      },
+      {
+        "path": "src/ascendc/op_host/CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d2be0a50b3d2c3a204769716ed2d88383e603640",
+        "size": 2108,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/d2be0a50b3d2c3a204769716ed2d88383e603640"
+      },
+      {
+        "path": "src/ascendc/op_host/fused_add_rms_norm.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7182ed91a1b4d6b40b732853416a956fd035b274",
+        "size": 5621,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/7182ed91a1b4d6b40b732853416a956fd035b274"
+      },
+      {
+        "path": "src/ascendc/op_kernel",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "e851ce9d8f2262282408be5072a95f7413eccd45",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/e851ce9d8f2262282408be5072a95f7413eccd45"
+      },
+      {
+        "path": "src/ascendc/op_kernel/CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "609362eec2ba86e630e14522af23bfe0e6c927f4",
+        "size": 1093,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/609362eec2ba86e630e14522af23bfe0e6c927f4"
+      },
+      {
+        "path": "src/ascendc/op_kernel/fused_add_rms_norm.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a1cf48e0c235adbb8238db8f98f1d763a13ec5d4",
+        "size": 20292,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/a1cf48e0c235adbb8238db8f98f1d763a13ec5d4"
+      },
+      {
+        "path": "src/ascendc/op_kernel/fused_add_rms_norm_tiling.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "62c01380085ad7b79e177cb6401503e1f0df1fba",
+        "size": 1872,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/62c01380085ad7b79e177cb6401503e1f0df1fba"
+      },
+      {
+        "path": "src/ascendc/setup.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "abc4ffcddcf594e52ba99e76700030501756227f",
+        "size": 1021,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/abc4ffcddcf594e52ba99e76700030501756227f"
+      },
+      {
+        "path": "src/tilelang",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "7df2394d7f6d1975ada8f3e084f340c3e2a38ba7",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/7df2394d7f6d1975ada8f3e084f340c3e2a38ba7"
+      },
+      {
+        "path": "src/tilelang/__init__.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b113492ee4bd26156527db345425884a598b2cd0",
+        "size": 468,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/b113492ee4bd26156527db345425884a598b2cd0"
+      },
+      {
+        "path": "src/tilelang/fused_add_rmsnorm.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "22f43329c21c50abbdf739ab7dddb04ed2a485af",
+        "size": 1485,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/22f43329c21c50abbdf739ab7dddb04ed2a485af"
+      },
+      {
+        "path": "src/triton",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "f1e12c3cd8ddfbd9e1f226259ee4709081d9ac5f",
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/trees/f1e12c3cd8ddfbd9e1f226259ee4709081d9ac5f"
+      },
+      {
+        "path": "src/triton/__init__.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9c14173f4ed85a304d69a980e8ccc9e1f4629702",
+        "size": 416,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/9c14173f4ed85a304d69a980e8ccc9e1f4629702"
+      },
+      {
+        "path": "src/triton/fused_add_rmsnorm.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3003726e979bff47c3e6ce61ccd73bd6f52f218d",
+        "size": 900,
+        "url": "https://api.github.com/repos/llrnb666-arch/HPC101-AscendC-FusedRMSNorm/git/blobs/3003726e979bff47c3e6ce61ccd73bd6f52f218d"
+      }
+    ],
+    "truncated": false
+  }
+}

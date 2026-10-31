@@ -81,7 +81,17 @@ def build(B,H,cores=48,core=0,origin='public'):
             interval('weightFp32Buf',f'γ[c{c}] FP32',na*4,w,norm+1,'weight',row=r,chunk=c,semantics='content use')
     ticks=len(events)
     for l in life:
-        l['freeLine']=events[min(l['end']-1,ticks-1)]['line']
+        endpoint=events[min(l['end']-1,ticks-1)]
+        l['endLine']=endpoint['line']
+        # A display endpoint is not an allocation-release event.
+        l['endpointKind']={'free':'queue-return','wait':'reuse-wait','window':'window-cut','drain':'writeback-wait'}.get(endpoint['kind'],'last-modeled-use')
+        l['queueReturnLine']=None
+        if l['buffer'].startswith(('inQue','outQue')) and 'beyond display window' not in l['semantics']:
+            l['queueReturnLine']=line(l['buffer']+'.FreeTensor(', max(0,l['endLine']-1))
+        l['freeLine']=l['queueReturnLine'] # compatibility: only an explicit FreeTensor
+        l['contentValidity']={'start':None,'end':None,'status':'not established by source-order display interval'}
+        l['physicalAddress']=None
+    reservations=[dict(id=f'{cid}/reservation/{b}',buffer=b,memorySpace='UB',bytes=n,initLine=line('InitBuffer('+b+','),releaseLine=None,startTime=None,endTime=None,evidence='source InitBuffer; runtime extent unknown') for b,n in capacities.items()]
     # Display packing is shared by both views; these are logical bands, not TQue slots.
     for buffer in capacities:
         active=[]; bands=[]
@@ -101,7 +111,7 @@ def build(B,H,cores=48,core=0,origin='public'):
     findings=whole_notes+[dict(id='coverage',title='公开用例没有覆盖分块分支',text='五个公开用例 H 都不超过 4096；4097 与 8193 是本轮增加的源码边界配置，尚无设备测试结果。',line=line('else { ProcessChunkedRows(); }'))]
     if whole: findings.append(dict(id='slots',title='显式输出槽与输入队列不同',text='输出按 row & 1 选 TBuf，隔两次迭代等待 MTE3 后复用；输入由 TQue 分配，不推定物理槽号。',line=line('int32_t eid = static_cast<int32_t>(row & 1)')))
     if A!=H: findings.append(dict(id='tail',title=f'尾部 padding {A-H} 个 FP16',text=f'每行有效 {H*2} B；行对齐 {A*2} B。'+('整行归约长度传 H。' if whole else '尾块归约长度传 n，按 nAlign 对齐。')+'写回仅传有效元素。',line=line('ReduceNormal(scalar, sq, H);') if whole else line('ReduceNormal(scalar, sq, n);')))
-    return dict(id=cid,shape=[B,H],cores=cores,core=core,origin=origin,aligned=A,tile=T,whole=whole,start=start,end=end,shown=shown,ticks=ticks,events=events,life=life,capacities=capacities,reserved=sum(capacities.values()),findings=findings,requestBytes=dict(x=B*H*2*(1 if whole else 2),residual=B*H*2*(1 if whole else 2),gamma=H*2*(sum(i*rows<B for i in range(cores)) if whole else B),outputs=B*H*4))
+    return dict(id=cid,shape=[B,H],cores=cores,core=core,origin=origin,aligned=A,tile=T,whole=whole,start=start,end=end,shown=shown,ticks=ticks,events=events,life=life,capacities=capacities,reservations=reservations,instructionAccesses=[],accessEvidence='not collected',reserved=sum(capacities.values()),findings=findings,requestBytes=dict(x=B*H*2*(1 if whole else 2),residual=B*H*2*(1 if whole else 2),gamma=H*2*(sum(i*rows<B for i in range(cores)) if whole else B),outputs=B*H*4))
 def generate():
     public=[(32,4096),(256,1024),(1,4096),(1997,3037),(2048,4096)]
     cases=[build(b,h,origin='public') for b,h in public]+[build(4,h,origin='source-boundary') for h in (4097,8193)]

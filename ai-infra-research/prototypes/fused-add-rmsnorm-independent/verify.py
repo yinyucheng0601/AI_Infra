@@ -34,6 +34,16 @@ for c in d['cases']:
    if a['buffer']==b['buffer'] and max(a['start'],b['start'])<min(a['end'],b['end']):
     check(a['displayBand']!=b['displayBand'],'concurrent intervals have separate main tracks')
     check(a['displayOffset']+a['size']<=b['displayOffset'] or b['displayOffset']+b['size']<=a['displayOffset'],'concurrent intervals have separate reuse extents')
+# Evidence boundaries: logical endpoints never fabricate physical release or accesses.
+for c in d['cases']:
+ check(sum(r['bytes'] for r in c['reservations'])==c['reserved'],'reservation total')
+ check(all(r['releaseLine'] is None and r['endTime'] is None for r in c['reservations']),'no invented UB release')
+ check(c['instructionAccesses']==[],'no invented trace accesses')
+ for l in c['life']:
+  check(l['contentValidity']['end'] is None and l['physicalAddress'] is None,'no invented validity or address')
+  if l['freeLine'] is not None:
+   check(l['buffer']+'.FreeTensor(' in d['sources']['kernel']['text'].splitlines()[l['freeLine']-1],'release evidence is explicit queue return')
+  if l['endpointKind']=='window-cut':check(l['freeLine'] is None,'window is not free')
 # Independent explicit row partition, including empty cores, compared with adapter.
 for B in (1,32,1997,2048):
  for N in (1,8,32,48):

@@ -1,0 +1,35 @@
+Standalone merge_rope_pack reproducer (device)
+==============================================
+
+merge_h.py lifts the dsv4 merge_rope_pack scope into its own single-kernel
+program and runs it on device. The hidden dimension is set by the HD env var
+(default 512); it scales only the Vec tile sizes (footprint), nothing else.
+
+Environment (machine-specific paths in merge_h.py):
+  - pypto build (with pipeline-stage coloring): /home/syfeng/pypto-pipeline-stage-scope/python
+  - dsv4 kernels + golden harness on sys.path:  /home/syfeng/pypto/dsv4_kernels
+  - CANN cann-8.5.1, device a2a3 (-d 0)
+
+1) Device NaN check (the headline result):
+
+   HD=512 python merge_h.py -d 0
+     -> "illegal values in actual: NaN=112 Inf=0"     (188.8 KB Vec, WRONG)
+
+   HD=496 python merge_h.py -d 0
+     -> "[RUN]   'o_packed' PASS ..."                  (183.3 KB Vec, CORRECT)
+
+   (HEAD_DIM must be a multiple of 16; off-16 values hit an unrelated ptoas
+    column-alignment limit.)
+
+2) Compile-only (footprint, no device) — writes report/memory_after_AllocateMemoryAddr.txt:
+
+   HD=512 python merge_h.py --compile-only -d 0
+   grep '^  Vec ' build_output/_jit_main_*/report/memory_after_AllocateMemoryAddr.txt
+
+3) Localize the NaN cells in o_packed (which heads / d-blocks):
+
+   python capture_merge.py        # HD defaults to 512; saves /tmp/o_packed_dev.pt and prints NaN map
+
+Inputs are small finite seeded-uniform[-0.5,0.5]; attn_sink=0. A control with
+positive 'li' (valid softmax sum) still NaNs at HD=512 — confirming corruption,
+not a division artifact.

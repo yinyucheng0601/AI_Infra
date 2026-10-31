@@ -49,3 +49,6 @@ Restored shared liquid-glass resources and grouped controls. Audit uses a dragga
 ## 910B 硬件对照补充
 复用共享 memory-architecture 的 ascend910b preset（仅挂载一个 AIV 局部，不挂载草稿 AIC）。Liquid 紧凑可拖动/缩放浮层随当前事件 lane 关联 GM/L2/MTE2、UB/Vector、MTE3 或 Scalar/Sync；开关保持主体视角，配置切换更新当前事件与申请量。
 来源：https://asc.gitcode.com/guide/programming_guide/advanced_programming/hardware_implementation/architecture_spec/npu_arch_2201.html ，2026-10-30 核对 A2 AIC/AIV 分离与 1:2 配比、UB 192 KiB/32B 对齐。可分配空间随工具链预留变化，未从标称容量推断本工程可编译。48 AIV 仍为分析参数；未移用 950 SIMT/ND-DMA Cache/性能标定。
+
+## 地址与生命周期证据修正（2026-10-30）
+当前图区间不能同时代表缓冲预留、数据有效期和指令访问。已分离 reservations、contentValidity 和 instructionAccesses；没有采集的地址、时间保持未知。显示终点改为 endLine，只有明确的 FreeTensor 才设置 queueReturnLine/freeLine，且不解释为 UB 预留释放。详见 CAPTURE.md。此前“申请/内容生命周期”的评价应限于源码步骤模型，不能证明执行时访问了同一物理地址。

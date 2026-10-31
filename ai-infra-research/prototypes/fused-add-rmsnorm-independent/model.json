@@ -161,7 +161,16 @@
           "eventId": "32x4096/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -179,7 +188,16 @@
           "eventId": "32x4096/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -197,7 +215,16 @@
           "eventId": "32x4096/aiv48/core0/event/3",
           "line": 116,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 158,
+          "endLine": 158,
+          "endpointKind": "writeback-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -215,7 +242,16 @@
           "eventId": "32x4096/aiv48/core0/event/5",
           "line": 140,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 158,
+          "endLine": 158,
+          "endpointKind": "writeback-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -233,7 +269,16 @@
           "eventId": "32x4096/aiv48/core0/event/0",
           "line": 80,
           "semantics": "content use",
-          "freeLine": 281,
+          "endLine": 281,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -251,7 +296,16 @@
           "eventId": "32x4096/aiv48/core0/event/1",
           "line": 281,
           "semantics": "content retained across rows",
-          "freeLine": 158,
+          "endLine": 158,
+          "endpointKind": "writeback-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -274,6 +328,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "32x4096/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "32x4096/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 188480,
       "findings": [
         {
@@ -616,7 +850,16 @@
           "eventId": "256x1024/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -634,7 +877,16 @@
           "eventId": "256x1024/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -652,7 +904,16 @@
           "eventId": "256x1024/aiv48/core0/event/4",
           "line": 116,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 110,
+          "endLine": 110,
+          "endpointKind": "reuse-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -670,7 +931,16 @@
           "eventId": "256x1024/aiv48/core0/event/6",
           "line": 140,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 110,
+          "endLine": 110,
+          "endpointKind": "reuse-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -688,7 +958,16 @@
           "eventId": "256x1024/aiv48/core0/event/3",
           "line": 102,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 2048,
           "displayBand": 1
         },
@@ -706,7 +985,16 @@
           "eventId": "256x1024/aiv48/core0/event/3",
           "line": 102,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 2048,
           "displayBand": 1
         },
@@ -724,7 +1012,16 @@
           "eventId": "256x1024/aiv48/core0/event/10",
           "line": 116,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -742,7 +1039,16 @@
           "eventId": "256x1024/aiv48/core0/event/12",
           "line": 140,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -760,7 +1066,16 @@
           "eventId": "256x1024/aiv48/core0/event/9",
           "line": 102,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -778,7 +1093,16 @@
           "eventId": "256x1024/aiv48/core0/event/9",
           "line": 102,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -796,7 +1120,16 @@
           "eventId": "256x1024/aiv48/core0/event/17",
           "line": 116,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -814,7 +1147,16 @@
           "eventId": "256x1024/aiv48/core0/event/19",
           "line": 140,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -832,7 +1174,16 @@
           "eventId": "256x1024/aiv48/core0/event/15",
           "line": 102,
           "semantics": "allocation continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 2048,
           "displayBand": 1
         },
@@ -850,7 +1201,16 @@
           "eventId": "256x1024/aiv48/core0/event/15",
           "line": 102,
           "semantics": "allocation continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 2048,
           "displayBand": 1
         },
@@ -868,7 +1228,16 @@
           "eventId": "256x1024/aiv48/core0/event/0",
           "line": 80,
           "semantics": "content use",
-          "freeLine": 281,
+          "endLine": 281,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -886,7 +1255,16 @@
           "eventId": "256x1024/aiv48/core0/event/1",
           "line": 281,
           "semantics": "content retained across rows",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -909,6 +1287,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "256x1024/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 2048,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 4096,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 2048,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 2048,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 2048,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 2048,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "256x1024/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 47168,
       "findings": [
         {
@@ -1079,7 +1637,16 @@
           "eventId": "1x4096/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1097,7 +1664,16 @@
           "eventId": "1x4096/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1115,7 +1691,16 @@
           "eventId": "1x4096/aiv48/core0/event/3",
           "line": 116,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 158,
+          "endLine": 158,
+          "endpointKind": "writeback-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1133,7 +1718,16 @@
           "eventId": "1x4096/aiv48/core0/event/5",
           "line": 140,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 158,
+          "endLine": 158,
+          "endpointKind": "writeback-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1151,7 +1745,16 @@
           "eventId": "1x4096/aiv48/core0/event/0",
           "line": 80,
           "semantics": "content use",
-          "freeLine": 281,
+          "endLine": 281,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1169,7 +1772,16 @@
           "eventId": "1x4096/aiv48/core0/event/1",
           "line": 281,
           "semantics": "content retained across rows",
-          "freeLine": 158,
+          "endLine": 158,
+          "endpointKind": "writeback-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -1192,6 +1804,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "1x4096/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1x4096/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 188480,
       "findings": [
         {
@@ -1534,7 +2326,16 @@
           "eventId": "1997x3037/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1552,7 +2353,16 @@
           "eventId": "1997x3037/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1570,7 +2380,16 @@
           "eventId": "1997x3037/aiv48/core0/event/4",
           "line": 116,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 110,
+          "endLine": 110,
+          "endpointKind": "reuse-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1588,7 +2407,16 @@
           "eventId": "1997x3037/aiv48/core0/event/6",
           "line": 140,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 110,
+          "endLine": 110,
+          "endpointKind": "reuse-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1606,7 +2434,16 @@
           "eventId": "1997x3037/aiv48/core0/event/3",
           "line": 102,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 6080,
           "displayBand": 1
         },
@@ -1624,7 +2461,16 @@
           "eventId": "1997x3037/aiv48/core0/event/3",
           "line": 102,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 6080,
           "displayBand": 1
         },
@@ -1642,7 +2488,16 @@
           "eventId": "1997x3037/aiv48/core0/event/10",
           "line": 116,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1660,7 +2515,16 @@
           "eventId": "1997x3037/aiv48/core0/event/12",
           "line": 140,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1678,7 +2542,16 @@
           "eventId": "1997x3037/aiv48/core0/event/9",
           "line": 102,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1696,7 +2569,16 @@
           "eventId": "1997x3037/aiv48/core0/event/9",
           "line": 102,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1714,7 +2596,16 @@
           "eventId": "1997x3037/aiv48/core0/event/17",
           "line": 116,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1732,7 +2623,16 @@
           "eventId": "1997x3037/aiv48/core0/event/19",
           "line": 140,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1750,7 +2650,16 @@
           "eventId": "1997x3037/aiv48/core0/event/15",
           "line": 102,
           "semantics": "allocation continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 6080,
           "displayBand": 1
         },
@@ -1768,7 +2677,16 @@
           "eventId": "1997x3037/aiv48/core0/event/15",
           "line": 102,
           "semantics": "allocation continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 6080,
           "displayBand": 1
         },
@@ -1786,7 +2704,16 @@
           "eventId": "1997x3037/aiv48/core0/event/0",
           "line": 80,
           "semantics": "content use",
-          "freeLine": 281,
+          "endLine": 281,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -1804,7 +2731,16 @@
           "eventId": "1997x3037/aiv48/core0/event/1",
           "line": 281,
           "semantics": "content retained across rows",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -1827,6 +2763,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "1997x3037/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 6080,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 12160,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 6080,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 6080,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 6080,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 6080,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "1997x3037/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 139904,
       "findings": [
         {
@@ -2175,7 +3291,16 @@
           "eventId": "2048x4096/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2193,7 +3318,16 @@
           "eventId": "2048x4096/aiv48/core0/event/2",
           "line": 89,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2211,7 +3345,16 @@
           "eventId": "2048x4096/aiv48/core0/event/4",
           "line": 116,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 110,
+          "endLine": 110,
+          "endpointKind": "reuse-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2229,7 +3372,16 @@
           "eventId": "2048x4096/aiv48/core0/event/6",
           "line": 140,
           "semantics": "explicit TBuf content until reuse wait",
-          "freeLine": 110,
+          "endLine": 110,
+          "endpointKind": "reuse-wait",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2247,7 +3399,16 @@
           "eventId": "2048x4096/aiv48/core0/event/3",
           "line": 102,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 8192,
           "displayBand": 1
         },
@@ -2265,7 +3426,16 @@
           "eventId": "2048x4096/aiv48/core0/event/3",
           "line": 102,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 8192,
           "displayBand": 1
         },
@@ -2283,7 +3453,16 @@
           "eventId": "2048x4096/aiv48/core0/event/10",
           "line": 116,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2301,7 +3480,16 @@
           "eventId": "2048x4096/aiv48/core0/event/12",
           "line": 140,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2319,7 +3507,16 @@
           "eventId": "2048x4096/aiv48/core0/event/9",
           "line": 102,
           "semantics": "allocation",
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 154,
           "freeLine": 154,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2337,7 +3534,16 @@
           "eventId": "2048x4096/aiv48/core0/event/9",
           "line": 102,
           "semantics": "allocation",
-          "freeLine": 154,
+          "endLine": 154,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 155,
+          "freeLine": 155,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2355,7 +3561,16 @@
           "eventId": "2048x4096/aiv48/core0/event/17",
           "line": 116,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2373,7 +3588,16 @@
           "eventId": "2048x4096/aiv48/core0/event/19",
           "line": 140,
           "semantics": "content continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2391,7 +3615,16 @@
           "eventId": "2048x4096/aiv48/core0/event/15",
           "line": 102,
           "semantics": "allocation continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 8192,
           "displayBand": 1
         },
@@ -2409,7 +3642,16 @@
           "eventId": "2048x4096/aiv48/core0/event/15",
           "line": 102,
           "semantics": "allocation continues beyond display window",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 8192,
           "displayBand": 1
         },
@@ -2427,7 +3669,16 @@
           "eventId": "2048x4096/aiv48/core0/event/0",
           "line": 80,
           "semantics": "content use",
-          "freeLine": 281,
+          "endLine": 281,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2445,7 +3696,16 @@
           "eventId": "2048x4096/aiv48/core0/event/1",
           "line": 281,
           "semantics": "content retained across rows",
-          "freeLine": 95,
+          "endLine": 95,
+          "endpointKind": "window-cut",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -2468,6 +3728,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "2048x4096/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "2048x4096/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 188480,
       "findings": [
         {
@@ -2832,7 +4272,16 @@
           "eventId": "4x4097/aiv48/core0/event/0",
           "line": 190,
           "semantics": "allocation",
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 207,
           "freeLine": 207,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2850,7 +4299,16 @@
           "eventId": "4x4097/aiv48/core0/event/0",
           "line": 190,
           "semantics": "allocation",
-          "freeLine": 207,
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 208,
+          "freeLine": 208,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2868,7 +4326,16 @@
           "eventId": "4x4097/aiv48/core0/event/3",
           "line": 190,
           "semantics": "allocation",
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 207,
           "freeLine": 207,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2886,7 +4353,16 @@
           "eventId": "4x4097/aiv48/core0/event/3",
           "line": 190,
           "semantics": "allocation",
-          "freeLine": 207,
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 208,
+          "freeLine": 208,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2904,7 +4380,16 @@
           "eventId": "4x4097/aiv48/core0/event/7",
           "line": 218,
           "semantics": "allocation",
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 229,
           "freeLine": 229,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2922,7 +4407,16 @@
           "eventId": "4x4097/aiv48/core0/event/7",
           "line": 218,
           "semantics": "allocation",
-          "freeLine": 229,
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 230,
+          "freeLine": 230,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2940,7 +4434,16 @@
           "eventId": "4x4097/aiv48/core0/event/10",
           "line": 232,
           "semantics": "allocation",
-          "freeLine": 236,
+          "endLine": 236,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 237,
+          "freeLine": 237,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2958,7 +4461,16 @@
           "eventId": "4x4097/aiv48/core0/event/14",
           "line": 257,
           "semantics": "allocation",
-          "freeLine": 264,
+          "endLine": 264,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 265,
+          "freeLine": 265,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2976,7 +4488,16 @@
           "eventId": "4x4097/aiv48/core0/event/13",
           "line": 256,
           "semantics": "content use",
-          "freeLine": 257,
+          "endLine": 257,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -2994,7 +4515,16 @@
           "eventId": "4x4097/aiv48/core0/event/16",
           "line": 218,
           "semantics": "allocation",
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 229,
           "freeLine": 229,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3012,7 +4542,16 @@
           "eventId": "4x4097/aiv48/core0/event/16",
           "line": 218,
           "semantics": "allocation",
-          "freeLine": 229,
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 230,
+          "freeLine": 230,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3030,7 +4569,16 @@
           "eventId": "4x4097/aiv48/core0/event/19",
           "line": 232,
           "semantics": "allocation",
-          "freeLine": 236,
+          "endLine": 236,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 237,
+          "freeLine": 237,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3048,7 +4596,16 @@
           "eventId": "4x4097/aiv48/core0/event/23",
           "line": 257,
           "semantics": "allocation",
-          "freeLine": 264,
+          "endLine": 264,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 265,
+          "freeLine": 265,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3066,7 +4623,16 @@
           "eventId": "4x4097/aiv48/core0/event/22",
           "line": 256,
           "semantics": "content use",
-          "freeLine": 257,
+          "endLine": 257,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -3089,6 +4655,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "4x4097/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x4097/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 188480,
       "findings": [
         {
@@ -3598,7 +5344,16 @@
           "eventId": "4x8193/aiv48/core0/event/0",
           "line": 190,
           "semantics": "allocation",
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 207,
           "freeLine": 207,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3616,7 +5371,16 @@
           "eventId": "4x8193/aiv48/core0/event/0",
           "line": 190,
           "semantics": "allocation",
-          "freeLine": 207,
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 208,
+          "freeLine": 208,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3634,7 +5398,16 @@
           "eventId": "4x8193/aiv48/core0/event/3",
           "line": 190,
           "semantics": "allocation",
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 207,
           "freeLine": 207,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3652,7 +5425,16 @@
           "eventId": "4x8193/aiv48/core0/event/3",
           "line": 190,
           "semantics": "allocation",
-          "freeLine": 207,
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 208,
+          "freeLine": 208,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3670,7 +5452,16 @@
           "eventId": "4x8193/aiv48/core0/event/6",
           "line": 190,
           "semantics": "allocation",
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 207,
           "freeLine": 207,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3688,7 +5479,16 @@
           "eventId": "4x8193/aiv48/core0/event/6",
           "line": 190,
           "semantics": "allocation",
-          "freeLine": 207,
+          "endLine": 207,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 208,
+          "freeLine": 208,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3706,7 +5506,16 @@
           "eventId": "4x8193/aiv48/core0/event/10",
           "line": 218,
           "semantics": "allocation",
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 229,
           "freeLine": 229,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3724,7 +5533,16 @@
           "eventId": "4x8193/aiv48/core0/event/10",
           "line": 218,
           "semantics": "allocation",
-          "freeLine": 229,
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 230,
+          "freeLine": 230,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3742,7 +5560,16 @@
           "eventId": "4x8193/aiv48/core0/event/13",
           "line": 232,
           "semantics": "allocation",
-          "freeLine": 236,
+          "endLine": 236,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 237,
+          "freeLine": 237,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3760,7 +5587,16 @@
           "eventId": "4x8193/aiv48/core0/event/17",
           "line": 257,
           "semantics": "allocation",
-          "freeLine": 264,
+          "endLine": 264,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 265,
+          "freeLine": 265,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3778,7 +5614,16 @@
           "eventId": "4x8193/aiv48/core0/event/16",
           "line": 256,
           "semantics": "content use",
-          "freeLine": 257,
+          "endLine": 257,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3796,7 +5641,16 @@
           "eventId": "4x8193/aiv48/core0/event/19",
           "line": 218,
           "semantics": "allocation",
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 229,
           "freeLine": 229,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3814,7 +5668,16 @@
           "eventId": "4x8193/aiv48/core0/event/19",
           "line": 218,
           "semantics": "allocation",
-          "freeLine": 229,
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 230,
+          "freeLine": 230,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3832,7 +5695,16 @@
           "eventId": "4x8193/aiv48/core0/event/22",
           "line": 232,
           "semantics": "allocation",
-          "freeLine": 236,
+          "endLine": 236,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 237,
+          "freeLine": 237,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3850,7 +5722,16 @@
           "eventId": "4x8193/aiv48/core0/event/26",
           "line": 257,
           "semantics": "allocation",
-          "freeLine": 264,
+          "endLine": 264,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 265,
+          "freeLine": 265,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3868,7 +5749,16 @@
           "eventId": "4x8193/aiv48/core0/event/25",
           "line": 256,
           "semantics": "content use",
-          "freeLine": 257,
+          "endLine": 257,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3886,7 +5776,16 @@
           "eventId": "4x8193/aiv48/core0/event/28",
           "line": 218,
           "semantics": "allocation",
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 229,
           "freeLine": 229,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3904,7 +5803,16 @@
           "eventId": "4x8193/aiv48/core0/event/28",
           "line": 218,
           "semantics": "allocation",
-          "freeLine": 229,
+          "endLine": 229,
+          "endpointKind": "queue-return",
+          "queueReturnLine": 230,
+          "freeLine": 230,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3922,7 +5830,16 @@
           "eventId": "4x8193/aiv48/core0/event/31",
           "line": 232,
           "semantics": "allocation",
-          "freeLine": 236,
+          "endLine": 236,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 237,
+          "freeLine": 237,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3940,7 +5857,16 @@
           "eventId": "4x8193/aiv48/core0/event/35",
           "line": 257,
           "semantics": "allocation",
-          "freeLine": 264,
+          "endLine": 264,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": 265,
+          "freeLine": 265,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         },
@@ -3958,7 +5884,16 @@
           "eventId": "4x8193/aiv48/core0/event/34",
           "line": 256,
           "semantics": "content use",
-          "freeLine": 257,
+          "endLine": 257,
+          "endpointKind": "last-modeled-use",
+          "queueReturnLine": null,
+          "freeLine": null,
+          "contentValidity": {
+            "start": null,
+            "end": null,
+            "status": "not established by source-order display interval"
+          },
+          "physicalAddress": null,
           "displayOffset": 0,
           "displayBand": 0
         }
@@ -3981,6 +5916,186 @@
         "scalarBuf": 32,
         "reduceTmpBuf": 32
       },
+      "reservations": [
+        {
+          "id": "4x8193/aiv48/core0/reservation/inQueX",
+          "buffer": "inQueX",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 43,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/inQueRes",
+          "buffer": "inQueRes",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 44,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/outQueY",
+          "buffer": "outQueY",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 45,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/outQueResOut",
+          "buffer": "outQueResOut",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 46,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/weightHalfBuf",
+          "buffer": "weightHalfBuf",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 47,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/weightFp32Buf",
+          "buffer": "weightFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 48,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/resoFp32Buf",
+          "buffer": "resoFp32Buf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 49,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/sqBuf",
+          "buffer": "sqBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 50,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/meanBuf",
+          "buffer": "meanBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 51,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/nrBuf",
+          "buffer": "nrBuf",
+          "memorySpace": "UB",
+          "bytes": 16384,
+          "initLine": 52,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/resOutHalfBuf0",
+          "buffer": "resOutHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 53,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/resOutHalfBuf1",
+          "buffer": "resOutHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 54,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/yHalfBuf0",
+          "buffer": "yHalfBuf0",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 55,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/yHalfBuf1",
+          "buffer": "yHalfBuf1",
+          "memorySpace": "UB",
+          "bytes": 8192,
+          "initLine": 56,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/scalarBuf",
+          "buffer": "scalarBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 57,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        },
+        {
+          "id": "4x8193/aiv48/core0/reservation/reduceTmpBuf",
+          "buffer": "reduceTmpBuf",
+          "memorySpace": "UB",
+          "bytes": 32,
+          "initLine": 58,
+          "releaseLine": null,
+          "startTime": null,
+          "endTime": null,
+          "evidence": "source InitBuffer; runtime extent unknown"
+        }
+      ],
+      "instructionAccesses": [],
+      "accessEvidence": "not collected",
       "reserved": 188480,
       "findings": [
         {

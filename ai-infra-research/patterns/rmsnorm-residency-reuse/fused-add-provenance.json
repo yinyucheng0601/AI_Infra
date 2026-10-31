@@ -16,14 +16,14 @@
   },
   "reuse": {
     "source": "../rmsnorm-performance-investigation/index.html",
-    "sha256": "1b4bedb25edc948e013c26bc7d3af1708054b0a50215c79d5ad5b1f28bbe79b3",
+    "sha256": "c252d2160a43d6d5fda367aec8afb62bb8c2e69d804b056560a107289141fa38",
     "parts": [
       "PtoSwimlaneTaskPattern",
       "GridTensor",
       "PtoMemoryReuseViewer",
       "LiquidGlassControls control/icon/panel"
     ],
-    "layout": "source-order lanes, linked tensor use/allocation intervals, parallel memory view, viewport restoration"
+    "layout": "source-order lanes with right-side lifecycle drawer restored; source intervals and logical offsets only; no mock UB addresses"
   },
   "hardware": {
     "preset": "ascend910b",

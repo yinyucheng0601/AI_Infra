@@ -1,5 +1,5 @@
 {
-  "checks": 973,
+  "checks": 1162,
   "status": "pass",
   "coverage": "7 UI cases; partition at 4 row counts and 4 core counts; both source branches; tail requests; source blob integrity",
   "device_run": false,
