@@ -1,0 +1,7 @@
+preview*.png
+.DS_Store
+__pycache__/
+history/draft-02/
+history/draft-03/
+history/draft-04/
+history/draft-05/

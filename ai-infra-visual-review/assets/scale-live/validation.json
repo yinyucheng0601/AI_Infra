@@ -1,0 +1,23 @@
+{
+  "source_sha256": "1d8fd0973e75162073e710f7a8a474c52f12f3b3d3b4e05fdb0ab6c02c91db8b",
+  "numerical_checks": 1920,
+  "configs": 4,
+  "original_function": "executed via AST extraction with stdlib FP32 Tensor shim",
+  "independent_oracle": "explicit nested coordinate interpretation per config",
+  "shape_rejections": 4,
+  "influence_counts": [
+    2,
+    20,
+    2,
+    12
+  ],
+  "mutation_detection": "wrong modulo-6 parameter index detected",
+  "status": "pass",
+  "not_verified": [
+    "real PyTorch execution",
+    "NPU execution",
+    "Host/Kernel",
+    "FP16/BF16",
+    "random upstream sample reproduction"
+  ]
+}

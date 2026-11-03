@@ -1,0 +1,34 @@
+[
+  {
+    "asset": "scale.png",
+    "source": "ai-infra-research/prototypes/scale-investigation-trial/preview.png",
+    "sha256": "f0cdb574ef64be39ddb92eb873e554f5cc6326ef207f354c7885341f0ad3c4ce",
+    "kind": "existing repository screenshot"
+  },
+  {
+    "asset": "swimlane.png",
+    "source": "ai-infra-research/web/media/critical-path-swimlane-cover.png",
+    "sha256": "e2828911d450f21ed52394f9488702147159b9b218fcd72ac02ed9901b20c658",
+    "kind": "existing repository screenshot"
+  },
+  {
+    "asset": "layer-stack.png",
+    "source": "ai-infra-research/web/media/pangu-layer-atlas-2-cover.png",
+    "sha256": "561ea54f1bac9cf16a22614f7df550f796eb84df09a2f04094958c2590822d86",
+    "kind": "existing repository screenshot"
+  },
+  {
+    "asset": "logsumexp.png",
+    "source": "ai-infra-research/web/media/reduction-memory-inspector-cover.png",
+    "sha256": "2f4db86d49925d6f8d814874ab082c0df906cbb783c32dd35d0c7717cdfe06c6",
+    "kind": "existing repository screenshot"
+  },
+  {
+    "asset": "tensor.svg",
+    "source": "ai-infra-research/reports/llm-compute/diagram-legend-library/inventory.json",
+    "item": "system-value",
+    "variant": "data-1",
+    "sha256": "83708624373bdef7cf49debbfc09f07aa92311a3da5a2591b1ebabc40fc671ff",
+    "kind": "unmodified formal-library SVG"
+  }
+]

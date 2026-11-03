@@ -4,7 +4,7 @@
   const allAssets=JSON.parse(document.getElementById('catalogData').textContent).assets;
   const config=JSON.parse(document.getElementById('runtimeConfig').textContent);
   const isSkills=config.collection==='skills', isPatterns=config.collection==='patterns';
-  const assets=allAssets.filter(a=>isSkills?a.type==='method':isPatterns?a.type==='pattern':a.type==='knowledge');
+  const assets=allAssets.filter(a=>isSkills?a.type==='method':isPatterns?a.type==='pattern':(a.type==='knowledge'||a.type==='case'));
   // Patterns: newest date first; same-day additions follow reverse catalog insertion order.
   if(isPatterns){const order=new Map(allAssets.map((a,i)=>[a.id,i]));assets.sort((a,b)=>String(b.addedAt||b.reviewedAt||'').localeCompare(String(a.addedAt||a.reviewedAt||''))||order.get(b.id)-order.get(a.id));}
   config.fileMode=location.protocol==='file:';
@@ -12,6 +12,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'ai-infra-visual-review':{src:'__VISUAL_REVIEW_COVER__',alt:'AI Infra 视觉设计复盘：问题驱动、认知减负与有效控制'},
     'unpack-case3-inspector':{src:'__UNPACK_CASE3_COVER__',alt:'Unpack case3：INT32 多输出拆分、任务与核分配'},
     'scale-broadcast-inspector':{src:'__SCALE_BROADCAST_COVER__',alt:'Scale：共享 scale 和 bias 与各批次输出的关系'},
     'rmsnorm-residency-reuse':{src:'__RMSNORM_REUSE_COVER__',alt:'RMSNorm 执行泳道与内存复用联动分屏'},
