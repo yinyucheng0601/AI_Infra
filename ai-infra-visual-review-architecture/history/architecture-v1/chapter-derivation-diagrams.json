@@ -1,0 +1,122 @@
+{
+  "attention": {
+    "title": "从性能症状，推导需要展开的执行证据",
+    "principle": "问题 / 结果驱动",
+    "color": "#c19cf0",
+    "pains": [
+      "只知道总耗时变长",
+      "日志难比较重叠与等待",
+      "事件太多，难找到相关范围"
+    ],
+    "frame": "先明确判断问题，再选择证据表达",
+    "definition": "当前需要判断：时间花在哪里？",
+    "opportunity": "总耗时不足以解释阶段关系时，展开共享时间轴",
+    "design": [
+      "共享时间轴：直接比较阶段关系",
+      "泳道聚焦：突出与问题相关的事件",
+      "原始事件：为候选原因保留核查入口"
+    ],
+    "result": [
+      "定位候选",
+      "继续核查"
+    ],
+    "source": "Problem-driven Visualization / Visualization Trigger",
+    "boundary": "现有设计支持时间比较、泳道聚焦与原始事件核查；自动诊断与生成视图属于演进目标。"
+  },
+  "layers": {
+    "title": "从跨层查找，推导连续的对象与证据关系",
+    "principle": "认知减负",
+    "color": "#9189ed",
+    "pains": [
+      "从模型到层，重新找位置",
+      "从层到节点，重新找对应",
+      "从节点到采样，重新建上下文"
+    ],
+    "frame": "降低信息关联成本",
+    "definition": "调查对象一致，证据逐级深入",
+    "opportunity": "跨层、节点与采样保留同一对象身份",
+    "design": [
+      "连续画布：保留层序和当前位置",
+      "局部展开：沿当前层进入计算节点",
+      "身份携带：定位到同一对象的采样"
+    ],
+    "result": [
+      "理解关联",
+      "核查局部"
+    ],
+    "source": "Object Continuity / Context Preservation",
+    "boundary": "当前展示对象连续与采样关联；64×64 原型采样不等于设备观测或完整张量映射。"
+  },
+  "agent": {
+    "title": "从结果核查到参数调整，保留调查上下文",
+    "principle": "有效控制",
+    "color": "#d9f550",
+    "pains": [
+      "看到结论，难以检查依据",
+      "调整参数，难以看清影响",
+      "完成核查，容易丢失调查条件"
+    ],
+    "frame": "计算可核查 / 上下文可交接",
+    "definition": "如何核查参数影响，并保留调查条件？",
+    "opportunity": "把检查、调整与继续放在同一对象上下文中",
+    "design": [
+      "计算依据：检验当前参数解释",
+      "联动高亮：检查参数影响的输出",
+      "上下文保留：携带对象与配置继续"
+    ],
+    "result": [
+      "人工核查",
+      "保留上下文"
+    ],
+    "source": "Human Verification / Handoff Context",
+    "boundary": "当前示例支持参数联动、计算核查与上下文摘要；Agent 自动接收反馈、批准与恢复执行尚未接通。"
+  },
+  "framework": {
+    "title": "从证据分散，推导问题定向的视图组合",
+    "principle": "问题 / 结果驱动",
+    "color": "#c19cf0",
+    "pains": [
+      "结果、关系、验证各自独立",
+      "切换视图后要重新选对象",
+      "细节常驻，主体被持续挤占"
+    ],
+    "frame": "Diagnostic View Composition",
+    "definition": "问题上下文决定主视图，对象身份贯穿检查",
+    "opportunity": "主视图回答问题，Inspector 展开局部证据",
+    "design": [
+      "任务分组：明确当前查什么",
+      "视角与导航：同一对象换观察方式",
+      "按需检查：只展开当前选择的细节"
+    ],
+    "result": [
+      "连续调查",
+      "局部核查"
+    ],
+    "source": "Diagnostic View Composition",
+    "boundary": "视图组合是设计目标；当前框架演示对象身份、任务、视角、导航与检查职责，未宣称接通全部工具。"
+  },
+  "system": {
+    "title": "从重复组装，推导可复用的证据与表达规则",
+    "principle": "有效控制",
+    "color": "#d9f550",
+    "pains": [
+      "样式复用后，语义仍可能漂移",
+      "证据不足，结论却越过边界",
+      "案例可用，换任务仍需重复组装"
+    ],
+    "frame": "Evidence Contract",
+    "definition": "明确什么证据，允许支持什么结论",
+    "opportunity": "问题触发 → 证据约束 → 视图组合 → 核查交接",
+    "design": [
+      "图元 / Pattern：固定语义与联动契约",
+      "证据契约：声明来源、层级与缺失项",
+      "Skill：固化触发、证据、表达与核查"
+    ],
+    "result": [
+      "可核查",
+      "可纠正"
+    ],
+    "source": "Evidence Contract / Visualization Rules / Skill",
+    "boundary": "图元和 Pattern 约束视觉与交互语义；Skill 沉淀任务触发、最低证据、表达选择与核查规则。自动 Agent 闭环尚未实现。"
+  }
+}

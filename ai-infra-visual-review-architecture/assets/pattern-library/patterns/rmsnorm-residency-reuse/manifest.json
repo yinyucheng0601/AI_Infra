@@ -1,0 +1,25 @@
+{
+  "authoritativeSource": "prototypes/rmsnorm-performance-investigation/index.html",
+  "sourceSha256": "e825157f8deaf32135e694ddf39db7dba41a35937fa3c5a5ae2f1a3a346fd40b",
+  "files": {
+    "index.html": "e825157f8deaf32135e694ddf39db7dba41a35937fa3c5a5ae2f1a3a346fd40b",
+    "provenance.json": "edd661466e19692ac80ffa23bbf4022c08954f7e0ec4f6e1457dcd34d4bf82e9",
+    "fused-add.html": "23756ca27044067fde1a6fa43ceda6f250cbb9c0f98a5b7cfe76a2dd1c09c869",
+    "fused-add-provenance.json": "e46e9d382f8c64468bac9dca73c8fb185d7314554cc47cbf0f741dedc7e4c4f4"
+  },
+  "groupEntries": [
+    {
+      "path": "index.html",
+      "source": "prototypes/rmsnorm-performance-investigation"
+    },
+    {
+      "path": "fused-add.html",
+      "source": "prototypes/fused-add-rmsnorm-independent"
+    }
+  ],
+  "cover": "web/media/rmsnorm-residency-reuse-cover.png",
+  "coverSha256": "ab69b81194fe15d2514686f433d984e1e11cd649b6e3ef67b6dcc47b3ccc4e39",
+  "coverMethod": "user supplied screenshot, 2026-10-30 11:15:23",
+  "refresh": "python3 scripts/build.py",
+  "validation": "standalone package; offline model/source checks, browser interaction reviewed; device prediction accuracy not established"
+}

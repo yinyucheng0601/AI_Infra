@@ -1,0 +1,259 @@
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) {
+  --csa-unselected-node-fill: color-mix(in srgb, var(--surface-4) 82%, var(--foreground-muted));
+}
+
+.pto-dv4-architecture {
+  --csa-map-same: var(--success);
+  --csa-map-expanded: var(--primary);
+  --csa-map-state: var(--warning);
+  --csa-map-deploy: var(--accent);
+  --csa-diff-same: #90f4b4;
+  --csa-diff-expanded: #95bcf9;
+  --csa-diff-state: #fad595;
+  --csa-diff-deploy: #a69dfa;
+}
+
+:root[data-theme='light'] .pto-dv4-architecture {
+  --foreground-secondary: rgba(0, 0, 0, 0.68);
+  --foreground-muted: rgba(0, 0, 0, 0.56);
+}
+
+:root[data-theme='dark'] .pto-dv4-architecture {
+  --foreground-secondary: rgba(255, 255, 255, 0.72);
+  --foreground-muted: rgba(255, 255, 255, 0.60);
+}
+
+/* The shared DV4 sidecar uses 8px for compact multiplicity badges. This
+   page keeps every rendered label at the 10px accessibility floor. */
+.pto-dv4-architecture__legend-mark.is-merge::after,
+.pto-dv4-side-merge__badge-text {
+  font-size: 10px;
+}
+
+.pto-dv4-architecture[data-mapping-level='l1'] .pto-model-graphviz-node.is-collapsed > rect,
+.pto-dv4-architecture[data-mapping-level='l2'] .pto-model-graphviz-node.is-collapsed > rect {
+  stroke-width: 2px;
+}
+
+.pto-dv4-architecture :is([data-node-id='csa_scope_input'], [data-node-id='csa_scope_output']) {
+  pointer-events: none;
+}
+
+.pto-dv4-architecture :is([data-node-id='csa_scope_input'], [data-node-id='csa_scope_output']) > rect {
+  fill: color-mix(in srgb, var(--surface-2) 62%, transparent) !important;
+  stroke: var(--foreground-muted) !important;
+  stroke-width: 1.5px !important;
+  stroke-dasharray: 6 5;
+  opacity: .62;
+}
+
+.pto-dv4-architecture :is([data-node-id='csa_scope_input'], [data-node-id='csa_scope_output']) > .pto-model-graphviz-node-label {
+  fill: var(--foreground-secondary) !important;
+  opacity: .62;
+}
+
+/* Diff compares visible L3 nodes to L2, independently of source mapping tags. */
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node[data-node-id] > rect {
+  fill: color-mix(in srgb, var(--surface-4) 82%, var(--foreground-muted)) !important;
+}
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node[data-diff-highlight][data-diff-category='expanded'] > rect { fill: var(--csa-diff-expanded) !important; }
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node[data-diff-highlight][data-diff-category='state'] > rect { fill: var(--csa-diff-state) !important; }
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node[data-diff-highlight][data-diff-category='deploy'] > rect { fill: var(--csa-diff-deploy) !important; }
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node > :is(.pto-model-graphviz-node-label, .pto-model-graphviz-node-type) { fill: var(--foreground-muted) !important; }
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node[data-diff-highlight] > :is(.pto-model-graphviz-node-label, .pto-model-graphviz-node-type) { fill: #202938 !important; }
+.pto-dv4-architecture.is-mapping-diff .pto-model-graphviz-node[data-diff-highlight][data-diff-category='state'] > :is(.pto-model-graphviz-node-label, .pto-model-graphviz-node-type) { fill: #241a00 !important; }
+
+
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node:not([data-selection-keep]) > rect {
+  fill: var(--csa-unselected-node-fill) !important;
+  fill-opacity: 1;
+}
+
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node:not([data-selection-keep]) > .pto-model-graphviz-node-label,
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node:not([data-selection-keep]) > .pto-model-graphviz-node-type {
+  fill: var(--foreground-muted);
+}
+
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node.is-model-selected > rect {
+  stroke-width: 5px;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--primary) 55%, transparent));
+}
+
+.pto-dv4-architecture[data-mapping-level='l3'].has-csa-selection .pto-model-graphviz-edge:not(.is-model-related) {
+  opacity: 0.36;
+}
+
+.pto-dv4-architecture.has-model-boundary-focus [data-cluster-id='csa_model_semantic_scope'] > rect:first-child {
+  fill: color-mix(in srgb, var(--primary) 7%, transparent);
+  stroke: var(--primary);
+  stroke-width: 4px;
+  stroke-dasharray: 11 6;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--primary) 42%, transparent));
+}
+
+.pto-dv4-architecture.has-model-boundary-focus [data-cluster-id='csa_model_semantic_scope'] > .pto-model-graphviz-cluster-label {
+  fill: var(--primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.pto-dv4-architecture[data-mapping-level='l1'].has-model-boundary-focus [data-cluster-id='csa_model_semantic_scope'] > rect:first-child {
+  fill: transparent;
+  stroke-dasharray: none;
+}
+
+:root[data-theme='light'] .pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) {
+  --csa-unselected-node-fill: color-mix(in srgb, var(--surface-3) 88%, var(--foreground-muted));
+}
+
+:root[data-theme='light'] .dv4-pattern-page[data-surface='white'] .pto-dv4-architecture,
+:root[data-theme='light'] .dv4-pattern-page[data-surface='white'] .pto-dv4-architecture__viewport {
+  background-color: #F8F8F8;
+}
+
+:root[data-theme='light'] .dv4-pattern-page[data-surface='white'] .pto-dv4-architecture {
+  --model-graphviz-bg: #F8F8F8;
+  --model-graphviz-surface: #F8F8F8;
+  --model-graphviz-surface-soft: #F8F8F8;
+  --model-graphviz-stage-bg: #F8F8F8;
+}
+
+:root[data-theme='light'] .dv4-pattern-page[data-surface='white'] .pto-dv4-architecture__viewport {
+  background-image: none;
+}
+
+/* Embedded white surface applies only in light mode; dark matches the host header. */
+:root[data-theme='dark'] .dv4-pattern-page[data-embed='true'][data-surface='white'] .pto-dv4-architecture__viewport {
+  background: var(--background);
+}
+
+/* Selection takes precedence over semantic and Diff colors on both canvases. */
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node[data-node-id]:not([data-selection-keep]) > rect {
+  fill: var(--csa-unselected-node-fill) !important;
+  fill-opacity: 1 !important;
+  filter: none !important;
+}
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node[data-node-id]:not([data-selection-keep]) > .pto-model-graphviz-node-label,
+.pto-dv4-architecture.has-csa-selection:not(.is-report-architecture) .pto-model-graphviz-node[data-node-id]:not([data-selection-keep]) > .pto-model-graphviz-node-type {
+  fill: var(--foreground-muted) !important;
+}
+
+/* Standalone preview shell only; graph internals remain the extracted source. */
+.v4-preview { height: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.v4-preview__toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:var(--space-2); padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--border-default); font:var(--type-body-sm); }
+.v4-preview__toolbar strong { margin-right:auto; font:var(--type-title-3); }
+.v4-preview__stage { min-height:0; }
+.v4-preview__footer { display:flex; flex-wrap:wrap; justify-content:space-between; gap:var(--space-2); padding:var(--space-2) var(--space-4); border-top:1px solid var(--border-default); color:var(--foreground-secondary); font:var(--type-body-sm); }
+.v4-preview__footer output { overflow-wrap:anywhere; }
+
+/* Report semantic palette, scoped to V4. Selection adds a stroke without changing types. */
+.is-report-architecture, .v4-preview {
+  --v4-report-value:#b4ed50;
+  --v4-report-parameter:#b8a1e3;
+  --v4-report-compute:#505050;
+  --v4-report-ink:#f3f3f3;
+}
+:root[data-theme='light'] :is(.is-report-architecture,.v4-preview) {
+  --background:#F8F8F8;
+  --model-graphviz-bg:#F8F8F8;
+  --model-graphviz-stage-bg:#F8F8F8;
+  background-color:#F8F8F8;
+  --v4-report-value:#578700;
+  --v4-report-parameter:#8550c8;
+  --v4-report-compute:#d2d2d2;
+  --v4-report-ink:#202020;
+}
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='compute'] > rect {
+  fill:var(--v4-report-compute) !important;
+  stroke:none !important;
+  filter:none !important;
+}
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='value'] > rect,
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] > rect {
+  fill:var(--background) !important;
+  stroke:var(--v4-report-value) !important;
+  stroke-width:1.2px !important;
+  stroke-dasharray:none !important;
+  filter:none !important;
+}
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] > rect { stroke:var(--v4-report-parameter) !important; }
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind] > .pto-model-graphviz-node-label { fill:var(--v4-report-ink) !important; }
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='value'] > .pto-model-graphviz-node-label { fill:var(--v4-report-value) !important; }
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] > .pto-model-graphviz-node-label { fill:var(--v4-report-parameter) !important; }
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind].is-model-selected > rect { stroke:var(--v4-report-ink) !important; stroke-width:2px !important; }
+.is-report-architecture .pto-model-graphviz-edge[data-report-flow='activation'] { stroke:var(--v4-report-value) !important; }
+.is-report-architecture .pto-model-graphviz-edge[data-report-flow='parameter'] { stroke:var(--v4-report-parameter) !important; stroke-dasharray:6 5; }
+.v4-report-residual-label { fill:var(--v4-report-value); font-size:16px; font-family:var(--font-family-mono,monospace); }
+.v4-preview__stage { position:relative; }
+.v4-preview__info { position:absolute; top:var(--space-4); left:var(--space-4); z-index:6; width:36px; height:36px; padding:8px; border-radius:50%; background:var(--surface-2); }
+.v4-preview__info svg { display:block; width:20px; height:20px; }
+.v4-preview__info:focus-visible { outline:2px solid var(--foreground-primary); outline-offset:3px; }
+.v4-preview__legend { position:absolute; z-index:5; left:var(--space-4); top:64px; max-width:320px; background:var(--surface-2); padding:var(--space-3); border:1px solid var(--border-default); border-radius:var(--radius-md); font:var(--type-body-sm); color:var(--foreground-secondary); }
+.v4-preview__legend[hidden] { display:none; }
+.v4-preview__legend p { margin:var(--space-2) 0 0; }
+.v4-legend-mark { display:inline-block; vertical-align:middle; width:32px; height:12px; margin-right:var(--space-2); border:1px solid currentColor; }
+.v4-legend-mark.is-compute { background:var(--v4-report-compute); border:0; border-radius:12px; }
+.v4-legend-mark.is-value { color:var(--v4-report-value); background:repeating-linear-gradient(90deg,transparent 0 1px,color-mix(in srgb,var(--v4-report-value) 23%,transparent) 1px 6px); }
+.v4-legend-mark.is-parameter { color:var(--v4-report-parameter); background:repeating-linear-gradient(90deg,transparent 0 1px,color-mix(in srgb,var(--v4-report-parameter) 23%,transparent) 1px 6px); }
+.v4-legend-mark.is-flow { height:0; border:0; border-top:1px solid var(--v4-report-value); }
+.v4-legend-mark.is-read { height:0; border:0; border-top:1px dashed var(--v4-report-parameter); }
+@media(max-width:640px) { .v4-preview__legend { max-width:min(260px,calc(100% - 32px)); } }
+
+.is-report-architecture .v4-report-grid > rect { stroke:none !important; stroke-width:0 !important; fill-opacity:1 !important; }
+
+/* Neutral wiring recedes until a node or connector is inspected. */
+.is-report-architecture, .v4-preview { --v4-report-wire:#666a70; }
+:root[data-theme='light'] :is(.is-report-architecture,.v4-preview) { --v4-report-wire:#b0b0b0; }
+.is-report-architecture .pto-model-graphviz-edge[data-report-flow] {
+  stroke:var(--v4-report-wire) !important;
+  pointer-events:stroke;
+}
+.is-report-architecture .pto-model-graphviz-edge[data-report-flow].is-flow-hover {
+  stroke:var(--v4-report-value) !important;
+  stroke-width:2px !important;
+}
+.is-report-architecture .pto-model-graphviz-edge[data-report-flow='parameter'].is-flow-hover { stroke:var(--v4-report-parameter) !important; }
+ .pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind].is-flow-hover > rect {
+  fill:color-mix(in srgb,var(--background) 90%,white 10%) !important;
+}
+.pto-dv4-architecture.is-report-architecture .pto-model-graphviz-node[data-report-kind='compute'].is-flow-hover > rect {
+  fill:color-mix(in srgb,var(--v4-report-compute) 90%,white 10%) !important;
+}
+.is-report-architecture .v4-report-residual-label { fill:var(--v4-report-wire); }
+.v4-legend-mark.is-flow, .v4-legend-mark.is-read { border-top-color:var(--v4-report-wire); }
+
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-cluster > rect:first-child {
+  stroke:#d0d0d0 !important;
+}
+:root[data-theme='light'] .is-report-architecture .v4-report-grid > rect { opacity:.34; }
+
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-node[data-report-kind='value'] > .pto-model-graphviz-node-label { fill:#416600 !important; }
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] > .pto-model-graphviz-node-label { fill:#7040ae !important; }
+
+.is-report-architecture .pto-dv4-architecture__viewport { cursor:grab; touch-action:none; }
+.is-report-architecture .pto-dv4-architecture__viewport.is-dragging { cursor:grabbing; user-select:none; }
+
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-edge[data-report-flow]:not(.is-flow-hover) {
+  stroke:#d0d0d0 !important;
+}
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-edge[data-report-residual='true']:not(.is-flow-hover) {
+  stroke:var(--v4-report-wire) !important;
+}
+:root[data-theme='light'] .v4-legend-mark.is-flow,
+:root[data-theme='light'] .v4-legend-mark.is-read { border-top-color:#d0d0d0; }
+
+/* Residual bypass remains outside the model card and visually distinct. */
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-edge[data-report-residual='true']:not(.is-flow-hover) {
+  stroke:#858585 !important; stroke-width:2px !important;
+}
+:root[data-theme='light'] .is-report-architecture .v4-report-residual-label { fill:#858585; }
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-cluster[data-report-foldable='true'] > rect:first-child {
+  fill:#fff !important; fill-opacity:1 !important; stroke:none !important;
+}
+
+:root[data-theme='light'] .is-report-architecture .pto-model-graphviz-cluster[data-report-foldable='true'][data-report-depth='1'] > rect:first-child {
+  fill:#f0f0f0 !important;
+}
+
+:root[data-theme='dark'] .is-report-architecture .pto-model-graphviz-edge[data-report-residual='true']:not(.is-flow-hover) { stroke:#a0a0a0 !important; stroke-width:2px !important; }
+:root[data-theme='dark'] .is-report-architecture .v4-report-residual-label { fill:#a0a0a0; }
+.is-report-architecture .pto-model-graphviz-node.is-flow-hover .v4-report-residual-label { fill:var(--v4-report-value); }

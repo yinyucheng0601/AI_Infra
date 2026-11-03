@@ -1,0 +1,13 @@
+{
+  "authoritativeSource": "prototypes/unpack-case3/index.html",
+  "sourceSha256": "113c6a5aa715b58069bc1f943e2ba80c66614dc869b8f2d9d9fbfb3c563fb6c6",
+  "outputSha256": "e2f808739144d8293bb43267e5644f7604c7fe5965c85be2290cd707443953e6",
+  "files": {
+    "index.html": "e2f808739144d8293bb43267e5644f7604c7fe5965c85be2290cd707443953e6"
+  },
+  "cover": "web/media/unpack-case3-inspector-cover.svg",
+  "coverSha256": "f67a3e89138252941eb69176bd8bcfa43a55c51f030856dc27f0b3a246c71f4c",
+  "coverMethod": "application-generated SVG scene exported via DOM substitute; not browser screenshot",
+  "refresh": "python3 scripts/build.py",
+  "validation": "packaged dependencies and hashes checked; rendering and device execution not verified by this collection"
+}

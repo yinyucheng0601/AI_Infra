@@ -1,0 +1,86 @@
+[
+  {
+    "title": "让判断，跟上 Agent",
+    "script": [
+      "我的一个设计目标，是让可视化自然地进入开发者与 Agent 协作的工作流程。Agent 可以协助分析和生成代码，开发者仍然需要判断：它理解的计算关系是否正确，参数变化影响了哪里，下一步应该核查什么。",
+      "Scale 把这些判断组织成可操作的画面。输入、参数与输出按照计算关系布置，颜色区分数据角色；开发者选择或修改参数时，可以核查关联输出，再将当前对象与来源证据带回会话。",
+      "视觉设计的重点，是让抽象关系成为能够辨认、比较和指认的对象，使讨论拥有具体落点。目标是支持已有开发流程中的理解与核查环节。"
+    ],
+    "sources": [
+      {
+        "label": "Scale · 原型说明与验证边界",
+        "path": "ai-infra-research/prototypes/scale-investigation-trial/README.md"
+      },
+      {
+        "label": "Scale · 对象与交接数据契约",
+        "path": "ai-infra-research/prototypes/scale-investigation-trial/model.js"
+      },
+      {
+        "label": "AI Infra 计算可视化 · 总 workflow",
+        "path": "ai-infra-research/methods/ai-infra-investigation/README.md"
+      }
+    ],
+    "boundary": "设计目标与原型探索。当前参考关系和数值检查基于固定来源及确定性数据，不是 NPU 设备结果。证据复制是交接能力，不表示已接入自动双向 Agent 会话。尚无真实开发任务的效率收益测量。 演示变更 scale[0,0]：−1 → 1；bias 保持 −1.5。仅更新模型确定的两个关联输出。图中动效不编码硬件时序。"
+  },
+  {
+    "title": "让重点，自己浮现",
+    "script": [
+      "执行泳道里有大量相似事件。如果每条泳道、每个标签和每条连线都有相同的视觉强度，读者就需要逐项搜索。",
+      "这里用灰阶保留整体分布，将强调色集中到当前调查路径。共享时间轴让起点与区间可以比较；上下配对和局部连接则帮助读者找到跨层对应。",
+      "视觉取舍是让重点足够突出，同时保留判断所需的上下文。它支持提出调查方向，后续仍需回到原始事件验证。"
+    ],
+    "sources": [
+      {
+        "label": "Inference Request · Pattern 与数据口径",
+        "path": "ai-infra-research/patterns/critical-path-swimlane/README.md"
+      }
+    ],
+    "boundary": "截图来自仓库现有封面。Device 行是 Host 记录的 runner_run 调用窗口，不是独立采集的设备执行时长。关注路径不证明唯一因果瓶颈。本页未虚构 Before/After 或用户效率指标。 发布会版使用原始 D23 的 bind 与 runner_run 窗口，按统一时间比例重新排布。最晚进入 lane 由 rrStart 重算；演示动画只表达视觉聚焦。"
+  },
+  {
+    "title": "进入细节，不丢全局",
+    "script": [
+      "Layer Stack 同时面对整网分布、单层计算结构和具体张量三个观察尺度。它们需要各自的阅读方式，也需要保留彼此的对应。",
+      "重复平面建立层序，当前层抬起成为焦点，前后层保留为参照；单层正视图承载计算关系，矩阵检查器承载采样坐标与数值。选择与张量模式成为不同视图间的共同上下文。",
+      "这里的视觉取舍是：总览保留结构与分布，精确读数进入局部。不同视图承担不同任务，持续回答当前对象来自哪里。"
+    ],
+    "sources": [
+      {
+        "label": "Layer Stack · 已有规格与视觉编码",
+        "path": "layer_stack/pangu-layer-stack-spec.md"
+      },
+      {
+        "label": "单层正视图 · 数据绑定与模式",
+        "path": "layer_stack/layer-front-notes.md"
+      },
+      {
+        "label": "Layer Atlas 2 · Pattern 来源",
+        "path": "layer_stack/pangu-layer-atlas-2.md"
+      }
+    ],
+    "boundary": "49 层结构与 LayerStackFace renderer 来自已有原型；矩阵为 layer-data.js 的 L18 normal 激活采样。此次镜头与分步展示为汇报重组，不表示原工具已实现相同镜头过渡。没有把样本解释为真实训练测量。"
+  },
+  {
+    "title": "每一次设计，都是下一次的起点",
+    "script": [
+      "作为团队中承担视觉设计的角色，我也在考虑：这些判断如何继续支持新的技术内容。",
+      "目前逐步积累了三个层次。图元记录对象的视觉语义；Pattern 把对象放进具体关系和交互中；方法与 Skills 则记录适用条件、来源约束与检查方式，供团队和 Agent 沿用。",
+      "这些资产已有具体应用，跨页面仍然存在需要统一和验证的地方。下一步希望通过真实开发任务，检验哪些规则可以直接复用，哪些需要保留场景差异。"
+    ],
+    "sources": [
+      {
+        "label": "正式图例库 · 对象与视觉语言",
+        "path": "ai-infra-research/reports/llm-compute/diagram-legend-library/OBJECT-SYSTEM.md"
+      },
+      {
+        "label": "参数化计算 · 复用 renderer",
+        "path": "ai-infra-research/prototypes/scale-investigation-trial/visual-system.js"
+      },
+      {
+        "label": "AI Infra 计算可视化 · 总 workflow",
+        "path": "ai-infra-research/methods/ai-infra-investigation/README.md"
+      }
+    ],
+    "boundary": "Tensor 为正式 inventory 的 system-value / data-1；参数化计算组合复用现有 VisualSystem renderer。最终三个案例预览为仓库已有截图。图元、Pattern 与方法已经沉淀；真实团队复用收益仍需在开发任务中验证。"
+  }
+]

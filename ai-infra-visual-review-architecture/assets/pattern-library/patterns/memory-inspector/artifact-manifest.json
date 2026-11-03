@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "pattern.snapshot.v1",
+  "sourceRepository": "PyPTO3-main",
+  "sourcePath": "Design/pass-error-cases/index.html",
+  "sha256": "8d57de3d75d41fe0c042cc7925602ff904eeb06f6ad2cc2f5f24bf6b41e5d33c",
+  "snapshot": "demo.html",
+  "entry": "index.html",
+  "route": "#case=MI-01&pass=32",
+  "approvedAt": "2026-10-16"
+}
