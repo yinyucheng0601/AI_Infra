@@ -22,10 +22,11 @@
  function toggleNotes(){setNotes(!document.body.classList.contains('notes-open'));}
  notesTrigger.addEventListener('click',e=>{if(matchMedia('(hover:none)').matches||e.detail===0)toggleNotes();else setNotes(true);});panel.querySelector('.notes-pin-close').addEventListener('click',()=>setNotes(false));
  let last=4;
- const firstStep=slide=>['summary','next-step'].includes(slide.id)?0:slide.id==='closing'?5:slide.id==='language'?0:-1;
- const lastStep=slide=>['summary','next-step'].includes(slide.id)?0:slide.id==='language'?4:slide.id==='system'?3:5;
+ const firstStep=slide=>['summary','next-step','domain-theory'].includes(slide.id)?0:slide.id==='closing'?5:slide.id==='language'?0:-1;
+ const lastStep=slide=>['summary','next-step','domain-theory'].includes(slide.id)?0:slide.id==='language'?4:slide.id==='system'?3:5;
  captions[0]=captions[0].slice(0,5).map(t=>t.replace('/ 06','/ 05'));
- captions.push(Array(6).fill('生成最少但足够的可视化'));
+ captions.splice(1,0,['']);
+ captions.splice(6,0,Array(6).fill('让领域视觉知识可复用、可组合、可核查'));
  let active=-1,step=0,auto=true,timeout=null,remaining=null,deadline=0,mode='slide';
  const play=document.querySelector('[data-play]');
  const rootStyle=getComputedStyle(document.documentElement);
@@ -113,7 +114,7 @@
    if(!reduce.matches&&step!==previousStep)cards.forEach((el,i)=>{const a=before[i],b=el.getBoundingClientRect();if(a.width&&b.width)el.animate([{transform:`translate(${a.left-b.left}px,${a.top-b.top}px) scale(${a.width/b.width},${a.height/b.height})`},{transform:"none"}],{duration:850,easing:"cubic-bezier(.22,1,.36,1)"});});
 
   }
-  const caption=slide.querySelector('[data-caption]');if(step>=0&&caption.textContent!==captions[active][step]){caption.textContent=captions[active][step];pop(caption);}
+  const caption=slide.querySelector('[data-caption]');if(step>=0&&caption&&captions[active]?.[step]!==undefined&&caption.textContent!==captions[active][step]){caption.textContent=captions[active][step];pop(caption);}
   if(slide.id==='system'){const head=slide.querySelector('.asset-series-head');head.getAnimations().forEach(a=>a.cancel());if(step===2&&!reduce.matches)head.animate([{opacity:1},{opacity:0}],{delay:1000,duration:400,fill:'forwards',easing:ease});}
   if(slide.id==='system'&&step>=0&&step<=2){document.querySelector('[data-series-title]').textContent=['01 原子图元','02 组合 Pattern','03 框架画布'][step];document.querySelector('[data-series-description]').textContent=['固定对象语义','组织关系与联动','保留上下文，按需核查'][step];document.querySelectorAll('[data-series-node]').forEach(el=>el.classList.toggle('current',Number(el.dataset.seriesNode)===step));}
   if(slide.id==='framework'){requestAnimationFrame(updateFrameworkLink);setTimeout(updateFrameworkLink,550);}

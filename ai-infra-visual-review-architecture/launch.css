@@ -1115,3 +1115,22 @@ body.navigator-open .navigator-hover-zone{pointer-events:none}
   }
   @keyframes skill-research-in{from{opacity:0}to{opacity:1}}
 }
+
+/* The opening rationale is a standalone, manually advanced frame. */
+.launch-theory{--accent:#725699;background:#f0f1f3;color:#17242e}
+.launch-theory .launch-head{position:absolute;inset:4% 4% auto}
+.launch-theory .title{font-size:clamp(26px,3.05cqw,58px)}
+.launch-theory .brand,.launch-theory .subtitle{color:#506374}
+.domain-map{position:absolute;inset:32% 5% 9%;display:grid;grid-template-rows:1fr .35fr 1fr}
+.domain-inputs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.2cqw}
+.domain-inputs article,.domain-outcome{border-radius:1cqw;background:#e4e7eb;padding:1.35cqw}
+.domain-map small{color:#5d477e;font:600 0.8cqw monospace;letter-spacing:.07em}
+.domain-inputs h2{font-size:1.65cqw;margin:.5em 0 .25em}
+.domain-inputs p{font-size:1.08cqw;margin:0;color:#425565}
+.domain-convergence{display:grid;grid-template-columns:repeat(4,1fr);align-items:stretch}
+.domain-convergence i{justify-self:center;border-left:1px solid #9aa9b7}
+.domain-outcome{text-align:center;display:grid;align-content:center;justify-items:center;gap:.6cqw}
+.domain-outcome strong{font-size:2.1cqw}
+.domain-outcome span{display:inline-block;border-radius:2em;background:#d9c4f2;padding:.36em 1em;margin:0 .35em;font-size:1cqw}
+.domain-outcome span:nth-child(2){background:#c8c4f6}
+.domain-outcome span:nth-child(3){background:#d9f550}
