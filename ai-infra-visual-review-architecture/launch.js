@@ -4,7 +4,7 @@
  const slides=[...document.querySelectorAll('#deck>.slide')];
  const data=JSON.parse(document.querySelector('#launch-data').textContent);
  const reduce=matchMedia('(prefers-reduced-motion:reduce)');
- const captions=[["01 / 06　让开发者用更少注意力完成关键判断", "02 / 06　从结果与检查点 发现问题，再按需调查", "03 / 06　由问题复杂度和决策风险决定表达方式", "04 / 06　由决策困难触发可视化", "05 / 06　让开发者在关键时刻能够介入和纠正", "06 / 06　生成最少但足够的可视化"], ["01 / 06　总耗时只能说明慢，不能说明差异在哪", "02 / 06　按同一时间轴排列 Host 事件窗口", "03 / 06　Lane 6 最晚进入 runner_run", "04 / 06　查看 bind 与调用窗的原始区间", "05 / 06　检查 Lane 6 跨步骤是否重复出现", "06 / 06　每次展开，都回答一个更具体的问题"], ["01 / 06　先看 Layer Stack 完整设计", "02 / 06　保留层序，拉出当前层 L18", "03 / 06　沿层内计算定位 Query", "04 / 06　进入 Query 的 64 × 64 原型采样", "05 / 06　从分布进入具体采样坐标", "06 / 06　层、节点、模式与采样共同保留对象身份"], ["01 / 06　从选中对象开始，随时展开核查", "02 / 06　选中 scale[0,0]，指认两个关联输出", "03 / 06　改变参数，检查作用范围是否符合预期", "04 / 06　用算式检查联动是否有依据", "05 / 06　展开核查面板，整理问题与交接证据", "06 / 06　保留问题与证据，供下一轮继续核查"], ["01 / 04　原子图元", "02 / 04　组合 Pattern", "03 / 04　框架画布 · Pass Error Cases", "04 / 04　Skill 生成与核查"]];
+ const captions=[["01 / 06　让开发者用更少注意力完成关键判断", "02 / 06　从结果与检查点 发现问题，再按需调查", "03 / 06　由问题复杂度和决策风险决定表达方式", "04 / 06　由决策困难触发可视化", "05 / 06　让开发者在关键时刻能够介入和纠正", "06 / 06　生成最少但足够的可视化"], ["01 / 06　总耗时只能说明慢，不能说明差异在哪", "02 / 06　按同一时间轴排列 Host 事件窗口", "03 / 06　Lane 6 最晚进入 runner_run", "04 / 06　查看 bind 与调用窗的原始区间", "05 / 06　检查 Lane 6 跨步骤是否重复出现", "06 / 06　每次展开，都回答一个更具体的问题"], ["01 / 06　先看 Layer Stack 完整设计", "02 / 06　保留层序，拉出当前层 L18", "03 / 06　沿层内计算定位 Query", "04 / 06　进入 Query 的 64 × 64 原型采样", "05 / 06　从分布进入具体采样坐标", "06 / 06　层、节点、模式与采样共同保留对象身份"], ["01 / 06　从选中对象开始，随时展开核查", "02 / 06　选中 scale[0,0]，指认两个关联输出", "03 / 06　将 scale[0,0] 从 −1 改为 1，核查两个 batch 的输出", "04 / 06　用算式检查联动是否有依据", "05 / 06　展开核查面板，整理问题与交接证据", "06 / 06　保留问题与证据，供下一轮继续核查"], ["01 / 04　原子图元", "02 / 04　组合 Pattern", "03 / 04　框架画布 · Pass Error Cases", "04 / 04　Skill 生成与核查"]];
  captions.push(['从发现问题，到理解证据，再到介入纠正']);
  const notes=JSON.parse(document.querySelector('#speaker-data').textContent),panel=document.querySelector('.speaker-panel'),notesBody=panel.querySelector('.pinned-notes-content'),notesTrigger=document.querySelector('.notes-button');
  const notesDock=document.createElement('div');notesDock.className='notes-dock';document.body.append(notesDock);notesDock.append(notesTrigger,panel);
@@ -22,8 +22,8 @@
  function toggleNotes(){setNotes(!document.body.classList.contains('notes-open'));}
  notesTrigger.addEventListener('click',e=>{if(matchMedia('(hover:none)').matches||e.detail===0)toggleNotes();else setNotes(true);});panel.querySelector('.notes-pin-close').addEventListener('click',()=>setNotes(false));
  let last=4;
- const firstStep=slide=>slide.id==='summary'?0:slide.id==='closing'?5:slide.id==='language'?0:-1;
- const lastStep=slide=>slide.id==='summary'?0:slide.id==='language'?4:slide.id==='system'?3:5;
+ const firstStep=slide=>['summary','next-step'].includes(slide.id)?0:slide.id==='closing'?5:slide.id==='language'?0:-1;
+ const lastStep=slide=>['summary','next-step'].includes(slide.id)?0:slide.id==='language'?4:slide.id==='system'?3:5;
  captions[0]=captions[0].slice(0,5).map(t=>t.replace('/ 06','/ 05'));
  captions.push(Array(6).fill('生成最少但足够的可视化'));
  let active=-1,step=0,auto=true,timeout=null,remaining=null,deadline=0,mode='slide';

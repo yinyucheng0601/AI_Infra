@@ -42,6 +42,8 @@ html=html.replace("clone.querySelectorAll('[id]').forEach", "clone.querySelector
 html=html.replace('window.deckCurrent=current;', '''window.deckCurrent=current;
     slides.forEach(function(s,i){s.dataset.active=String(i===current);s.inert=i!==current;s.setAttribute('aria-hidden',String(i!==current));});''')
 html=html.replace("function setView(view,moveFocus){", "function setView(view,moveFocus){\n    document.dispatchEvent(new CustomEvent('deck:view',{detail:{view:view}}));")
+html=html.replace("return '#'+s.id===location.hash;", "return '#'+s.id===(location.hash==='#system-workflow'?'#system':location.hash);", 1)
+html=html.replace("history.replaceState(null,'','#'+slides[current].id);", "if(location.hash!=='#system-workflow'||slides[current].id!=='system')history.replaceState(null,'','#'+slides[current].id);", 1)
 observer=r'  var observer=new IntersectionObserver.*?slides\.forEach\(function\(s\)\{observer\.observe\(s\);\}\);'
 html,n=re.subn(observer,'',html,count=1,flags=re.S)
 if n!=1: raise RuntimeError('Template observer adapter no longer matches')
