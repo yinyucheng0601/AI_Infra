@@ -28,7 +28,7 @@ html=re.sub(r'<script id="speaker-data" type="application/json">.*?</script>',la
 a=html.index(' const notes=JSON.parse(document.querySelector("#speaker-data")') if ' const notes=JSON.parse(document.querySelector("#speaker-data")' in html else html.index(" const notes=JSON.parse(document.querySelector('#speaker-data')")
 b=html.index('\n})();',a)
 html=html[:a]+html[b:]
-html=re.sub(r'<dialog class="speaker-dialog".*?</dialog>', '<aside class="speaker-panel" aria-label="对照讲稿"><header><span>对照讲稿</span><button class="notes-pin-close" title="收起讲稿（N）">收起 · N</button></header><div class="pinned-notes-content" aria-live="polite"></div></aside>', html, flags=re.S)
+html=re.sub(r'<dialog class="speaker-dialog".*?</dialog>', '<aside class="speaker-panel" aria-label="当前分镜讲稿"><header><span>当前分镜讲稿</span><button class="notes-pin-close" title="收起讲稿（N）">收起 · N</button></header><div class="pinned-notes-content" aria-live="polite"></div></aside>', html, flags=re.S)
 html=html.replace('aria-haspopup="dialog"','aria-expanded="true"').replace('讲稿 · N</button>','讲稿 · N</button>')
 html=html.replace("if(e.target.closest('[data-prev]'))goTo(current-1);if(e.target.closest('[data-next]'))goTo(current+1);", "if(e.target.closest('[data-prev]'))window.DeckMotion?.back();if(e.target.closest('[data-next]'))window.DeckMotion?.advance();")
 html=html.replace('四页总览','六页总览').replace('上一页（←）','上一画面（←）').replace('下一页（→）','下一画面（→）')
@@ -36,7 +36,7 @@ html=html.replace('aria-label="上一页"','aria-label="上一画面"').replace(
 html=html.replace('Draft 01</title>','Launch Draft 06</title>')
 html=html.replace('<span class="deck-position"','<button type="button" data-play title="暂停分步演示（P）" aria-label="暂停分步演示">暂停</button><span class="deck-position"',1)
 html=html.replace('上一页（←）','上一页（PageUp）').replace('下一页（→）','下一页（PageDown）')
-html=html.replace('<div class="lightbox"','<div class="launch-hint">空格 暂停 / 继续　← → 翻帧　PageUp / PageDown 翻页　R 重播　N 讲稿</div><div class="scene-progress" aria-hidden="true"><i></i></div>\n<div class="lightbox"',1)
+html=html.replace('<div class="lightbox"','<div class="launch-hint">空格 暂停 / 继续　← → 翻帧　PageUp / PageDown 翻页　R 返回第一页　N 讲稿</div><div class="scene-progress" aria-hidden="true"><i></i></div>\n<div class="lightbox"',1)
 # Adapt the supplied navigation runtime to a stationary presentation stage.
 html=html.replace("clone.querySelectorAll('[id]').forEach", "clone.querySelectorAll('canvas').forEach(function(c,i){var source=slide.querySelectorAll('canvas')[i];if(source)c.getContext('2d').drawImage(source,0,0);});\n    clone.querySelectorAll('[id]').forEach")
 html=html.replace('window.deckCurrent=current;', '''window.deckCurrent=current;
@@ -54,6 +54,8 @@ html=html.replace("window.addEventListener('resize',sizeThumbs);", "window.DeckN
 data={'d23':json.loads((ROOT/'assets/swimlane-d23.json').read_text()),'sample':json.loads((ROOT/'assets/layer18-sample.json').read_text())}
 deps='<script id="launch-data" type="application/json">'+json.dumps(data,ensure_ascii=False).replace('</','<\\/')+'</script>\n<script src="assets/scale-model.js"></script>\n<script src="assets/visual-system.js"></script>\n<script src="launch.js?v=SCRIPT_FINGERPRINT"></script>'
 deps=deps.replace('SCRIPT_FINGERPRINT',hashlib.sha256((ROOT/'launch.js').read_bytes()).hexdigest()[:12])
+html=html.replace('查看当前页讲稿与来源（N）','查看当前分镜讲稿（N）').replace('查看当前页讲稿与来源 (N)','查看当前分镜讲稿（N）')
 html=html.replace('</body>',deps+'\n</body>')
+html=html.replace('<head>', '<head>\n<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">',1)
 (ROOT/'index.html').write_text(html)
 print('Built Launch Draft 06: 6 scenes, variable builds per scene, source-derived animated data.')

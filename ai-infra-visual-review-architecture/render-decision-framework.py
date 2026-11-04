@@ -7,7 +7,7 @@ def render(key,d,model,label):
     master=key=='master'
     focus=d.get('focus')
     widths=[355,560,355] if focus is None else [790 if i==focus else 240 for i in range(3)]
-    detail={'attention':'证据随问题深入，整体参照持续可见','layers':'表达可以变化，同一对象的对应关系持续可见','agent':'人的判断连同对象、条件与证据一起保留'}.get(key,'')
+    detail={'attention':'证据随问题深入，整体参照持续可见','layers':'表达可以变化，同一对象的对应关系持续可见','agent':'开发者的判断连同对象、条件与证据一起保留'}.get(key,'')
     shapes=[];start=45
     for i,w in enumerate(widths):
         shapes.append((start,start+w,50 if focus==i else (80 if focus is None else 165)));start+=w
@@ -48,7 +48,7 @@ def render(key,d,model,label):
     for i,(h,t) in enumerate(zip(headings,reasoning)):
         svg+=f'<foreignObject x="{30+i*335}" y="490" width="310" height="115"><div xmlns="http://www.w3.org/1999/xhtml" class="ds-reason"><small>{h}</small><p>{esc(t)}</p></div></foreignObject>'
     svg+='</svg>'
-    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="决策支持框架" style="--diagram-accent:{d["color"]}"><div class="theory-brand">AI INFRA<span>DECISION SUPPORT / {dict(attention="FOCUS",layers="CONTINUITY",agent="CONTROL").get(key,key.upper())}</span></div><header><small class="derive-principle">{d["level"]}</small><h2>{d["title"]}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
+    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="决策支持框架" style="--diagram-accent:{d["color"]}"><div class="theory-brand">COMPUTE DEVELOPMENT VISUALIZATION<span>DECISION SUPPORT / {dict(attention="FOCUS",layers="CONTINUITY",agent="CONTROL").get(key,key.upper())}</span></div><header><small class="derive-principle">{d["level"]}</small><h2>{d["title"]}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
 def render_handoff(d,label):
     nodes=[(70,300,'AGENT','自动调查','测试 · 收集证据','提出候选解释'),(520,870,'HUMAN × AGENT','决策检查点','当前结论 · 支持证据','关键差异 · 未验证部分'),(1090,1300,'AGENT','根据反馈继续','验证假设 · 更新证据','保留可追溯结果')]
     svg='<svg viewBox="0 0 1360 610" role="img" aria-label="收敛任务和证据，Skill 约束资产选择与组装，Agent 生成并核查表达">'
@@ -64,11 +64,11 @@ def render_handoff(d,label):
     for i,(title,text) in enumerate([('图元','固定对象角色、变体与视觉语义'),('Pattern + 框架','固定关系联动与页面空间职责'),('Skill','串联问题、证据、资产选择、组装与核查')]):
         svg+=f'<foreignObject x="{40+i*445}" y="465" width="410" height="130"><div xmlns="http://www.w3.org/1999/xhtml" class="ds-reason"><small>{title}</small><p>{text}</p></div></foreignObject>'
     svg+='</svg>'
-    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="设计资产与 Skill 输出约束" style="--diagram-accent:#d9f550"><div class="theory-brand">AI INFRA<span>HUMAN × AGENT / SYSTEM</span></div><header><small class="derive-principle">{esc(d["level"])}</small><h2>{esc(d["title"])}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
+    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="设计资产与 Skill 输出约束" style="--diagram-accent:#d9f550"><div class="theory-brand">COMPUTE DEVELOPMENT VISUALIZATION<span>HUMAN × AGENT / SYSTEM</span></div><header><small class="derive-principle">{esc(d["level"])}</small><h2>{esc(d["title"])}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
 
 def apply(slides):
     data=json.loads((ROOT/'chapter-derivation-diagrams.json').read_text());model=data['model']
-    master={'title':'从判断困难，到决策支持','context':'把可观测性设计成人类决策支持系统 · 本项目的设计主张','level':'总框架 · 三个设计原则','color':'#c19cf0','focus':None,'reasoning':['人需要判断什么？','注意力、理解或行动在哪里受阻？','由判断困难选择表达与交互','案例机制 → 页面组织 → 复用规则']}
+    master={'title':'从判断困难，到决策支持','context':'把可观测性设计成计算开发者的决策支持 · 本项目的设计主张','level':'总框架 · 三个设计原则','color':'#c19cf0','focus':None,'reasoning':['开发者需要判断什么？','注意力、理解或行动在哪里受阻？','由判断困难选择表达与交互','案例机制 → 页面组织 → 复用规则']}
     for key,d in data['chapters'].items():
         section='language' if key=='master' else key
         pattern=r'(<section[^>]*id="'+section+r'"[^>]*>)(<div class="chapter-theory.*?<div class="diamond-stage">.*?</svg></div>(?:<footer>.*?</footer>)?</div>)'
