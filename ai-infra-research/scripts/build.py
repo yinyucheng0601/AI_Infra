@@ -3,6 +3,9 @@ import argparse
 import base64
 import json
 import os
+import math
+import shutil
+import subprocess
 from zipfile import ZipFile, ZIP_DEFLATED
 from pathlib import Path
 from validate_catalog import validate
@@ -10,6 +13,23 @@ from version_rank_demo import refresh
 from collect_csa import collect
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def cover_thumbnail(path):
+    """Sample at 1.5× the 500px single-column ceiling and 16:10 cover ratio."""
+    width, height = 750, 469
+    output = path.parent / 'thumbnails' / (path.name + '.jpg')
+    sips = shutil.which('sips')
+    if sips and (not output.exists() or output.stat().st_mtime_ns < path.stat().st_mtime_ns):
+        info = subprocess.check_output([sips, '-g', 'pixelWidth', '-g', 'pixelHeight', str(path)], text=True)
+        dimensions = dict(line.strip().split(': ', 1) for line in info.splitlines()[1:])
+        w, h = int(dimensions['pixelWidth']), int(dimensions['pixelHeight'])
+        scale = min(1, max(width / w, height / h))
+        output.parent.mkdir(exist_ok=True)
+        subprocess.run([sips, '-s', 'format', 'jpeg', '-s', 'formatOptions', 'high',
+                        '-z', str(math.ceil(h * scale)), str(math.ceil(w * scale)),
+                        str(path), '--out', str(output)], check=True, stdout=subprocess.DEVNULL)
+    return output if output.exists() else path
 
 
 def design_system_markup(mode):
@@ -93,6 +113,21 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
     }
     replacements.update({'__PASS_OBSERVABILITY_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/pass-observability-cover.svg').read_bytes()).decode('ascii'),})
     replacements['__VISUAL_REVIEW_COVER__'] = 'data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/ai-infra-visual-review-cover.png').read_bytes()).decode('ascii')
+    if mode == 'standalone':
+        # Embed only compact thumbnails so file and sandbox previews can show covers.
+        raster_sources = {
+            base64.b64encode(path.read_bytes()).decode('ascii'): path
+            for path in (ROOT / 'web/media').iterdir()
+            if path.suffix in {'.png', '.jpg'}
+        }
+        for marker, value in replacements.items():
+            if value.startswith(('data:image/png;', 'data:image/jpeg;')):
+                source = raster_sources.get(value.split(',', 1)[1])
+                if source is not None:
+                    thumbnail = cover_thumbnail(source)
+                    if thumbnail != source:
+                        encoded = base64.b64encode(thumbnail.read_bytes()).decode('ascii')
+                        replacements[marker] = f'data:image/jpeg;base64,{encoded}'
     for marker, value in replacements.items():
         assert template.count(marker) == 1, f'missing or duplicate marker: {marker}'
         template = template.replace(marker, value)
