@@ -2,6 +2,58 @@
   "version": 1,
   "assets": [
     {
+      "id": "ai-infra-visual-review",
+      "title": "AI Infra 视觉设计复盘 · Keynote",
+      "type": "case",
+      "form": "设计汇报",
+      "summary": "以问题 / 结果驱动、认知减负、有效控制串联执行泳道、Layer Stack 与 Scale，呈现设计推导、交互案例和可复用框架。",
+      "designValue": "把业务痛点、设计依据与具体设计响应连接成渐进式汇报，沉淀视觉设计的论证方式与演示结构。",
+      "outline": [
+        "设计目标与三项原则",
+        "执行泳道：从问题进入证据",
+        "Layer Stack：连续对象与上下文",
+        "Scale：核查、调整与继续",
+        "页面框架：功能分组与控件",
+        "图元、Pattern 与 Skill 体系"
+      ],
+      "domains": [
+        "AI Infra",
+        "Visualization",
+        "Agent"
+      ],
+      "topics": [
+        "experience",
+        "visual",
+        "operators",
+        "inference"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "reports/ai-infra-visual-review/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-visual-review-architecture/index.html",
+          "sha256": "a5f7dcf4394a04c00bd751d4650c4195c9341e261a7c2bd10146029ac7ad9f25",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-11-03：按用户要求收录并推送 HTML Keynote 草稿；已逐轮检查浏览器布局、章节播放与 iframe 演示。",
+        "本轮检查目录、打包资源与入口；当前案例交互与 Agent 目标工作流分别表述，不代表设备验证或用户效率收益。"
+      ],
+      "related": [
+        "critical-path-swimlane",
+        "observability-design-style"
+      ],
+      "reviewedAt": "2026-11-03",
+      "author": "Yucheng"
+    },
+    {
       "id": "ai-infra-investigation",
       "title": "AI Infra 计算可视化 · 总 workflow",
       "type": "method",
@@ -2722,58 +2774,6 @@
           "description": "打开 Fused Add RMSNorm 源码步骤、内存复用与硬件联动 · Ascend 910B"
         }
       ]
-    },
-    {
-      "id": "ai-infra-visual-review",
-      "title": "AI Infra 视觉设计复盘 · Keynote",
-      "type": "case",
-      "form": "设计汇报",
-      "summary": "以问题 / 结果驱动、认知减负、有效控制串联执行泳道、Layer Stack 与 Scale，呈现设计推导、交互案例和可复用框架。",
-      "designValue": "把业务痛点、设计依据与具体设计响应连接成渐进式汇报，沉淀视觉设计的论证方式与演示结构。",
-      "outline": [
-        "设计目标与三项原则",
-        "执行泳道：从问题进入证据",
-        "Layer Stack：连续对象与上下文",
-        "Scale：核查、调整与继续",
-        "页面框架：功能分组与控件",
-        "图元、Pattern 与 Skill 体系"
-      ],
-      "domains": [
-        "AI Infra",
-        "Visualization",
-        "Agent"
-      ],
-      "topics": [
-        "experience",
-        "visual",
-        "operators",
-        "inference"
-      ],
-      "media": [
-        "web"
-      ],
-      "status": "draft",
-      "visibility": "internal",
-      "content": "reports/ai-infra-visual-review/index.html",
-      "sources": [
-        {
-          "repository": "ai-infra",
-          "path": "ai-infra-visual-review/index.html",
-          "sha256": "4d086c4d8364408b065595d217c671a2eec71e7f1e3adb513b3e2073024a2c5c",
-          "url": null,
-          "revision": null
-        }
-      ],
-      "validation": [
-        "2026-11-03：按用户要求收录并推送 HTML Keynote 草稿；已逐轮检查浏览器布局、章节播放与 iframe 演示。",
-        "本轮检查目录、打包资源与入口；当前案例交互与 Agent 目标工作流分别表述，不代表设备验证或用户效率收益。"
-      ],
-      "related": [
-        "critical-path-swimlane",
-        "observability-design-style"
-      ],
-      "reviewedAt": "2026-11-03",
-      "author": "Yucheng"
     }
   ]
 }
