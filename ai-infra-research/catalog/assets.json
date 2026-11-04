@@ -1281,6 +1281,50 @@
       "author": "Yucheng"
     },
     {
+      "id": "inference-layer-stack",
+      "title": "DeepSeek V4 Flash · 推理层栈",
+      "form": "交互 Pattern",
+      "domains": [
+        "Model Inference",
+        "Observability"
+      ],
+      "summary": "通过 43 层 2.5D 层栈观察 Prefill、Decode 与 Token 采样，联动当前层的 Attention、KV Cache 和 Token 位置。",
+      "designValue": "将推理阶段、逐层执行和缓存读写放在同一个可交互视图中。",
+      "outline": [
+        "推理阶段与逐层播放",
+        "Attention 与 KV Cache 读写",
+        "Token 位置与采样联动"
+      ],
+      "type": "pattern",
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "internal",
+      "content": "patterns/inference-layer-stack/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "url": null,
+          "path": "layer_stack/inference-layer-stack.html",
+          "revision": null,
+          "sha256": "ec7fb5af6664248600d1235ca8aa4d19e3a749011a7cc6d771303aed3c65bc1d"
+        }
+      ],
+      "validation": [
+        "2026-11-04：本地 Chrome 检查阶段切换、Token 联动、KV 读写箭头和层弹起时主线路径。"
+      ],
+      "related": [
+        "pangu-layer-atlas-2"
+      ],
+      "reviewedAt": "2026-11-04",
+      "topics": [
+        "inference",
+        "visual"
+      ],
+      "author": "Yucheng"
+    },
+    {
       "id": "pangu-layer-atlas-2",
       "title": "Pangu Layer Atlas 2",
       "form": "交互 Pattern",

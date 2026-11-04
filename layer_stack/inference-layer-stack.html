@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Layer Stack · 模型推理</title>
+<style>
+:root{color-scheme:dark;--grey-100:#eeeeee;--grey-200:#dddddd;--grey-300:#bcbcbc;--grey-400:#aaaaaa;--grey-500:#999999;--grey-600:#888888;--grey-700:#777777;--grey-800:#555555;--grey-900:#333333;--grey-1000:#111111;--bg:var(--grey-1000);--fg:#e8e8e8;--muted:#a0a0a0;--border:#2e2e2e;--text-auxiliary:var(--grey-600);--bar-normal:var(--grey-800)}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif}main{width:100%;margin:0;padding:34px 42px 24px}header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:10px}h1{font-size:25px;letter-spacing:-.7px;font-weight:500;margin:0}h1 span{color:#7a7a7a;font-weight:400}.meta{margin-top:10px;color:var(--muted);font-size:12px}.status{font-size:11px;border:1px solid #363636;border-radius:20px;padding:8px 13px;white-space:nowrap;color:#adadad}.status:before{content:"";display:inline-block;width:5px;height:5px;background:#bababa;border-radius:50%;margin-right:8px}.view{position:relative;margin-top:16px}.view svg{display:block;width:100%;height:auto;max-height:76vh;min-height:350px}.view-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;color:var(--muted);font-size:12px}.view-head strong{font-weight:400;color:#cfcfcf}.legend{display:flex;align-items:center;gap:10px}.ramp{width:105px;height:7px;background:linear-gradient(90deg,#242424,#505050,#888888,#bcbcbc,#eeeeee)}.plane{cursor:pointer}.plane .outline{stroke-width:1.5;vector-effect:non-scaling-stroke}.plane:hover .outline{stroke-width:1.5}.plane.chosen .outline{stroke-width:1.5}.plane .matrix-cell{pointer-events:none}.scene-label{fill:#e0e0e0;font-size:19px;font-weight:500}.scene-small{fill:#a0a0a0;font-size:12px}.bottom{border-top:1px solid var(--border);padding-top:19px}.layer-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:14px}.layer-top span{color:var(--muted)}.layer-list{display:grid;grid-template-columns:repeat(49,minmax(0,1fr));gap:4px;min-width:980px}.layer-button{min-width:0;border:0;background:transparent;padding:0 3px 9px;color:#888888;cursor:pointer;font:10px ui-monospace,monospace;display:flex;flex-direction:column;align-items:center;gap:9px}.layer-button:hover{color:#ffffff;background:#1c1c1c}.layer-button[aria-pressed="true"]{color:#ffffff;background:#292929;box-shadow:inset 0 -2px #dddddd}.controls{display:flex;gap:25px;align-items:center;margin-top:20px}label{font-size:12px;color:var(--muted);white-space:nowrap}button:focus-visible,input:focus-visible{outline:2px solid #dbdbdb;outline-offset:4px}.arrow-button{border:1px solid #3a3a3a;border-radius:5px;background:transparent;color:#c8c8c8;padding:7px 12px;cursor:pointer}.hint{display:flex;justify-content:space-between;gap:24px;margin-top:22px;font-size:11px;color:var(--text-auxiliary);line-height:1.6}.dense-legend{white-space:nowrap}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}@media(max-width:760px){main{padding:24px 18px}.view svg{min-height:300px;max-height:none}.view-head{align-items:flex-start}.legend{font-size:10px;gap:5px}.controls{gap:12px}.hint{display:block}.status{font-size:10px;padding:6px 9px}h1{font-size:20px}.meta{font-size:11px}.eyebrow{font-size:10px}.scene-label{font-size:22px}}@media(prefers-reduced-motion:no-preference){.layer-button{transition:color .15s,border-color .15s}}
+.matrix-tabs{display:flex;gap:6px}.matrix-tabs button{font-family:inherit;font-size:13px;background:transparent;color:#868686;border:1px solid transparent;border-radius:5px;padding:8px 15px;cursor:pointer}.matrix-tabs button[aria-pressed="true"]{background:#ffffff;color:#111111;border-color:#ffffff}#matrix-caption{font-size:12px;color:#8d8d8d}@media(max-width:760px){.view-head{flex-wrap:wrap}}
+.layer-scroll{overflow-x:auto;padding:30px 2px 4px}.bar-track{height:76px;width:100%;display:flex;align-items:flex-end;border-bottom:1px solid #444444}.layer-bar{position:relative;display:block;width:100%;background:var(--bar-normal);min-height:0}.bar-heading{display:flex;justify-content:space-between;font:10px ui-monospace,monospace;color:var(--text-auxiliary);margin:0 0 8px}.layer-number{font-size:10px}.bottom{padding-top:16px}.view svg{max-height:69vh}.layer-top{margin-bottom:18px}@media(max-width:760px){.view svg{max-height:none}.layer-scroll{margin-right:-6px}}
+.bar-value{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font:11px ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#eeeeee;background:#111111;padding:2px 4px;pointer-events:none;z-index:2}.layer-button[aria-pressed="true"] .bar-value{display:block}.layer-button:first-child .bar-value{left:0;transform:none}.layer-button:last-child .bar-value{left:auto;right:0;transform:none}
+
+.tensor-detail{border-top:1px solid #333;margin-top:30px;padding-top:28px}.detail-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.detail-top h2{font-size:20px;font-weight:500;margin:0 0 10px}.detail-top p{font-size:13px;color:#aaa;margin:0;line-height:1.7}.shape{font:18px ui-monospace,monospace;color:#eee}.detail-layout{display:grid;grid-template-columns:minmax(280px,560px) minmax(230px,1fr);gap:36px;margin-top:24px}.matrix-axis{font-size:12px;color:#aaa;margin-bottom:12px}.detail-grid{display:grid;grid-template-columns:repeat(16,1fr);gap:3px}.detail-cell{border:0;aspect-ratio:1;padding:0;cursor:pointer;position:relative}.detail-cell[aria-pressed="true"]:after{content:"";position:absolute;inset:-2px;border:2px solid #fff;box-shadow:0 0 0 1px #111}.detail-grid .detail-cell:nth-child(4n){margin-right:2px}.inspect{font-size:13px;line-height:1.7}.inspect h3{font-weight:500;font-size:16px;margin:0 0 18px}.inspect dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}.inspect dt{color:#aaa}.inspect dd{margin:0;text-align:right;font-family:ui-monospace,monospace}.detail-foot{font-size:12px;color:#aaa;line-height:1.8;margin-top:18px}.detail-foot a{color:#ccc}.detail-readout{font-size:12px;color:#aaa;margin:18px 0}.detail-state{font-size:12px;color:#aaa}.matrix-tabs button{color:#aaa}@media(max-width:700px){.detail-layout{grid-template-columns:1fr}.detail-top{gap:10px}}
+
+/* Desktop: model canvas and selected tensor inspector share the same row. */
+main{max-width:none;padding:28px 32px 24px}
+.workspace-split{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:28px;margin-top:24px;align-items:start}
+.atlas-pane{min-width:0;display:flex;flex-direction:column;min-height:calc(100dvh - 140px)}
+.atlas-pane .view-head{margin-top:0;flex-wrap:wrap}
+.atlas-pane .view{flex:1;display:flex;align-items:center;margin-top:12px}
+.atlas-pane .view svg{min-height:0;max-height:none;width:100%;height:auto}
+.atlas-pane .layer-top{gap:12px;flex-wrap:wrap;line-height:1.6}
+.tensor-detail{border-top:0;border-left:1px solid #333;margin-top:0;padding:4px 0 12px 24px;position:sticky;top:20px;max-height:calc(100dvh - 40px);overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#555 #111;min-width:0}
+.tensor-detail .detail-top{display:block}
+.tensor-detail .shape{margin-top:18px;font-size:17px}
+.tensor-detail .detail-state{margin-top:6px}
+.tensor-detail .detail-layout{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:22px}
+.tensor-detail .matrix-axis{line-height:1.8}
+.tensor-detail .detail-readout{line-height:1.7}
+.tensor-detail .inspect{border-top:1px solid #333;padding-top:18px}
+.tensor-detail .inspect dl{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}
+.tensor-detail .inspect dd{overflow-wrap:anywhere}
+.tensor-detail .detail-foot{padding-right:8px}
+@media(min-width:1700px){.workspace-split{grid-template-columns:minmax(0,1fr) 460px;gap:36px}}
+@media(max-width:1000px){main{padding:24px 18px}.workspace-split{grid-template-columns:minmax(0,1fr);gap:28px}.atlas-pane{min-height:0}.tensor-detail{position:static;max-height:none;overflow:visible;border-left:0;border-top:1px solid #333;padding:24px 0 0}.tensor-detail .detail-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}.tensor-detail .inspect{border-top:0;padding-top:0}}
+@media(max-width:600px){header{flex-wrap:wrap;gap:14px}.tensor-detail .detail-layout{grid-template-columns:minmax(0,1fr)}.tensor-detail .inspect{border-top:1px solid #333;padding-top:18px}}
+
+.help{position:relative;display:inline-block;border:0;padding:2px 4px;background:transparent;color:#bbb;font:13px inherit;cursor:help;vertical-align:middle;text-align:left}.tip{display:none;position:absolute;top:100%;right:0;width:290px;max-width:78vw;padding:13px;background:#222;border:1px solid #555;border-radius:4px;color:#ddd;font:12px/1.8 sans-serif;white-space:normal;z-index:20;box-shadow:0 8px 20px #0008}.help:hover .tip,.help:focus .tip,.help.open .tip{display:block}.bar-heading .tip{right:auto;left:0;top:auto;bottom:100%}.block-controls{display:flex;gap:18px;margin:16px 0}.block-controls select{background:#222;color:#ddd;border:1px solid #555;padding:5px 8px;border-radius:3px}.sample-legend{font-size:12px;color:#aaa;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}.numeric-grid{display:grid;grid-template-columns:48px repeat(4,minmax(0,1fr));gap:6px;align-items:center}.numeric-head{font:11px ui-monospace,monospace;color:#aaa;text-align:center;padding:4px 0}.numeric-cell{aspect-ratio:1;display:flex;justify-content:center;align-items:center;flex-direction:column;gap:5px;min-width:0}.numeric-cell span{font:11px ui-monospace,monospace;color:#eee;background:#111;padding:3px 2px}.numeric-cell small{font:10px ui-monospace,monospace;color:#ccc;background:#111;padding:2px}.tensor-detail .detail-foot{margin-top:15px}
+
+.plane .matrix-cell{pointer-events:auto;cursor:pointer}.block-match{display:flex;align-items:center;gap:10px;margin:16px 0;color:#ddd;font:12px ui-monospace,monospace;line-height:1.6}#block-swatch{display:inline-block;flex:none;width:24px;height:24px;border:1.5px solid #fff}
+
+.whole-scroll{width:100%;overflow:auto;max-height:65vh;scrollbar-width:thin;scrollbar-color:#555 #111}.whole-scroll svg{display:block;width:100%;height:auto;max-width:none}.sample-legend select{background:#222;color:#eee;border:1px solid #555;border-radius:3px;padding:5px;font:12px inherit}.sample-legend{gap:10px;flex-wrap:wrap}#sample-readout{min-height:42px;overflow-wrap:anywhere;font-family:monospace}
+
+.training-context{margin-top:24px;border-top:1px solid #333;border-bottom:1px solid #333;padding:14px 0;display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:12px;color:#aaa}.scenario-select{background:#191919;border:1px solid #444;color:#aaa;border-radius:4px;padding:8px 12px;font:12px inherit;cursor:pointer}.training-note{flex-basis:100%;line-height:1.7}.anomaly-key{color:#FD5644;font-size:12px}.alert-strip{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;font-size:12px;min-height:30px}.alert-strip button{background:transparent;border:1px solid #FD5644;color:#FD5644;border-radius:4px;padding:6px 10px;cursor:pointer}.diagnosis{border-top:1px solid #444;padding:18px 0;margin-top:18px;font-size:12px;line-height:1.8}.diagnosis h3{font-size:15px;font-weight:500;margin:0 0 12px}.diagnosis p{color:#aaa;margin:8px 0}.diagnosis .flag{color:#FD5644}.diagnosis dl{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0}.diagnosis dd{margin:0;text-align:right;font-family:monospace}.layer-button.has-alert .layer-number{color:#FD5644}.layer-button.has-alert .bar-track{border-bottom:2px solid #FD5644}.layer-button.has-alert .layer-bar{background:rgba(253,86,68,.5)!important}
+
+/* One navigation axis: tensor type. Phase is contextual metadata. */
+.training-context{padding:10px 0;gap:12px}.training-note{flex-basis:auto;margin-left:auto;font-size:12px;color:#bcbcbc;cursor:help}
+.tensor-detail{padding-top:0}.diagnosis{position:sticky;top:0;z-index:5;background:#111111;border-top:0;border-bottom:1px solid #444;border-left:2px solid #555;margin:0 0 22px;padding:12px 12px 14px 14px}.diagnosis.has-alert{border-left-color:#FD5644}.diagnosis h3{font-size:17px;margin:0 0 10px}.diagnosis dl{margin:8px 0 10px;gap:3px}.diagnosis dt{color:#aaa}.diagnosis summary{cursor:pointer;color:#bcbcbc;font-size:11px}.diagnosis details[open]{max-height:220px;overflow:auto}.diagnosis summary:focus-visible{outline:1px solid #fff;outline-offset:3px}@media(max-width:1000px){.diagnosis{position:static}}@media(max-width:760px){.training-note{margin-left:0;flex-basis:100%}}
+
+/* Compact hierarchy: title/context, one action row, then the visualization. */
+main{padding:18px 24px 20px}.compact-header{align-items:center;justify-content:space-between;gap:16px;min-height:28px}.compact-header h1{font-size:20px;letter-spacing:-.4px;white-space:nowrap}.run-context{font-size:11px;color:#999}.atlas-toolbar{display:flex;align-items:center;gap:16px;min-height:48px;margin-top:10px;padding:6px 0;border-bottom:1px solid #333;position:relative;z-index:10}.matrix-tabs{gap:4px;flex:none}.matrix-tabs button{font-size:12px;padding:7px 11px;white-space:nowrap}.atlas-toolbar .legend{margin-left:auto;gap:6px;font-size:11px}.ramp{width:70px;height:6px}.alert-jump{background:transparent;border:0;border-left:1px solid #444;border-radius:0;color:#FD5644;font:12px inherit;padding:5px 0 5px 14px;cursor:pointer;white-space:nowrap}.alert-jump:disabled{color:#888;cursor:default}.display-settings{position:relative;color:#999;font-size:11px;flex:none}.display-settings>summary{cursor:pointer;list-style:none;padding:7px 0}.display-settings>summary:after{content:' ▾'}.settings-popover{position:absolute;right:0;top:100%;width:290px;padding:16px;background:#191919;border:1px solid #444;border-radius:4px;box-shadow:0 8px 20px #0008;display:flex;flex-direction:column;gap:14px;line-height:1.7}.settings-popover label{display:flex;gap:10px;align-items:center}.settings-popover .training-note{margin:0;font-size:11px}.settings-note{font-size:11px;color:#888}input[type=checkbox]{accent-color:#bcbcbc}.workspace-split{margin-top:14px;gap:24px}.atlas-pane{min-height:0}.atlas-pane .view{margin-top:0;flex:none}.atlas-pane .view svg{max-height:calc(100dvh - 280px);min-height:350px}.diagnosis{padding:8px 10px 10px 12px;margin-bottom:16px}.diagnosis h3{font-size:15px;margin:0 0 4px}.diagnosis-brief{font-size:11px;color:#bcbcbc;margin-bottom:5px}.diagnosis summary{font-size:11px}.tensor-detail .detail-top h2{font-size:17px;margin-bottom:5px}.tensor-detail .detail-top p{font-size:12px}.tensor-detail .shape{margin-top:10px;font-size:15px}.tensor-detail .detail-layout{margin-top:12px}.tensor-detail .matrix-axis{font-size:11px;margin-bottom:8px}.sample-legend{font-size:11px;margin-bottom:8px}.tensor-detail .detail-state{font-size:11px}.bottom{padding-top:12px}.layer-top{margin-bottom:10px}.controls{margin-top:10px}
+@media(max-width:1100px){.atlas-toolbar{gap:10px;flex-wrap:wrap}.atlas-toolbar .legend{margin-left:auto}}@media(max-width:760px){main{padding:16px}.compact-header{flex-wrap:wrap;gap:4px}.compact-header h1{font-size:18px}.atlas-toolbar{margin-top:8px}.matrix-tabs button{font-size:11px;padding:7px 8px}.atlas-toolbar .legend{margin-left:0}.alert-jump{margin-left:auto}.atlas-pane .view svg{max-height:none;min-height:0}.settings-popover{width:260px}.run-context{font-size:10px}}
+
+.diagnosis{position:static;margin:0 0 18px;padding:8px 10px 10px 12px}.diagnosis[hidden],.alert-jump[hidden]{display:none}.tensor-info .tip{right:auto;left:0;width:300px;max-width:calc(100vw - 80px)}.info-line{display:block;margin-bottom:8px}.info-line:last-child{margin-bottom:0}.sample-legend .tensor-info{font:15px sans-serif;padding:3px 5px}.inspect .diagnosis h3{margin:0 0 4px;font-size:15px}.inspect .diagnosis dl{margin:10px 0;gap:5px;font-size:12px}.tensor-detail .sample-legend{position:relative;margin-bottom:6px}
+
+/* Keep navigation anchored while the model and inspector use the remaining height. */
+@media(min-width:1001px){
+ html,body{height:100%;overflow:hidden}main{height:100dvh;display:flex;flex-direction:column;padding-bottom:0}.compact-header,.atlas-toolbar{flex-shrink:0}.workspace-split{flex:1;min-height:0;align-items:stretch;margin-top:14px}.atlas-pane{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto}.atlas-pane .view{display:flex;min-height:0;overflow:hidden}.atlas-pane .view svg{height:100%;width:100%;min-height:0;max-height:none}.bottom{position:sticky;bottom:0;z-index:6;background:#111111;padding:12px 0 10px;flex-shrink:0}.tensor-detail{position:relative;top:auto;min-height:0;height:100%;max-height:none;overflow-y:auto;padding-bottom:24px}.layer-top{margin-bottom:8px}.layer-scroll{padding-top:22px}.bar-heading{margin-bottom:4px}
+}
+@media(max-width:1000px){main{padding-bottom:240px}.bottom{position:fixed;left:18px;right:18px;bottom:0;z-index:15;background:#111111;padding:10px 0 max(8px,env(safe-area-inset-bottom))}.bottom .layer-top{margin-bottom:6px}.bottom .layer-scroll{padding-top:20px}.bottom .bar-heading{margin-bottom:4px}.atlas-pane .view svg{min-height:0;max-height:none}.layer-top{font-size:11px}}
+
+.plane.preview:not(.chosen):not(.has-anomaly) .outline{stroke:#bcbcbc;stroke-width:1.5}.external-layer-number{user-select:none;paint-order:stroke;stroke:#111111;stroke-width:3px;stroke-linejoin:round}.external-layer-number:hover{fill:#fff}.plane,.external-layer-number{touch-action:manipulation}
+
+.propagation-controls{display:flex;align-items:center;gap:10px;flex-shrink:0;padding:8px 0 0;color:#aaa;font:11px sans-serif}.propagation-controls[hidden],.prop-layer-state[hidden]{display:none}.propagation-controls button:not(.help){border:1px solid #444;background:#191919;color:#ddd;border-radius:4px;padding:5px 9px;font:11px sans-serif;cursor:pointer}.propagation-controls input{width:180px;accent-color:#ddd}.propagation-controls .tip{left:0;right:auto}.tensor-detail .detail-top p.prop-layer-state{font-size:11px;color:#aaa;margin-top:7px}.propagation-controls label{font-size:11px}.propagation-controls #prop-progress{font-family:monospace;min-width:80px}@media(max-width:600px){.propagation-controls{flex-wrap:wrap}.propagation-controls input{width:120px}}
+
+.observation-tabs{display:flex;gap:5px;margin:13px 0 10px;flex-wrap:wrap}.observation-tabs button{border:1px solid #383838;background:transparent;color:#aaa;border-radius:4px;padding:7px 9px;font:11px inherit;cursor:pointer}.observation-tabs button[aria-pressed="true"]{background:#fff;color:#111;border-color:#fff}.hidden-observation{padding:22px 0;font-size:12px;line-height:1.9}.hidden-observation[hidden]{display:none}.hidden-observation h3{font-size:15px;font-weight:500;margin:0 0 16px}.hidden-observation dl{display:grid;grid-template-columns:80px 1fr;gap:12px;margin:0}.hidden-observation dt{color:#888}.hidden-observation dd{margin:0;color:#ddd}.hidden-empty{border:1px dashed #444;padding:24px 18px;margin:24px 0;color:#aaa}.flow-port{cursor:pointer;outline:none}.flow-port rect{fill:#171717;stroke:#666}.flow-port:hover rect,.flow-port:focus-visible rect{stroke:#fff}.flow-port[aria-pressed="true"] rect{fill:#eee;stroke:#fff}.flow-port[aria-pressed="true"] text{fill:#111}.flow-port text{fill:#ccc;font:15px ui-monospace,monospace}.flow-port .port-sub{font:11px sans-serif;fill:#999}.ground-rail{pointer-events:auto}.hidden-mode .detail-layout,.hidden-mode .detail-foot,.hidden-mode #prop-layer-state{display:none!important}
+.boundary-arrow{cursor:pointer;outline:none}.boundary-arrow .boundary-hit{stroke:transparent;stroke-width:14;fill:none;pointer-events:stroke}.boundary-arrow .boundary-ink{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.boundary-arrow .boundary-halo{fill:none;stroke:#111;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.boundary-arrow[aria-pressed="true"] .boundary-halo,.boundary-arrow:focus-visible .boundary-halo{stroke:#fff}.boundary-arrow:hover .boundary-ink{stroke-width:3}
+
+/* Ablation: local context stays near data; auxiliary prose and playback are on demand. */
+.tensor-detail:not(.hidden-mode) #detail-purpose{display:none}
+#prop-layer-state{display:none}
+.path-demo{position:absolute;right:12px;top:12px;margin:0;color:#999;font-size:11px;z-index:11}
+.path-demo[hidden]{display:none}.path-demo>summary{cursor:pointer;list-style:none;padding:6px 9px;background:#191919;border:1px solid #444;border-radius:4px}.path-demo>summary:after{content:' ▾'}
+.path-demo .propagation-controls{position:absolute;right:0;top:calc(100% + 6px);width:440px;max-width:calc(100vw - 48px);padding:14px;background:#191919;border:1px solid #444;border-radius:4px;box-shadow:0 8px 20px #0008;flex-wrap:wrap}
+.path-demo .propagation-controls input{width:135px}.path-demo .tip{left:auto;right:0}
+.detail-foot>summary{cursor:pointer;color:#999;padding:6px 0}.detail-foot>div{padding-top:8px}.bottom .bar-heading{align-items:center;font-size:11px;margin-bottom:0}.observation-tabs{margin-top:10px}
+
+.matrix-lens{position:fixed;z-index:1000;pointer-events:none;background:#161616;border:1px solid #aaa;border-radius:5px;box-shadow:0 10px 36px #000a;overflow:hidden}.matrix-lens[hidden],.matrix-lens-source[hidden]{display:none}.matrix-lens-head{height:28px;padding:5px 9px;display:flex;justify-content:space-between;align-items:center;font:11px ui-monospace,monospace;color:#ddd;border-bottom:1px solid #444}.matrix-lens-view{overflow:hidden;background:#111}.matrix-lens-view svg{display:block;width:100%;height:100%;max-height:none}.matrix-lens-source{position:fixed;z-index:999;pointer-events:none;border:1px solid #fff;box-shadow:0 0 0 1px #1119;background:#ffffff08}.whole-scroll svg{cursor:crosshair}
+
+/* Type hierarchy: body 14px, compact UI 12px, smallest labels 10px. */
+body{font-size:14px;line-height:1.5}
+.tensor-detail .detail-top p,.inspect,.inspect dl,.diagnosis p,.diagnosis dl,.diagnosis-brief,.detail-foot,.detail-foot>summary,.hidden-observation,.detail-readout,.tip,.settings-note,.settings-popover .training-note{font-size:14px;line-height:1.7}
+.tensor-detail .detail-readout,.tensor-detail .detail-foot,.inspect .diagnosis dl{font-size:14px}
+.run-context,.matrix-tabs button,.observation-tabs button,.sample-legend,.sample-legend label,.sample-legend select,.display-settings,.alert-jump,.legend,.path-demo,.propagation-controls,.propagation-controls button:not(.help),.propagation-controls label,.bar-heading,.bottom .bar-heading,.diagnosis summary{font-size:12px}
+.layer-number,.bar-value,.layer-button,.matrix-lens-head{font-size:10px}
+.data-state{display:none;margin:12px 0;padding:14px 16px;border:1px solid #444;color:#bbb;font-size:13px}.data-state:not([data-state="ready"]){display:block}.data-state[data-state="error"]{border-color:#FD5644;color:#FD887a}
+.tensor-detail .detail-top h2{font-size:18px}.hidden-observation h3,.inspect h3,.diagnosis h3{font-size:16px}
+
+.detail-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.detail-title-row h2{min-width:0}.detail-title-row .tensor-info{flex:none;font-size:14px}.detail-title-row .tensor-info .tip{left:auto;right:0;top:100%}.tensor-detail .detail-layout{margin-top:8px}
+
+/* Full-page composition: fixed canvas, independent inspection surface. */
+html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block}
+.compact-header{position:fixed;left:38px;top:64px;z-index:8;pointer-events:none}.compact-header h1{font-size:12px;letter-spacing:1px}.run-context{display:none}
+.atlas-toolbar{position:fixed;inset:22px 38px auto;margin:0;padding:0;border:0;min-height:32px;z-index:20;gap:24px}
+.matrix-tabs{gap:25px}.matrix-tabs button,.matrix-tabs button[aria-pressed="true"]{border:0;border-radius:0;background:none;color:#888;padding:9px 0;font-size:12px}.matrix-tabs button[aria-pressed="true"]{color:#eee;box-shadow:0 -2px #eee}
+.atlas-toolbar .legend{position:fixed;left:38px;bottom:137px;margin:0;font-size:12px}.legend .tip{top:auto;bottom:100%;left:0;right:auto}.ramp{width:104px}.alert-jump{margin-left:auto;border:0;font-size:12px}
+.workspace-split{display:block;margin:0;height:100%}.atlas-pane{display:block;height:100%;min-height:0}.atlas-pane .view{position:absolute;inset:0;margin:0;display:block;overflow:hidden}.atlas-pane .view #scene{width:100%;height:100%;max-height:none;min-height:0;transform:translateY(clamp(0px, 3vh, 36px)) scale(1.05);transform-origin:50% 50%}
+#guides{display:none}.path-demo>summary{background:none;border:0;border-radius:0;padding:7px 0}.path-demo{position:fixed;top:82px;right:38px;left:auto;z-index:12}.propagation-controls{background:#191919;padding:14px;border:1px solid #333}
+.identity{position:fixed;left:38px;top:120px;z-index:9;pointer-events:none}.identity h2{font:500 66px/1 ui-monospace,monospace;letter-spacing:-3px;margin:0 0 20px}.identity h3{font-size:19px;font-weight:400;margin:0 0 28px}.identity p{font:12px/1.9 ui-monospace,monospace;color:#aaa;margin:0}.identity button{pointer-events:auto;margin-top:26px}
+.text-action{background:none;border:0;border-bottom:1px solid #666;color:#ddd;padding:7px 0;cursor:pointer;font-size:12px}.sampling-note{position:fixed;left:38px;bottom:83px;color:#999;font:12px/1.8 ui-monospace,monospace;z-index:8}
+.bottom{position:fixed;left:50%;right:auto;transform:translateX(-50%);bottom:24px;width:44%;background:none;border:0;padding:0;z-index:10}.bar-heading{display:none}.layer-scroll{padding:26px 0 0;overflow:visible}.layer-list{position:relative;min-width:0;display:grid;grid-template-columns:repeat(49,1fr);gap:0;touch-action:none}.layer-button{position:relative;height:38px;padding:0;background:none!important;box-shadow:none!important}.bar-track{height:5px;background:#292929;border:0!important;margin-top:5px;width:100%}.layer-bar{display:none}.layer-button[aria-pressed="true"] .bar-track{background:#eee;height:15px;margin-top:0}.layer-number{display:none;position:absolute;top:23px;font-size:11px}.layer-button:first-child .layer-number,.layer-button:last-child .layer-number,.layer-button:nth-child(9n + 1) .layer-number,.layer-button[aria-pressed="true"] .layer-number{display:block}.layer-button[aria-pressed="true"] .layer-number{top:-22px;color:#fff}.layer-button.has-alert:after{content:'';position:absolute;top:15px;left:40%;width:3px;height:3px;background:#FD5644}.layer-button:hover .bar-track{background:#999}
+.tensor-detail{position:fixed;inset:125px 28px 85px auto;width:330px;height:auto;max-height:none;min-height:0;padding:20px;background:#191919;border:1px solid #424242;overflow:auto;z-index:30;box-shadow:0 12px 40px #0006}.tensor-detail[hidden]{display:none}.panel-actions{display:flex;gap:18px;justify-content:flex-end;margin-bottom:18px}.tensor-detail.expanded{inset:75px 7vw 65px;width:auto}.tensor-detail.expanded .detail-layout{grid-template-columns:minmax(0,1fr) 260px;gap:30px}.tensor-detail.expanded .whole-scroll{max-height:65vh}.tensor-detail .whole-scroll{max-height:40vh;cursor:grab}.tensor-detail .whole-scroll.dragging{cursor:grabbing}.tensor-detail .whole-scroll svg{width:calc(100% * var(--matrix-zoom,1));max-width:none}.observation-tabs button,.observation-tabs button[aria-pressed="true"]{background:none;border:0;border-radius:0;padding:5px 0;margin-right:12px;color:#999}.observation-tabs button[aria-pressed="true"]{color:#eee;border-bottom:1px solid #ddd}.matrix-zoom{display:flex;align-items:center;gap:12px;margin-bottom:15px;font-size:12px;color:#aaa}.matrix-zoom input{width:95px;accent-color:#ddd}.hover-preview{position:fixed;z-index:25;background:#1b1b1b;border:1px solid #444;padding:9px 12px;color:#ddd;font:12px/1.6 ui-monospace,monospace;pointer-events:none}.hover-preview[hidden]{display:none}.data-state{position:fixed;left:38px;top:70px;z-index:50;background:#191919}
+@media(max-width:1000px){.identity{top:105px;left:24px}.identity h2{font-size:48px}.identity h3{font-size:16px}.atlas-toolbar{left:24px;right:24px;gap:14px}.matrix-tabs{gap:16px}.tensor-detail{width:310px;right:18px}.bottom{width:50%}.compact-header{left:24px}.atlas-toolbar .legend,.sampling-note{left:24px}.tensor-detail.expanded .detail-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.atlas-toolbar{flex-wrap:wrap}.matrix-tabs{width:100%;gap:18px}.alert-jump{margin-left:0}.identity{top:145px}.identity h2{font-size:40px;margin-bottom:10px}.identity h3{margin-bottom:14px}.identity p{font-size:11px}.path-demo{top:115px;right:24px}.tensor-detail{inset:130px 12px 75px;width:auto}.bottom{width:82%;bottom:22px}.compact-header h1{font-size:10px;letter-spacing:.4px}.sampling-note{bottom:91px;font-size:10px}.atlas-toolbar .legend{bottom:142px}.tensor-detail.expanded{inset:100px 8px 70px}}
+
+
+.mb-process{position:fixed;right:38px;top:85px;z-index:12;color:#aaa;font-size:12px}.mb-process[hidden],.mb-inspection[hidden]{display:none}.mb-process p{margin:0 0 8px}.mb-process button{margin-left:16px}.mb-inspection{border-top:1px solid #444;border-bottom:1px solid #444;margin:14px 0;padding:14px 0;color:#bbb;font-size:12px;line-height:1.8}.mb-mark{cursor:pointer;outline:none}.mb-mark:focus-visible rect,.mb-mark:hover rect{stroke:#fff;stroke-width:1}.mb-axis-label{font:14px ui-monospace,monospace;fill:#aaa}
+
+/* Playback belongs to the layer navigation, independent of canvas transforms. */
+.bottom .mb-process{position:absolute;top:22px;right:calc(100% + 20px);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.bottom .mb-process button{margin:0;border:0;padding:5px;background:none;width:28px;height:28px;display:grid;place-items:center;color:#ccc}
+.playback-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.playback-icon:hover{color:#fff!important}.playback-icon:disabled{opacity:.35;cursor:default}
+@media(max-width:600px){.bottom{width:64%;left:58%}.bottom .mb-process{right:calc(100% + 12px);gap:3px}}
+.layer-button.has-alert[aria-pressed="true"] .bar-track{background:#FD5644}.layer-button.has-alert[aria-pressed="true"] .layer-number{color:#FD5644}
+.ground-rail text,.ground-rail .mb-axis-label{font-family:ui-monospace,monospace;font-size:18px}
+#scene[data-view="side"] .ground-rail text,#scene[data-view="side"] .ground-rail .mb-axis-label{font-size:18px}
+#scene .ground-rail text.loss-emphasis{font-size:30px}
+/* Reduce arrow height by two scene units in each projection; preserve hit targets. */
+#scene .mb-flow-arrow,#scene .boundary-ink,#scene .boundary-halo{transform-box:fill-box;transform-origin:center;stroke-linecap:round;stroke-linejoin:round}
+#scene .mb-flow-arrow{transform:scale(.75)}
+#scene .boundary-ink,#scene .boundary-halo{transform:scale(.8)}
+#scene[data-view="side"] .mb-flow-arrow{transform:scale(1.35)}
+#scene[data-view="side"] .boundary-ink,#scene[data-view="side"] .boundary-halo{transform:scale(1.4)}
+
+
+/* Center Side geometry without the previous downward screen offset. */
+.atlas-pane .view #scene[data-view="side"]{transform:scale(1.05)}
+
+/* Orientation dial: independent of the model canvas and playback. */
+.view-dial{position:fixed;top:76px;right:30px;width:148px;z-index:13;text-align:center;color:#aaa;font:10px ui-monospace,monospace}
+.view-dial button{position:relative;width:148px;height:148px;display:block;border:0;background:transparent;color:inherit;padding:0;cursor:pointer;border-radius:50%}
+.view-dial svg{display:block;width:148px;height:148px;overflow:visible}
+.dial-ring{fill:none;stroke:#666;stroke-width:1}.dial-label{fill:#888;font:9px ui-monospace,monospace;text-anchor:middle}.dial-marker{fill:#ddd}.cube-face{stroke:#ddd;stroke-width:1.2;stroke-linejoin:round}.view-dial button:hover .dial-ring{stroke:#bbb}.view-dial button:hover .cube-face{stroke:#fff}.dial-name{display:block;color:#ddd;font-size:11px;letter-spacing:1.5px;margin-top:2px}.path-demo{top:278px}
+@media(max-width:600px){.view-dial{top:105px;right:12px;width:108px}.view-dial button,.view-dial svg{width:108px;height:108px}.path-demo{top:265px;right:18px}}
+</style>
+
+<style>
+.layer-list{grid-template-columns:repeat(43,1fr)}
+.identity{pointer-events:none}.identity button{pointer-events:auto}
+#kv-dialog{background:#191919;color:#eee;border:1px solid #555;padding:24px;width:min(600px,90vw)}
+#guide{background:#191919;color:#eee;border:1px solid #555;padding:24px;max-width:500px}
+dialog:focus{outline:none}dialog::backdrop{background:#0008}
+.kv-origin{color:#aaa;font-size:13px;line-height:1.6;margin:12px 0 18px}
+.kv-lane{margin:16px 0}.kv-lane h3{margin:0 0 6px;font-size:14px;font-weight:600}.kv-lane p{font-size:13px;color:#bbb;margin:7px 0}
+:root{--cache-blue:#afd2f6;--cache-surface:#94aecc;--cache-ink:#080a0d}
+.kv{display:flex;align-items:center;gap:1px;min-height:22px;padding:5px;background:#344455;border-radius:5px}
+.kv-dot{flex:1;min-width:0;aspect-ratio:1;border-radius:50%;background:var(--cache-blue);opacity:.16}
+.kv-dot.read{opacity:.62}.kv-dot.current{opacity:1;transform:scale(1.45)}
+.kv-entries{gap:5px}.kv-entries .kv-dot{flex:0 0 12px}
+.cache-body{fill:var(--cache-surface);stroke:var(--cache-blue);stroke-width:1.6}
+.cache-dot{fill:var(--cache-blue)}
+.cache-label{fill:var(--cache-ink);font-weight:700}
+.layer-kv-port:hover .cache-body,.layer-kv-port:focus-visible .cache-body{fill:var(--cache-blue)}
+#front-graph{pointer-events:auto;touch-action:none;cursor:grab;user-select:none}
+#front-graph.is-panning{cursor:grabbing}
+.kv-key{font-size:12px;color:#aaa}
+.front-view .atlas-pane .view{visibility:hidden}
+.view-actions{display:flex;justify-content:center;gap:10px;margin-top:12px;white-space:nowrap}.view-dial .view-actions button{width:auto;height:auto;border-radius:0;border-bottom:1px solid #666;padding:6px 0;color:#ddd}
+#scene{touch-action:none;cursor:grab}#scene.is-panning{cursor:grabbing}
+.plane .layer-kv-port,#scene[data-request-idle] .plane.chosen .layer-kv-port{display:none}
+#scene[data-view="2.5d"] .plane.chosen .layer-kv-port{display:inline;cursor:pointer;outline:none}
+.identity .request-nav{pointer-events:auto;justify-content:flex-start;margin-top:14px;font-size:12px}
+.request-nav output{flex-basis:100%}
+.identity .request-nav button{margin-top:0}
+#position-axis{display:flex;gap:3px}
+#position-axis button{border:0;border-radius:4px;padding:5px 4px;background:#292929;color:#ddd;font:11px ui-monospace,monospace;cursor:pointer}
+#position-axis button[aria-pressed="true"]{background:var(--token-blue);color:#080a0d;font-weight:700}
+:root{--token-blue:#3187EC}
+.request-nav{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;color:#ccc}
+.face text{font:15px ui-monospace,monospace;text-anchor:middle;dominant-baseline:middle}.face rect{rx:12}
+#scene[data-view="front"] .plane:not(.chosen),#scene[data-view="front"] .external-layer-number{display:none}
+button:focus-visible{outline:2px solid #ddd;outline-offset:4px}
+
+.view-dial .view-actions{flex-wrap:wrap}
+.view-dial .view-actions #token-mode{width:100%;border:0;border-radius:999px;background:#292929;color:#eee;padding:6px 12px}
+.view-dial .view-actions #token-mode[aria-expanded="true"]{background:#eee;color:#111}
+#token-workspace{position:fixed;inset:auto 16px 66px;max-height:36dvh;padding:6px 10px;overflow:auto;z-index:15;background:#181818}
+#token-workspace h2{font-size:22px;font-weight:500;margin:0 0 8px}
+#token-workspace p{color:#aaa;margin:0 0 16px;font-size:13px;line-height:1.6}
+.token-grid[hidden]{display:none}
+.token-grid{display:grid;grid-template-columns:repeat(auto-fill,22px);gap:2px}
+.token-cell{width:22px;aspect-ratio:1;padding:0;border:0;border-radius:3px;background:#262626;color:#aaa;font:10px ui-monospace,monospace;cursor:pointer}
+.token-cell:disabled{cursor:default;color:#777}
+.token-cell[data-read="true"]{background:#505050;color:#e2e2e2}
+.token-cell[aria-pressed="true"]{background:var(--token-blue);color:#fff;font-weight:700}
+.token-evidence{display:flex;flex-wrap:wrap;gap:4px 16px}
+.token-evidence[hidden]{display:none}
+.token-evidence > div{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 6px}
+.token-evidence > [hidden]{display:none}
+.token-evidence h3{margin:0;font-size:11px;color:#eee}
+
+.request-sequence{display:flex;gap:5px;margin:0 0 6px}
+.request-sequence button{padding:4px 8px;background:#262626;color:#eee;border:0;border-radius:4px;cursor:pointer;font:12px ui-monospace,monospace}
+.request-sequence [data-role="future"]{color:#888}
+.request-sequence [data-role="input"]{background:#344455}
+.request-sequence [data-role="output"]{background:#3187ec;color:#fff}
+.identity{top:168px}
+.identity h2{font-size:40px;margin-bottom:8px}
+.identity h3{margin-bottom:8px}
+.bottom{bottom:92px}
+.atlas-pane .view #scene{transform:none}
+#request-links{pointer-events:none}
+.request-inspecting:not(.front-view) .atlas-pane .view{right:40%}
+.request-inspecting:not(.front-view) #inference-front{inset:235px 24px 150px 58%;background:#151515}
+.request-inspecting #open-front{color:#fff}
+@media(max-width:750px){
+ .request-inspecting:not(.front-view) .atlas-pane .view{right:0;bottom:35%}
+ .request-inspecting:not(.front-view) #inference-front{inset:47% 12px 145px}
+}
+.token-heading{display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px;margin-bottom:6px}
+#token-workspace h2{font-size:13px;margin:0}
+#token-close{margin-left:auto}
+#token-workspace p{margin:0;font-size:11px}
+.request-sequence [data-role="output"]{background:#3187ec;color:#fff}
+.request-progress{position:fixed;z-index:16;bottom:18px;left:50%;width:min(880px,calc(100% - 32px));transform:translateX(-50%);display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:10px}
+.request-progress .mb-process{position:static;display:flex;align-items:center;gap:4px}
+.request-progress .mb-process button{margin:0;display:grid;place-items:center;border:0;border-radius:4px;background:transparent;padding:4px 6px}
+.request-track{min-width:0}
+#request-axis{display:block;appearance:none;width:100%;height:16px;margin:0;background:transparent;cursor:ew-resize}
+#request-axis::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,#aaa var(--played),#353535 var(--played))}
+#request-axis::-webkit-slider-thumb{appearance:none;width:8px;height:14px;margin-top:-5px;border:0;border-radius:1px;background:#eee}
+#request-axis::-moz-range-track{height:4px;background:#353535}
+#request-axis::-moz-range-progress{height:4px;background:#aaa}
+#request-axis::-moz-range-thumb{width:8px;height:14px;border:0;border-radius:1px;background:#eee}
+.request-progress nav{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;padding:0;overflow:visible}
+.request-progress nav button{min-width:0;border:0;background:transparent;border-radius:4px;padding:3px 0;white-space:normal;color:#aaa;cursor:pointer;font-size:12px}
+.request-progress nav button[aria-current="step"]{background:#292929;color:#eee}
+.request-progress button:focus-visible,#request-axis:focus-visible{outline:none;background-color:#333;color:#fff}
+#request-cache .kv-box,.sample-port{cursor:pointer}
+.sample-port{pointer-events:auto}
+.kv-box:focus-visible,.sample-port:focus-visible{outline:none;filter:brightness(1.4)}
+@media(max-width:650px){
+ .request-progress nav button{font-size:9px}
+}
+@media(max-width:600px){
+ .identity{top:145px;left:18px}
+ .view-dial{top:145px}
+ .bottom{bottom:96px}
+}
+</style></head><body><main>
+<header class="compact-header"><h1>Layer Atlas <span>/ DeepSeek V4 Flash · 43 层</span></h1></header>
+<div class="view-dial" aria-label="模型视角">
+<button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Side" title="点击轮切：2.5D → Front → Side">
+<svg viewBox="0 0 148 148" aria-hidden="true">
+<path class="dial-ring" d="M86 19 A56 56 0 0 1 129 62 M129 86 A56 56 0 0 1 86 129 M62 129 A56 56 0 0 1 19 86 M19 62 A56 56 0 0 1 62 19"/>
+<text class="dial-label" x="74" y="21">0°</text><text class="dial-label" x="135" y="77">90°</text><text class="dial-label" x="74" y="134">180°</text><text class="dial-label" x="13" y="77">-90°</text>
+<g id="dial-marker" transform="rotate(-35 74 74)"><rect class="dial-marker" x="70" y="14" width="8" height="8"/></g>
+<g id="dial-cube"><path class="cube-face" fill="#353535" d="M74 45 99 59 74 74 49 59Z"/><path class="cube-face" fill="#202020" d="M49 59 74 74 74 103 49 88Z"/><path class="cube-face" fill="#515151" d="M74 74 99 59 99 88 74 103Z"/></g>
+</svg></button><span class="dial-name" id="view-name" aria-live="polite">2.5D</span><div class="view-actions"><button id="open-kv" class="text-action" title="展开当前层 KV 位置图">查看 KV ↗</button> <button id="open-front" class="text-action" title="查看当前层算子与缓存">查看层内图 ↗</button><button id="token-mode" type="button" title="查看请求中的 Token 位置" aria-expanded="true" aria-controls="token-workspace">Token 视图</button></div></div>
+
+<div class="atlas-toolbar"><div class="matrix-tabs" role="group" aria-label="推理阶段">
+
+
+<button id="help" title="查看操作和来源">ⓘ</button>
+</div></div>
+<section id="identity" class="identity" aria-label="当前层"><h2 id="identity-layer"></h2><h3 id="identity-name"></h3><p id="identity-context"></p><div class="request-nav" aria-label="推理位置"><output id="position" aria-live="polite"></output><button id="prev" title="上一位置">←</button><div id="position-axis" role="group" aria-label="可选序列位置"></div><button id="next" title="下一位置">→</button></div></section>
+<div id="hover-preview" class="hover-preview" hidden></div>
+<div class="workspace-split"><section class="atlas-pane"><div class="view"><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="DeepSeek V4 模型层栈"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="request-links"></g><g id="request-cache" aria-label="各层 KV 缓存"></g><g id="annotation"></g><g id="side-rms" aria-hidden="true" pointer-events="none"></g><g id="flow-ports"></g></svg></div>
+
+</section></div><section id="inference-front" hidden style="position:fixed;inset:8vh 12vw 115px 24vw;pointer-events:none"><div style="position:absolute;right:0;top:20%;z-index:1;pointer-events:auto" aria-label="层内图缩放"><button id="front-in" title="放大层内图" aria-label="放大层内图">＋</button> <button id="front-out" title="缩小层内图" aria-label="缩小层内图">−</button> <button id="front-fit" title="适应层内图">适应</button></div><svg id="front-graph" viewBox="0 0 800 700" width="100%" height="100%" role="img"></svg></section>
+<section id="token-workspace" aria-labelledby="token-title">
+ <div class="token-heading"><h2 id="token-title">Token 位置</h2>
+  <p id="token-caption"></p>
+ <div id="token-evidence" class="token-evidence" aria-live="polite">
+  <div><h3 id="token-swa-title"></h3><p id="token-swa"></p></div>
+  <div><h3>当前位置</h3><p id="token-current"></p></div>
+  <div id="token-compression"><h3 id="token-compression-title"></h3><p id="token-compression-value"></p></div>
+ </div>
+  <button id="token-close" type="button" aria-label="关闭 Token 抽屉">×</button>
+ </div>
+ <div class="request-sequence" id="request-sequence" aria-label="请求序列"></div>
+ <div id="token-grid" class="token-grid" role="group" aria-label="序列位置"></div>
+</section>
+<section class="request-progress" aria-label="完整请求进度">
+ <div class="mb-process" aria-label="播放与重置">
+<button class="playback-icon" id="play" title="播放完整请求" aria-label="播放完整请求"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-icon" d="M8 5l12 7-12 7z"/></svg></button>
+<button class="playback-icon" id="restart" title="返回请求起点并重置视角" aria-label="重置位置与视角"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a8 8 0 1 1 0 7M5 3v6h6"/></svg></button>
+</div><p class="sr" id="request-status" aria-live="polite"></p>
+ <div class="request-track"><input id="request-axis" type="range" min="0" step="1" aria-label="请求播放轴">
+ <nav id="request-steps" aria-label="请求步骤"></nav></div>
+</section></main>
+<dialog id="kv-dialog" aria-labelledby="kv-title"><h2 id="kv-title"></h2><p class="kv-origin">本层输入 → KV 投影与位置编码 → 写入缓存<br>本步 Query → 用缓存里的 K 算注意力权重，再按权重汇总 V</p><section class="kv-lane"><h3>SWA · 逐位置 KV</h3><div class="kv" id="kv" aria-hidden="true"></div><p id="kv-range"></p></section><section class="kv-lane" id="kv-hca" hidden><h3>HCA · 压缩 KV</h3><div class="kv kv-entries" id="kv-hca-track" aria-hidden="true"></div><p id="kv-compressed"></p></section><p class="kv-key">SWA 按原始位置排列，亮蓝标出当前位置。<span id="kv-hca-key"> HCA 每个圆点代表一条压缩记录。</span></p><form method="dialog"><button title="关闭 KV 详情" autofocus>关闭</button></form></dialog>
+<dialog id="guide"><h2>沿层栈查看 KV</h2><p>选择模型层，用底部箭头推进位置。Decode 中当前写入的位置会在下一步进入历史窗口。切换阶段保留选层和视角。</p><p>层类型与 128 位置的 SWA 窗口来自本地 DeepSeek V4 的 Flash 配置。Prompt 长度、生成位置和窗口范围为页面设定和逻辑推导。位置条在 CSA／HCA 层展示滑窗分支，层内图按 Flash 的 Attention 类型展示对应的 PyPTO 算子分支。</p><form method="dialog"><button title="返回当前层和位置">关闭</button></form></dialog>
+
+<script>
+'use strict';
+const get = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+// FLASH declares 43 backbone layers. Dispatchers bound layer_id before indexing the 44-entry tuple.
+const ratios = [0, 0, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4];
+const kinds = {0:'SWA',4:'CSA',128:'HCA'};
+const lastLayer = ratios.length-1;
+const layers=[], groups=[], labels=[];
+let selected=0, phase='prefill';
+const positions={prefill:131,decode:132};
+const positionBounds={prefill:[0,131],decode:[132,133]};
+const requestSteps=[
+ {label:'分词',status:'Prompt → Tokenizer → 132 个输入 token',input:null},
+ {label:'Prefill',status:'输入 0–131 · 各层建立 Prompt KV',input:131},
+ {label:'采样 132',status:'首个 token 132 已采样 · 下一轮送回模型',input:131,output:132},
+ {label:'Decode 132',status:'输入 132 · 读取历史并写入 KV 132',input:132},
+ {label:'采样 133',status:'token 133 已采样 · 下一轮送回模型',input:132,output:133},
+ {label:'Decode 133',status:'输入 133 · 读取历史并写入 KV 133',input:133},
+ {label:'采样 EOS',status:'示例在位置 134 采样到 EOS',input:133,output:134},
+ {label:'完成',status:'EOS 命中结束条件 · 响应完成',input:133}
+];
+const isLayerStep=index=>[1,3,5].includes(index);
+const stageStride=lastLayer+1;
+const requestAxis=get('request-axis');
+requestAxis.max=requestSteps.length*stageStride-1;
+let requestIndex=0;
+function seekAxis(value){
+ const index=Math.floor(value/stageStride);
+ const layer=isLayerStep(index)?value%stageStride:index===0?0:lastLayer;
+ pausePlayback();
+ selectRequest(index,layer);
+}
+requestAxis.oninput=()=>seekAxis(Number(requestAxis.value));
+requestAxis.onkeydown=event=>{
+ const direction=event.key==='ArrowRight'||event.key==='ArrowUp'?1:
+  event.key==='ArrowLeft'||event.key==='ArrowDown'?-1:0;
+ if(!direction)return;
+ event.preventDefault();
+ const value=isLayerStep(requestIndex)?Number(requestAxis.value)+direction:
+  direction>0?(requestIndex+1)*stageStride:requestIndex*stageStride-1;
+ seekAxis(Math.max(0,Math.min(Number(requestAxis.max),value)));
+};
+function generatedThrough(){
+ for(let i=requestIndex;i>=0;i--)if(requestSteps[i].output)return requestSteps[i].output;
+ return 131;
+}
+function selectRequest(index,layer=selected){
+ requestIndex=index;
+ const input=requestSteps[index].input;
+ phase=input===null||input<=131?'prefill':'decode';
+ if(input!==null)positions[phase]=input;
+ selected=layer;
+ render();
+ requestGeometry();
+}
+
+let playback=null;
+function syncPlayback(){
+ const label=playback===null?'播放完整请求':'暂停播放';
+ get('play').title=label;
+ get('play').setAttribute('aria-label',label);
+ get('play-icon').setAttribute('d',playback===null?'M8 5l12 7-12 7z':'M8 5v14M16 5v14');
+}
+function pausePlayback(){
+ cancelAnimationFrame(playback);
+ playback=null;
+ syncPlayback();
+}
+function setPosition(position){
+ if(phase==='decode'&&positions.decode!==position){selectRequest(position===132?3:5);return;}
+ positions[phase]=position;
+ render();
+}
+function togglePlayback(){
+ if(playback!==null){pausePlayback();return;}
+ if(requestIndex===requestSteps.length-1)selectRequest(0,0);
+ let lastTick=null;
+ function advance(now){
+  lastTick??=now;
+  const layered=isLayerStep(requestIndex);
+  if(now-lastTick>=(layered?65:850)){
+   lastTick=now;
+   if(layered&&selected<lastLayer)choose(selected+1,false);
+   else if(requestIndex<requestSteps.length-1){
+    const next=requestIndex+1;
+    selectRequest(next,isLayerStep(next)?0:lastLayer);
+   }else{pausePlayback();return;}
+  }
+  playback=requestAnimationFrame(advance);
+ }
+ playback=requestAnimationFrame(advance);
+ syncPlayback();
+}
+let projectionX=.72,projectionY=.46*projectionX;
+const planeWidth=362,planeHeight=462;
+const layerStepX=46,layerSpan=lastLayer*layerStepX;
+let layerStepY=12;
+// Calibrate to the unlifted matrix geometry, not the SVG element or side panels.
+// Freeze this frame across hover, selection and inspector transitions.
+const modelBounds={left:170,right:170+layerSpan+planeWidth*projectionX,top:365-lastLayer*layerStepY,bottom:365+planeWidth*projectionY+planeHeight};
+const modelCenter={x:(modelBounds.left+modelBounds.right)/2,y:(modelBounds.top+modelBounds.bottom)/2};
+document.getElementById('scene').setAttribute('viewBox',`${modelCenter.x-1590} ${modelCenter.y-830} 3180 1660`);
+const planes=document.getElementById('planes'),annotation=document.getElementById('annotation');
+function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n}
+let hovered=null,focusPosition=selected,animationFrame=0,lastFrameTime=0;
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+const displayedPositions=[],sideRmsLabels=[];
+const sideRmsGroup=document.getElementById('side-rms');
+function project(x,y,z){
+ const cosine=Math.sqrt(3)/2;
+ return {x:170+cosine*(x+y),y:365+(y-x)/2-z};
+}
+function position(l){
+ const lift=projectionY===.5&&l===selected&&isLayerStep(requestIndex)?155:0;
+ if(projectionY===.5)return project(l*layerStepX/projectionX,0,lift);
+ return {x:170+l*layerStepX,y:365-l*layerStepY};
+}
+function layerPort(layer,y,z){
+ const origin=displayedPositions[layer]??position(layer);
+ return {x:origin.x+projectionX*y,y:origin.y+projectionY*y-z};
+}
+// Test the label footprint / top-left corner against foreground parallelograms.
+// Painter order is L42 ... L0, so only lower-index planes can occlude this layer.
+function labelIsOccluded(l){
+ const p=displayedPositions[l]??position(l);
+ const samples=[[p.x-14,p.y-14],[p.x-23,p.y-14],[p.x+4,p.y+8]];
+ for(let front=0;front<l;front++){
+ const q=displayedPositions[front]??position(front);
+ for(const [x,y] of samples){const localX=(x-q.x)/projectionX,localY=y-q.y-projectionY*localX;
+ if(localX>=0&&localX<=planeWidth&&localY>=0&&localY<=planeHeight)return true;}
+ }
+ return false;
+}
+function paintGeometry(){
+ for(const l of layers){const p=displayedPositions[l]??position(l),g=groups[l],label=labels[l];displayedPositions[l]=p;
+ g.setAttribute('transform',`matrix(${projectionX} ${projectionY} 0 1 ${p.x} ${p.y})`);
+ const preview=l===hovered;g.classList.toggle('preview',preview);
+ label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
+ const numberSize=l===selected||preview?18:13;
+ label.setAttribute('font-size',numberSize);
+ g.querySelector('.layer-rms-value').setAttribute('font-size',26);
+ g.querySelector('.layer-rms-label').setAttribute('font-size',12);
+ const side=projectionX===.035,rms=sideRmsLabels[l];
+ // Screen-space labels stay readable instead of inheriting the thin side projection.
+ rms.setAttribute('transform',`translate(${p.x+planeWidth*projectionX/2} ${p.y-34}) rotate(-90)`);
+ rms.setAttribute('font-size',18);
+ rms.setAttribute('fill',l===selected?'#fff':'#aaa');
+ rms.textContent=kinds[ratios[l]];
+ rms.style.display=side?'':'none';
+ g.querySelector('.layer-rms-label').style.display=side?'none':'';
+ g.querySelector('.layer-rms-value').style.display=side?'none':'';
+ label.setAttribute('fill',l===selected?'#ffffff':preview?'#dddddd':'#a0a0a0');
+ const occluded=labelIsOccluded(l);label.setAttribute('opacity',occluded?'.28':'1');label.classList.toggle('occluded',occluded);
+ }
+
+}
+function animateGeometry(time){
+ const target=hovered??selected,dt=lastFrameTime?Math.min(40,time-lastFrameTime):16.7;lastFrameTime=time;
+ const blend=1-Math.exp(-dt/(playback===null?55:12));let moving=false;focusPosition=target;
+ // Interpolate each plane toward its own destination. Do not sweep a focus
+ // index through unrelated layers when switching between distant targets.
+ for(const l of layers){const dest=position(l,target),from=displayedPositions[l]??dest;
+ if(reducedMotion.matches||Math.hypot(dest.x-from.x,dest.y-from.y)<.15)displayedPositions[l]=dest;
+ else{displayedPositions[l]={x:from.x+(dest.x-from.x)*blend,y:from.y+(dest.y-from.y)*blend};moving=true;}}
+ paintGeometry();
+ paintRequestLinks();
+ if(moving)animationFrame=requestAnimationFrame(animateGeometry);
+ else{animationFrame=0;lastFrameTime=0;}
+}
+function requestGeometry(){
+ if(reducedMotion.matches){if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;focusPosition=hovered??selected;for(const l of layers)displayedPositions[l]=position(l,focusPosition);paintGeometry();paintRequestLinks();return;}
+ if(!animationFrame)animationFrame=requestAnimationFrame(animateGeometry);
+}
+function previewLayer(l){if(hovered===l)return;hovered=l;paintGeometry();if(l===null)document.getElementById('hover-preview').hidden=true}
+// Only physical pointer movement selects a new hover target, so geometry moving
+// underneath a stationary cursor cannot trigger a pointerenter feedback loop.
+function bindDockSurface(surface){
+ let lastX=null,lastY=null;
+ surface.addEventListener('pointermove',e=>{
+ if(surface.classList.contains('is-panning')||e.pointerType==='touch'||(e.clientX===lastX&&e.clientY===lastY))return;
+ lastX=e.clientX;lastY=e.clientY;
+ const target=e.target.closest('.plane[data-layer]');
+ previewLayer(target&&surface.contains(target)?Number(target.dataset.layer):null);
+ });
+ surface.addEventListener('pointerleave',()=>{lastX=lastY=null;previewLayer(null)});
+ surface.addEventListener('pointercancel',()=>previewLayer(null));
+}
+
+for(let l=0;l<ratios.length;l++){
+ const g=el('g',{'class':'plane','data-layer':l});g.append(el('title',{},`Layer ${l} · ${kinds[ratios[l]]} + MoE · 双击查看层内图`));g.append(el('rect',{x:0,y:0,width:planeWidth,height:planeHeight,fill:'#131313',stroke:'#393939','class':'outline'}));
+ const rmsLabel=el('text',{'font-family':'monospace','font-size':30,fill:'#ddd','dominant-baseline':'middle','class':'side-rms-value'});sideRmsLabels.push(rmsLabel);sideRmsGroup.append(rmsLabel);
+ const label=el('text',{fill:'#a0a0a0','font-size':13,'font-family':'monospace','text-anchor':'end','class':'external-layer-number'},String(l));label.dataset.layer=String(l);label.style.cursor='pointer';label.addEventListener('click',()=>choose(l));labels.push(label);
+ const matrix=el('g',{'data-matrix':l,transform:'translate(0 60)'});
+ g.append(el('text',{x:24,y:25,fill:'#aaa','font-size':12,'font-family':'monospace','pointer-events':'none','class':'layer-rms-label'},'Attention'),el('text',{x:24,y:42,fill:'#eee','font-size':26,'font-family':'monospace','class':'layer-rms-value','pointer-events':'none'},'—'));
+ g.append(matrix);g.addEventListener('click',()=>choose(l));g.addEventListener('dblclick',()=>applyView(1));groups.push(g);layers.push(l);
+
+}
+// Fixed painter order preserves the layer sequence while the dock wave moves.
+for(let l=lastLayer;l>=0;l--)planes.append(groups[l]);
+const guide=document.getElementById('guides');for(const[x,y]of [[100,280],[1290,280],[100,660],[1290,660]])guide.append(el('path',{d:`M${x-6},${y}h12 M${x},${y-6}v12`,stroke:'#2f2f2f','stroke-width':1}));
+const viewPresets=[
+ {name:'2.5D',px:Math.sqrt(3)/2,py:.5,stepY:46/Math.sqrt(3),angle:-35,cube:['M74 45 99 59 74 74 49 59Z','M49 59 74 74 74 103 49 88Z','M74 74 99 59 99 88 74 103Z']},
+ {name:'Front',px:1,py:0,stepY:12,angle:0,cube:['M49 49H99V99H49Z','M49 49H99V99H49Z','M49 49H99V99H49Z']},
+ {name:'Side',px:.035,py:0,stepY:0,angle:90,cube:['M49 49H99V99H49Z','M49 49H99V99H49Z','M49 49H99V99H49Z']}
+];
+let viewIndex=0;
+document.getElementById('cycle-view').addEventListener('click',()=>applyView((viewIndex+1)%viewPresets.length));
+function applyView(index){
+ viewIndex=index;const v=viewPresets[viewIndex];
+ document.body.classList.toggle('front-view',v.name==='Front');
+ syncFrontVisibility();
+ projectionX=v.px;projectionY=v.py;layerStepY=v.stepY;
+ document.getElementById('scene').dataset.view=v.name.toLowerCase();
+ if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;
+ for(const l of layers)displayedPositions[l]=position(l);
+ paintGeometry();
+ resetSceneView();
+ paintRequestLinks();
+ document.getElementById('view-name').textContent=v.name;
+ document.getElementById('cycle-view').setAttribute('aria-label',`当前视角 ${v.name}，点击切换 ${viewPresets[(viewIndex+1)%viewPresets.length].name}`);
+ document.getElementById('dial-marker').setAttribute('transform',`rotate(${v.angle} 74 74)`);
+ document.querySelectorAll('#dial-cube path').forEach((p,i)=>{p.setAttribute('d',v.cube[i]);p.setAttribute('fill',v.name==='Side'?'#515151':['#353535','#202020','#515151'][i])});
+}
+
+// Zoom the SVG camera only; page controls and inspector retain their size.
+const zoomScene=document.getElementById('scene');
+let sceneZoom=1;
+const frontGraph=get('front-graph');
+const frontWidth=800,frontHeight=700;
+let frontZoom=1;
+let frontDrag=null;
+
+function setFrontZoom(scale,anchor){
+ const box=frontGraph.viewBox.baseVal;
+ const next=Math.max(.5,Math.min(3,scale));
+ const center=anchor??{x:box.x+box.width/2,y:box.y+box.height/2};
+ const ratio=frontZoom/next;
+ const x=center.x+(box.x-center.x)*ratio;
+ const y=center.y+(box.y-center.y)*ratio;
+ frontGraph.setAttribute('viewBox',`${x} ${y} ${frontWidth/next} ${frontHeight/next}`);
+ frontZoom=next;
+}
+function fitFrontGraph(){
+ frontZoom=1;
+ frontGraph.setAttribute('viewBox',`0 0 ${frontWidth} ${frontHeight}`);
+}
+get('front-in').onclick=()=>setFrontZoom(frontZoom*1.25);
+get('front-out').onclick=()=>setFrontZoom(frontZoom/1.25);
+get('front-fit').onclick=fitFrontGraph;
+
+frontGraph.addEventListener('wheel',event=>{
+ const inverse=frontGraph.getScreenCTM()?.inverse();
+ if(!inverse||frontDrag)return;
+ event.preventDefault();
+ const anchor=new DOMPoint(event.clientX,event.clientY).matrixTransform(inverse);
+ setFrontZoom(frontZoom*(event.deltaY<0?1.1:1/1.1),anchor);
+},{passive:false});
+frontGraph.addEventListener('pointerdown',event=>{
+ if(event.button!==0||frontDrag)return;
+ const inverse=frontGraph.getScreenCTM()?.inverse();
+ if(!inverse)return;
+ const {x,y,width,height}=frontGraph.viewBox.baseVal;
+ const start=new DOMPoint(event.clientX,event.clientY).matrixTransform(inverse);
+ frontDrag={id:event.pointerId,inverse,start,x,y,width,height};
+ frontGraph.setPointerCapture(event.pointerId);
+ frontGraph.classList.add('is-panning');
+});
+frontGraph.addEventListener('pointermove',event=>{
+ if(frontDrag?.id!==event.pointerId)return;
+ const {inverse,start,x,y,width,height}=frontDrag;
+ const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(inverse);
+ frontGraph.setAttribute('viewBox',`${x+start.x-point.x} ${y+start.y-point.y} ${width} ${height}`);
+});
+frontGraph.addEventListener('lostpointercapture',event=>{
+ if(frontDrag?.id!==event.pointerId)return;
+ frontDrag=null;
+ frontGraph.classList.remove('is-panning');
+});
+function resetSceneView(){
+ fitFrontGraph();
+ const cx=viewIndex===1?position(selected).x+planeWidth/2:(170+170+layerSpan+planeWidth*projectionX)/2;
+ const cy=(365-lastLayer*layerStepY+365+planeWidth*projectionY+planeHeight)/2;
+ sceneZoom=1;zoomScene.setAttribute('viewBox',`${cx-1780} ${cy-850} 3890 1860`);
+}
+let panStart=null, suppressCanvasClick=false;
+zoomScene.addEventListener('pointerdown',event=>{
+ if(event.button!==0)return;
+ suppressCanvasClick=false;
+ const inverse=zoomScene.getScreenCTM()?.inverse();
+ if(!inverse)return;
+ const box=zoomScene.viewBox.baseVal;
+ panStart={id:event.pointerId,x:event.clientX,y:event.clientY,inverse,box:[box.x,box.y,box.width,box.height]};
+});
+zoomScene.addEventListener('pointermove',event=>{
+ if(!panStart||event.pointerId!==panStart.id)return;
+ const dx=event.clientX-panStart.x,dy=event.clientY-panStart.y;
+ if(!suppressCanvasClick&&Math.hypot(dx,dy)<5)return;
+ if(!suppressCanvasClick){
+  suppressCanvasClick=true;
+  zoomScene.setPointerCapture(event.pointerId);
+  zoomScene.classList.add('is-panning');
+  previewLayer(null);
+ }
+ const [x,y,width,height]=panStart.box;
+ const {a,b,c,d}=panStart.inverse;
+ zoomScene.setAttribute('viewBox',`${x-a*dx-c*dy} ${y-b*dx-d*dy} ${width} ${height}`);
+});
+function endCanvasPan(event){
+ if(panStart?.id!==event.pointerId)return;
+ panStart=null;
+ zoomScene.classList.remove('is-panning');
+}
+window.addEventListener('pointerup',endCanvasPan);
+window.addEventListener('pointercancel',endCanvasPan);
+zoomScene.addEventListener('click',event=>{
+ if(suppressCanvasClick)event.stopImmediatePropagation();
+},true);
+zoomScene.addEventListener('wheel',event=>{
+ event.preventDefault();
+ const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?innerHeight:1);
+ const next=Math.max(.5,Math.min(4,sceneZoom*Math.exp(-Math.max(-160,Math.min(160,delta))*.0015)));
+ if(next===sceneZoom)return;
+ const matrix=zoomScene.getScreenCTM();if(!matrix)return;
+ const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());
+ const box=zoomScene.viewBox.baseVal,ratio=sceneZoom/next;
+ zoomScene.setAttribute('viewBox',`${point.x+(box.x-point.x)*ratio} ${point.y+(box.y-point.y)*ratio} ${box.width*ratio} ${box.height*ratio}`);
+ sceneZoom=next;
+ previewLayer(null);
+},{passive:false});
+
+
+// Logical handoffs from PyPTO3 prefill_layer.py and decode_layer.py.
+// Icon paths from the formal diagram legend library, op-icons.js.
+const opIcons = {"linear": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2", "norm": "M4 6h16M7 12h10M9 18h6", "attention": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6", "compress": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4", "mix": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16", "topk": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6", "router": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"};
+function appendCacheGlyph(parent,x,y,width,height,label){
+ parent.append(el('rect',{x,y,width,height,rx:6,class:'cache-body'}));
+ const rows=width<80?2:1;
+ const columns=rows===2?3:Math.round(width/(height*.83));
+ const pitch=(width-8)/columns;
+ const radius=Math.min(pitch*.45,height*(rows===2?.205:.34));
+ for(let row=0;row<rows;row++){
+  for(let col=0;col<columns;col++){
+   parent.append(el('circle',{cx:x+4+(col+.5)*pitch,cy:y+height*(row+.5)/rows,r:radius,class:'cache-dot'}));
+  }
+ }
+ parent.append(el('text',{x:x+width/2,y:y+height/2,'text-anchor':'middle',
+  'dominant-baseline':'middle','font-size':width<80?14:16,class:'cache-label'},label));
+}
+function appendGlyph(parent,x,y,width,height,label,role){
+ if(role==='cache'){appendCacheGlyph(parent,x,y,width,height,label);return;}
+ const tensor=role==='activation';
+ const color='#b1ef6b';
+ const glyph=el('g');
+ glyph.append(el('rect',{x,y,width,height,style:tensor?'rx:7px':'rx:'+height/2+'px',
+  fill:tensor?'#141414':'#494949',stroke:tensor?color:'none'}));
+ if(tensor){
+  const size=(height-14)/2;
+  const columns=Math.floor((width-10+4)/(size+4));
+  const pitch=(width-10-size)/(columns-1);
+  for(let row=0;row<2;row++)for(let column=0;column<columns;column++){
+   glyph.append(el('rect',{x:x+5+column*pitch,y:y+5+row*(size+4),width:size,height:size,fill:color,opacity:.23,style:'rx:0'}));
+  }
+ }else{
+  const cx=x+height/2,cy=y+height/2;
+  glyph.append(el('circle',{cx,cy,r:height*.35,fill:'#111'}),
+   el('path',{d:opIcons[role],transform:'translate('+(cx-10)+' '+(cy-10)+') scale(.83)',fill:'none',stroke:'#eee','stroke-width':1.8,'stroke-linecap':'round','stroke-linejoin':'round'}));
+ }
+ glyph.append(el('text',{x:x+width/2,y:y+height/2,fill:tensor?color:'#eee','text-anchor':'middle',
+  'dominant-baseline':'middle','font-size':16,style:tensor?'paint-order:stroke;stroke:#141414;stroke-width:3px':''},label));
+ parent.append(glyph);
+}
+function renderFront(kind) {
+ const svg=get('front-graph');
+ svg.setAttribute('aria-label','L'+selected+' · '+phase+' · '+kind+' 层内图');
+ svg.innerHTML='<defs><marker id="front-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8" fill="#999"/></marker></defs>';
+ const edge=d=>svg.append(el('path',{d,fill:'none',stroke:'#999','marker-end':'url(#front-arrow)'}));
+ // Grouped from Design/architecture/deepseek_v4_flash_csa/model_architecture.json.
+ const nodes=[
+  [(phase==='prefill'?'Prompt · 132':'Decode · 1')+' × 4 × 4096','activation'],
+  ['Attention · HC Pre','mix'],
+  ['Attention · RMSNorm','norm'],
+  ['Query Projection / RoPE','linear'],
+  [kind+' Attention · '+(phase==='prefill'?'Prefill':'Decode'),'attention'],
+  ['Output Projection','linear'],
+  ['Attention · HC Post','mix'],
+  ['FFN · HC Pre / RMSNorm','mix'],
+  [(selected<3?'Hash Router':'Router')+' / MoE','router'],
+  ['FFN · HC Post','mix'],
+  ['Hidden Out · T × 4 × 4096','activation']
+ ];
+ nodes.forEach(([label,role],i)=>{
+  const y=42+i*58;
+  if(i)edge('M290 '+(y-20)+'V'+y);
+  appendGlyph(svg,135,y,310,38,label,role);
+ });
+
+ // Branch at the normalized input. Cache access links represent read/write.
+ edge('M445 177H477V116H510');
+ appendGlyph(svg,510,97,250,38,'KV Projection / RoPE','linear');
+ edge('M635 135V159');
+ appendGlyph(svg,510,159,250,38,'SWA · KV cache','cache');
+ edge('M510 178H495V286H445');
+ if(kind!=='SWA'){
+  const ratio=kind==='CSA'?4:128;
+  edge('M477 177V222H510');
+  appendGlyph(svg,510,203,250,38,'KV Compressor · '+ratio+':1','compress');
+  edge('M635 241V263');
+  appendGlyph(svg,510,263,250,38,kind+' · 压缩 KV','cache');
+  edge('M510 282H481V298H445');
+ }
+ if(kind==='CSA'){
+  edge('M445 233H462V347H510');
+  appendGlyph(svg,510,328,250,38,'Lightning Indexer / Top-K','topk');
+  edge('M510 347H473V308H445');
+ }
+ // Keep the expert branches grouped in this layer view.
+ svg.append(el('text',{x:460,y:528,fill:'#aaa','font-size':15},'Top-6 路由专家 + 1 共享专家'));
+
+}
+function choose(layer, manual=true) {
+ if(manual)pausePlayback();
+ selected=Math.max(0,Math.min(lastLayer,layer));
+ render();
+ if(viewIndex===1)resetSceneView();
+ requestGeometry();
+}
+function render() {
+ const position=positions[phase], start=Math.max(0,position-127);
+ const kind=kinds[ratios[selected]];
+ for(const l of layers){
+  const active=l===selected,g=groups[l];
+  g.classList.toggle('chosen',active);
+  g.querySelector('.outline').setAttribute('fill',active?'#1b1b1b':'#131313');
+  g.querySelector('.layer-rms-value').textContent=kinds[ratios[l]];
+  g.querySelector('title').textContent='L'+l+' · '+kinds[ratios[l]]+' + MoE · 双击查看层内图';
+  const inputLabel=phase==='prefill'?'Prompt · 132 tokens':'Decode · 1 token';
+  const nodes=[inputLabel,'Attention · '+kinds[ratios[l]],'MoE','Hidden Out'];
+  const face=el('g',{class:'face'});
+  nodes.forEach((name,i)=>{
+   const y=20+i*67;
+   if(i)face.append(el('path',{d:'M181 '+(y-23)+'v23',stroke:'#777'}));
+   appendGlyph(face,72,y,218,44,name,['activation','attention','router','activation'][i]);
+  });
+  g.querySelector('[data-matrix]').replaceChildren(face);
+ }
+ renderRequest();
+ renderFront(kind);
+ get('identity-layer').textContent='L'+selected;
+ get('identity-name').textContent='Attention / '+kind;
+ const history=start===position?'无':start+'–'+(position-1);
+ get('identity-context').textContent='SWA 历史可见 '+history+' · 当前 '+position;
+ get('position').textContent=(phase==='decode'?'Decode 输入':'Prompt 查询')+' · 位置 '+position;
+ const [first,last]=positionBounds[phase];
+ renderPositionAxis(position,first,last);
+ get('prev').disabled=position===first;
+ get('next').disabled=position===last;
+ get('kv-title').textContent='L'+selected+' · '+kind+' / SWA';
+ get('kv-range').textContent='SWA 历史读取 '+history+' · '+(phase==='decode'?'当前写入并参与读取 ':'当前 Prompt 位置 ')+position;
+ const compressed=get('kv-compressed');
+ const hca=get('kv-hca');
+ hca.hidden=kind!=='HCA'||phase!=='decode';
+ get('kv-hca-key').hidden=hca.hidden;
+ if(!hca.hidden){
+  const count=Math.floor((position+1)/128);
+  const writes=(position+1)%128===0;
+  get('kv-hca-track').replaceChildren(...Array.from({length:count},(_,i)=>
+    kvDot(writes&&i===count-1?'current':'read')
+  ));
+  compressed.textContent=count+' 条完整压缩 KV'+
+    (count?' · 对应原始位置 0–'+(count*128-1):'')+
+    (writes?' · 本步新增 1 条':' · 本步沿用已有条目');
+ }
+ get('kv').replaceChildren(...Array.from({length:positionBounds.decode[1]+1},(_,i)=>
+  kvDot(i===position?'current':i>=start&&i<position?'read':'')
+ ));
+ if(!get('token-workspace').hidden)renderTokenView(position,start,kind);
+}
+function renderPositionAxis(position,first,last){
+ const axis=get('position-axis');
+ const count=Math.min(8,last-first+1);
+ const start=Math.max(first,Math.min(position-3,last-count+1));
+ const restoreFocus=axis.contains(document.activeElement);
+ axis.replaceChildren(...Array.from({length:count},(_,offset)=>{
+  const index=start+offset;
+  const button=document.createElement('button');
+  button.type='button';
+  button.textContent=index;
+  button.setAttribute('aria-pressed',String(index===position));
+  button.onclick=()=>{pausePlayback();setPosition(index);};
+  return button;
+ }));
+ if(restoreFocus)axis.children[position-start].focus();
+}
+const tokenCells=Array.from({length:positionBounds.decode[1]+1},(_,index)=>{
+ const button=document.createElement('button');
+ button.type='button';
+ button.className='token-cell';
+ button.textContent=index;
+ button.onclick=()=>{pausePlayback();setPosition(index);};
+ get('token-grid').append(button);
+ return button;
+});
+function renderTokenView(position,start,kind){
+ const idle=requestIndex===0;
+ get('token-grid').hidden=idle;
+ get('token-evidence').hidden=idle;
+ get('token-caption').hidden=!idle;
+ if(idle){get('token-caption').textContent='分词完成 · 132 个输入 token';return;}
+ const prefill=phase==='prefill';
+ const [first,last]=positionBounds[phase];
+ get('token-caption').textContent='';
+ get('token-swa-title').textContent='L'+selected+' · SWA '+(prefill?'因果窗口':'读取');
+ get('token-swa').textContent=start+'–'+position+' · '+(position-start+1)+' 个位置';
+ get('token-current').textContent=position+(prefill?' · Prompt 查询':' · 写入 KV');
+ const compression=get('token-compression');
+ compression.hidden=kind==='SWA';
+ get('token-compression-title').textContent=kind+' · 压缩 KV';
+ get('token-compression-value').textContent=kind==='HCA'&&!prefill
+  ? get('kv-compressed').textContent.split(' · ').slice(0,2).join(' · ')
+  : '暂无条目明细';
+ tokenCells.forEach((button,index)=>{
+  button.hidden=prefill&&index>last;
+  button.disabled=index<first||index>last;
+  button.dataset.read=String(index>=start&&index<=position);
+  button.setAttribute('aria-pressed',String(index===position));
+  const status=index===position?'，当前位置':index>=start&&index<=position?'，SWA 可见':'，SWA 窗口外';
+  button.setAttribute('aria-label',(index<positionBounds.decode[0]?'Prompt ':'Decode ')+index+status);
+ });
+}
+get('token-mode').onclick=()=>{
+ const open=get('token-workspace').hidden;
+ get('token-workspace').hidden=!open;
+ get('token-mode').setAttribute('aria-expanded',String(open));
+ if(open)render();
+};
+get('token-close').onclick=()=>{get('token-mode').click();get('token-mode').focus();};
+function kvDot(state){
+ const dot=document.createElement('span');
+ dot.className=state?'kv-dot '+state:'kv-dot';
+ return dot;
+}
+get('play').onclick=togglePlayback;
+get('restart').onclick=()=>{
+ pausePlayback();
+ selectRequest(0,0);
+ resetSceneView();
+};
+get('prev').onclick=()=>{pausePlayback();setPosition(positions[phase]-1)};
+get('next').onclick=()=>{pausePlayback();setPosition(positions[phase]+1)};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pausePlayback()});
+function syncFrontVisibility(){
+ const inline=document.body.classList.contains('request-inspecting');
+ get('inference-front').hidden=viewIndex!==1&&!inline;
+ get('open-front').textContent=inline?'关闭层内图':'查看层内图 ↗';
+ get('open-front').setAttribute('aria-expanded',String(!get('inference-front').hidden));
+}
+get('open-front').onclick=()=>{
+ pausePlayback();
+ if(viewIndex===1){applyView(0);return;}
+ document.body.classList.toggle('request-inspecting');
+ syncFrontVisibility();
+};
+get('open-kv').onclick=()=>{pausePlayback();get('kv-dialog').showModal()};
+get('help').onclick=()=>{pausePlayback();get('guide').showModal()};
+for(const label of labels)annotation.append(label);
+bindDockSurface(get('scene'));
+const sequenceLabels=['Prompt 0–131','132','133','EOS'];
+const sequenceButtons=sequenceLabels.map((label,index)=>{
+ const button=document.createElement('button');
+ button.type='button';
+ button.onclick=()=>{pausePlayback();selectRequest([1,2,4,6][index],index===0?0:lastLayer);};
+ get('request-sequence').append(button);
+ return button;
+});
+const stepButtons=requestSteps.map((step,index)=>{
+ const button=document.createElement('button');
+ button.type='button';
+ button.textContent=step.label;
+ button.title='定位到 '+step.label;
+ button.onclick=()=>{pausePlayback();selectRequest(index,[2,4,6,7].includes(index)?lastLayer:0);};
+ get('request-steps').append(button);
+ return button;
+});
+function renderRequest(){
+ const step=requestSteps[requestIndex];
+ const generated=generatedThrough();
+ const layered=isLayerStep(requestIndex);
+ requestAxis.value=requestIndex*stageStride+(layered?selected:requestIndex===0?0:requestIndex===requestSteps.length-1?lastLayer:Math.floor(lastLayer/2));
+ requestAxis.setAttribute('aria-valuetext',step.label+(layered?' · L'+selected:''));
+ get('request-status').textContent=(layered?step.label+' · L'+selected+'　':'')+step.status;
+ requestAxis.style.setProperty('--played',100*requestAxis.value/Number(requestAxis.max)+'%');
+ sequenceButtons.forEach((item,index)=>{
+  const position=131+index;
+  item.textContent=sequenceLabels[index];
+  item.disabled=position>generated;
+  item.dataset.role=position>generated?'future':position===generated&&index>0?'output':
+   position===step.input?'input':'ready';
+  item.title=index===0?'查看 Prefill':position>generated?'尚未生成':'定位到采样 '+sequenceLabels[index];
+ });
+ stepButtons.forEach((button,index)=>{
+  button.textContent=requestSteps[index].label+(index===requestIndex&&layered?' · L'+selected:'');
+  if(index===requestIndex)button.setAttribute('aria-current','step');
+  else button.removeAttribute('aria-current');
+ });
+ const tokenStarted=step.input!==null;
+ get('identity').hidden=!tokenStarted;
+ get('open-kv').disabled=!tokenStarted;
+ get('open-front').disabled=!tokenStarted&&!document.body.classList.contains('request-inspecting')&&viewIndex!==1;
+ get('scene').toggleAttribute('data-request-idle',!tokenStarted);
+
+ paintRequestLinks();
+}
+const cacheBoxes=layers.map(layer=>{
+ const box=el('g',{class:'kv-box',role:'button',tabindex:0,'aria-label':'查看 L'+layer+' 的 KV 缓存'});
+ box.append(el('title',{},'查看 L'+layer+' 的 KV 缓存'));
+ const face=(d,fill)=>el('path',{d,fill,stroke:'#151b22','stroke-width':1.5});
+ box.append(
+  face('M0 0L16 -9L35 2L19 11Z','var(--token-blue)'),
+  face('M0 0L19 11V25L0 14Z','#246fc6'),
+  face('M19 11L35 2V16L19 25Z','#19569f')
+ );
+ const open=()=>{if(box.getAttribute('aria-disabled')==='true')return;choose(layer);get('kv-dialog').showModal();};
+ box.addEventListener('click',open);
+ box.addEventListener('keydown',event=>{
+  if(event.key==='Enter'||event.key===' '){event.preventDefault();open();}
+ });
+ get('request-cache').append(box);
+ return box;
+});
+function paintRequestLinks(){
+ const group=get('request-links');
+ group.replaceChildren();
+ const spatial=get('scene').dataset.view==='2.5d';
+ get('request-cache').style.display=spatial?'':'none';
+ if(!spatial)return;
+ const lastLayerX=lastLayer*layerStepX/projectionX;
+ const entry=project(0,0,-245);
+ const exit=project(lastLayerX,planeWidth,-245);
+ const step=requestSteps[requestIndex];
+ const output=generatedThrough()>131;
+ const stroke=step.input===null?'#555':'#3187ec';
+ const end=project(lastLayerX,0,-245);
+ const route=(d,dashed=false)=>group.append(el('path',{d,fill:'none',stroke,
+  'stroke-width':dashed?3.5:5,'stroke-linejoin':'round','stroke-dasharray':dashed?'8 9':'none'}));
+ const label=(x,y,value)=>group.append(el('text',{x,y,fill:'#ddd','font-size':25},value));
+ route(`M${entry.x-75} ${entry.y}L${entry.x} ${entry.y}L${end.x} ${end.y}L${exit.x} ${exit.y}`);
+ const endpoint=(x,y,title,detail,width)=>{
+  group.append(el('rect',{x,y,width,height:76,rx:10,fill:'#21252b',stroke:'#424953'}));
+  label(x+14,y+29,title);
+  group.append(el('text',{x:x+14,y:y+57,fill:'#a9b5c4','font-size':20},detail));
+ };
+ endpoint(entry.x-295,entry.y-38,'Embedding',step.input===null?'Prompt → Tokenizer':
+  step.input<=131?'Prompt 0–131':'输入 Token '+step.input,220);
+ route(`M${exit.x} ${exit.y}h80`);
+ endpoint(exit.x+80,exit.y-38,'Final Norm · LM Head','Logits → 采样',310);
+ if(output){
+  const generated=generatedThrough();
+  const bottom=modelBounds.bottom+128;
+  const port=el('g',{class:'sample-port',role:'button',tabindex:0,'aria-label':'在 Token 视图查看 '+sequenceLabels[generated-131]});
+  port.append(el('title',{},'在 Token 视图查看采样结果'),
+   el('rect',{x:exit.x+80,y:exit.y+51,width:200,height:42,rx:8,fill:'#26384b'}),
+   el('text',{x:exit.x+94,y:exit.y+79,fill:'#fff','font-size':22},generated===134?'EOS · 完成':'Token '+generated+' ↗'));
+  const inspect=()=>{
+   pausePlayback();
+   if(get('token-workspace').hidden)get('token-mode').click();
+   sequenceButtons[generated-131].focus();
+  };
+  port.addEventListener('click',inspect);
+  port.addEventListener('keydown',event=>{
+   if(event.key==='Enter'||event.key===' '){event.preventDefault();inspect();}
+  });
+  group.append(port);
+  if(generated<134){
+   route(`M${exit.x+94} ${exit.y+93}V${bottom}H${entry.x-185}V${entry.y+38}`,true);
+   const middle=(exit.x+94+entry.x-185)/2;
+   group.append(el('text',{x:middle,y:bottom+33,fill:'#ccc','font-size':23,'text-anchor':'middle'},
+    'Token '+generated+' → 下一轮输入'));
+  }
+ }
+ const layered=isLayerStep(requestIndex);
+ for(const layer of layers){
+  const populated=requestIndex>1||requestIndex===1&&layer<=selected;
+  const updated=layered&&layer<=selected;
+  const slot=layerPort(layer,planeWidth+14,-162);
+  cacheBoxes[layer].setAttribute('transform',`translate(${slot.x} ${slot.y}) scale(1.24)`);
+  cacheBoxes[layer].setAttribute('opacity',layer===selected&&populated?1:updated?.94:populated?.84:.22);
+  cacheBoxes[layer].setAttribute('tabindex',populated?0:-1);
+  cacheBoxes[layer].setAttribute('aria-disabled',String(!populated));
+ }
+ if(layered){
+  const attention=layerPort(selected,290,-169);
+  const slot=layerPort(selected,planeWidth+14,-162);
+  const marker=el('marker',{id:'kv-direction',viewBox:'0 0 8 8',refX:7,refY:4,markerWidth:14,markerHeight:14,markerUnits:'userSpaceOnUse',orient:'auto'});
+  marker.append(el('path',{d:'M0 0L8 4L0 8Z',fill:'var(--token-blue)'}));
+  group.append(marker);
+  const arrow=(d)=>group.append(el('path',{d,fill:'none',stroke:'var(--token-blue)','stroke-width':4,'stroke-linejoin':'round','marker-end':'url(#kv-direction)'}));
+  arrow(`M${attention.x} ${attention.y}H${slot.x-14}V${slot.y+4}H${slot.x}`);
+  if(phase==='decode')arrow(`M${slot.x} ${slot.y+15}H${slot.x-26}V${attention.y+8}H${attention.x-4}`);
+ }
+
+}
+render();
+applyView(0);
+</script></body></html>
