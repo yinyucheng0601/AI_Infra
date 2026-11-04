@@ -1008,20 +1008,84 @@ body.notes-pinned.preview-open .speaker-panel{display:none}body.notes-pinned.pre
 .implementation-skill{display:flex;align-items:center;justify-content:center;gap:1.6cqw;border-top:1px solid #d0d5dc;margin-top:1.3cqh;padding-top:1.2cqh;font-size:1cqw;color:#53616d}.implementation-skill strong{background:#243028;color:#e2f58b;border-radius:99px;padding:.45cqh 1cqw;font-size:1.1cqw}.implementation-skill b{font-weight:400;color:#8b96a1}
 
 /* Edge navigation overlays the unchanged 16:9 presentation stage. */
-.navigator-hover-zone{position:fixed;left:0;top:0;bottom:0;width:22px;z-index:8999}
+.navigator-hover-zone{position:fixed;left:0;top:0;bottom:0;width:32px;z-index:9001}
+.navigator-backdrop{display:none;position:fixed;inset:0;z-index:9001}
+body.navigator-open .navigator-backdrop{display:block}
+body.navigator-open .navigator-hover-zone{pointer-events:none}
 @media screen{
  body.navigator-open #deck,body.notes-pinned.navigator-open #deck{width:100%;padding-left:0}
  body.navigator-open #deck>.slide,body.notes-pinned.navigator-open #deck>.slide{left:50%;width:min(100vw,177.777778dvh);height:min(56.25vw,100dvh)}
  body.navigator-open #deck>.slide .diamond-theory{inset:0 0 7cqh}
  body.navigator-open .deck-view-switcher{left:50%}
- .deck-navigator{z-index:9002;background:rgba(17,17,17,.97)}
+ body.navigator-open .deck-navigator{display:block!important;z-index:9002;background:rgba(17,17,17,.97)}
  .navigator-resizer{z-index:9003}
 }
 @media(hover:none){.navigator-hover-zone{display:none}}
-@media print{.navigator-hover-zone{display:none}}
+@media print{.navigator-hover-zone,body.navigator-open .navigator-backdrop,body.navigator-open .deck-navigator{display:none!important}}
 
 .summary-implementation{padding:1.6cqh 1.8cqw 1.4cqh}
 .implementation-label{margin-bottom:1.2cqh}
 .implementation-assets article{min-height:9cqh;box-sizing:border-box;padding:1.7cqh 1.2cqw;border-radius:.9cqw}
 .implementation-assets p{margin-top:.8cqh;line-height:1.5}
 .implementation-skill{border:0;margin-top:1.5cqh;padding-top:0;gap:1.6cqw}
+#system:is([data-step="3"],[data-step="4"],[data-step="5"]){background:#f2f3f5;color:#18232c}
+#system:is([data-step="3"],[data-step="4"],[data-step="5"]) :is(.brand,.subtitle,.scene-caption,.page-no){color:#526372}
+#system:is([data-step="3"],[data-step="4"],[data-step="5"]) :is(.title,.title em){color:#18232c}
+.asset-bento.skill-workflow{inset:19% 4% 3%;display:flex}
+.skill-workflow svg{display:block;width:100%;height:100%;overflow:visible}
+.skill-workflow text{fill:#18232c;font:650 24px var(--sans);text-anchor:middle}
+.skill-workflow .loop-note{fill:#526372;font-size:19px;font-weight:450}
+#system[data-step="4"] .loop-core>rect:first-child{fill:#dce2e8}
+#system[data-step="5"] .loop-stage-4 rect{fill:#c8e942}
+
+.skill-workflow .loop-index{fill:#6b578f;font:600 15px var(--mono);letter-spacing:.12em}
+#system[data-step="5"] .loop-stage-4 text:not(.loop-note){fill:#4b6419}
+.pass-dimension{position:absolute;inset:0;pointer-events:none;color:#82b9ff;font:500 0.83cqw var(--mono);opacity:0}
+.pass-dimension::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#69a5ef55 1px,transparent 1.5px) 0 0/1.8cqw 1.8cqw}
+.pass-dimension span{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:var(--h)}
+.pass-dimension span:not(.dimension-title):not(.dimension-origin){outline:1px dashed #82b9ffa0;padding:.3cqw}
+.pass-dimension .dimension-title{top:2%;left:50%;transform:translateX(-50%)}
+#system[data-step="2"] .asset-framework iframe{animation:pass-real-in .8s 2.8s both}
+#system[data-step="2"] .pass-dimension{opacity:1;animation:pass-dimension-hold 1s 7s forwards}
+#system[data-step="2"] .pass-dimension span:not(.dimension-title){animation:pass-real-in .25s calc(.15s + var(--i)*.43s) both}
+@keyframes pass-real-in{from{opacity:0}to{opacity:1}}
+@keyframes pass-dimension-hold{to{opacity:.7}}
+@media(prefers-reduced-motion:reduce){#system[data-step="2"] :is(.asset-framework iframe,.pass-dimension,.pass-dimension span){animation:none}}
+
+/* The canvas reveal plays on entry even when manual navigation pauses the deck. */
+#system[data-step="2"] :is(.asset-framework iframe,.pass-dimension,.pass-dimension span){animation-play-state:running!important}
+#system[data-step="3"] .scene-caption{display:none}
+
+.pass-audit{position:absolute;z-index:2;inset:3% 17% auto auto;color:#eee;font:500 .95cqw/1.6 var(--sans);visibility:hidden}
+#system[data-step="2"] .pass-audit{animation:pass-audit-in .8s 2.8s both;animation-play-state:running!important}
+@keyframes pass-audit-in{from{opacity:0;visibility:hidden}to{opacity:1;visibility:visible}}
+.pass-audit summary{display:grid;place-items:center;width:4cqw;height:4cqw;border-radius:50%;border:1px solid #505050;background:#1a1a1a;font-size:1.8cqw;cursor:pointer;list-style:none}
+.pass-audit summary::-webkit-details-marker{display:none}
+.pass-audit[open] summary{background:#ddd;color:#171717}
+.pass-audit aside{position:absolute;top:4.8cqw;right:-14cqw;width:27cqw;max-height:70cqh;overflow:auto;padding:1.35cqw;border:1px solid #434343;border-radius:1.3cqw;background:#1a1a1a;box-shadow:0 10px 30px #0005}
+.pass-audit h3{font-size:1.5cqw;margin:.35em 0}
+.pass-audit h4{margin:0;font-size:1.05cqw}
+.pass-audit section{padding:.75cqw 0;border-top:1px solid #353535}
+.pass-audit p{margin:.35em 0;color:#ccc}
+.pass-audit a{color:#eee;text-decoration:underline}
+#system[data-step="2"] .pass-dimension span:not(.dimension-title):not(.dimension-origin){box-sizing:border-box}
+@media(prefers-reduced-motion:reduce){#system[data-step="2"] .pass-audit{animation:none;visibility:visible}}
+
+#system .asset-framework iframe{position:absolute;inset:0;display:block}
+#system .asset-framework{bottom:3%}
+#system[data-step="2"] .page-no{display:none}
+.pass-dimension span[data-pass-dimension="legend"],.pass-dimension span[data-pass-dimension="rail"],.pass-dimension span[data-pass-dimension="zoom"]{font-size:0}
+.pass-dimension span[data-pass-dimension="legend"]::before,.pass-dimension span[data-pass-dimension="rail"]::before,.pass-dimension span[data-pass-dimension="zoom"]::before{position:absolute;bottom:100%;left:0;font-size:.72cqw;background:#131313;padding:0 .3cqw}
+.pass-dimension span[data-pass-dimension="legend"]::before{content:"03 场景控制"}
+.pass-dimension span[data-pass-dimension="rail"]::before{content:"04 阶段导航"}
+.pass-dimension span[data-pass-dimension="zoom"]::before{content:"05 视野控制"}
+.pass-audit>summary svg{width:1.7cqw;height:1.7cqw}
+.pass-audit aside label{display:block;margin-top:1cqw}
+.pass-audit textarea,.pass-audit pre{width:100%;box-sizing:border-box;padding:.5cqw;background:#111;color:#eee;border:1px solid #505050;border-radius:.4cqw;font:inherit}
+.pass-audit pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.pass-audit .pass-handoff summary{display:list-item;width:auto;height:auto;border:0;background:transparent;color:#ddd;font:inherit;list-style:revert}
+.pass-audit-actions{display:flex;gap:.5cqw;margin-top:.65cqw}
+.pass-audit-actions button{border:0;border-radius:99px;padding:.35cqw .7cqw;background:#ddd;color:#151515;cursor:pointer}
+
+.pass-audit[open] aside{outline:1px dashed #82b9ffa0;outline-offset:4px}
+.pass-audit[open]::after{content:"06 核查与交接";position:absolute;top:4.8cqw;right:-14cqw;transform:translateY(-100%);padding:0 .35cqw;background:#131313;color:#82b9ff;font:500 .72cqw var(--mono);pointer-events:none}

@@ -5,7 +5,7 @@ import re
 
 ROOT=Path(__file__).resolve().parent
 base=(ROOT/'history/draft-01/index.html').read_text()
-template=(ROOT/'vendor/deck-template.html').read_text()
+template=(ROOT/'assets/build/deck-template.html').read_text()
 nav_css=template[template.index('/* ===== 三视图导航'):template.index('/* ===== 放大预览')]
 styles=nav_css+'\n'+(ROOT/'launch.css').read_text()
 html=re.sub(r'<style>.*?</style>',lambda _: '<style>\n'+styles+'\n</style>',base,count=1,flags=re.S)

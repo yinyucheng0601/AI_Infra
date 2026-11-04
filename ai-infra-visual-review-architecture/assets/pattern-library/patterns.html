@@ -4208,10 +4208,11 @@ a:focus-visible, summary:focus-visible { outline: 3px solid var(--focus-ring); o
   if(isPatterns){$('pageTitle').textContent='AI Infra Patterns';document.querySelector('#galleryHero .hero-description').textContent='积累可复用的可视化与交互模式，从具体场景探索设计表达。';$('searchInput').placeholder='搜索 Pattern、摘要、关键词…';$('collection').setAttribute('aria-label','Pattern 内容');}
   if(isPatterns&&new URLSearchParams(location.search).has('embed')){
  document.body.className='pattern-deck-embed';
- const wall=document.createElement('main');wall.className='pattern-wall';wall.style.gridTemplateRows='repeat('+Math.ceil(assets.length/5)+',minmax(0,1fr))';wall.setAttribute('aria-label','全部 Pattern 封面宫格');
- wall.innerHTML=assets.map((a,i)=>`<button class="pattern-tile" data-index="${i}" aria-label="查看 ${esc(a.title)}"><div class="pattern-cover">${coverArt(a)}</div><div class="pattern-caption"><small>${String(i+1).padStart(2,'0')}</small><span>${esc(a.title)}</span></div></button>`).join('');document.body.append(wall);
+ const deckAssets=assets.filter(asset=>asset.id!=='atlas-950-anatomy');
+ const wall=document.createElement('main');wall.className='pattern-wall';wall.style.gridTemplateRows='repeat('+Math.ceil(deckAssets.length/5)+',minmax(0,1fr))';wall.setAttribute('aria-label','全部 Pattern 封面宫格');
+ wall.innerHTML=deckAssets.map((a,i)=>`<button class="pattern-tile" data-index="${i}" aria-label="查看 ${esc(a.title)}"><div class="pattern-cover">${coverArt(a)}</div><div class="pattern-caption"><small>${String(i+1).padStart(2,'0')}</small><span>${esc(a.title)}</span></div></button>`).join('');document.body.append(wall);
  const zoom=document.createElement('dialog');zoom.className='pattern-zoom';zoom.innerHTML='<button aria-label="关闭封面预览">×</button><h2></h2><div></div>';document.body.append(zoom);zoom.querySelector('button').onclick=()=>zoom.close();
- wall.addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(!b)return;const a=assets[+b.dataset.index];zoom.querySelector('h2').textContent=a.title;zoom.querySelector('div').innerHTML=coverArt(a);zoom.showModal()});return;
+ wall.addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(!b)return;const a=deckAssets[+b.dataset.index];zoom.querySelector('h2').textContent=a.title;zoom.querySelector('div').innerHTML=coverArt(a);zoom.showModal()});return;
  }
   render();
   if(isPatterns){$('connectionStatus').textContent=`共 ${assets.length} 个 Pattern`;return;}

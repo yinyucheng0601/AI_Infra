@@ -15,15 +15,30 @@
 const DATA=JSON.parse(document.getElementById('legendData').textContent),$=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let layer='system';const categoriesByLayer={system:['全部','对象','关系'],pattern:['全部']};let category='全部',shown=[],selected=-1,currentOptions={},currentUrl=null;
 const sourceMap=Object.fromEntries(DATA.sources.map(s=>[s.id,s]));
-const images=Object.fromEntries(DATA.items.map(e=>[e.id,URL.createObjectURL(new Blob([e.svg],{type:'image/svg+xml'}))]));
-for(const e of DATA.items)for(const [i,t] of (e.tiles||[]).entries())images[e.id+'-'+i]=URL.createObjectURL(new Blob([t.svg],{type:'image/svg+xml'}));
+const lightTheme=new URLSearchParams(location.search).get('embed')==='1';
+function themedSvg(svg){
+ if(!lightTheme)return svg;
+ const ink={b1ef6b:'365a16',bca0f3:'5e3e8c',f2c45f:'704e09','79d4f2':'175568'};
+ return svg.replace(/#([0-9a-f]{6}|[0-9a-f]{3})(?![0-9a-f])/gi,(color,hex)=>{
+  const rgb=hex.length===3?Array.from(hex,c=>c+c).join(''):hex;
+  if(rgb.slice(0,2)!==rgb.slice(2,4)||rgb.slice(0,2)!==rgb.slice(4))return color;
+  const gray=parseInt(rgb.slice(0,2),16);
+  const value=gray<96?Math.round(248-gray*.75):Math.round(105-(gray-96)*.48);
+  return '#'+value.toString(16).repeat(3);
+ }).replace(/<text\b[^>]*>/gi,tag=>tag.replace(
+  /(\bfill[:=]["']?\s*)#(b1ef6b|bca0f3|f2c45f|79d4f2)\b/gi,
+  (_,prefix,hue)=>prefix+'#'+ink[hue.toLowerCase()]
+ ));
+}
+const images=Object.fromEntries(DATA.items.map(e=>[e.id,URL.createObjectURL(new Blob([themedSvg(e.svg)],{type:'image/svg+xml'}))]));
+for(const e of DATA.items)for(const [i,t] of (e.tiles||[]).entries())images[e.id+'-'+i]=URL.createObjectURL(new Blob([themedSvg(t.svg)],{type:'image/svg+xml'}));
 // Card previews share a 320 × 180 minimum coordinate frame. Dense content
 // expands that frame at the same aspect ratio and is fitted as a whole.
 function previewImage(svg){
- const m=svg.match(/viewBox="([^"]+)"/);if(!m)return URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+ const m=svg.match(/viewBox="([^"]+)"/);if(!m)return URL.createObjectURL(new Blob([themedSvg(svg)],{type:'image/svg+xml'}));
  const [x,y,w,h]=m[1].trim().split(/\s+/).map(Number),W=Math.max(320,w,h*320/180),H=W*180/320;
  const framed=svg.replace(m[0],`viewBox="${x-(W-w)/2} ${y-(H-h)/2} ${W} ${H}"`);
- return URL.createObjectURL(new Blob([framed],{type:'image/svg+xml'}));
+ return URL.createObjectURL(new Blob([themedSvg(framed)],{type:'image/svg+xml'}));
 }
 const previews=Object.fromEntries(DATA.items.map(e=>[e.id,previewImage(e.svg)]));
 for(const e of DATA.items)for(const [i,t] of (e.tiles||[]).entries())previews[e.id+'-'+i]=previewImage(t.svg);
@@ -48,7 +63,7 @@ function configure(e){
 }
  $('variantControls').innerHTML=controls;
 }
-function updatePreview(e){if(!['pattern-compute','pattern-distribution','pattern-storage'].includes(e.id))return;if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=URL.createObjectURL(new Blob([VisualSystem.render(e.id,currentOptions)],{type:'image/svg+xml'}));$('detailImg').src=currentUrl;$('download').href=currentUrl;$('download').download=e.id+'-current.svg'}
+function updatePreview(e){if(!['pattern-compute','pattern-distribution','pattern-storage'].includes(e.id))return;if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=URL.createObjectURL(new Blob([themedSvg(VisualSystem.render(e.id,currentOptions))],{type:'image/svg+xml'}));$('detailImg').src=currentUrl;$('download').href=currentUrl;$('download').download=e.id+'-current.svg'}
 $('variantControls').addEventListener('change',ev=>{const key=ev.target.dataset.option;if(!key)return;currentOptions[key]=key==='expanded'?ev.target.value==='true':ev.target.value;updatePreview(shown[selected])});
 render();const initial=decodeURIComponent(location.hash.slice(1));if(initial)show(initial);
 </script></body></html>
