@@ -8,25 +8,22 @@
  captions.push(['从发现问题，到理解证据，再到介入纠正']);
  const notes=JSON.parse(document.querySelector('#speaker-data').textContent),panel=document.querySelector('.speaker-panel'),notesBody=panel.querySelector('.pinned-notes-content'),notesTrigger=document.querySelector('.notes-button');
  const notesDock=document.createElement('div');notesDock.className='notes-dock';document.body.append(notesDock);notesDock.append(notesTrigger,panel);
- notesTrigger.setAttribute('aria-expanded','false');let notesCloseTimer;
- function setNotes(open){clearTimeout(notesCloseTimer);document.body.classList.toggle('notes-open',open);notesTrigger.setAttribute('aria-expanded',String(open));}
- notesDock.addEventListener('pointerenter',()=>setNotes(true));notesDock.addEventListener('pointerleave',()=>{notesCloseTimer=setTimeout(()=>setNotes(false),180);});
- notesDock.addEventListener('focusin',()=>setNotes(true));notesDock.addEventListener('focusout',e=>{if(!notesDock.contains(e.relatedTarget))notesCloseTimer=setTimeout(()=>setNotes(false),180);});
+ notesTrigger.setAttribute('aria-expanded','false');
+ function setNotes(open){document.body.classList.toggle('notes-open',open);notesTrigger.setAttribute('aria-expanded',String(open));}
  function renderNotes(){
-  const n=notes[active];if(!n)return;notesBody.replaceChildren();
-  const label=document.createElement('div');label.className='notes-step';label.textContent=`${active+1} / ${slides.length} · ${step<0?'理论封面':'分镜 '+(step-firstStep(slides[active])+1)}`;
+  const n=notes[active];if(!n)return;
   const current=document.createElement('p');current.className='notes-current';current.textContent=step<0?n.intro.script:n.steps[step];
-  notesBody.append(label,current);
+  notesBody.replaceChildren(current);
  }
 
  function toggleNotes(){setNotes(!document.body.classList.contains('notes-open'));}
- notesTrigger.addEventListener('click',e=>{if(matchMedia('(hover:none)').matches||e.detail===0)toggleNotes();else setNotes(true);});panel.querySelector('.notes-pin-close').addEventListener('click',()=>setNotes(false));
+ notesTrigger.addEventListener('click',toggleNotes);
  let last=4;
- const firstStep=slide=>['summary','next-step','domain-theory'].includes(slide.id)?0:slide.id==='closing'?5:slide.id==='language'?0:-1;
- const lastStep=slide=>['summary','next-step','domain-theory'].includes(slide.id)?0:slide.id==='language'?4:slide.id==='system'?3:5;
+ const firstStep=slide=>['summary','domain-theory','agenda','architecture'].includes(slide.id)?0:slide.id==='language'?0:-1;
+ const lastStep=slide=>slide.id==='summary'?4:['summary','domain-theory','agenda','architecture'].includes(slide.id)?0:slide.id==='language'?4:slide.id==='system'?3:5;
  captions[0]=captions[0].slice(0,5).map(t=>t.replace('/ 06','/ 05'));
+ captions.unshift(['']);
  captions.splice(1,0,['']);
- captions.splice(6,0,Array(6).fill('让领域视觉知识可复用、可组合、可核查'));
  let active=-1,step=0,auto=true,timeout=null,remaining=null,deadline=0,mode='slide';
  const play=document.querySelector('[data-play]');
  const rootStyle=getComputedStyle(document.documentElement);
@@ -99,11 +96,11 @@
  function syncLayerDemo(){const frame=document.querySelector('#layers iframe');if(frame?.contentWindow)frame.contentWindow.postMessage({type:'deck-layer-playback',playing:slides[active]?.id==='layers'&&step===0},location.origin);}
  function clearClock(){if(timeout!==null){remaining=Math.max(0,deadline-performance.now());clearTimeout(timeout);timeout=null;}}
  function updateControl(){document.querySelector('[data-prev]').disabled=active===0&&step===0;document.querySelector('[data-next]').disabled=active===slides.length-1&&step===last;play.textContent=step<0?'进入案例':step===last?'已播完':auto?'暂停':'继续';play.disabled=step===last;play.dataset.icon=step<0?'▶':step===last?'✓':auto?'Ⅱ':'▶';play.setAttribute('aria-label',step<0?'进入案例并自动播放':step===last?'本页已播完':auto?'暂停分步演示':'继续分步演示');play.setAttribute('title',step<0?'进入案例（空格 / →）':step===last?'本页已播完；R 返回第一页':auto?'暂停（空格 / P）':'继续（空格 / P）');document.querySelector('.scene-progress').style.setProperty('--progress',((slides.slice(0,active).reduce((sum,s)=>sum+lastStep(s)-firstStep(s)+1,0)+step-firstStep(slides[active])+1)/slides.reduce((sum,s)=>sum+lastStep(s)-firstStep(s)+1,0)*100)+'%');}
- function schedule(){clearClock();if(!auto||step<0||step>=last||mode!=='slide'||document.hidden)return;const duration=remaining??(slides[active]?.id==='system'&&step===2?10000:step<0?8000:step===0?(slides[active]?.id==='language'?4800:2400):step===3?4400:3300);deadline=performance.now()+duration;timeout=setTimeout(()=>{timeout=null;remaining=null;setStep(step+1);schedule();},duration);}
+ function schedule(){clearClock();if(!auto||step<0||step>=last||mode!=='slide'||document.hidden)return;const duration=remaining??(slides[active]?.id==='summary'?1000:slides[active]?.id==='system'&&step===2?10000:step<0?8000:step===0?(slides[active]?.id==='language'?4800:2400):step===3?4400:3300);deadline=performance.now()+duration;timeout=setTimeout(()=>{timeout=null;remaining=null;setStep(step+1);schedule();},duration);}
 
  function setStep(n){
   clearClock();remaining=null;
-  const cards=active===0?[...slides[0].querySelectorAll(".principle-card")]:[];
+  const cards=slides[active].id==='language'?[...slides[active].querySelectorAll(".principle-card")]:[];
   cards.forEach(el=>el.getAnimations().forEach(animation=>animation.cancel()));
   const before=cards.map(el=>el.getBoundingClientRect());
   const previousStep=step;step=Math.max(firstStep(slides[active]),Math.min(last,n));const slide=slides[active];slide.dataset.direction=step<previousStep?'back':'forward';slide.dataset.step=String(step);slide.dataset.depth=step>=3?'detail':'overview';document.documentElement.style.setProperty('--active-accent',getComputedStyle(slide).getPropertyValue('--accent'));
@@ -123,24 +120,20 @@
   if(slide.id==='agent'){slide.classList.toggle('audit-open',step===4);updateAudit();}syncLayerDemo();renderNotes();updateControl();
  }
  function enter(index){
-  const previous=slides[active]?.id;
-  const source=previous==='closing'&&slides[index]?.id==='summary'?document.querySelector('#closing .bento-conclusion'):null;
-  const sourceBox=source?.getBoundingClientRect();
-  if(sourceBox&&!reduce.matches){requestAnimationFrame(()=>requestAnimationFrame(()=>{
-   const target=document.querySelector('.minimal-viz-title'),box=target.getBoundingClientRect();
-   target.animate([{transform:`translate(${sourceBox.left-box.left}px,${sourceBox.top-box.top}px) scale(${sourceBox.width/box.width},${sourceBox.height/box.height})`,background:'#f1ece3',borderRadius:'12px'},{transform:'none',background:'transparent',borderRadius:'0px'}],{duration:700,easing:'cubic-bezier(.22,1,.36,1)'});
-   document.querySelector('.summary-inner>svg').animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:500,delay:350,fill:'backwards',easing:'cubic-bezier(.22,1,.36,1)'});
-  }));}
-
   clearClock();remaining=null;active=index;auto=firstStep(slides[active])>=0;last=lastStep(slides[active]);slides.forEach((s,i)=>{s.classList.toggle('launch-paused',!auto);if(i!==active){s.querySelector('.t-stagger')?.classList.remove('is-shown');s.dataset.step=s.id==='closing'?'5':'0';s.dataset.depth=s.id==='closing'?'detail':'overview';}});
   slides[active].dataset.chapterReady='false';requestAnimationFrame(()=>requestAnimationFrame(()=>{slides[index].dataset.chapterReady='true';}));
-  const block=slides[active].querySelector('.t-stagger');block.classList.remove('is-hiding','is-shown');void block.offsetHeight;requestAnimationFrame(()=>block.classList.add('is-shown'));
+  const block=slides[active].querySelector('.t-stagger');
+  if(block){
+   block.classList.remove('is-hiding','is-shown');
+   void block.offsetHeight;
+   requestAnimationFrame(()=>block.classList.add('is-shown'));
+  }
   setStep(firstStep(slides[active]));schedule();
  }
  function manual(){clearClock();auto=false;slides[active].classList.add('launch-paused');}
  function advance(){if(step<0){clearClock();auto=true;slides[active].classList.remove('launch-paused');setStep(0);schedule();return;}manual();if(step<last)setStep(step+1);else if(active<slides.length-1)window.DeckNav.goTo(active+1);}
  function back(){manual();if(step>(firstStep(slides[active])))setStep(step-1);else if(active>0){window.DeckNav.goTo(active-1);setStep(last);}}
- function restart(){manual();const first=slides.findIndex(slide=>slide.id==='language');window.DeckNav.setView('slide',false);if(active!==first)window.DeckNav.goTo(first);else enter(first);manual();setStep(0);updateControl();}
+ function restart(){manual();const first=0;window.DeckNav.setView('slide',false);if(active!==first)window.DeckNav.goTo(first);else enter(first);manual();setStep(0);updateControl();}
  function replay(){auto=true;slides[active].classList.remove('launch-paused');enter(active);}
  function toggle(){if(step<0){advance();return;}if(step===last){clearClock();auto=false;updateControl();return;}auto=!auto;slides[active].classList.toggle('launch-paused',!auto);updateControl();schedule();}
  document.querySelector('#layers iframe').addEventListener('load',syncLayerDemo);window.addEventListener('message',event=>{if(event.origin===location.origin&&event.source===document.querySelector('#layers iframe').contentWindow&&event.data?.type==='layer-demo-ready')syncLayerDemo();});

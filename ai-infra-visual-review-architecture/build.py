@@ -28,7 +28,7 @@ html=re.sub(r'<script id="speaker-data" type="application/json">.*?</script>',la
 a=html.index(' const notes=JSON.parse(document.querySelector("#speaker-data")') if ' const notes=JSON.parse(document.querySelector("#speaker-data")' in html else html.index(" const notes=JSON.parse(document.querySelector('#speaker-data')")
 b=html.index('\n})();',a)
 html=html[:a]+html[b:]
-html=re.sub(r'<dialog class="speaker-dialog".*?</dialog>', '<aside class="speaker-panel" aria-label="当前分镜讲稿"><header><span>当前分镜讲稿</span><button class="notes-pin-close" title="收起讲稿（N）">收起 · N</button></header><div class="pinned-notes-content" aria-live="polite"></div></aside>', html, flags=re.S)
+html=re.sub(r'<dialog class="speaker-dialog".*?</dialog>', '<aside class="speaker-panel" aria-label="当前分镜讲稿"><div class="pinned-notes-content" aria-live="polite"></div></aside>', html, flags=re.S)
 html=html.replace('aria-haspopup="dialog"','aria-expanded="true"').replace('讲稿 · N</button>','讲稿 · N</button>')
 html=html.replace("if(e.target.closest('[data-prev]'))goTo(current-1);if(e.target.closest('[data-next]'))goTo(current+1);", "if(e.target.closest('[data-prev]'))window.DeckMotion?.back();if(e.target.closest('[data-next]'))window.DeckMotion?.advance();")
 html=html.replace('四页总览','六页总览').replace('上一页（←）','上一画面（←）').replace('下一页（→）','下一画面（→）')

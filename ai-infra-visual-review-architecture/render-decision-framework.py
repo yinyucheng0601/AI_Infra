@@ -3,6 +3,12 @@ import html,json,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 def esc(s): return html.escape(str(s),quote=True)
+CHAPTER_PATHS = {
+    "attention": "3.1 人机协同方法 / 聚焦",
+    "layers": "3.2 人机协同方法 / 理解",
+    "agent": "3.3 人机协同方法 / 介入",
+}
+
 def render(key,d,model,label):
     master=key=='master'
     focus=d.get('focus')
@@ -48,7 +54,7 @@ def render(key,d,model,label):
     for i,(h,t) in enumerate(zip(headings,reasoning)):
         svg+=f'<foreignObject x="{30+i*335}" y="490" width="310" height="115"><div xmlns="http://www.w3.org/1999/xhtml" class="ds-reason"><small>{h}</small><p>{esc(t)}</p></div></foreignObject>'
     svg+='</svg>'
-    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="决策支持框架" style="--diagram-accent:{d["color"]}"><div class="theory-brand">COMPUTE DEVELOPMENT VISUALIZATION<span>DECISION SUPPORT / {dict(attention="FOCUS",layers="CONTINUITY",agent="CONTROL").get(key,key.upper())}</span></div><header><small class="derive-principle">{d["level"]}</small><h2>{d["title"]}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
+    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="决策支持框架" style="--diagram-accent:{d["color"]}"><div class="theory-brand">{esc(CHAPTER_PATHS.get(key, label))}<span>DECISION SUPPORT / {dict(attention="FOCUS",layers="CONTINUITY",agent="CONTROL").get(key,key.upper())}</span></div><header><small class="derive-principle">{d["level"]}</small><h2>{d["title"]}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
 def render_handoff(d,label):
     nodes=[(70,300,'AGENT','自动调查','测试 · 收集证据','提出候选解释'),(520,870,'HUMAN × AGENT','决策检查点','当前结论 · 支持证据','关键差异 · 未验证部分'),(1090,1300,'AGENT','根据反馈继续','验证假设 · 更新证据','保留可追溯结果')]
     svg='<svg viewBox="0 0 1360 610" role="img" aria-label="收敛任务和证据，Skill 约束资产选择与组装，Agent 生成并核查表达">'
@@ -64,7 +70,7 @@ def render_handoff(d,label):
     for i,(title,text) in enumerate([('图元','固定对象角色、变体与视觉语义'),('Pattern + 框架','固定关系联动与页面空间职责'),('Skill','串联问题、证据、资产选择、组装与核查')]):
         svg+=f'<foreignObject x="{40+i*445}" y="465" width="410" height="130"><div xmlns="http://www.w3.org/1999/xhtml" class="ds-reason"><small>{title}</small><p>{text}</p></div></foreignObject>'
     svg+='</svg>'
-    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="设计资产与 Skill 输出约束" style="--diagram-accent:#d9f550"><div class="theory-brand">COMPUTE DEVELOPMENT VISUALIZATION<span>HUMAN × AGENT / SYSTEM</span></div><header><small class="derive-principle">{esc(d["level"])}</small><h2>{esc(d["title"])}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
+    return f'<div class="chapter-theory theory-derivation diamond-theory decision-theory" data-cover-label="{esc(label)}" role="group" aria-label="设计资产与 Skill 输出约束" style="--diagram-accent:#d9f550"><div class="theory-brand">4 落地实现<span>HUMAN × AGENT / SYSTEM</span></div><header><small class="derive-principle">{esc(d["level"])}</small><h2>{esc(d["title"])}</h2><p>{esc(d["context"])}</p></header><div class="diamond-stage">{svg}</div></div>'
 
 def apply(slides):
     data=json.loads((ROOT/'chapter-derivation-diagrams.json').read_text());model=data['model']

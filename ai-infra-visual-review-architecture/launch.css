@@ -446,7 +446,7 @@ body.notes-pinned.preview-open .speaker-panel{display:none}body.notes-pinned.pre
 /* Keep the relation figure opaque and optically centered; dismiss the opening art in place. */
 .launch-language .detail-relations{bottom:3cqh;display:flex;flex-direction:column}
 .launch-language .detail-relations img{display:block;align-self:center;width:100%;height:auto;min-height:0;flex:1;object-fit:contain;object-position:center;opacity:1;margin:0 auto}
-.launch-language:is([data-step="1"],[data-step="2"],[data-step="3"],[data-step="4"]) .principle-card-0 .card-art{width:100%!important;height:70%!important;left:0!important;bottom:-7%!important;opacity:0!important;transition:opacity 300ms ease!important;pointer-events:none}
+.launch-language:is([data-step="1"],[data-step="2"],[data-step="3"],[data-step="4"]) .principle-card-0.is-focused .card-art{width:100%!important;height:70%!important;left:0!important;bottom:-7%!important;opacity:0!important;transition:opacity 300ms ease!important;pointer-events:none}
 
 /* Shared expanded-card treatment across all three principles. */
 .launch-language .principle-card{--chip-ink:#6358b5}
@@ -921,8 +921,8 @@ body.notes-pinned.preview-open .speaker-panel{display:none}body.notes-pinned.pre
 .ds-principle{height:100%;padding:0 18px;box-sizing:border-box;white-space:nowrap;font-size:23px}
 .ds-content-tag{height:100%;padding:0 14px;box-sizing:border-box;white-space:nowrap;font-size:18px}
 
-/* Let the diagram use the space released by the chapter footer. */
-.slide .decision-theory .diamond-stage{top:17.2cqh;bottom:.8cqh;left:0;right:0}
+/* Keep the chapter diagram below the heading and subtitle. */
+.slide .decision-theory .diamond-stage{top:25cqh;bottom:2cqh;left:0;right:0}
 
 .handoff-port{fill:#8996a2}.handoff-role{font:400 17px var(--mono);fill:#7a8792}.handoff-title{font:500 29px var(--sans);fill:#24323d}.handoff-detail{font:400 20px var(--sans);fill:#6f7d88}
 .handoff-check{box-sizing:border-box;height:100%;border-radius:24px;background:#e0f66b;color:#1c291b;padding:28px 22px;text-align:center}
@@ -1134,3 +1134,134 @@ body.navigator-open .navigator-hover-zone{pointer-events:none}
 .domain-outcome span{display:inline-block;border-radius:2em;background:#d9c4f2;padding:.36em 1em;margin:0 .35em;font-size:1cqw}
 .domain-outcome span:nth-child(2){background:#c8c4f6}
 .domain-outcome span:nth-child(3){background:#d9f550}
+
+.domain-inputs .domain-agent{background:#c19cf0}
+
+.notes-dock{top:auto!important;bottom:max(12px,env(safe-area-inset-bottom))!important;pointer-events:none;z-index:10000}
+.notes-dock::before{display:none}
+.notes-dock .notes-button{top:auto!important;bottom:0!important;pointer-events:auto}
+.notes-open .notes-dock .notes-button{background:var(--active-accent);color:#111}
+.notes-dock .speaker-panel{top:auto!important;bottom:calc(100% + 8px)!important}
+.notes-dock .notes-current{margin:0}
+
+/* Opening roadmap */
+.agenda-flow{position:absolute;inset:28cqh 4cqw 15cqh;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2cqw;list-style:none;margin:0;padding:0}
+.agenda-flow>li{display:flex;align-items:center;gap:1.3cqw;background:#e3e6ea;border-radius:1cqw;padding:2cqw;color:#17242e}
+.agenda-flow small{font:600 1cqw var(--mono);color:#5c477d}
+.agenda-flow h2{font-size:2cqw;margin:0}
+
+/* Light stage for the design principles chapter. */
+#language{background:#f0f1f3}
+#language .launch-head :is(.title,.title em){color:#17242e}
+#language .launch-head :is(.brand,.brand span,.subtitle),
+#language :is(.scene-caption,.page-no){color:#506374}
+
+/* Closing overview, aligned to the 16:9 presentation stage. */
+.report-map{background:#f0f1f3;color:#17242e}
+.report-map-grid{position:absolute;inset:5cqh 4cqw 6cqh;display:grid;grid-template-columns:14cqw minmax(0,1fr);grid-template-rows:1fr 1fr 1.25fr 1.8fr 2.15fr;gap:1.5cqh 1.4cqw}
+.map-label{align-self:center;font-size:1.45cqw;font-weight:650}
+.map-label small{display:block;color:#62478a;font-size:.86cqw;margin-top:.5cqh}
+.map-inputs,.map-principles,.map-diamonds{display:grid;gap:.8cqw;text-align:center}
+.map-inputs{grid-template-columns:repeat(4,1fr)}
+.map-inputs span,.map-task,.map-principles>div{display:grid;place-content:center;border-radius:.55cqw;background:#e3e6ea;font-size:1.2cqw}
+.map-inputs span:last-child{background:#c19cf0}
+.map-task{font-size:1.5cqw;font-weight:650}
+.map-principles,.map-diamonds{grid-template-columns:repeat(3,1fr)}
+.map-principles>div:nth-child(1){background:#c19cf0}
+.map-principles>div:nth-child(2){background:#9189ed}
+.map-principles>div:nth-child(3){background:#d9f550}
+.map-principles b,.map-diamonds b{font-size:1.42cqw}
+.map-principles span,.map-diamonds span{font-size:.95cqw;margin-top:.4cqh}
+.map-diamonds>div{display:grid;place-content:center;background:center/100% 100% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'%3E%3Cpath d='M2 50 C78 50 91 4 150 4 S222 50 298 50 C222 50 209 96 150 96 S78 50 2 50Z' fill='none' stroke='%23929eab' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
+.map-skill{display:grid;grid-template-rows:1fr 1fr .9fr;gap:.65cqh;text-align:center}
+.map-cycle,.map-assets{display:grid;place-content:center;background:#e3e6ea;border-radius:.55cqw;font-size:1.15cqw;display:flex;align-items:center;justify-content:center;gap:.7cqw}
+.map-cycle span,.map-assets i{color:#62478a}
+.map-external{display:grid;grid-template-columns:1fr 1fr;gap:.8cqw;font-size:.92cqw;color:#506374}
+.map-external span{display:grid;place-content:center;border:1px dashed #a2adba;border-radius:.45cqw}
+
+.report-map-grid{inset-inline:14cqw;grid-template-columns:minmax(0,1fr)}
+.map-label{grid-column:1;grid-row:var(--map-row);justify-self:start;transform:translateX(-12cqw);font-size:1.28cqw}
+.map-label:nth-child(1){--map-row:1}
+.map-label:nth-child(3){--map-row:2}
+.map-label:nth-child(5){--map-row:3}
+.map-label:nth-child(7){--map-row:4}
+.map-label:nth-child(9){--map-row:5}
+.report-map-grid>div:nth-child(even){grid-column:1;grid-row:var(--map-row)}
+.report-map-grid>div:nth-child(2){--map-row:1}
+.report-map-grid>div:nth-child(4){--map-row:2}
+.report-map-grid>div:nth-child(6){--map-row:3}
+.report-map-grid>div:nth-child(8){--map-row:4}
+.report-map-grid>div:nth-child(10){--map-row:5}
+.map-principles>div:nth-child(-n+2){color:#fff}
+.map-icon{display:inline-block;width:1.15em;height:1.15em;margin-inline-end:.42em;vertical-align:-.19em}
+.map-inputs span{display:flex;align-items:center;justify-content:center}
+
+.report-map-grid{inset-block-start:17cqh}
+.map-goal{position:absolute;inset:4cqh 14cqw auto 2cqw;height:10cqh;display:grid;grid-template-columns:12cqw minmax(0,1fr);align-items:stretch}
+.map-goal strong{align-self:center;font-size:1.28cqw}
+.map-goal span{display:grid;place-items:center;background:#e8dff6;border-radius:.55cqw;color:#17242e;font-size:1.42cqw;font-weight:650}
+
+.report-map :is(.map-label,.map-goal strong){
+  justify-self:start;
+  padding:.75cqh .9cqw;
+  border-radius:999px;
+  background:#e3e6ea;
+  line-height:1.25;
+  white-space:nowrap;
+}
+.report-map .map-goal strong{background:#e8dff6}
+.report-map .map-label small{margin-top:.25cqh}
+.report-map .map-icon{width:1.24em;height:1.24em;vertical-align:-.24em;opacity:.9}
+
+/* Center the revealed portion of the architecture while preserving final row sizes. */
+.report-map{
+  --map-motion-duration:540ms;
+  --map-motion-ease:cubic-bezier(.28,1.19,.52,1);
+}
+.map-stack{
+  position:absolute;
+  inset:0;
+  transform:translateY(var(--map-offset,0cqh));
+  transition:transform var(--map-motion-duration) var(--map-motion-ease);
+}
+.report-map[data-step="1"]{--map-offset:28.89cqh}
+.report-map[data-step="2"]{--map-offset:21.98cqh}
+.report-map[data-step="3"]{--map-offset:12.35cqh}
+.report-map{transition:background-color 450ms var(--ease-smooth-out)}
+.report-map[data-step="0"]{background:#e8dff6}
+.report-map[data-step="0"]{--map-offset:41cqh}
+.report-map .map-goal{display:block}
+.report-map .map-goal :is(strong,span){
+  position:absolute;
+  top:50%;
+  transform:translate(0,-50%);
+  transition:left var(--map-motion-duration) var(--map-motion-ease),top var(--map-motion-duration) var(--map-motion-ease),
+    width var(--map-motion-duration) var(--map-motion-ease),transform var(--map-motion-duration) var(--map-motion-ease),
+    font-size var(--map-motion-duration) var(--map-motion-ease);
+}
+.report-map .map-goal strong{left:0}
+.report-map .map-goal span{left:12cqw;width:72cqw;height:100%;text-align:center}
+.report-map[data-step="0"] .map-goal strong{
+  left:48cqw;
+  top:-3cqh;
+  transform:translate(-50%,-50%);
+  font-size:1.65cqw;
+}
+.report-map[data-step="0"] .map-goal span{
+  left:48cqw;
+  width:94cqw;
+  transform:translate(-50%,-50%);
+  font-size:2.15cqw;
+}
+.report-map-grid>div{transition:opacity 300ms ease,visibility 300ms}
+.report-map[data-step="0"] .report-map-grid>div,
+.report-map[data-step="1"] .report-map-grid>div:nth-child(n+5),
+.report-map[data-step="2"] .report-map-grid>div:nth-child(n+7),
+.report-map[data-step="3"] .report-map-grid>div:nth-child(n+9){
+  opacity:0;
+  visibility:hidden;
+  transition:none;
+}
+@media(prefers-reduced-motion:reduce){
+  .report-map,.report-map :is(.map-stack,.map-goal strong,.map-goal span,.report-map-grid>div){transition:none}
+}
