@@ -1,0 +1,11 @@
+# Local system metadata.
+.DS_Store
+
+# Superseded presentation and local experiments.
+/ai-infra-visual-review/
+/ai-infra-visual-review-architecture-copy/
+
+# Local presentation snapshots and preview captures.
+/ai-infra-visual-review-architecture/history/
+/ai-infra-visual-review-architecture/preview*.png
+/ai-infra-visual-review-architecture/vendor/

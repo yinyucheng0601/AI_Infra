@@ -1,10 +1,10 @@
-"""Build the launch-style HTML presentation; Draft 01 stays in history/."""
+"""Build the launch-style HTML presentation from the packaged base template."""
 from pathlib import Path
 import json
 import re
 
 ROOT=Path(__file__).resolve().parent
-base=(ROOT/'history/draft-01/index.html').read_text()
+base=(ROOT/'assets/build/base.html').read_text()
 template=(ROOT/'assets/build/deck-template.html').read_text()
 nav_css=template[template.index('/* ===== 三视图导航'):template.index('/* ===== 放大预览')]
 styles=nav_css+'\n'+(ROOT/'launch.css').read_text()
