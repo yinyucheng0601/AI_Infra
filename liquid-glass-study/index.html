@@ -39,6 +39,11 @@ function addTuning(card,glass,v){
  v.ior=1.5;v.blur=0;v.strength=60;v.rim=v.id==='B'?95:85;v.rimWidth=v.id==='B'?2.75:3;
  const defaults={...v};
  const specs=[['strength','折射强度',0,100,1,''],['depth','玻璃厚度',0,48,1,'px'],['bezel','折射覆盖宽度',2,36,1,'px'],['shine','高光强度',0,1.5,.05,''],['power','高光聚焦',5,100,1,''],['blur','磨砂程度',0,3,.1,'px'],['rim','侧壁取色',0,100,1,''],['rimWidth','侧壁宽度',1,6,.25,'px'],['ior','折射率',1,1.8,.01,'']];
+ if(v.id==='B'){
+  const order=['strength','bezel','shine','power','depth','blur','rim','rimWidth','ior'];
+  specs.sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0]));
+  specs.find(spec=>spec[0]==='power')[2]=0;
+ }
  const panel=document.createElement('div');panel.className='tuning';
  const advanced=document.createElement('details');advanced.style.gridColumn='1 / -1';const summary=document.createElement('summary');summary.textContent='高级 · 物理折射率';summary.title='展开物理折射率调节，默认 1.50';advanced.append(summary);
  const syncs=[];

@@ -6,6 +6,11 @@ function renderB(el,v){
  const ctx=c.getContext('2d'),face=ctx.createImageData(W,H),rim=ctx.createImageData(W,H),mask=ctx.createImageData(W,H),light=ctx.createImageData(W,H);
  const bezel=Math.min(h*.44,v.bezel*h/74),rimWidth=v.rimWidth*Math.sqrt(h/74),depth=v.depth*h/74;
  const faceGain=.23+1.15*Math.min(1,Math.pow(74/h,4));
+ // Focus changes both the radial highlight width and its angular concentration.
+ // Keep the approved default (28) as the width reference.
+ const focus=Math.max(0,Math.min(100,v.power));
+ const spread=Math.exp((28-focus)/45);
+ const angularPower=.45+8*Math.pow(focus/100,1.5);
  // Do not encode a small face displacement against the much larger rim range:
  // the previous shared 285px range quantized face offsets to >1 CSS pixel.
  const faceScale=Math.max(8,Math.ceil(depth*(v.strength/60)*faceGain*2.5));
@@ -37,12 +42,12 @@ function renderB(el,v){
   const band=(Math.exp(-Math.pow((colourD-rimWidth*.43)/(rimWidth*.36),2))+.16*Math.exp(-Math.pow((colourD-rimWidth*1.15)/(rimWidth*.30),2)))*aa*colourGate;
   mask.data.set([255,255,255,Math.round(255*Math.min(1,band)*v.rim/100)],i);
   const facing=-gx*.56-gy*.83;
-  const edge=Math.exp(-Math.pow((d-.35)/.30,2));
-  const bevel=Math.exp(-Math.pow((d-rimWidth*.88)/(rimWidth*.65),2));
-  const soft=Math.exp(-Math.pow((d-rimWidth*1.4)/(rimWidth*1.6),2));
-  const directional=Math.pow(Math.max(0,facing),Math.max(.4,v.power/35));
-  const returnLight=Math.pow(Math.max(0,gx*.62+gy*.78),2);
-  const innerReflection=Math.exp(-Math.pow((d-rimWidth*1.7)/(rimWidth*1.2),2));
+  const edge=Math.exp(-Math.pow((d-.35)/(.30*Math.sqrt(spread)),2));
+  const bevel=Math.exp(-Math.pow((d-rimWidth*.88)/(rimWidth*.65*spread),2));
+  const soft=Math.exp(-Math.pow((d-rimWidth*1.4)/(rimWidth*1.6*spread),2));
+  const directional=Math.pow(Math.max(0,facing),angularPower);
+  const returnLight=Math.pow(Math.max(0,gx*.62+gy*.78),angularPower);
+  const innerReflection=Math.exp(-Math.pow((d-rimWidth*1.7)/(rimWidth*1.2*spread),2));
   const outerWhite=edge*(.58+.40*directional)*v.shine;
   const innerWhite=(bevel*(.24*directional+.22*returnLight)+soft*.07*directional+innerReflection*.13*returnLight)*v.shine*(h<100?.45:1);
   const white=outerWhite+innerWhite;
