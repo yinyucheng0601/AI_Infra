@@ -1,0 +1,9 @@
+{
+  "sourceRepository": "pto",
+  "sourcePath": "hw-native-sys",
+  "files": {
+    "index.html": "9d6567805a41b8f1de78ee9265f4a2e11fc32601f357683104d3bf19ba635ad2",
+    "shared.css": "3e8d62f470ecc580ea85f283cf1125138334261752ba83cd1a20ddd4727b0d65",
+    "nav.js": "e8f5785ab371a5f268bf72ef784571974fd1feef231b49a13637e82e46d71a3c"
+  }
+}
