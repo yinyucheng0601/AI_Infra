@@ -42,6 +42,11 @@ function renderB(el,v){
   const band=(Math.exp(-Math.pow((colourD-rimWidth*.43)/(rimWidth*.36),2))+.16*Math.exp(-Math.pow((colourD-rimWidth*1.15)/(rimWidth*.30),2)))*aa*colourGate;
   mask.data.set([255,255,255,Math.round(255*Math.min(1,band)*v.rim/100)],i);
   const facing=-gx*.56-gy*.83;
+  // A nearby upper-left area light also varies with position. Normal-only
+  // lighting makes every pixel along a straight top edge equally bright.
+  const lightDistance=Math.hypot(x+w*.12,y+h*.75);
+  const nearDistance=Math.hypot(w*.12,h*.75);
+  const lightFalloff=Math.pow(nearDistance/lightDistance,1.15);
   const edge=Math.exp(-Math.pow((d-.35)/(.30*Math.sqrt(spread)),2));
   const bevel=Math.exp(-Math.pow((d-rimWidth*.88)/(rimWidth*.65*spread),2));
   const soft=Math.exp(-Math.pow((d-rimWidth*1.4)/(rimWidth*1.6*spread),2));
@@ -50,8 +55,8 @@ function renderB(el,v){
   const innerReflection=Math.exp(-Math.pow((d-rimWidth*1.7)/(rimWidth*1.2*spread),2));
   // No constant rim term: the highlight must disappear away from the light,
   // otherwise the entire silhouette becomes a white UI border in dark mode.
-  const outerWhite=edge*.98*Math.pow(Math.max(0,facing),Math.max(2,angularPower))*v.shine;
-  const innerWhite=(bevel*(.24*directional+.22*returnLight)+soft*.07*directional+innerReflection*.13*returnLight)*v.shine*(h<100?.45:1);
+  const outerWhite=edge*.98*Math.pow(Math.max(0,facing),Math.max(2,angularPower))*v.shine*lightFalloff;
+  const innerWhite=(bevel*(.24*directional+.22*returnLight)+soft*.07*directional+innerReflection*.13*returnLight)*v.shine*(h<100?.45:1)*lightFalloff;
   const white=outerWhite+innerWhite;
   const innerShade=Math.exp(-Math.pow((d-h*.085)/(h*.065),2))*.105*Math.max(0,facing);
   const dark=Math.exp(-Math.pow((d-rimWidth*.8)/1.0,2))*(.04+.14*Math.max(0,-facing))+innerShade;
