@@ -44,10 +44,10 @@ function renderB(el,v){
   const facing=-gx*.56-gy*.83;
   // A nearby upper-left area light also varies with position. Normal-only
   // lighting makes every pixel along a straight top edge equally bright.
-  const lightDistance=Math.hypot(x+w*.12,y+h*.75);
-  const nearDistance=Math.hypot(w*.12,h*.75);
-  const lightFalloff=Math.pow(nearDistance/lightDistance,1.15);
-  const edge=Math.exp(-Math.pow((d-.35)/(.30*Math.sqrt(spread)),2));
+  // Broad softbox rather than a very close point light: keep a readable top
+  // highlight across long toolbars, with a gentle 1 -> 0.33 horizontal falloff.
+  const lightFalloff=Math.exp(-1.1*Math.pow(x/w,.9)-.35*y/h);
+  const edge=Math.exp(-Math.pow((d-.48)/(.44*Math.sqrt(spread)),2));
   const bevel=Math.exp(-Math.pow((d-rimWidth*.88)/(rimWidth*.65*spread),2));
   const soft=Math.exp(-Math.pow((d-rimWidth*1.4)/(rimWidth*1.6*spread),2));
   const directional=Math.pow(Math.max(0,facing),angularPower);
@@ -55,14 +55,21 @@ function renderB(el,v){
   const innerReflection=Math.exp(-Math.pow((d-rimWidth*1.7)/(rimWidth*1.2*spread),2));
   // No constant rim term: the highlight must disappear away from the light,
   // otherwise the entire silhouette becomes a white UI border in dark mode.
-  const outerWhite=edge*.98*Math.pow(Math.max(0,facing),Math.max(2,angularPower))*v.shine*lightFalloff;
-  const innerWhite=(bevel*(.24*directional+.22*returnLight)+soft*.07*directional+innerReflection*.13*returnLight)*v.shine*(h<100?.45:1)*lightFalloff;
+  const outerWhite=edge*1.2*Math.pow(Math.max(0,facing),Math.max(2,angularPower))*v.shine*lightFalloff;
+  const primaryReflection=(bevel*.24*directional+soft*.07*directional)*lightFalloff;
+  // Lower-right environment reflection has its own footprint; it must not be
+  // attenuated a second time by the upper-left key light's distance field.
+  const returnFalloff=Math.exp(-Math.pow((x/w-.91)/.30,2));
+  const returnCore=Math.exp(-Math.pow((d-rimWidth*.90)/(rimWidth*.32*spread),2));
+  const returnHalo=Math.exp(-Math.pow((d-rimWidth*1.25)/(rimWidth*.50*spread),2));
+  const secondaryReflection=(returnCore*.45+returnHalo*.12)*returnLight*returnFalloff;
+  const innerWhite=(primaryReflection+secondaryReflection)*v.shine*(h<100?.65:1);
   const white=outerWhite+innerWhite;
   const innerShade=Math.exp(-Math.pow((d-h*.085)/(h*.065),2))*.105*Math.max(0,facing);
   const dark=Math.exp(-Math.pow((d-rimWidth*.8)/1.0,2))*(.04+.14*Math.max(0,-facing))+innerShade;
   const a=Math.max(white,dark)*aa;
   const tone=white>=dark?255:35;
-  light.data.set([tone,tone,tone,Math.round(Math.min(.9,a)*255)],i);
+  light.data.set([tone,tone,tone,Math.round(Math.min(1,a)*255)],i);
  }
  function url(img){ctx.putImageData(img,0,0);return c.toDataURL()}
  const fURL=url(face),rURL=url(rim),mURL=url(mask),lURL=url(light),id='glass-B';

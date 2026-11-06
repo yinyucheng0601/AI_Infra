@@ -46,6 +46,7 @@ function addTuning(card,glass,v){
   const order=['strength','bezel','shine','power','depth','blur','rim','rimWidth','ior'];
   specs.sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0]));
   specs.find(spec=>spec[0]==='power')[2]=0;
+  specs.find(spec=>spec[0]==='shine')[3]=6;
  }
  const panel=document.createElement('div');panel.className='tuning';
  const advanced=document.createElement('details');advanced.style.gridColumn='1 / -1';const summary=document.createElement('summary');summary.textContent='高级 · 物理折射率';summary.title='展开物理折射率调节，默认 1.50';advanced.append(summary);
