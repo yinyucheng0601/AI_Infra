@@ -48,7 +48,9 @@ function renderB(el,v){
   const directional=Math.pow(Math.max(0,facing),angularPower);
   const returnLight=Math.pow(Math.max(0,gx*.62+gy*.78),angularPower);
   const innerReflection=Math.exp(-Math.pow((d-rimWidth*1.7)/(rimWidth*1.2*spread),2));
-  const outerWhite=edge*(.58+.40*directional)*v.shine;
+  // No constant rim term: the highlight must disappear away from the light,
+  // otherwise the entire silhouette becomes a white UI border in dark mode.
+  const outerWhite=edge*.98*Math.pow(Math.max(0,facing),Math.max(2,angularPower))*v.shine;
   const innerWhite=(bevel*(.24*directional+.22*returnLight)+soft*.07*directional+innerReflection*.13*returnLight)*v.shine*(h<100?.45:1);
   const white=outerWhite+innerWhite;
   const innerShade=Math.exp(-Math.pow((d-h*.085)/(h*.065),2))*.105*Math.max(0,facing);
