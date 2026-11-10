@@ -1308,11 +1308,12 @@
           "url": null,
           "path": "layer_stack/inference-layer-stack.html",
           "revision": null,
-          "sha256": "ec7fb5af6664248600d1235ca8aa4d19e3a749011a7cc6d771303aed3c65bc1d"
+          "sha256": "164cddad1904c098b5247130ffd8bc37ca25acba80060220985c42c4877fe849"
         }
       ],
       "validation": [
-        "2026-11-04：本地 Chrome 检查阶段切换、Token 联动、KV 读写箭头和层弹起时主线路径。"
+        "2026-11-04：本地 Chrome 检查阶段切换、Token 联动、KV 读写箭头和层弹起时主线路径。",
+        "2026-11-10：更新 Info、深浅色、视窗控制、默认 L1 播放、残差路径与 Rank；脚本及依赖检查通过。浏览器最终视觉复核因连接超时未完成。"
       ],
       "related": [
         "pangu-layer-atlas-2"

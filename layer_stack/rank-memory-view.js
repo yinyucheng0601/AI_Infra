@@ -69,5 +69,5 @@
     const title=`Rank ${data.rank} · ${data.scope}；${(data.assumptions||[]).join('；')}`;
     target.innerHTML=`<svg viewBox="345 222 460 553" role="img" aria-label="${escape(title)}"><title>${escape(title)}</title>${markup}</svg>`;
   }
-  global.RankMemoryView={render,colors:Object.freeze(colors)};
+  global.RankMemoryView={render,colors:Object.freeze(colors),geometry:Object.freeze({P,points,polygon,shade,block})};
 })(window);
