@@ -57,6 +57,22 @@
       "url": "./op-icons.html",
       "kind": "demo",
       "sha256": "eb7b897a496f1d0187905f8db69e87ea91391a7c7d185c9c767073c173740eee"
+    },
+    {
+      "id": "npu-memory-atlas",
+      "title": "NPU Memory Atlas",
+      "file": "patterns/npu-memory-atlas/index.html",
+      "url": "../../../patterns/npu-memory-atlas/index.html",
+      "kind": "demo",
+      "sha256": "d28e3af6146092c1c65b9cbcbc9de3b2515ac6ceaf68592d00b44393936fb32d"
+    },
+    {
+      "id": "pypto-logic-glyphs",
+      "title": "PyPTO 算子逻辑图元 · 规范化收录",
+      "file": "reports/llm-compute/diagram-legend-library/logic-catalog-source.js",
+      "url": "./README.md",
+      "kind": "demo",
+      "sha256": "9af57badffccf82cf1855e16fa1a72d34df0a4acdd23a063b9f6b9eacebcbfbc"
     }
   ],
   "items": [
@@ -408,117 +424,140 @@
         {
           "id": "matmul",
           "name": "MatMul",
-          "description": "矩阵乘法"
+          "description": "矩阵乘法",
+          "path": "M3 4h4M3 4v16h4M21 4h-4M21 4v16h-4M8 7h3v3H8zM14 7h3v3h-3zM8 14h3v3H8zM14 14h3v3h-3z"
         },
         {
           "id": "linear",
           "name": "Linear Projection",
-          "description": "线性投影"
+          "description": "线性投影",
+          "path": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2"
         },
         {
           "id": "norm",
           "name": "RMSNorm",
-          "description": "归一化"
+          "description": "归一化",
+          "path": "M4 6h16M7 12h10M9 18h6"
         },
         {
           "id": "embedding",
           "name": "Embedding",
-          "description": "嵌入查表"
+          "description": "嵌入查表",
+          "path": "M4 4h9v16H4zM4 9h9M4 15h9M16 12h5M19 10l2 2-2 2"
         },
         {
           "id": "attention",
           "name": "Attention",
-          "description": "注意力计算"
+          "description": "注意力计算",
+          "path": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6"
         },
         {
           "id": "rope",
           "name": "RoPE",
-          "description": "旋转位置编码"
+          "description": "旋转位置编码",
+          "path": "M5 8a8 8 0 0 1 14 0M19 4v4h-4M19 16a8 8 0 0 1-14 0M5 20v-4h4"
         },
         {
           "id": "compress",
           "name": "Compress",
-          "description": "压缩聚合"
+          "description": "压缩聚合",
+          "path": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
         },
         {
           "id": "expand",
           "name": "Expand",
-          "description": "展开广播"
+          "description": "展开广播",
+          "path": "M10 10L4 4M14 10l6-6M10 14l-6 6M14 14l6 6M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
         },
         {
           "id": "mix",
           "name": "HC Mix",
-          "description": "流间混合"
+          "description": "流间混合",
+          "path": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16"
         },
         {
           "id": "gate",
           "name": "Gate / Multiply",
-          "description": "门控乘法"
+          "description": "门控乘法",
+          "path": "M3 7h6M3 17h6M9 5v14h4a7 7 0 0 0 0-14H9M20 12h3"
         },
         {
           "id": "activation",
           "name": "SiLU",
-          "description": "激活函数"
+          "description": "激活函数",
+          "path": "M4 19h16M5 19V4M5 16c8 4 7-8 14-12"
         },
         {
           "id": "softmax",
           "name": "Softmax",
-          "description": "归一化概率"
+          "description": "归一化概率",
+          "path": "M5 20v-5M12 20V5M19 20v-9M3 3h18"
         },
         {
           "id": "topk",
           "name": "Top-K",
-          "description": "候选选择"
+          "description": "候选选择",
+          "path": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6"
         },
         {
           "id": "router",
           "name": "Router / MoE",
-          "description": "专家路由"
+          "description": "专家路由",
+          "path": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"
         },
         {
           "id": "concat",
           "name": "Concat",
-          "description": "拼接"
+          "description": "拼接",
+          "path": "M3 5h6v5H3zM15 5h6v5h-6zM6 10v4h12v-4M12 14v6M8 20h8"
         },
         {
           "id": "split",
           "name": "Split",
-          "description": "分支拆分"
+          "description": "分支拆分",
+          "path": "M12 3v7M5 20v-5l7-5 7 5v5M3 18l2 2 2-2M17 18l2 2 2-2"
         },
         {
           "id": "reshape",
           "name": "Reshape",
-          "description": "形状变换"
+          "description": "形状变换",
+          "path": "M4 4h10v7H4zM10 15h10v5H10zM18 5h3v7M3 14v6h4"
         },
         {
           "id": "transpose",
           "name": "Transpose",
-          "description": "维度交换"
+          "description": "维度交换",
+          "path": "M4 7h15M16 4l3 3-3 3M7 20V5M4 8l3-3 3 3"
         },
         {
           "id": "reduce",
           "name": "Reduce / Pool",
-          "description": "规约汇聚"
+          "description": "规约汇聚",
+          "path": "M4 4l8 8 8-8M4 10l8 8 8-8M12 18v3"
         },
         {
           "id": "cache",
           "name": "KV Read / Write",
-          "description": "状态读写"
+          "description": "状态读写",
+          "path": "M5 4h14v16H5zM5 8h14M9 12h6M9 16h6"
         },
         {
           "id": "conv",
           "name": "Conv / Patch",
-          "description": "卷积与分块"
+          "description": "卷积与分块",
+          "path": "M4 4h16v16H4zM4 10h16M10 4v16M14 14h6M14 14v6"
         },
         {
           "id": "exchange",
           "name": "All-to-All",
-          "description": "通信交换"
+          "description": "通信交换",
+          "path": "M3 8h17M16 4l4 4-4 4M21 16H4M8 12l-4 4 4 4"
         },
         {
           "id": "sample",
           "name": "Sampling",
-          "description": "采样选择"
+          "description": "采样选择",
+          "path": "M5 5h2M11 5h2M17 5h2M5 11h2M17 11h2M5 17h2M11 17h2M17 17h2M10 10l6 3-3 1-1 3z"
         }
       ],
       "provenance": {
@@ -1764,6 +1803,146 @@
       "refs": [
         {
           "id": "op-icons-approved"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "pattern-npu-memory-atlas",
+      "title": "NPU Memory Atlas · 硬件内存层级",
+      "cat": "组合模式",
+      "layer": "pattern",
+      "desc": "沿设备、Rank 与片上存储层级查看内存硬件拓扑。",
+      "note": "预览采用现有 Pattern 封面，交互见来源页面。",
+      "refs": [
+        {
+          "id": "npu-memory-atlas"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-valid-region",
+      "title": "有效区（valid_shape）",
+      "cat": "对象",
+      "layer": "system",
+      "desc": "shape 与 valid_shape 的面积比。亮的那块是有效区，其余压暗；不渲染 valid_shape=[...] 这种字段原文。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。申请了多大 / 真正有效的是哪一块 —— 两者不同是 fillpad 存在的原因",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-scalar",
+      "title": "标量",
+      "cat": "对象",
+      "layer": "system",
+      "desc": "单个值：循环变量、长度、索引、TaskId。小胶囊，不带网格纹理。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。一个标量 / 一片数据 —— 标量进不了 Vec 预算，别画成同形",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-array",
+      "title": "Array（片上定长数组）",
+      "cat": "对象",
+      "layer": "system",
+      "desc": "落在标量寄存器 / C 栈的一维定长数组，`pl.array.create(N, dtype)`。常见用途是存一批 TaskId。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。Array（标量本地） / Tensor / Tile —— Array 不跨函数边界，也不占 Vec",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-barrier",
+      "title": "依赖汇合 / 栅栏",
+      "cat": "对象",
+      "layer": "system",
+      "desc": "task_dummy 或 phase fence：多入一出的扇入点，自己不提交 kernel。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。扇入点（不跑计算） / 一个任务 —— 画成同形会让人以为多了一次派发",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-pipe",
+      "title": "跨核管道",
+      "cat": "对象",
+      "layer": "system",
+      "desc": "C2V 与 V2C 两条反向通道分别展示槽位；默认两槽，每槽 16 KB。槽数随在飞头块数变化，取自 hardware-native-ide 的 CSA 硬件映射。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。跨核交接（要握手、要槽位） / 核内的数据流 —— 前者占预算，后者不占",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-static",
+      "title": "编译期辅助",
+      "cat": "对象",
+      "layer": "system",
+      "desc": "static_print、static_assert、dump_tag：解析期消费，不生成 IR。整体压暗、虚线边。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。解析期的断言与标记 / 运行期真的执行的东西 —— 前者在 IR 里查不到",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-carry",
+      "title": "循环携带",
+      "cat": "关系",
+      "layer": "system",
+      "desc": "回边：绕到下方再折回。lavender 和前向流区分。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。跨迭代的回边 / 同迭代内的前向流",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-index",
+      "title": "索引 / 寻址",
+      "cat": "关系",
+      "layer": "system",
+      "desc": "细点线，从标量指向它参与的偏移。包括 block_table 这种间接寻址。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。索引值的来路 / 被索引的数据本身",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
+        }
+      ],
+      "legacy": []
+    },
+    {
+      "id": "logic-xcore",
+      "title": "跨核通信",
+      "cat": "关系",
+      "layer": "system",
+      "desc": "sky 色箭头，必定穿过核边界线。",
+      "note": "来源：PyPTO hardware-native-ide-ui；按正式库灰阶、数据角色色和公共比例归一化。跨核交接（要槽位） / 核内数据流",
+      "refs": [
+        {
+          "id": "pypto-logic-glyphs"
         }
       ],
       "legacy": []

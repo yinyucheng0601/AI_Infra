@@ -8,7 +8,7 @@ for(const source of data.sources){const bytes=fs.readFileSync(path.join(root,sou
 for(const item of data.items){assert(item.svg.includes('viewBox='));assert(!/undefined|NaN/.test(item.svg));for(const ref of item.refs){const s=data.sources.find(s=>s.id===ref.id);assert(s);if(ref.anchor){const text=fs.readFileSync(path.join(root,s.file),'utf8');assert(ref.anchor.startsWith('step-')||text.includes(ref.anchor),`${item.id}: ${ref.anchor}`)}}}
 class El{constructor(){this.value='';this.dataset={};this.hidden=false;this.open=false;this.listeners={};this.innerHTML='';this.textContent=''}addEventListener(k,f){this.listeners[k]=f}showModal(){this.open=true}close(){this.open=false;this.listeners.close?.()} }
 const els={};const get=id=>els[id]??=new El();get('legendData').textContent=JSON.stringify(data);get('source').value='all';const handlers={};
-const context=vm.createContext({Blob,URL,document:{getElementById:get,addEventListener(k,f){handlers[k]=f}},location:{hash:'',pathname:'/index.html',search:''},history:{replaceState(){}}});
+const context=vm.createContext({Blob,URL,atob,btoa,TextDecoder,TextEncoder,document:{documentElement:{dataset:{}},getElementById:get,addEventListener(k,f){handlers[k]=f}},location:{href:'http://localhost/index.html',hash:'',pathname:'/index.html',search:''},history:{replaceState(){}}});
 vm.runInContext(fs.readFileSync(path.join(__dirname,'visual-system.js'),'utf8'),context);
 const js=html.match(/<script>\s*'use strict';([\s\S]*?)<\/script>/)[1];vm.runInContext(js,context);
 const run=s=>vm.runInContext(s,context);assert.equal(run('shown.length'),data.items.filter(e=>e.layer==='system').length);
@@ -41,7 +41,7 @@ assert(!combined.includes('data-decoration="state"'));assert(!combined.includes(
 assert(!html.includes('<section class="principles"'));assert(!html.includes('<p class="desc"'));
 run("show('system-value')");assert.equal(get('variantControls').innerHTML,'');
 run("show('system-op')");assert.equal(get('variantControls').innerHTML,'');
-assert.equal(Object.keys(data.coverage).length,46);for(const ids of Object.values(data.coverage))assert(ids.length>0);assert(html.includes('id="layers"'));assert.equal(data.items.filter(e=>e.layer==='pattern').length,7); 
+assert.equal(Object.keys(data.coverage).length,46);for(const ids of Object.values(data.coverage))assert(ids.length>0);assert(html.includes('id="layers"'));assert.equal(data.items.filter(e=>e.layer==='pattern').length,8); 
 assert(data.items.find(e=>e.id==='system-op').variants.some(v=>v.id==='ir-op')); 
 console.log('PASS: pattern dimensions, stable IDs, local colors, removed state/selection decorations; original OP/communication SVGs, view identity, exact cell counts/vector lengths, live export, native keyboard guard.');
 
@@ -52,7 +52,7 @@ assert(data.items.find(e=>e.id==='system-kernel').svg.includes('fill-opacity=".1
 assert(data.items.find(e=>e.id==='system-task').svg.includes('fill="#9EF04B"'));
 const instruction=data.items.find(e=>e.id==='system-instruction').svg;
 assert(instruction.includes('data-icon="instruction"'));assert(instruction.includes('DataCopy'));assert(instruction.includes('fill="#9EF04B"'));assert(data.items.find(e=>e.id==='system-task').svg.includes('data-icon="task"')); 
-run("layer='pattern';category='全部';render()");assert.equal(run('shown.length'),7);assert(run("shown.every(e=>e.cat==='组合模式')"));
+run("layer='pattern';category='全部';render()");assert.equal(run('shown.length'),data.items.filter(e=>e.layer==='pattern').length);assert(run("shown.every(e=>e.cat==='组合模式')"));
 run("show('system-value')");assert.equal(run('layer'),'system');
 console.log('PASS: merged cards, kernel fill, green task/instruction glyphs, pattern tab and cross-tab detail navigation.');
 
@@ -97,7 +97,8 @@ console.log('PASS: prior snapshots preserved except user-requested memory replac
 
 const extraction=JSON.parse(fs.readFileSync(path.join(__dirname,'layer-extract.json'),'utf8'));
 for(const e of extraction.extracts){if(['sample','sample-gray'].includes(e.id)){assert.equal(data.items.find(x=>x.id==='system-value').incorporated.find(x=>x.id==='layer-'+e.id).svg,e.svg);continue;}const item=data.items.find(x=>x.id==='layer-'+e.id);assert(item);assert.equal(item.svg,e.svg);run('show('+JSON.stringify(item.id)+')');assert.equal(get('variantControls').innerHTML,'');assert.equal(get('detailImg').src,get('download').href);}
-assert.equal(data.items.length,36);
+assert.equal(data.items.length,46);
+for(const id of ['valid-region','scalar','array','barrier','pipe','static','carry','index','xcore'])assert(data.items.some(e=>e.id==='logic-'+id));
 const passPattern=data.items.find(e=>e.id==='pattern-pass-observation-facets');assert(passPattern&&passPattern.layer==='pattern');assert.equal((passPattern.svg.match(/class="micro"/g)||[]).length,12);
 assert.equal(run("href('layer-stack-demo')"),'../../../../layer_stack/pangu-layer-stack_2.html');
 console.log('PASS: all 9 approved Layer Stack snapshots, pattern grouping, source link and exact SVG export.');
@@ -108,3 +109,12 @@ assert(!data.items.find(e=>e.id==='system-op').tiles);
 assert(data.items.some(e=>e.id==='pattern-op-icons'));
 
 assert(!data.items.find(e=>e.id==='system-op').icons.some(i=>i.id==='add'));
+
+// Source-faithful Tensor geometry and distinct channel directions.
+const refined=require('./logic-refined.cjs');
+for(const [id,color] of [['carry','#ffbd1a'],['index','#bca0f3'],['xcore','#72d7af']]){
+ const svg=refined(id);assert(svg.includes('data-tensor='));assert(svg.includes(color));assert(svg.includes('fill="#080808"'));
+}
+assert(!refined('scalar').includes('#9EF04B'));assert(!refined('array').includes('#9EF04B'));
+const pipe=refined('pipe');assert(pipe.includes('C2V'));assert(pipe.includes('V2C'));assert.equal((pipe.match(/fill="#79D4F2"/g)||[]).length,4);
+console.log('PASS: source Tensor renderer/colors, neutral scalars/arrays, C2V/V2C two-slot rows.');

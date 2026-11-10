@@ -1,0 +1,15 @@
+{
+  "source": "PyPTO3-main/Design/hardware-native-ide-ui",
+  "date": "2026-11-10",
+  "sha256": {
+    "js/logic-glyphs.js": "d47f974c4f8dbd000c44b5c4085792fed1bd85cc12fe29c3c6ef86e0ac5426d0",
+    "js/glyph-catalog.js": "20afe8737ad3dacdb411dc0a93d654d7a441d48ddf01bdfa0cff74e21f0dd09e",
+    "styles/glyphs.css": "ad0c7ab26454b16c8519b9b4d1fd9cbf69af934d7d32611a6fb22ad6306c240e"
+  },
+  "additional_sources": {
+    "Design/hardware-native-ide-ui/js/path-grid-glyphs.js": "9ed6f22630c470c8aef2810d1eab072679f414b1519ba00be9cb5c9490beb0dc",
+    "Design/hardware-native-ide-ui/js/path.js": "11545a0f40d3a44072f28e6c55e66e36478cafb06c4fb9db81328f622ab84950",
+    "Design/hardware-native-ide/js/path-csa.js": "3d4a2c8b636e9580e89abfe1e51971ff819b1b2fa9945b556a123442df3a8270",
+    "Design/hardware-native-ide/styles/path-csa.css": "94ffc7fd6870a785b4b27f0787fdd60614838db52b8241b6479dbe1949ba142c"
+  }
+}

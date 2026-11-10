@@ -1,10 +1,23 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Infra · 图例库</title>
+<html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Infra · 图例库</title>
+<script>
+// Resolve the explicit URL theme before first paint; default is always dark.
+document.documentElement.dataset.theme=new URL(location.href).searchParams.get('theme')==='light'?'light':'dark';
+</script>
 <style>
 :root{color-scheme:dark;--bg:#111;--panel:#131313;--line:#353535;--fg:#e8e8e8;--muted:#ababab}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.7 Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif}a{color:inherit;text-underline-offset:4px}button,input,select{font:inherit;color:inherit}button,select{cursor:pointer}button{background:none;border:0}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #BCA0F3;outline-offset:4px}[hidden]{display:none!important}.shell{max-width:1560px;margin:auto;padding:0 42px}.top{display:flex;align-items:center;justify-content:space-between;padding:23px 0;border-bottom:1px solid var(--line);font-size:12px;letter-spacing:1.5px;color:var(--muted)}.top a{text-decoration:none;letter-spacing:0}.intro{padding:42px 0 30px}.intro h1{font-size:42px;font-weight:450;line-height:1.2;margin:0 0 18px;letter-spacing:-1px}.intro p{max-width:850px;color:var(--muted);margin:0}.stats{font:13px ui-monospace,monospace;color:var(--muted);margin-top:20px}.toolbar{position:sticky;top:0;background:#111f;z-index:2;padding:18px 0 12px;border-bottom:1px solid var(--line)}.search-row{display:flex;gap:14px;align-items:center;margin-bottom:15px}.search-row input{flex:1;min-width:0;background:#191919;border:1px solid #454545;padding:11px 14px;border-radius:4px}.search-row select{background:#191919;border:1px solid #454545;padding:11px 12px;max-width:350px;border-radius:4px}.categories{display:flex;gap:24px;overflow:auto}.categories button{white-space:nowrap;padding:7px 0 10px;color:var(--muted);border-bottom:2px solid transparent}.categories button[aria-pressed=true]{color:#fff;border-color:#e8e8e8}.results{display:flex;justify-content:space-between;align-items:center;padding:19px 0;color:var(--muted);font-size:12px}.results button{text-decoration:underline;text-underline-offset:4px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}.card{min-width:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:25px;background:#131313;display:flex;flex-direction:column}.card:hover{background:#181818}.card-top{display:flex;gap:12px;align-items:baseline}.number{font:12px ui-monospace,monospace;color:#888}.card h2{font-size:17px;font-weight:500;margin:0}.preview{width:100%;padding:0;margin:10px 0 8px;display:block;position:relative}.preview img{width:100%;height:185px;object-fit:contain;display:block}.preview span{position:absolute;right:0;bottom:0;font-size:11px;color:#aaa;opacity:0}.preview:hover span,.preview:focus-visible span{opacity:1}.card-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11px;color:#888}.card-bottom button{color:#bbb;padding:0}.empty{padding:90px 0;text-align:center;color:var(--muted)}details.scope{margin:30px 0 50px;color:#aaa;font-size:13px;border-top:1px solid var(--line);padding-top:20px}.scope summary{cursor:pointer}.scope ul{padding-left:20px}.scope p{max-width:1000px}dialog{color:var(--fg);background:#171717;border:1px solid #555;border-radius:6px;width:min(1050px,92vw);max-height:90svh;padding:0}dialog::backdrop{background:#000b}.dialog-top{display:flex;justify-content:space-between;align-items:center;padding:20px 26px;border-bottom:1px solid var(--line)}.dialog-top h2{font-size:20px;font-weight:500;margin:0}.close{font-size:24px;padding:0 5px}.dialog-body{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;padding:26px}.dialog-art{background:#131313;display:flex;align-items:center;min-height:300px}.dialog-art img{width:100%;height:340px;object-fit:contain}.detail-copy{font-size:14px;color:#ccc}.detail-copy p{margin:0 0 20px}.detail-copy h3{font-size:12px;font-weight:400;color:#888;margin:24px 0 10px}.detail-copy a{display:block;font-size:13px;margin:9px 0}.note{font-size:12px;color:#aaa;border-left:2px solid #555;padding-left:12px}.dialog-bottom{padding:15px 26px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#aaa}.dialog-bottom button,.download{border:1px solid #555;border-radius:4px;padding:7px 12px;text-decoration:none}.dialog-bottom button:disabled{opacity:.3;cursor:default}.sr{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}@media(min-width:1500px){.preview img{height:205px}}@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shell{padding:0 24px}.dialog-body{grid-template-columns:1fr}.dialog-art{min-height:200px}.dialog-art img{height:230px}}@media(max-width:600px){.shell{padding:0 16px}.intro{padding-top:28px}.intro h1{font-size:34px}.search-row{flex-wrap:wrap}.search-row input,.search-row select{width:100%;max-width:none}.categories{gap:18px}.grid{grid-template-columns:1fr}.card{padding:22px}.dialog-bottom{flex-wrap:wrap}.dialog-body{padding:20px}.top{font-size:10px}}
 .layers{display:flex;gap:24px;border-bottom:1px solid #555}.layers button{padding:12px 0;color:#999;border-bottom:2px solid transparent}.layers button[aria-pressed=true]{color:white;border-color:white}.variant-controls{display:flex;gap:12px;flex-wrap:wrap;padding:16px 26px;border-bottom:1px solid #353535}.variant-controls label{font-size:12px;color:#aaa;display:flex;gap:7px;align-items:center}.variant-controls select{background:#252525;border:1px solid #555;padding:5px}.dialog-body.pattern{grid-template-columns:1fr}.dialog-body.pattern .dialog-art img{height:auto;max-height:420px}.dialog-body.pattern .detail-copy{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dialog-body.pattern .detail-copy h3{margin:0}.variant-controls:empty{display:none}#legacyLinks{font-size:12px;margin-top:20px}#legacyLinks button{color:#bbb;text-decoration:underline;padding:4px 10px 4px 0}@media(max-width:600px){.dialog-body.pattern .detail-copy{display:block}}
 .intro{padding:24px 0 18px}.intro h1{font-size:28px;margin:0}.pattern-card{grid-column:1/-1}.pattern-card .preview img{height:300px}.card:not(.pattern-card):not(.data-card) .preview img{height:240px}.data-card{grid-column:1/-1}.data-card .preview img{height:auto;max-height:560px}.dialog-body.data-detail{grid-template-columns:1fr}.dialog-body.data-detail .dialog-art img{height:auto;max-height:none}.card-bottom>span{display:none}#detailDesc{white-space:pre-line}.card .preview{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}.card .preview img,.card:not(.pattern-card):not(.data-card) .preview img,.pattern-card .preview img{width:100%;height:100%;max-height:none;object-fit:contain}.pattern-card .preview{max-height:420px}
-</style></head><body><main class="shell"><header class="top"><span>AI INFRA / VISUAL VOCABULARY</span><a href="../../../index.html">返回 Library ↗</a></header><section class="intro"><h1>图例库</h1></section>
+html[data-theme=dark]{color-scheme:dark;--bg:#111;--panel:#131313;--fg:#e8e8e8;--muted:#ababab;--line:#353535;background:#111}
+html[data-theme=dark] body{background:#111;color:#e8e8e8}
+html[data-theme=dark] :is(.card,.dialog-art){background:#131313}
+html[data-theme=light]{color-scheme:light;--bg:#f5f5f5;--panel:#fff;--fg:#161616;--muted:#545454;--line:#d4d4d4}
+html[data-theme=light] :is(.toolbar,.card,.card:hover,.dialog-art,dialog,.search-row input,.search-row select){background:var(--panel)}
+html[data-theme=light] :is(.number,.preview span,.card-bottom,.card-bottom button,.scope,.detail-copy,.detail-copy h3,.note,.dialog-bottom){color:var(--muted)}
+html[data-theme=light] .layers button[aria-pressed=true]{background:#242424;color:#fff;border-color:transparent}
+.layers button{border-radius:999px;padding:8px 16px;border:0}.layers button[aria-pressed=true]{background:#e8e8e8;color:#111}
+.theme-link{border-radius:999px;background:var(--panel);padding:5px 12px}
+</style></head><body><main class="shell"><header class="top"><span>AI INFRA / VISUAL VOCABULARY</span><a href="../../../index.html">返回 Library ↗</a><a class="theme-link" id="themeLink" title="切换图例库主题">浅色模式</a></header><section class="intro"><h1>图例库</h1></section>
 <nav class="layers" id="layers" aria-label="图例与组合模式"></nav>
 <section class="toolbar" aria-label="图例筛选"><div class="search-row"><label for="search" class="sr">搜索图例</label><input id="search" type="search" placeholder="搜索图元、语义、报告名称…" autocomplete="off"><label for="source" class="sr">按来源报告筛选</label><select id="source"><option value="all">全部来源报告</option></select></div></section>
 <section id="grid" class="grid" aria-label="图例宫格"></section><div class="empty" id="empty" hidden>没有匹配的图例。请调整关键词或来源筛选。</div>
@@ -15,15 +28,115 @@
 const DATA=JSON.parse(document.getElementById('legendData').textContent),$=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let layer='system';const categoriesByLayer={system:['全部','对象','关系'],pattern:['全部']};let category='全部',shown=[],selected=-1,currentOptions={},currentUrl=null;
 const sourceMap=Object.fromEntries(DATA.sources.map(s=>[s.id,s]));
-const images=Object.fromEntries(DATA.items.map(e=>[e.id,URL.createObjectURL(new Blob([e.svg],{type:'image/svg+xml'}))]));
-for(const e of DATA.items)for(const [i,t] of (e.tiles||[]).entries())images[e.id+'-'+i]=URL.createObjectURL(new Blob([t.svg],{type:'image/svg+xml'}));
+const themeUrl=new URL(location.href);
+const lightTheme=themeUrl.searchParams.get('theme')==='light';
+document.documentElement.dataset.theme=lightTheme?'light':'dark';
+themeUrl.searchParams.set('theme',lightTheme?'dark':'light');
+$('themeLink').href=themeUrl.href;
+$('themeLink').textContent=lightTheme?'深色模式':'浅色模式';
+const rolePalette={
+ b1ef6b:{surface:'d3faa8',cell:'a4ed59'},
+ bca0f3:{surface:'e7d8ff',cell:'bd9af3'},
+ f2c45f:{surface:'ffe29a',cell:'ffbc32'},
+ '79d4f2':{surface:'bcecff',cell:'64c9ee'}
+};
+// Use the source grid pitch to keep a consistent gutter at every glyph scale.
+function compactGrid(svg){
+ return svg.replace(/(?:<rect\b[^>]*\/>\s*){3,}/gi,run=>{
+  const cells=Array.from(run.matchAll(/<rect\b[^>]*\/>/gi),match=>match[0]);
+  const read=(tag,name)=>Number(tag.match(new RegExp('\\b'+name+'="([^"]+)"'))?.[1]);
+  const [first,second]=cells;
+  const width=read(first,'width'),height=read(first,'height');
+  const pitch=read(second,'x')-read(first,'x');
+  if(!(pitch>=width&&pitch<=width*1.4&&read(first,'y')===read(second,'y')))return run;
+  const nextRow=cells.find(tag=>read(tag,'x')===read(first,'x')&&read(tag,'y')>read(first,'y'));
+  const rowPitch=nextRow?read(nextRow,'y')-read(first,'y'):height;
+  return run.replace(/<rect\b[^>]*\/>/gi,tag=>{
+   if(Math.abs(read(tag,'width')-width)>.001||Math.abs(read(tag,'height')-height)>.001)return tag;
+   const resize=(rect,axis,size,current,step)=>{
+    const target=step*.9;
+    if(step<current||step>current*1.4)return rect;
+    return rect.replace(new RegExp('\\b'+axis+'="[^"]+"'),axis+'="'+(read(rect,axis)+(current-target)/2).toFixed(3)+'"')
+     .replace(new RegExp('\\b'+size+'="[^"]+"'),size+'="'+target.toFixed(3)+'"');
+   };
+   return resize(resize(tag,'x','width',width,pitch),'y','height',height,rowPitch);
+  });
+ });
+}
+const operationIcons=new Map(DATA.items.find(item=>item.id==='system-op').icons.map(icon=>[icon.name.toLowerCase(),icon.path]));
+const operationAliases={
+ 'query down':'linear projection',
+ 'norm 1':'rmsnorm',
+ 'norm 2':'rmsnorm',
+ 'attention · mla':'attention',
+ 'moe · top-8':'router'
+};
+function addOperationBadges(svg){
+ return svg.replace(/(<rect\b[^>]*\/>)((?:\s|<g\b[^>]*>)*)(<text\b[^>]*>([^<]+)<\/text>)/gi,(whole,rect,between,label,name)=>{
+  const key=name.trim().toLowerCase().replace(/^tile\./,'').replace(/–/g,'-');
+  const path=operationIcons.get(operationAliases[key]||key);
+  const attr=key=>Number(rect.match(new RegExp('\\b'+key+'="([^"]+)"'))?.[1]);
+  const x=attr('x'),y=attr('y'),height=attr('height');
+  if(!path||!Number.isFinite(x+y+height)||attr('rx')!==height/2)return whole;
+  const centerX=x+height/2,centerY=y+height/2,scale=height*30/64/24;
+  const badge='<circle cx="'+centerX+'" cy="'+centerY+'" r="'+height*22/64+'" fill="#101010"/>'+
+   '<path d="'+path+'" transform="translate('+(centerX-12*scale)+' '+(centerY-12*scale)+') scale('+scale+')" fill="none" stroke="#eee" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+  return rect+badge+between+label;
+ });
+}
+function themedSvg(svg){
+ svg=svg.replace(/data:image\/svg\+xml;base64,([A-Za-z0-9+/=]+)/g,(_,encoded)=>{
+  const bytes=Uint8Array.from(atob(encoded),character=>character.charCodeAt(0));
+  const themed=themedSvg(new TextDecoder().decode(bytes));
+  const binary=Array.from(new TextEncoder().encode(themed),byte=>String.fromCharCode(byte)).join('');
+  return 'data:image/svg+xml;base64,'+btoa(binary);
+ });
+ svg=compactGrid(addOperationBadges(svg));
+ if(!lightTheme)return svg.replace(/<svg\b[^>]*>/i,tag=>{
+  const rules='color-scheme:only light;background:transparent';
+  return /\bstyle="/.test(tag)?tag.replace(/\bstyle="([^"]*)"/,(_,style)=>'style="'+style+';'+rules+'"'):tag.replace(/>$/,' style="'+rules+'">');
+ });
+ // Source diagrams can set their Tensor label colors through SVG classes.
+ svg=svg.replace(/<text\b([^>]*\bclass="[^"]*\btensor-label\b[^"]*"[^>]*)>/gi,
+  (_,attrs)=>'<text'+attrs+' style="fill:#233516;stroke:none">');
+ const ink={b1ef6b:'365a16',bca0f3:'5e3e8c',f2c45f:'704e09','79d4f2':'175568'};
+ return svg.replace(/#([0-9a-f]{6}|[0-9a-f]{3})(?![0-9a-f])/gi,(color,hex)=>{
+  const rgb=hex.length===3?Array.from(hex,c=>c+c).join(''):hex;
+  const sand={'29251f':'fff0d5','2a251e':'fff0d5','c8ac83':'77572f','c6a77d':'77572f'};
+  if(sand[rgb.toLowerCase()])return '#'+sand[rgb.toLowerCase()];
+  if(rgb.slice(0,2)!==rgb.slice(2,4)||rgb.slice(0,2)!==rgb.slice(4))return color;
+  const gray=parseInt(rgb.slice(0,2),16);
+  const value=gray<96?Math.round(255-gray*.32):Math.round(105-(gray-96)*.48);
+  return '#'+value.toString(16).repeat(3);
+ }).replace(/(\bfill\s*[:=]\s*["']?)(white|rgb\(255,\s*255,\s*255\))/gi,'$1#242424')
+ .replace(/<rect\b[^>]*>/gi,tag=>{
+  const outline=tag.match(/stroke="#([0-9a-f]{6})"/i)?.[1].toLowerCase();
+  const role=tag.match(/fill="#([0-9a-f]{6})"/i)?.[1].toLowerCase();
+  if(rolePalette[outline]){
+   return tag.replace(/fill="#f[0-9a-f]{5}"/i,'fill="#'+rolePalette[outline].surface+'"');
+  }
+  if(rolePalette[role]){
+   return tag.replace(/\bopacity="(0?\.\d+)"/,(_,value)=>{
+    const opacity=Number(value);
+    return 'opacity="'+(opacity<=.25?.88:.4+opacity*.6).toFixed(3)+'"';
+   }).replace(/fill="#[0-9a-f]{6}"/i,'fill="#'+rolePalette[role].cell+'"');
+  }
+  return tag;
+ }).replace(/<text\b[^>]*>/gi,tag=>tag.replace(
+  /(\bfill[:=]["']?\s*)#(b1ef6b|bca0f3|f2c45f|79d4f2)\b/gi,
+  (_,prefix,hue)=>prefix+'#'+ink[hue.toLowerCase()]
+ ).replace(/(paint-order:stroke;stroke:#[0-9a-f]+;stroke-width:)4px/gi,(_,prefix)=>prefix+'0px')).replace(/<\/svg>\s*$/i,
+ '<style>[data-tensor] text,.gl-onrole,.gl-onrole-strong{fill:#080808!important}.slot-title{fill:#111!important}.slot-capacity{fill:#292929!important}</style></svg>');
+}
+const images=Object.fromEntries(DATA.items.map(e=>[e.id,URL.createObjectURL(new Blob([themedSvg(e.svg)],{type:'image/svg+xml'}))]));
+for(const e of DATA.items)for(const [i,t] of (e.tiles||[]).entries())images[e.id+'-'+i]=URL.createObjectURL(new Blob([themedSvg(t.svg)],{type:'image/svg+xml'}));
 // Card previews share a 320 × 180 minimum coordinate frame. Dense content
 // expands that frame at the same aspect ratio and is fitted as a whole.
 function previewImage(svg){
- const m=svg.match(/viewBox="([^"]+)"/);if(!m)return URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+ const m=svg.match(/viewBox="([^"]+)"/);if(!m)return URL.createObjectURL(new Blob([themedSvg(svg)],{type:'image/svg+xml'}));
  const [x,y,w,h]=m[1].trim().split(/\s+/).map(Number),W=Math.max(320,w,h*320/180),H=W*180/320;
  const framed=svg.replace(m[0],`viewBox="${x-(W-w)/2} ${y-(H-h)/2} ${W} ${H}"`);
- return URL.createObjectURL(new Blob([framed],{type:'image/svg+xml'}));
+ return URL.createObjectURL(new Blob([themedSvg(framed)],{type:'image/svg+xml'}));
 }
 const previews=Object.fromEntries(DATA.items.map(e=>[e.id,previewImage(e.svg)]));
 for(const e of DATA.items)for(const [i,t] of (e.tiles||[]).entries())previews[e.id+'-'+i]=previewImage(t.svg);
@@ -48,7 +161,7 @@ function configure(e){
 }
  $('variantControls').innerHTML=controls;
 }
-function updatePreview(e){if(!['pattern-compute','pattern-distribution','pattern-storage'].includes(e.id))return;if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=URL.createObjectURL(new Blob([VisualSystem.render(e.id,currentOptions)],{type:'image/svg+xml'}));$('detailImg').src=currentUrl;$('download').href=currentUrl;$('download').download=e.id+'-current.svg'}
+function updatePreview(e){if(!['pattern-compute','pattern-distribution','pattern-storage'].includes(e.id))return;if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=URL.createObjectURL(new Blob([themedSvg(VisualSystem.render(e.id,currentOptions))],{type:'image/svg+xml'}));$('detailImg').src=currentUrl;$('download').href=currentUrl;$('download').download=e.id+'-current.svg'}
 $('variantControls').addEventListener('change',ev=>{const key=ev.target.dataset.option;if(!key)return;currentOptions[key]=key==='expanded'?ev.target.value==='true':ev.target.value;updatePreview(shown[selected])});
 render();const initial=decodeURIComponent(location.hash.slice(1));if(initial)show(initial);
 </script></body></html>

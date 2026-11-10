@@ -1,0 +1,93 @@
+.gl-svg text { font-family: Inter,"PingFang SC",system-ui,sans-serif; }
+
+/* 文字层级：沿用 path.css 的 sv-title / sv-strong / sv-label 三档 */
+.gl-title { fill: #cecece; font-size: 10px; letter-spacing: .12em; font-weight: 600; }
+.gl-strong { fill: #e8e8e8; font-size: 11px; font-weight: 600; }
+.gl-name { fill: #e8e8e8; font-size: 11px; font-weight: 500; font-family: ui-monospace,monospace; }
+.gl-label { fill: #bcbcbc; font-size: 10.5px; }
+.gl-small { fill: #bcbcbc; font-size: 10px; font-family: ui-monospace,monospace; }
+.gl-dim { fill: #aaa; font-size: 9.5px; font-family: ui-monospace,monospace; }
+.gl-node-text { fill: #ddd; font-size: 11px; font-weight: 500; }
+.gl-chip { fill: #9a9a9a; font-size: 9px; letter-spacing: .14em; font-weight: 600; font-family: ui-monospace,monospace; }
+.gl-icon { fill: none; stroke: #ddd; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 1 函数边界：名称栏 + 参数方向针脚 */
+.gl-fn { fill: rgba(255, 255, 255, .025); stroke: #BCA0F3; stroke-width: 1; }
+.gl-fn-rule { stroke: #BCA0F3; stroke-width: 1; fill: none; opacity: .55; }
+.gl-pin { stroke: none; }
+.gl-pin-in { fill: #79D4F2; }
+.gl-pin-out { fill: #F2C45F; }
+.gl-pin-inout { fill: #BCA0F3; }
+
+/* 2 数据对象：实心角色色 + 同形网格纹理 */
+.gl-data { stroke: none; }
+.gl-data-panel { fill: #000; fill-opacity: .3; stroke: none; }
+.gl-data-cell { stroke: none; }
+.gl-role-gm { fill: #B1EF6B; }
+.gl-role-vec { fill: #79D4F2; }
+.gl-role-mat { fill: #BCA0F3; }
+.gl-role-acc { fill: #F2C45F; }
+.gl-role-scalar { fill: #8e8e8e; }
+.gl-invalid { fill: #0b0b0b; fill-opacity: .74; stroke: none; }
+.gl-valid-edge { fill: none; stroke: #0a0a0a; stroke-width: 1.2; stroke-dasharray: 2 2; }
+.gl-onrole { fill: #0c0c0c; font-size: 9px; font-weight: 600; font-family: ui-monospace,monospace; }
+.gl-onrole-strong { fill: #080808; font-size: 10.5px; font-weight: 700; }
+.gl-scalar { fill: #262626; stroke: #3d3d3d; stroke-width: 1; }
+.gl-arr-cell { fill: #242424; stroke: #3d3d3d; stroke-width: 1; }
+
+/* 3 计算：圆端胶囊 */
+.gl-op { fill: #303030; stroke: #565656; stroke-width: 1; }
+.gl-op-badge { fill: #111; stroke: none; }
+
+/* 4 搬运 / 视图：方角，和圆端计算节点区分 */
+.gl-move { fill: #232323; stroke: #4a4a4a; stroke-width: 1; }
+.gl-move-arrow { fill: none; stroke: #79D4F2; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.gl-view { fill: none; stroke: #4a4a4a; stroke-width: 1; stroke-dasharray: 4 3; }
+.gl-view-bracket { fill: none; stroke: #8f8f8f; stroke-width: 1.3; stroke-linecap: round; }
+
+/* 5 控制结构：虚线框 + 左侧粗条 */
+.gl-loop { fill: rgba(255, 255, 255, .018); stroke: #4e4e4e; stroke-width: 1; stroke-dasharray: 5 4; }
+.gl-loop-bar { stroke: #BCA0F3; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+.gl-ghost { fill: #141414; stroke: #2c4a54; stroke-width: 1; stroke-dasharray: 3 3; }
+
+/* 6 执行作用域：四角实线角标 */
+.gl-scope-fill { fill: rgba(255, 255, 255, .03); stroke: none; }
+.gl-scope-corner { fill: none; stroke: #e8e8e8; stroke-width: 1.4; opacity: .62; }
+
+/* 7 任务与同步 */
+.gl-task { fill: #1d1d1d; stroke: #BCA0F3; stroke-width: 1; }
+.gl-port { fill: #111; stroke: #BCA0F3; stroke-width: 1.5; }
+.gl-barrier { fill: #BCA0F3; stroke: none; opacity: .55; }
+.gl-dep-edge { stroke: #BCA0F3; stroke-width: 1.3; fill: none; marker-end: url(#gl-tick); }
+.gl-core-split { stroke: #4a4a4a; stroke-width: 1; stroke-dasharray: 3 3; fill: none; }
+.gl-slot { fill: #202c33; stroke: #2c4a54; stroke-width: 1; }
+.gl-pipe-arrow { fill: none; stroke: #79D4F2; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 8 编译期辅助：不生成 IR，整体压暗 */
+.gl-static { fill: none; stroke: #3a3a3a; stroke-width: 1; stroke-dasharray: 3 3; }
+.gl-static-mark { fill: none; stroke: #aaa; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 存储放置：空心网格 = 存储面，和数据的实心网格填充相反 */
+.gl-mem { fill: #202020; stroke: #3b3b3b; stroke-width: 1; }
+.gl-mem-cell { fill: none; stroke: #4c4c4c; stroke-width: .8; }
+.gl-addr { fill: #191919; stroke: #383838; stroke-width: 1; }
+.gl-addr-block { fill: #79D4F2; stroke: none; opacity: .72; }
+
+/* 9 种关系 */
+.gl-marker { fill: none; stroke: #9a9a9a; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+.gl-marker-fill { fill: #202020; stroke: #9a9a9a; stroke-width: 1.1; }
+.gl-rel-contain { fill: none; stroke: #4e4e4e; stroke-width: 1; stroke-dasharray: 5 4; }
+.gl-rel-data { fill: none; stroke: #8a8a8a; stroke-width: 1.3; }
+.gl-rel-carry { fill: none; stroke: #BCA0F3; stroke-width: 1.3; }
+.gl-rel-alias { fill: none; stroke: #8a8a8a; stroke-width: 1.2; stroke-dasharray: 1 3; }
+.gl-rel-index { fill: none; stroke: #777; stroke-width: 1; stroke-dasharray: 2 3; }
+.gl-rel-place { fill: none; stroke: #777; stroke-width: 1; stroke-dasharray: 2 5; }
+.gl-rel-call { fill: none; stroke: #8a8a8a; stroke-width: 1.2; stroke-dasharray: 8 5; }
+.gl-rel-dep { fill: none; stroke: #BCA0F3; stroke-width: 1.4; }
+.gl-rel-xcore { fill: none; stroke: #79D4F2; stroke-width: 1.4; }
+
+/* Library normalization: roles do not encode memory spaces. */
+.gl-role-gm{fill:#B1EF6B}.gl-role-vec{fill:#79D4F2}.gl-role-mat{fill:#BCA0F3}.gl-role-acc{fill:#F2C45F}.gl-loop-bar,.gl-rel-carry,.gl-rel-dep,.gl-dep-edge,.gl-pipe-arrow,.gl-rel-xcore{stroke:#aaa}.gl-barrier{fill:#aaa;opacity:1}.gl-slot{fill:#292929;stroke:#777}.gl-title,.gl-strong,.gl-name,.gl-label,.gl-small,.gl-node-text{font-size:14px;letter-spacing:0}.gl-dim,.gl-chip{font-size:12px;letter-spacing:0}.gl-op{fill:#505050;stroke:#858585}.gl-op-badge{fill:#111}.gl-static{stroke:#777}
+
+/* Preserve source geometry; use a common 1.4x SVG coordinate scale. */
+.gl-title,.gl-small{font-size:10px}.gl-strong,.gl-name,.gl-node-text{font-size:11px}.gl-label{font-size:10.5px}.gl-dim{font-size:9.5px}.gl-chip{font-size:9px}

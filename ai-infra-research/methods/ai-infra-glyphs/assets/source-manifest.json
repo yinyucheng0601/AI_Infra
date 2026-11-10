@@ -4,12 +4,12 @@
     {
       "file": "legend-library.html",
       "source": "reports/llm-compute/diagram-legend-library/index.html",
-      "sha256": "78928259b474981c7dfb7eb617729d81485262ea328dd903286ccd5124a2ef1f"
+      "sha256": "3ad38df6b34839e92916ce58f7571355c11edd649dab1df094c505a78ed8053c"
     },
     {
       "file": "inventory.json",
       "source": "reports/llm-compute/diagram-legend-library/inventory.json",
-      "sha256": "709ef79edc003bb7d7b4fbeeba3a5a07d03fd2c706005323bfdc1bef770b5fe5"
+      "sha256": "97c0255fefd311cc8914b63680dd435ac64719ef5681ce1a34f14d71dbe22d4a"
     },
     {
       "file": "visual-system.js",
@@ -31,7 +31,7 @@
     {
       "file": "sample-system-op.svg",
       "item": "system-op",
-      "sha256": "0c484b30e58f788a78a089181f240dcb6f2ce3a50b32436fe5445d2f2307febf"
+      "sha256": "536a712f68f67361998548a1e39d2509f6e7e83da8f67aaeb35d177ebbf7967f"
     }
   ],
   "refresh": "python3 scripts/package_investigation.py"

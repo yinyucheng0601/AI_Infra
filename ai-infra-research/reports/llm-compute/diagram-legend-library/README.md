@@ -48,3 +48,16 @@
 ### OP 节点图标库（2026-10-23）
 
 收录已确认的 24 个 OP 图标与节点组合 Pattern。图标 30 px、底托 44 px、节点 64 px；Residual Add 使用独立圆形加法节点。源码快照为 `op-icons.js`，独立预览为 `op-icons.html`，不依赖 localhost。
+
+
+## PyPTO 逻辑图元收录（2026-11-10）
+
+新增九项：有效区、Scalar、Array、依赖汇合、跨核管道、编译期辅助、循环携带、索引关系、跨核通信关系。来源指纹见 `logic-source-manifest.json`。`logic-glyphs.js` 保留来源 renderer，`logic-glyphs.css` 归一化正式库灰阶和数据角色色；`logic-catalog.cjs` 构建自包含 SVG。源目录快照只用于提取这九项，其余候选没有自动获准收录。
+
+有效区保持 activation 色，不按 Vec/Mat/Acc 改变数据角色；结构关系使用中性灰并保留线型。使用公共 1.4 倍显示尺寸，保持源几何内文字布局。已有函数、任务、MemRef、调用和依赖不重复建类。fillpad 不收为仅元数据操作。新增项为设计资产，API 及内存预算解释仍须结合实际编译器版本核对。静态校验不替代用户视觉验收。
+
+2026-11-10 视觉修订：`logic-refined.cjs` 为八项新增图元提供库内 renderer，使用数据 activation 绿、任务 lime、跨核通道 sky、编译结构 lavender；关系接到具名对象边界，公共 viewBox 为 420×200。该修订替代早期全部中性灰的展示。
+
+2026-11-10 来源校正：本轮覆盖上一轮统一染色方案。Tensor 直接执行 PyPTO3 `path-grid-glyphs.js`；Q #72d7af、K/V #bca0f3、acc #ffbd1a，标量和 Array 恢复中性灰。管道按 `hardware-native-ide/js/path-csa.js` 的 C2V/V2C 双向分行和 `path-csa.css` 的 #3a4f63 槽位色组织，默认每行两槽，每槽 16 KB；不再将四槽排在核分界两侧。来源文件指纹见 manifest。
+
+2026-11-10 构图修订：循环标记随内容色，当前累加例为 amber；管道槽位采用连续通道内的实色分段，去除小卡片标题栏和装饰刻度，方向保持 C2V/V2C。
