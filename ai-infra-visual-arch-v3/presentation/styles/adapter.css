@@ -1,0 +1,42 @@
+/* Keep the original scene dimensions; isolate host layout from slide content. */
+.trial-stage { position:relative; width:100%; height:100%; container-type:size; overflow:hidden; background:#080a09; }
+.trial-stage > .slide { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; display:block!important; opacity:1!important; visibility:visible!important; transform:none!important; margin:0!important; }
+.trial-stage .t-stagger { opacity:1!important; visibility:visible!important; }
+.trial-controls {position:absolute; bottom:8px; right:12px; z-index:10000; display:flex; gap:8px}
+.trial-controls button {background:#eee;color:#111;border:0;border-radius:20px;padding:7px 12px;font:14px sans-serif;cursor:pointer}
+.trial-controls button:focus-visible{text-decoration:underline}
+
+.slidev-layout {width:100%;height:100%;padding:0!important}
+.trial-stage > .slide {filter:none!important}
+
+.trial-controls {bottom:auto;top:8px;right:12px}
+.reveal .slides {z-index:2}
+
+.reveal .backgrounds, .reveal .slide-background-content {pointer-events:none!important}
+
+/* PPT header owns space separate from embedded pages. */
+.trial-stage .launch-system .asset-series-head{position:absolute;inset:3cqh 4cqw auto;z-index:3;height:15cqh;opacity:1!important;visibility:visible!important;animation:none!important;background:none;pointer-events:auto}
+.trial-stage .launch-system .system-scene{inset:21cqh 4cqw 5cqh!important;height:auto!important;width:auto!important}
+.trial-stage .launch-system .asset-framework{inset:0!important}
+.trial-stage .launch-system .asset-series-head h2{margin:1cqh 0;font-size:3cqw}
+.trial-stage .launch-system .asset-series-head small{font-size:1cqw}
+.trial-stage .launch-system .scene-caption{display:none}
+
+/* Keep the presentation stage quiet until controls are requested. */
+nav button[title="Toggle camera view"],nav button[title="Record video"],nav button[title="Stop record video"],nav button[title="Select recording device"]{display:none!important}
+nav:has(button[title="Show slide overview"]){opacity:0!important;transition:opacity 160ms ease;min-height:48px}
+nav:has(button[title="Show slide overview"]):hover,nav:has(button[title="Show slide overview"]):focus-within{opacity:1!important}
+@media (hover:none){nav:has(button[title="Show slide overview"]){opacity:1!important}}
+
+/* Live references belong below the PPT title, never behind it. */
+.trial-stage :is(.launch-attention,.launch-layer)[data-step="0"] .launch-head{top:3.2cqh;left:4cqw;right:4cqw;max-width:none;background:none;animation:none!important}
+.trial-stage :is(.launch-attention,.launch-layer)[data-step="0"] .scene{top:22cqh;height:66cqh}
+
+/* Chapter covers fill the Slidev canvas; keep their own colored footer. */
+.trial-stage > .slide .chapter-theory.diamond-theory{inset:0!important}
+.slide .chapter-theory .diamond-stage.chapter-diamonds{left:2cqw;right:2cqw;top:25cqh;bottom:2cqh}
+.chapter-diamonds svg{display:block;width:100%;height:100%;overflow:visible}
+
+.chapter-detail{text-align:center;color:#17242e;font:400 19px/1.5 sans-serif}.chapter-detail p{font-size:21px;font-weight:600;margin:0 0 10px;white-space:normal}.chapter-detail span{color:#677482;font-size:18px}
+
+.slide .chapter-theory .diamond-stage.chapter-diamonds{top:20cqh;bottom:1cqh;left:0;right:0}.chapter-tags{display:flex;justify-content:center;align-items:center;gap:12px;height:100%;font:400 23px/1 sans-serif}.chapter-tags span{padding:10px 18px;border-radius:999px;background:#e1e4e9;color:#53616f}.principle-tag span{background:var(--diagram-accent);color:#17242e;font-weight:600}.chapter-detail p{font-size:24px}.chapter-detail span{font-size:23px}.chapter-diamonds .ds-reason small{font-size:21px}.chapter-diamonds .ds-reason p{font-size:24px;line-height:1.45}

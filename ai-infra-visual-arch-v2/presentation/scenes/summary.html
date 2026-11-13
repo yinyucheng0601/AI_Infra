@@ -1,0 +1,26 @@
+<section class="slide report-map" id="summary" data-layout="cover" data-short="汇报架构" data-step="0" aria-label="汇报架构">
+<div class="map-stack">
+<div class="map-goal"><strong>体验目标</strong><span>从「传统计算领域视觉组织与呈现」转向「复杂计算系统的认知与决策辅助」</span></div>
+<div class="report-map-grid">
+  <div class="map-label">设计依据</div>
+  <div class="map-inputs"><span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-2-2-5-2.5-8-2v14c3-.5 6 0 8 2 2-2 5-2.5 8-2V4c-3-.5-6 0-8 2v14"/></svg>领域知识</span><span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 3v3m6-3v3M9 18v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3"/></svg>计算机制</span><span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>开发者认知</span><span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V5M9 13h.1m5.9 0h.1M10 16h4"/><circle cx="12" cy="4" r="1"/></svg>Agent 工程能力</span></div>
+  <div class="map-label">设计任务</div>
+  <div class="map-task">帮助开发者理解复杂计算系统，并依据运行证据作出决策</div>
+  <div class="map-label">设计原则</div>
+  <div class="map-principles"><div><b><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18H5zM8 13l2 2 5-5"/></svg>证据驱动</b><span>按判断需要展开证据</span></div><div><b><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v5l-4 2v-7z"/></svg>认知减负</b><span>选择最小充分的表达</span></div><div><b><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18M8 3v6m8 0v6m-7 0v6"/></svg>协同控制</b><span>核查、调整与交接</span></div></div>
+  <div class="map-label">人机协同方法<small>三钻模型</small></div>
+  <div class="map-diamonds">
+    <div><b><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5m0 8v5h-5m-8 0H3v-5M12 9v6m-3-3h6"/></svg>聚焦</b><span>从问题进入调查</span></div><div><b><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="6" r="2"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/><path d="m11 8-4 7m6-7 4 7M8 17h8"/></svg>理解</b><span>保留上下文，看清关系</span></div><div><b><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h17m-6-6 6 6-6 6"/></svg>介入</b><span>带着问题与证据交回 Agent</span></div>
+  </div>
+  <div class="map-label">落地实现</div>
+  <div class="map-skill">
+    <div class="map-cycle">明确工程问题 → 推导表达 → 组装视图 → 核查交付 <span>↺</span></div>
+    <div class="map-assets"><span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM4 12h16M12 5v14"/></svg>原子图元</span> <i>·</i> <span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="5" height="6" rx="1"/><rect x="16" y="4" width="5" height="5" rx="1"/><rect x="16" y="15" width="5" height="5" rx="1"/><path d="M8 12h4m0 0V6.5h4m-4 5.5v5.5h4"/></svg>可复用 Pattern</span> <i>·</i> <span><svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c4-8 8-8 10 0s6 8 10 0c-4-8-8-8-10 0s-6 8-10 0z"/></svg>极简无限画布</span></div>
+    <div class="map-external"><span>CANNBot Skill · 工程编排与验证</span><span>开发者证据 · 运行数据、来源与版本</span></div>
+  </div>
+</div>
+</div>
+</section>
+</template>
+
+

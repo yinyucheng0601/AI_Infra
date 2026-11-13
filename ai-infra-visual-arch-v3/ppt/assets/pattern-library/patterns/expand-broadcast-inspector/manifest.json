@@ -1,0 +1,10 @@
+{
+  "authoritativeSource": "prototypes/compute-investigation-trial/expand.html",
+  "sourceSha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
+  "outputSha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
+  "cover": "web/media/expand-mapping-inspector-cover.svg",
+  "coverSha256": "603c59836dd79e76a8cd24936d3ac488740ede97fa870ec35491dc3d9cdc5963",
+  "coverMethod": "export of actual SVG scene from delivered application; not a browser screenshot",
+  "refresh": "python3 scripts/collect_operator_mapping.py",
+  "validation": "model and DOM-substitute behavior checks passed; no NPU/device run"
+}

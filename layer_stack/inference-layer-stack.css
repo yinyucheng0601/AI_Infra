@@ -30,3 +30,11 @@ main{height:100dvh}.compact-header{position:fixed;top:28px;left:32px;z-index:8;p
 .architecture-nav .icon-button:hover{background:var(--surface)}
 #architecture-close{margin-left:auto}
 #front-graph{padding:8px}
+
+/* Linked cache focus uses fill, retaining cache role and current-token semantics. */
+.cache-inspect-node{cursor:pointer;outline:none}
+.cache-inspect-node[aria-pressed=true] .cache-body{fill:#3187EC;stroke:none}
+.cache-inspect-node[aria-pressed=true] .cache-label{fill:#fff}
+.cache-inspect-node[aria-pressed=true] .cache-dot{fill:#fff;opacity:.22}
+.cache-inspect-node:focus-visible .cache-label{text-decoration:underline}
+.kv-storage-layer[data-branch-focus]:not([data-branch-focus=""]) polygon:not([fill="transparent"]){fill:#3187EC}

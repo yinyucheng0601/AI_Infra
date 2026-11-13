@@ -1,0 +1,24 @@
+{
+  "name": "ai-infra-visual-arch-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare:content": "python3 prepare.py",
+    "dev": "slidev slides.md --port 8851",
+    "build": "python3 prepare.py && slidev build slides.md",
+    "dev:slidev": "slidev slides.md --port 8851",
+    "dev:templates": "TRIAL_HOST=templates slidev templates.md --port 8853",
+    "build:templates": "TRIAL_HOST=templates slidev build templates.md --out dist-templates"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@slidev/cli": "53.1.0",
+    "playwright": "1.65.0",
+    "reveal.js": "6.0.2"
+  }
+}

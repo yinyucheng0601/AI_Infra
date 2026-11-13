@@ -60,6 +60,7 @@ const layers=[], groups=[], labels=[];
 let selected=0, phase='prefill';
 let inspectedToken=null;
 let inspectedRange=null;
+let cacheFocus=null;
 const positions={prefill:131,decode:132};
 const positionBounds={prefill:[0,131],decode:[132,133]};
 const requestSteps=[
@@ -309,15 +310,17 @@ frontGraph.addEventListener('pointerdown',event=>{
  if(!inverse)return;
  const {x,y,width,height}=frontGraph.viewBox.baseVal;
  const start=new DOMPoint(event.clientX,event.clientY).matrixTransform(inverse);
- frontDrag={id:event.pointerId,inverse,start,x,y,width,height};
- if(!event.target.closest('.front-object'))frontGraph.setPointerCapture(event.pointerId);
- frontGraph.classList.add('is-panning');
+ suppressFrontClick=false;
+ frontDrag={id:event.pointerId,inverse,start,x,y,width,height,clientX:event.clientX,clientY:event.clientY,moved:false};
 });
 frontGraph.addEventListener('pointermove',event=>{
  if(frontDrag?.id!==event.pointerId)return;
  const {inverse,start,x,y,width,height}=frontDrag;
  const point=new DOMPoint(event.clientX,event.clientY).matrixTransform(inverse);
- if(Math.hypot(point.x-start.x,point.y-start.y)>4){frontDrag.moved=true;if(!frontGraph.hasPointerCapture(event.pointerId))frontGraph.setPointerCapture(event.pointerId);}
+ if(!frontDrag.moved){
+  if(Math.hypot(event.clientX-frontDrag.clientX,event.clientY-frontDrag.clientY)<5)return;
+  frontDrag.moved=true;frontGraph.setPointerCapture(event.pointerId);frontGraph.classList.add('is-panning');
+ }
  frontGraph.setAttribute('viewBox',`${x+start.x-point.x} ${y+start.y-point.y} ${width} ${height}`);
 });
 let suppressFrontClick=false;
@@ -325,9 +328,10 @@ frontGraph.addEventListener('click',event=>{if(suppressFrontClick){event.stopImm
 window.addEventListener('pointerup',event=>{if(frontDrag?.id===event.pointerId){suppressFrontClick=!!frontDrag.moved;frontDrag=null;frontGraph.classList.remove('is-panning');}});
 frontGraph.addEventListener('lostpointercapture',event=>{
  if(frontDrag?.id!==event.pointerId)return;
- frontDrag=null;
+ suppressFrontClick=!!frontDrag.moved;frontDrag=null;
  frontGraph.classList.remove('is-panning');
 });
+window.addEventListener('pointercancel',event=>{if(frontDrag?.id===event.pointerId){frontDrag=null;suppressFrontClick=false;frontGraph.classList.remove('is-panning');}});
 function resetSceneView(){
  const rect=zoomScene.getBoundingClientRect();
  if(!rect.width||!rect.height)return;
@@ -463,7 +467,21 @@ function renderFront(kind) {
  svg.setAttribute('aria-label','L'+selected+' · '+phase+' · '+kind+' 层内图');
  svg.innerHTML='<defs><marker id="front-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L8 4L0 8" fill="#999"/></marker></defs>';
  const edge=d=>svg.append(el('path',{d,fill:'none',stroke:'#999','marker-end':'url(#front-arrow)'}));
- const glyph=(id,x,y,w,h,label,role)=>appendGlyph(svg,x,y,w,h,label,role);
+ const glyph=(id,x,y,w,h,label,role)=>{
+  const group=appendGlyph(svg,x,y,w,h,label,role);
+  if(role==='cache'){
+   const branch=id==='raw'?'swa':'compressed';
+   group.classList.add('cache-inspect-node');group.dataset.cacheBranch=branch;
+   group.setAttribute('role','button');group.setAttribute('tabindex','0');
+   group.setAttribute('aria-label','定位 Rank · L'+selected+' · '+label);
+   group.setAttribute('aria-pressed',String(cacheFocus===branch));
+   group.dataset.tooltip='定位 Rank 与 Token 表 · '+label;
+   const activate=()=>{selectCacheBranch(branch);get('front-graph').querySelector('[data-cache-branch="'+branch+'"]')?.focus();};
+   group.addEventListener('click',activate);
+   group.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activate();}});
+  }
+  return group;
+ };
  // Grouped from Design/architecture/deepseek_v4_flash_csa/model_architecture.json.
  const nodes=[
   [(phase==='prefill'?'Prompt · 132':'Decode · 1')+' × 4 × 4096','activation'],
@@ -532,6 +550,8 @@ function choose(layer, manual=true) {
 function render() {
  const position=positions[phase], start=Math.max(0,position-127);
  const kind=kinds[ratios[selected]];
+ if(kind==='SWA'&&cacheFocus==='compressed')cacheFocus=null;
+ if(cacheFocus==='compressed'){const count=kind==='HCA'&&phase==='decode'?Math.floor((position+1)/128):0;inspectedRange=count?[0,count*128-1]:null;}
  for(const l of layers){
   const active=l===selected,g=groups[l];
   g.classList.toggle('chosen',active);
@@ -557,22 +577,33 @@ function render() {
  if(!get('token-workspace').hidden)renderTokenView(position,start,kind);
  renderKVMemory();
 }
+function selectCacheBranch(branch){
+ pausePlayback();cacheFocus=branch;inspectedToken=null;inspectedRange=null;
+ const position=positions[phase];
+ if(branch==='compressed'&&kinds[ratios[selected]]==='HCA'&&phase==='decode'){
+  const count=Math.floor((position+1)/128);
+  if(count)inspectedRange=[0,count*128-1];
+ }
+ if(get('token-workspace').hidden){get('token-workspace').hidden=false;get('token-mode').setAttribute('aria-expanded','true');}
+ render();
+}
 function inspectCacheToken(index,range=null){
+ cacheFocus=range?'compressed':null;
  inspectedToken=index;inspectedRange=range;
  if(get('token-workspace').hidden){get('token-workspace').hidden=false;get('token-mode').setAttribute('aria-expanded','true');}
  render();
 }
-get('kv-inspect-clear').onclick=()=>{inspectedToken=null;inspectedRange=null;render();};
+get('kv-inspect-clear').onclick=()=>{cacheFocus=null;inspectedToken=null;inspectedRange=null;render();};
 function renderKVMemory(){
  const position=positions[phase];
- get('kv-inspect-clear').hidden=inspectedToken===null;
+ get('kv-inspect-clear').hidden=inspectedToken===null&&cacheFocus===null;
  window.InferenceKVMemory.render(get('kv-memory-graphic'),{
   layer:selected,ratios,phase,position,stage:requestIndex,layered:isLayerStep(requestIndex),
-  inspection:inspectedToken,range:inspectedRange,
-  onToken:inspectCacheToken,onLayer:layer=>choose(layer)
+  inspection:inspectedToken,range:inspectedRange,branch:cacheFocus,
+  onToken:inspectCacheToken,onBranch:selectCacheBranch,onLayer:layer=>{inspectedToken=null;inspectedRange=null;choose(layer);if(cacheFocus)selectCacheBranch(cacheFocus);}
  });
  const start=Math.max(0,position-127),kind=kinds[ratios[selected]];
- let status='';
+ let status=cacheFocus==='swa'?'L'+selected+' · SWA 读取 '+start+'–'+position+' · 写入 '+position:cacheFocus==='compressed'?'L'+selected+' · '+kind+' 压缩'+(inspectedRange?' · 来源 '+inspectedRange.join('–'):' · 条目明细未接入'):'';
  if(inspectedToken!==null){
   status=inspectedRange?'压缩记录 · 来源 '+inspectedRange.join('–'):
    '位置 '+inspectedToken+(inspectedToken>=start?' · SWA 缓存':kind==='HCA'&&inspectedToken<Math.floor((position+1)/128)*128?' · HCA 压缩记录':' · SWA 窗口外');
@@ -610,7 +641,7 @@ function renderTokenView(position,start,kind){
  tokenCells.forEach((button,index)=>{
   button.hidden=prefill&&index>last;
   button.disabled=index>position;
-  button.dataset.inspect=String(inspectedRange?index>=inspectedRange[0]&&index<=inspectedRange[1]:index===inspectedToken);
+  button.dataset.inspect=String(cacheFocus==='swa'?index>=start&&index<=position:inspectedRange?index>=inspectedRange[0]&&index<=inspectedRange[1]:index===inspectedToken);
   button.dataset.read=String(index>=start&&index<=position);
   button.setAttribute('aria-pressed',String(index===position));
   const status=index===position?'，当前位置':index>=start&&index<=position?'，SWA 可见':'，SWA 窗口外';

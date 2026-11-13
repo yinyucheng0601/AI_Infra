@@ -1,0 +1,31 @@
+<section class="slide cover-slide launch-agent" id="agent" data-layout="cover" data-short="判断 · Scale" data-step="0">
+  <header class="launch-head t-stagger"><div class="brand t-stagger-line t-stagger-line--1">AI INFRA <span>VISUAL DESIGN / 01</span></div><h1 class="title t-stagger-line t-stagger-line--2">让判断，<em>跟上 Agent</em></h1></header>
+  <div class="slide-body scene scale-scene">
+    <svg class="scale-connections" viewBox="0 0 1440 480" aria-hidden="true"><g class="flow-lines"><path class="flow-line input-line" d="M330 126 H460 V242 H660"/><path class="flow-line input-line" d="M330 350 H460 V242 H660"/><path class="flow-line parameter-line" d="M686 136 V218"/><path class="flow-line" d="M710 242 H760"/><path class="flow-line result-line" d="M810 242 H950 V126 H1110"/><path class="flow-line result-line" d="M810 242 H950 V350 H1110"/></g><g id="scale-ops"></g></svg>
+    <div class="scale-inputs tensor-group"><div class="tensor-title">输入 X <small>[2, 6, 10]</small></div><div class="matrix-wrap"><span class="matrix-meta">batch 0</span><div class="data-grid" data-matrix="x0"></div></div><div class="matrix-wrap"><span class="matrix-meta">batch 1</span><div class="data-grid" data-matrix="x1"></div></div></div>
+    <div class="parameter-focus"><div class="parameter-name">scale[0,0]</div><div class="parameter-value" data-scale-value>−1</div><span class="parameter-hint">一个参数</span></div>
+    <div class="bias-note">bias = −1.5</div>
+    <div class="scale-outputs tensor-group"><div class="tensor-title">输出 Y <small>[2, 6, 10]</small></div><div class="matrix-wrap"><span class="matrix-meta">batch 0 <strong class="output-readout" data-readout="0">10.5</strong></span><div class="data-grid" data-matrix="y0"></div></div><div class="matrix-wrap"><span class="matrix-meta">batch 1 <strong class="output-readout" data-readout="1">−11</strong></span><div class="data-grid" data-matrix="y1"></div></div></div>
+    <div class="impact-counter"><span class="impact-number">2</span><span>个关联输出</span></div>
+    <div class="handoff"><span class="handoff-object">当前对象</span><span>＋</span><span>配置</span><span>＋</span><span>来源</span><b>→ Agent</b></div>
+  </div>
+  <div class="scene-caption"><span data-caption>把抽象计算，变成可核查的关系</span></div><div class="page-no">1 / 4</div>
+</section>
+
+<section class="slide launch-attention" id="attention" data-layout="evidence-grid" data-short="聚焦 · 执行泳道" data-step="0">
+  <header class="launch-head t-stagger"><div class="brand t-stagger-line t-stagger-line--1">AI INFRA <span>VISUAL DESIGN / 02</span></div><h2 class="title t-stagger-line t-stagger-line--2">让重点，<em>自己浮现</em></h2></header>
+  <div class="slide-body scene attention-scene"><div class="lane-legend"><span>Host · bind</span><span>Host 记录的 runner_run 调用窗</span></div><div class="lane-chart" id="lane-chart"></div><div class="lane-hero"><span class="lane-id">LANE <strong data-critical>6</strong></span><span class="lane-readout" data-entry>108.47 <small>ms</small></span><span class="lane-hero-label">最晚进入 runner_run</span></div></div>
+  <div class="scene-caption"><span data-caption>先看全局</span></div><div class="page-no">2 / 4</div>
+</section>
+
+<section class="slide launch-layer" id="layers" data-layout="evidence-grid" data-short="深入 · Layer Stack" data-step="0">
+  <header class="launch-head t-stagger"><div class="brand t-stagger-line t-stagger-line--1">AI INFRA <span>VISUAL DESIGN / 03</span></div><h2 class="title t-stagger-line t-stagger-line--2">进入细节，<em>不丢全局</em></h2></header>
+  <div class="slide-body scene layer-scene"><div class="layer-stack" id="layer-stack"></div><div class="layer-identity"><span>始终是</span><strong>L18</strong><span>Query activation</span></div><div class="sample-view"><span class="sample-name">L18 / Query activation</span><canvas id="layer-sample" width="512" height="512" aria-label="L18 Query 激活的 64×64 原型采样矩阵"></canvas><span class="sample-foot">64 × 64 采样</span></div><svg class="query-link" viewBox="0 0 1440 480" aria-hidden="true"><path d="M602 191 H788 V126 H932"/></svg></div>
+  <div class="scene-caption"><span data-caption>49 层，一个整体</span></div><div class="page-no">3 / 4</div>
+</section>
+
+<section class="slide launch-system" id="system" data-layout="pattern-system" data-short="延续 · 视觉体系" data-step="0">
+  <header class="launch-head t-stagger"><div class="brand t-stagger-line t-stagger-line--1">AI INFRA <span>VISUAL DESIGN / 04</span></div><h2 class="title t-stagger-line t-stagger-line--2">每一次设计，<em>都是下一次的起点</em></h2></header>
+  <div class="slide-body scene system-scene"><div class="grammar-object"><img src="assets/tensor.svg" alt="正式图例库的数据角色图元"><span>图元</span></div><div class="grammar-pattern"><img src="assets/compute-pattern.svg" alt="原 renderer 生成的 X、W、MatMul 与 Y 参数化计算关系"><span>Pattern</span></div><div class="grammar-method"><span class="method-word">Skills</span><div class="method-line">任务 <i>→</i> 表达 <i>→</i> 核查</div></div><div class="reuse-gallery"><figure><img src="assets/scale.png" alt="Scale 参数共享视图"><figcaption>计算关系</figcaption></figure><figure><img src="assets/swimlane.png" alt="执行泳道视图"><figcaption>执行关系</figcaption></figure><figure><img src="assets/layer-stack.png" alt="Layer Stack 层级视图"><figcaption>层级关系</figcaption></figure></div></div>
+  <div class="scene-caption"><span data-caption>让设计判断，可以延续</span></div><div class="page-no">4 / 4</div>
+</section>

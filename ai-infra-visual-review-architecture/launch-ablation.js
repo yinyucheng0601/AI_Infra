@@ -8,19 +8,16 @@
  captions.push(['从发现问题，到理解证据，再到介入纠正']);
  const notes=JSON.parse(document.querySelector('#speaker-data').textContent),panel=document.querySelector('.speaker-panel'),notesBody=panel.querySelector('.pinned-notes-content'),notesTrigger=document.querySelector('.notes-button');
  const notesDock=document.createElement('div');notesDock.className='notes-dock';document.body.append(notesDock);notesDock.append(notesTrigger,panel);
- notesTrigger.setAttribute('aria-expanded','false');let notesCloseTimer;
- function setNotes(open){clearTimeout(notesCloseTimer);document.body.classList.toggle('notes-open',open);notesTrigger.setAttribute('aria-expanded',String(open));}
- notesDock.addEventListener('pointerenter',()=>setNotes(true));notesDock.addEventListener('pointerleave',()=>{notesCloseTimer=setTimeout(()=>setNotes(false),180);});
- notesDock.addEventListener('focusin',()=>setNotes(true));notesDock.addEventListener('focusout',e=>{if(!notesDock.contains(e.relatedTarget))notesCloseTimer=setTimeout(()=>setNotes(false),180);});
+ notesTrigger.setAttribute('aria-expanded','false');
+ function setNotes(open){document.body.classList.toggle('notes-open',open);notesTrigger.setAttribute('aria-expanded',String(open));}
  function renderNotes(){
-  const n=notes[active];if(!n)return;notesBody.replaceChildren();
-  const label=document.createElement('div');label.className='notes-step';label.textContent=`${active+1} / ${slides.length} · ${step<0?'理论封面':'分镜 '+(step-firstStep(slides[active])+1)}`;
+  const n=notes[active];if(!n)return;
   const current=document.createElement('p');current.className='notes-current';current.textContent=step<0?n.intro.script:n.steps[step];
-  notesBody.append(label,current);
+  notesBody.replaceChildren(current);
  }
 
  function toggleNotes(){setNotes(!document.body.classList.contains('notes-open'));}
- notesTrigger.addEventListener('click',e=>{if(matchMedia('(hover:none)').matches||e.detail===0)toggleNotes();else setNotes(true);});panel.querySelector('.notes-pin-close').addEventListener('click',()=>setNotes(false));
+ notesTrigger.addEventListener('click',toggleNotes);
  let last=4;
  const firstStep=slide=>['summary','next-step'].includes(slide.id)?0:slide.id==='closing'?5:slide.id==='language'?0:-1;
  const lastStep=slide=>['summary','next-step'].includes(slide.id)?0:slide.id==='language'?4:slide.id==='system'?3:5;

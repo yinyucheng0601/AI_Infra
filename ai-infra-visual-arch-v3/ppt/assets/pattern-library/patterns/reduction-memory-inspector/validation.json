@@ -1,0 +1,20 @@
+{
+  "scope": "Conditional source request model; CPU double arithmetic; not CANN/NPU execution",
+  "outputs": 2067,
+  "affectedOutputs": 371,
+  "memberChecks": 390663,
+  "copyInCalls": 530,
+  "requestedSlots": 400680,
+  "requiredConsumedSlots": 390663,
+  "missingRequired": 0,
+  "duplicateConsumed": 0,
+  "extraRequestSlots": 10017,
+  "duplicateLegalAddresses": 10016,
+  "outOfAllocationRequests": 1,
+  "tailGatherUnwrittenSlotsAcrossCalls": 6360,
+  "outputWrites": 2067,
+  "contextChecks": 12773,
+  "cpuReferenceMaxAbsError": 1.7763568394002505e-15,
+  "sourceCommit": "04c0c97dc5623053fefc585786697a8c19b9504a",
+  "htmlSha256": "6d51a3cde5e9dcaa65dfccb04b66c3b4e670b92d2846902340b4daaa3f4e8093"
+}

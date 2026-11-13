@@ -1,0 +1,101 @@
+{
+  "libraryVersion": "2026-10-13",
+  "items": [
+    {
+      "id": "data-1",
+      "source": "data-1.svg",
+      "sha256": "aee8eb392b13e6fcfdd090bd27f08445147028ff2aa0d01041a57724c00e6050",
+      "variant": "current-library",
+      "crop": [
+        80,
+        65,
+        160,
+        64
+      ]
+    },
+    {
+      "id": "data-2",
+      "source": "data-2.svg",
+      "sha256": "a458ab910b6766ae4ad6a2222dafa985621b7c3701c8770878490a24cae29931",
+      "variant": "current-library",
+      "crop": [
+        67,
+        42,
+        186,
+        96
+      ]
+    },
+    {
+      "id": "token",
+      "source": "token.svg",
+      "sha256": "40618b5843d61d409f25c9317f803ee49a59cac6292e69db88de7f63797bfc57",
+      "variant": "current-library",
+      "crop": [
+        230,
+        110,
+        180,
+        60
+      ]
+    },
+    {
+      "id": "data-5",
+      "source": "data-5.svg",
+      "sha256": "7bb059ef05173acb9f5c144604884b2d26893675a7377742fe6c6a73c467c547",
+      "variant": "current-library",
+      "crop": [
+        35,
+        50,
+        250,
+        90
+      ]
+    },
+    {
+      "id": "data-4",
+      "source": "data-4.svg",
+      "sha256": "fd2e5b883fa8d57d33aa5a9e61d5ab704a09e4b6e9a4d40a3c2343dc3aa4c846",
+      "variant": "current-library",
+      "crop": [
+        0,
+        45,
+        480,
+        100
+      ]
+    },
+    {
+      "id": "system-storage",
+      "source": "system-storage.svg",
+      "sha256": "7f23b9236929626f8b04e40d2ee1ee46972d3483c972f0e3070b03f292a6664f",
+      "variant": "current-library",
+      "crop": [
+        20,
+        35,
+        300,
+        106
+      ]
+    },
+    {
+      "id": "system-memref",
+      "source": "system-memref.svg",
+      "sha256": "7c755fa8cdec299bb9f593fdb4387d47af48e9a673a1e0f5413b38d9e906b77a",
+      "variant": "current-library",
+      "crop": [
+        20,
+        35,
+        300,
+        106
+      ]
+    },
+    {
+      "id": "system-op",
+      "source": "system-op.svg",
+      "sha256": "0fd9691aab69279b24e237992c21abe0c00ac83214b9331bcccc380f72bc4d70",
+      "variant": "first embedded model OP",
+      "crop": [
+        30,
+        65,
+        260,
+        48
+      ]
+    }
+  ]
+}

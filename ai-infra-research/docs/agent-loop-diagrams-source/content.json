@@ -1,0 +1,308 @@
+{
+  "title": "AI Agent Loop：从推理服务到目标托管",
+  "pages": [
+    {
+      "title": "从一个目标开始",
+      "question": "为什么能持续推进任务？",
+      "conclusion": "目标持久化使系统围绕完成依据继续行动。",
+      "change": "开发目标 → 自主行动 → 可核查成果",
+      "steps": [
+        "委托",
+        "推进",
+        "交付"
+      ],
+      "sources": [
+        "goals"
+      ],
+      "boundary": "产品行为与案例分步分开：输入用于改变本页案例目标，不启动真实 Codex。"
+    },
+    {
+      "title": "四层 Loop 框架",
+      "question": "每层分别循环什么？",
+      "conclusion": "四层改变的是不同尺度的状态。",
+      "change": "选层后显示职责、状态、退出条件",
+      "steps": [
+        "职责",
+        "状态",
+        "退出条件"
+      ],
+      "sources": [
+        "transformer",
+        "orca",
+        "react",
+        "magentic"
+      ],
+      "boundary": "四层是跨论文综合分析框架，不是通用标准，也不要求所有 Agent 框架都实现目标循环。"
+    },
+    {
+      "title": "Loop 的思想与技术演进",
+      "question": "思想早已存在，LLM 改变什么？",
+      "conclusion": "LLM 把开放语言目标、外部行动与反馈接入可编排系统。",
+      "change": "分轨时间线定位论文贡献，不绘制简单继承箭头",
+      "steps": [
+        "反馈与行动",
+        "语言模型",
+        "Agent 系统"
+      ],
+      "sources": [
+        "wiener",
+        "brooks",
+        "transformer",
+        "react",
+        "reflexion",
+        "magentic",
+        "mixed"
+      ],
+      "boundary": "事件按各轨阅读顺序排布，位置不是同比例时间刻度。"
+    },
+    {
+      "title": "AI Infra：持续服务推理请求",
+      "question": "服务循环如何共享资源？",
+      "conclusion": "调度器处理请求状态，KV 存储按请求保留或释放。",
+      "change": "请求 A 贯穿入队、共享迭代、释放资源",
+      "steps": [
+        "A 入队",
+        "共同迭代",
+        "A 结束"
+      ],
+      "sources": [
+        "orca",
+        "vllm"
+      ],
+      "boundary": "请求槽位、KV 块用于说明机制，不给出实际硬件容量、耗时或批次记录。"
+    },
+    {
+      "title": "LLM：逐步生成模型输出",
+      "question": "输出怎样逐步生成？",
+      "conclusion": "参数、序列与 KV Cache 在推理中扮演不同角色。",
+      "change": "Token 追加到输入；新增 K/V 追加到缓存",
+      "steps": [
+        "Prefill",
+        "Decode 1",
+        "Decode 2",
+        "停止生成"
+      ],
+      "sources": [
+        "transformer",
+        "vllm"
+      ],
+      "boundary": "限定常规自回归 decoder 推理；文本标签与 Token ID 不声称对应具体 tokenizer。"
+    },
+    {
+      "title": "Agent Runtime：把输出变成行动",
+      "question": "模型输出如何变成行动？",
+      "conclusion": "Runtime 执行工具，并把结果作为下一次输入。",
+      "change": "同一搜索功能任务：读取文件 → 修改 → 检查 → 决策",
+      "steps": [
+        "读取文件",
+        "修改工具",
+        "检查结果",
+        "再次决策"
+      ],
+      "sources": [
+        "react",
+        "runner"
+      ],
+      "boundary": "图中工具轨迹是机制案例，不是实测调用记录；不展示模型私有思维链。"
+    },
+    {
+      "title": "Runtime 如何组织复杂执行",
+      "question": "复杂执行由谁接管？",
+      "conclusion": "调用返回与控制权交接需要分别建模。",
+      "change": "切换四种执行结构，观察活动控制者与返回路径",
+      "steps": [
+        "工具调用",
+        "专家调用",
+        "Handoff",
+        "条件工作流"
+      ],
+      "sources": [
+        "runner",
+        "langgraph",
+        "magentic"
+      ],
+      "boundary": "机制可嵌套；一次调用、分发或交接本身未必形成循环。"
+    },
+    {
+      "title": "应用 Agent：围绕目标持续推进",
+      "question": "长任务如何保持方向？",
+      "conclusion": "账本分离当前计划的推进与整体计划的调整。",
+      "change": "局部修复、重规划、完成、阻塞触发不同状态",
+      "steps": [
+        "正常推进",
+        "局部修复",
+        "重规划",
+        "完成",
+        "阻塞"
+      ],
+      "sources": [
+        "magentic",
+        "reflexion"
+      ],
+      "boundary": "账本机制借鉴 Magentic-One；不推断 Codex 内部使用相同账本。"
+    },
+    {
+      "title": "Codex Goal：四层如何共同工作",
+      "question": "一轮结束后为什么还会继续？",
+      "conclusion": "Goal 是有边界的线程目标，空闲检查可发起后续回合。",
+      "change": "跨回合保留目标，按安全条件触发下一轮",
+      "steps": [
+        "目标保存",
+        "回合结束",
+        "检查可继续条件",
+        "继续并核验"
+      ],
+      "sources": [
+        "goals"
+      ],
+      "boundary": "只表达官方公开行为；不模拟私有调度实现或调用次数。"
+    },
+    {
+      "title": "目标托管改变人机协作",
+      "question": "托管怎样改变协作？",
+      "conclusion": "人按结果与例外参与，也能主动改变系统方向。",
+      "change": "人离开时系统继续；返回后查看、改约束或接管",
+      "steps": [
+        "委托",
+        "托管推进",
+        "返回介入",
+        "阻塞输入"
+      ],
+      "sources": [
+        "mixed",
+        "goals"
+      ],
+      "boundary": "泳道为交互设计推导；人离开不代表服务离线、权限或预算无限。"
+    },
+    {
+      "title": "不同应用如何组合这些循环",
+      "question": "应用如何组合循环？",
+      "conclusion": "通用层次相同，行动环境和完成依据随应用改变。",
+      "change": "选择应用，联动工具环境、反馈与交付依据",
+      "steps": [
+        "编程",
+        "研究检索",
+        "浏览器操作",
+        "数据分析"
+      ],
+      "sources": [
+        "react",
+        "magentic"
+      ],
+      "boundary": "场景组合是报告综合，不是对某个产品内部实现的断言。"
+    },
+    {
+      "title": "Loop 如何帮助能力演进",
+      "question": "Loop 怎样帮助能力演进？",
+      "conclusion": "运行时适应、系统改进与参数训练是三条不同路径。",
+      "change": "反馈进入上下文；改编排；筛选轨迹后训练",
+      "steps": [
+        "上下文适应",
+        "系统改进",
+        "参数更新"
+      ],
+      "sources": [
+        "reflexion",
+        "react"
+      ],
+      "boundary": "运行轨迹不能自动等同训练数据；参数路径包含授权、质量筛选与独立优化过程。"
+    },
+    {
+      "title": "完整体系：从计算到持续完成目标",
+      "question": "如何回看完整体系？",
+      "conclusion": "从计算服务到持续目标，能力依赖与状态尺度共同决定行为。",
+      "change": "总览选择层级与跨层保障，追溯来源与术语",
+      "steps": [
+        "计算依赖",
+        "持久状态",
+        "控制与预算",
+        "可观测性"
+      ],
+      "sources": [
+        "transformer",
+        "orca",
+        "vllm",
+        "react",
+        "reflexion",
+        "magentic",
+        "goals",
+        "mixed"
+      ],
+      "boundary": "四层框架与跨层保障为综合分析，不添加统一行业架构的断言。"
+    }
+  ],
+  "sources": {
+    "transformer": [
+      "Transformer · 2017",
+      "https://arxiv.org/abs/1706.03762",
+      "论文",
+      "注意力与序列建模；自回归解码使用已有输出预测下一位置。"
+    ],
+    "orca": [
+      "Orca · OSDI 2022",
+      "https://www.usenix.org/conference/osdi22/presentation/yu",
+      "论文",
+      "以模型迭代为调度粒度，迭代之间可调整服务请求集合。"
+    ],
+    "vllm": [
+      "PagedAttention / vLLM · 2023",
+      "https://arxiv.org/abs/2309.06180",
+      "论文",
+      "将 KV Cache 的逻辑块映射至物理块，管理分配和共享。"
+    ],
+    "react": [
+      "ReAct · 2022",
+      "https://arxiv.org/abs/2210.03629",
+      "论文",
+      "交替组织语言推理与环境行动，用观察结果更新后续行动依据。"
+    ],
+    "reflexion": [
+      "Reflexion · 2023",
+      "https://arxiv.org/abs/2303.11366",
+      "论文",
+      "把反馈反思保存在文本记忆中，用于后续尝试；不更新模型权重。"
+    ],
+    "magentic": [
+      "Magentic-One · 2024",
+      "https://arxiv.org/abs/2411.04468",
+      "论文",
+      "协调者维护计划与进展，分配任务并在停滞时重规划。"
+    ],
+    "goals": [
+      "Using Goals in Codex",
+      "https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex",
+      "官方产品资料",
+      "线程目标跨回合保存；线程空闲、无待处理工作、目标有效且预算允许时可继续。"
+    ],
+    "mixed": [
+      "Mixed-Initiative Interfaces · 1999",
+      "https://erichorvitz.com/chi99horvitz.pdf",
+      "研究论文",
+      "结合自动化与直接操作，考虑不确定性、行动成本及用户的控制能力。"
+    ],
+    "wiener": [
+      "Cybernetics · 1948",
+      "https://mitpress.mit.edu/9780262355919/cybernetics-or-control-and-communication-in-the-animal-and-the-machine/",
+      "原著出版资料",
+      "反馈控制思想远早于语言模型；1948 年是该书首版年份。"
+    ],
+    "brooks": [
+      "Brooks · 1986",
+      "https://doi.org/10.1109/JRA.1986.1087032",
+      "论文",
+      "以异步行为层构造可与环境持续交互的机器人控制系统。"
+    ],
+    "runner": [
+      "OpenAI Agents SDK · Running agents",
+      "https://openai.github.io/openai-agents-python/running_agents/",
+      "官方框架文档",
+      "工具调用后追加结果，交接时切换当前 Agent，最终输出满足规则时返回。"
+    ],
+    "langgraph": [
+      "LangGraph · Graph API",
+      "https://docs.langchain.com/oss/python/langgraph/graph-api",
+      "官方框架文档",
+      "状态、节点与条件边组织图式执行；回边可以形成循环。"
+    ]
+  }
+}

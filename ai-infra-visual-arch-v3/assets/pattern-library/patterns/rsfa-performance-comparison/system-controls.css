@@ -1,0 +1,50 @@
+/* Menu: compute-investigation-trial/spatial.html; zoom: logsumexp-case5/page.html. Extracted source rules. */
+:root{--dropdown-open-dur:250ms;--dropdown-close-dur:150ms;--dropdown-pre-scale:.97;--dropdown-closing-scale:.99;--dropdown-ease:cubic-bezier(.22,1,.36,1)}
+.config-trigger{display:flex;align-items:center;gap:16px;font:12px ui-monospace;border:0;outline:0!important;border-radius:20px;padding:7px 12px;min-height:34px}.config-trigger:focus-visible{box-shadow:inset 0 0 0 1px #888}.config-trigger svg{width:14px;height:14px;stroke:#bbb;fill:none}.config-menu{position:absolute;left:0;top:calc(100% + 9px);min-width:100%;width:max-content;max-width:calc(100vw - 36px);padding:5px;background:#242424;border:1px solid #484848;border-radius:14px;box-shadow:0 12px 32px #0005;visibility:hidden}.config-menu.is-open,.config-menu.is-closing{visibility:visible}.config-menu button{display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;font:12px ui-monospace;text-align:left;padding:10px 13px;border-radius:9px;white-space:nowrap;background:transparent;color:#ddd;outline:0!important;border:0}.config-menu button[aria-selected=true]{background:#343434;color:#eee}.config-menu button:hover,.config-menu button:focus-visible{background:#414141}.config-menu .check{color:#b1ef6b;width:14px}.t-dropdown {
+  transform-origin: top left;
+  transform: scale(var(--dropdown-pre-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-open-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-open-dur) var(--dropdown-ease);
+  will-change: transform, opacity;
+}
+.t-dropdown[data-origin="top-right"]     { transform-origin: top right; }
+.t-dropdown[data-origin="top-center"]    { transform-origin: top center; }
+.t-dropdown[data-origin="bottom-left"]   { transform-origin: bottom left; }
+.t-dropdown[data-origin="bottom-center"] { transform-origin: bottom center; }
+.t-dropdown[data-origin="bottom-right"]  { transform-origin: bottom right; }
+.t-dropdown.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-dropdown.is-closing {
+  transform: scale(var(--dropdown-closing-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dropdown-close-dur) var(--dropdown-ease),
+    opacity   var(--dropdown-close-dur) var(--dropdown-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-dropdown { transition: none !important; }
+}
+
+.zoom-controls{position:absolute;right:28px;bottom:24px;display:flex;align-items:center;padding:4px;border-radius:24px;z-index:4}.zoom-controls button{width:36px;padding:4px;font-size:17px}.zoom-controls .fit{width:auto;font-size:12px}.zoom-controls output{font:11px ui-monospace;min-width:45px;text-align:center;color:#bbb}
+.zoom-controls button{min-height:36px}.zoom-controls output{padding:0}.config-menu .check{color:#eee}.config-menu{z-index:9}.dropdown{position:relative;display:flex;align-items:center;gap:5px}.config-trigger svg{flex:none}.config-trigger{color:#eee}.config-menu[aria-hidden="true"]{pointer-events:none}
+@media(max-width:850px){.zoom-controls{right:12px;bottom:18px}.zoom-controls button{min-height:44px}.config-trigger{gap:8px;padding:7px 8px}}
+
+/* Unpack Case3: top-actions and icon geometry copied from its index.html. */
+.top-actions{position:absolute;right:26px;top:24px;display:flex;gap:8px;z-index:4}.icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.icon{width:38px;height:38px;border-radius:50%;padding:0;display:grid;place-items:center;font-size:18px}
+body{font:13px -apple-system,BlinkMacSystemFont,"PingFang SC",Arial,sans-serif}
+nav.configuration{left:50%;right:auto;top:24px;transform:translateX(-50%);padding:5px 10px;gap:9px;width:max-content;max-width:calc(100vw - 60px);font:12px ui-monospace,SFMono-Regular,Consolas,monospace;min-height:44px}
+.configuration .dropdown,.configuration label,.configuration .config-trigger,.configuration input{font:inherit;line-height:20px}
+.configuration .dropdown{gap:4px}.configuration .dropdown>span{color:#aaa}
+.configuration .config-trigger{gap:9px;padding:7px 9px;min-height:34px;align-items:center;justify-content:center}
+.configuration label{gap:6px}.configuration input{height:34px;min-height:34px;width:42px;padding:0;text-align:center;border:0}
+.top-actions .icon{min-height:38px;padding:0}.top-actions svg{display:block}
+#sourcePanel{width:530px}#rawRecord{max-height:60vh;overflow:auto}
+
+@media(max-width:750px){nav.configuration{top:24px;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 28px);gap:4px}.top-actions{right:16px;top:20px;gap:4px}.top-actions .icon{width:36px;height:36px;min-height:36px}header h1 span{display:none}header{left:16px}header small{display:none}main{top:190px}#sourcePanel{width:auto}}

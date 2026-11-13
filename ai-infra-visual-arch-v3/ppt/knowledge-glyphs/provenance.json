@@ -1,0 +1,20 @@
+{
+  "source": "ai-infra-research/reports/llm-compute/diagram-legend-library/",
+  "files": [
+    {
+      "file": "visual-system.js",
+      "sha256": "dfe3ce4b8fef227778dfde20bb5ceb22ab1a5fbd293cec6a7eaca4791f67eee8"
+    },
+    {
+      "file": "op-icons.js",
+      "sha256": "a2d430dcf655d38bcb09428f7b2645990e761a3b6abee1b3401b8cc18e804408"
+    }
+  ],
+  "usage": {
+    "model": "MatMul with A and B input tensors, C output; expanded matrix variant",
+    "operator": "Same MatMul object with Tensor inputs and output",
+    "task": "IR pass and Task; mapping relation",
+    "runtime": "Memory storage variant and Task; storage binding, no measured timeline"
+  },
+  "note": "Conceptual cross-layer structure, no measured timing or compiler mapping asserted."
+}

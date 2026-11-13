@@ -1,0 +1,251 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f0f1f3"><title>智能计算六类对象 · Light Mindmap</title><style>
+*{box-sizing:border-box}
+:root{--canvas:#f0f1f3;--ink:#253342;--quiet:#7b8794;--accent:#a69bb9;--ss-selection:#ffffff;--ss-motion-feedback:160ms}
+html,body{margin:0;min-height:100%;background:#e8ebef;color:var(--ink);font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.page{min-height:100vh;display:grid;place-items:center;padding:15px 20px 74px}
+.slide{position:relative;aspect-ratio:16/9;width:min(calc(100vw - 40px),calc((100vh - 105px)*16/9));background:var(--canvas);overflow:hidden;box-shadow:0 16px 54px #2634430c}
+.slide>svg{display:block;width:100%;height:100%}
+.slide svg g[role="button"]:focus{outline:none}
+.slide svg g[role="button"]:focus-visible>.leaf-pill{fill:#e6e0f8!important;stroke:#a895d7;stroke-width:1.5}
+.panel{position:absolute;left:0;top:0;z-index:8;width:min(454px,calc(100% - 32px));padding:20px 25px;background:#fff;border:0;border-radius:18px;box-shadow:0 18px 48px #34425321,0 3px 14px #3442530d;opacity:0;visibility:hidden;transform:translateY(6px);transition:opacity var(--ss-motion-feedback) ease,transform var(--ss-motion-feedback) ease,visibility var(--ss-motion-feedback);pointer-events:none}
+.panel.show{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+.panel-visual{height:105px;margin:0;display:grid;place-items:center;overflow:hidden}
+.panel-visual svg{width:100%;height:100%;max-height:105px;overflow:visible}
+.toolbar{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:5px;display:flex;gap:4px;background:#fff;border:1px solid #e3e7ec;border-radius:32px;box-shadow:0 5px 24px #26334215;z-index:10}
+.toolbar button{border:0;border-radius:24px;background:transparent;color:#536275;font-size:12px;font-weight:550;padding:10px 16px;white-space:nowrap;cursor:pointer}
+.toolbar button:hover{background:#f1f3f6}.toolbar button:first-child{background:#29394b;color:white}.toolbar button:first-child:hover{background:#435368}
+.hint{position:fixed;right:21px;bottom:26px;color:#8a95a4;font-size:11px;letter-spacing:.015em}
+@media(max-width:850px){.page{padding:6px 6px 67px}.slide{width:100%}.panel{position:fixed;left:14px!important;right:14px;top:auto!important;bottom:75px;width:auto;padding:20px 18px}.panel-visual{height:110px}.hint{display:none}.toolbar button{padding:9px 11px}}
+@media(prefers-reduced-motion:reduce){.panel{transition:none}}
+@media print{@page{size:16in 9in;margin:0}html,body,.page{padding:0;margin:0;background:#fff;min-height:0}.slide{width:16in;height:9in;box-shadow:none}.toolbar,.hint,.panel{display:none}}
+</style><style id="ppt-embed">html,body{width:100%;height:100%;min-height:0;background:#f0f1f3;overflow:hidden}.page{height:100%;min-height:0;display:block;padding:0}.slide{width:100%;height:100%;aspect-ratio:auto;box-shadow:none}.toolbar,.hint{display:none}@media(max-width:850px){.page{padding:0}.slide{width:100%}.panel{position:absolute;bottom:auto;width:min(454px,calc(100% - 32px))}}.slide svg g[role="button"]:focus-visible>.leaf-pill{fill:#e6e0f8!important;stroke:none!important}</style><style>
+.panel{width:min(430px,calc(100% - 32px));padding:18px 22px}.panel-visual{height:auto;display:block;overflow:hidden}#panelDiagram{width:100%}.legend-examples{display:flex;flex-direction:column;gap:12px}.legend-entry{display:flex;flex-direction:column;align-items:center;gap:5px}.legend-entry img{display:block;width:100%;height:110px;object-fit:contain}.legend-examples.single img{height:145px}.legend-entry span,.legend-missing small{font-size:11px;color:#7b8794}.legend-missing{font-size:15px;line-height:1.7;color:#344354;text-align:center;padding:12px}.legend-missing small{display:block;margin-top:8px}
+</style><style>
+.legend-examples.source-diagram img{height:330px;max-height:48vh}
+.legend-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.legend-tabs button{border:0;border-radius:18px;background:#f0f1f3;color:#657386;font:12px Inter,system-ui,sans-serif;padding:7px 10px;cursor:pointer}
+.legend-tabs button[aria-selected=true]{background:#e7dff7;color:#253344}
+.legend-tabs button:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+</style><style>
+.panel{width:min(520px,calc(100% - 24px));padding:32px 22px 18px}
+.panel-close{position:absolute;right:10px;top:7px;border:0;border-radius:16px;background:#f0f1f3;color:#657386;width:25px;height:25px;font:19px/1 system-ui;cursor:pointer}
+.panel-close:focus-visible{outline:none;text-decoration:underline}
+.legend-tabs{background:#f0f1f3;padding:4px;border-radius:20px}
+.legend-tabs button{background:transparent}
+.legend-tabs button[aria-selected=true]{background:#fff;font-weight:600}
+.legend-examples.source-diagram img{height:380px;max-height:calc(100vh - 155px)}
+</style><style id="focus-layout">
+#drawing>*,.map-leaf{transition:opacity 160ms ease}
+.overview-muted{opacity:0;pointer-events:none!important}
+#drawing .focus-moving{transition:transform 280ms cubic-bezier(.22,1,.36,1),opacity 160ms ease;transform-box:view-box;transform-origin:0 0}
+.focus-mode .map-leaf{pointer-events:none}
+.focus-spine,.focus-root{opacity:0;pointer-events:none;transition:opacity 160ms ease}
+.focus-mode .focus-spine,.focus-mode .focus-root{opacity:1;transition-delay:80ms}
+.panel,.panel.show{left:34%!important;right:14px;top:54px!important;bottom:14px!important;width:auto!important;padding:16px 20px;box-shadow:none;border-radius:14px;transform:none;transition:opacity 160ms ease,visibility 160ms ease}
+.panel.show{transition-delay:80ms}
+.panel-visual,#panelDiagram,.focus-reader{height:100%;width:100%}
+.panel-visual{display:block;max-height:none;overflow:hidden}
+.focus-reader{display:flex;flex-direction:column;gap:10px;padding-top:20px}
+.legend-tabs{flex-shrink:0;margin:0;padding:4px;border-radius:20px}
+.legend-tabs button{font-size:12px}
+.figure-stage{flex:1;position:relative;min-height:0}
+.legend-entry{position:absolute;inset:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:8px;margin:0;opacity:0;pointer-events:none;transition:opacity 150ms ease}
+.legend-entry.figure-active{opacity:1;pointer-events:auto}
+.legend-entry img,.legend-examples.single img,.legend-examples.source-diagram img{display:block;width:100%;height:100%;max-height:none;min-height:0;object-fit:contain}
+.legend-entry figcaption{text-align:center;font-size:12px;color:#7b8794}
+.focus-context{position:absolute;left:14px;right:14px;top:10px;height:32px;display:flex;justify-content:center;gap:8px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 160ms ease}
+.focus-context button,.focus-context span,.focus-back{border:0;border-radius:20px;padding:8px 14px;font:13px Inter,system-ui,sans-serif;background:#e4e6eb;color:#657386;white-space:nowrap}
+.focus-context button,.focus-back{cursor:pointer}
+.focus-context button[aria-current=true]{background:#fff;color:#253344;font-weight:600}
+.focus-context span{background:transparent;color:#a2aab5}
+.focus-back{position:absolute;left:22px;bottom:22px;background:#fff;opacity:0;visibility:hidden;transition:opacity 160ms ease}
+.focus-mode .focus-context,.focus-mode .focus-back{opacity:1;visibility:visible;pointer-events:auto;transition-delay:100ms}
+.focus-context button:focus-visible,.focus-back:focus-visible{outline:none;text-decoration:underline;text-underline-offset:4px}
+g[data-has-legend=false]{cursor:default}
+@media(prefers-reduced-motion:reduce){.focus-moving,#drawing>*,.map-leaf,.panel,.panel.show,.legend-entry,.focus-context,.focus-back,.focus-spine,.focus-root{transition:none!important}}
+</style><style id="anchored-panel">
+.focus-context,.focus-back,.focus-spine,.focus-root{display:none!important}
+.panel,.panel.show{left:0!important;top:0!important;right:auto;bottom:auto!important;width:var(--popup-width,560px)!important;height:var(--popup-height,480px);max-width:calc(100% - 24px);max-height:calc(100% - 24px);padding:30px 20px 16px;box-shadow:0 12px 34px #3442531a;transform:translate(var(--popup-x,0px),calc(var(--popup-y,0px) + 6px));transition:opacity 160ms ease,visibility 160ms ease,transform 220ms cubic-bezier(.22,1,.36,1),height 180ms ease;transition-delay:0ms}
+.panel.show{transform:translate(var(--popup-x,0px),var(--popup-y,0px))}
+.detail-open .map-leaf{pointer-events:auto}
+@media(prefers-reduced-motion:reduce){.panel,.panel.show{transition:none!important}}
+</style></head><body><main class="page"><div class="slide" id="slide"><svg id="map" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="智能计算六类对象思维导图"><rect width="1920" height="1080" fill="#f0f1f3"/><g id="drawing"></g></svg><aside class="panel" id="panel" aria-label="当前知识对象图例"><button type="button" class="panel-close" aria-label="关闭图例" title="关闭图例">×</button><div class="panel-visual"><div id="panelDiagram" aria-label="当前知识对象正式图例"></div></div></aside></div></main><div class="toolbar"><button id="svgBtn">导出 SVG</button><button id="pngBtn">导出 4K PNG</button><button onclick="window.print()">打印 / PDF</button></div><div class="hint">点击查看图解 · Esc 返回总览</div>
+<script src="legend-assets.js"></script><script>
+const domains=[
+{name:'计算对象',side:'L',rows:[['任务与目标','Training · Inference · Fine-tuning'],['模型组成','Model · Layer · Module'],['核心子层','Attention · FFN · MoE'],['算子与数值','MatMul · Reduce · Softmax'],['训练计算','Loss · Gradient · Optimizer']]},
+{name:'数据对象',side:'L',rows:[['输入与表征','Token · Embedding · Activation'],['张量属性','Tensor · Shape · dtype'],['视图与布局','Stride · Layout · View'],['数据操作','Broadcast · Slice · Transpose'],['数据状态','Weight · KV Cache · Gradient']]},
+{name:'程序对象',side:'L',rows:[['图与表示','Graph · IR · SSA Value'],['编译转换','Pass · Fusion · Lowering'],['程序结构','Kernel · Function · Loop'],['设备指令','Instruction · DMA · MMA'],['编译产物','Tiling · Codegen · Binary']]},
+{name:'资源对象',side:'R',rows:[['计算资源','GPU / NPU · Core · AI Core'],['存储层级','HBM · L2 · UB / L1 · Register'],['资源组织','Device · Node · Server · Rack'],['互连资源','PCIe · NIC · Device Link'],['容量与约束','Compute · Memory · Bandwidth']]},
+{name:'执行对象',side:'R',rows:[['工作与调度','Request · Batch · Scheduler'],['执行实体','Rank · Process · Task · Stream'],['并行组织','DP · TP · PP · EP · CP'],['通信操作','Collective · P2P · AllReduce'],['同步控制','Event · Barrier · Wait / Signal']]},
+{name:'观测对象',side:'R',rows:[['时间证据','Trace · Span · Timestamp'],['性能证据','Metric · Counter · Sample'],['程序证据','IR Dump · Log · Source Map'],['结果验证','Golden · Validation · Benchmark'],['追溯信息','Build ID · Version · Diagnostic']]}
+];
+const svg=document.getElementById('map'),draw=document.getElementById('drawing'),panel=document.getElementById('panel'),slide=document.getElementById('slide'),NS='http://www.w3.org/2000/svg';
+const familyHeads=[],leafNodes=[],rowCache=new Map(),decodeCache=new Map();
+let current=null,activeRow=null,renderTicket=0;
+function reportInteraction(active){parent.postMessage({type:'knowledge-map-interaction',active},location.origin)}
+function node(tag,attrs={},parent=draw){const n=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));parent.appendChild(n);return n}
+function text(x,y,s,size=20,weight=400,color='#273441',anchor='start',parent=draw){const n=node('text',{x,y,'font-size':size,'font-weight':weight,fill:color,'text-anchor':anchor,'dominant-baseline':'middle'},parent);n.textContent=s;return n}
+function link(d,color='#c6cdd6',weight=1.6){node('path',{d,fill:'none',stroke:color,'stroke-width':weight,'stroke-linecap':'round'})}
+function roundedRoute(points,radius=14){
+ let d=`M${points[0][0]} ${points[0][1]}`;
+ for(let i=1;i<points.length-1;i++){
+  const a=points[i-1],b=points[i],c=points[i+1],ab=Math.hypot(b[0]-a[0],b[1]-a[1]),bc=Math.hypot(c[0]-b[0],c[1]-b[1]);
+  if(!ab||!bc)continue;
+  const r=Math.min(radius,ab/2,bc/2),p=[b[0]+(a[0]-b[0])*r/ab,b[1]+(a[1]-b[1])*r/ab],q=[b[0]+(c[0]-b[0])*r/bc,b[1]+(c[1]-b[1])*r/bc];
+  d+=`L${p[0]} ${p[1]}Q${b[0]} ${b[1]} ${q[0]} ${q[1]}`;
+ }
+ const last=points[points.length-1];return d+`L${last[0]} ${last[1]}`;
+}
+function termLabel(x,y,value,anchor,parent){
+ const label=text(x,y,value,20,420,'#657386',anchor,parent);
+ const available=anchor==='end'?x-8:1920-x-8;
+ if(label.getComputedTextLength()<=available)return label;
+ const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');ctx.font='420 20px '+getComputedStyle(svg).fontFamily;
+ const lines=[];let line='';
+ for(const part of value.split(' · ')){const candidate=line?line+' · '+part:part;if(line&&ctx.measureText(candidate).width>available){lines.push(line);line=part}else line=candidate}
+ if(line)lines.push(line);
+ if(lines.length>1){label.textContent='';lines.forEach((line,i)=>{const span=node('tspan',{x,dy:i===0?-(lines.length-1)*11:22},label);span.textContent=line})}
+ return label;
+}
+function familyIcon(i,x,y){
+ const g=node('g',{transform:`translate(${x} ${y})`,fill:'none',stroke:'#66788a','stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'});
+ const path=d=>node('path',{d},g);
+ switch(i){
+  case 0:path('M6 6h12v12H6z M9 2v4 M15 2v4 M9 18v4 M15 18v4 M2 9h4 M2 15h4 M18 9h4 M18 15h4');break;
+  case 1:for(let r=0;r<3;r++)for(let c=0;c<3;c++)node('rect',{x:3+c*7,y:3+r*7,width:5,height:5,rx:1,fill:'#66788a',stroke:'none'},g);break;
+  case 2:path('M8 6L2 12l6 6 M16 6l6 6-6 6 M14 3l-4 18');break;
+  case 3:path('M4 3h16v8H4z M4 13h16v8H4z M8 7h2 M8 17h2 M14 7h4 M14 17h4');break;
+  case 4:path('M7 4l13 8-13 8V4z');break;
+  case 5:path('M2 13h4l3-7 5 13 3-7h5');break;
+ }
+ return g;
+}
+
+// 视觉层级：叶节点 → 六个知识分类胶囊 → 中央智能计算。
+text(77,67,'智能计算 / 六类知识对象',48,600,'#263443');
+text(80,119,'AI COMPUTE　 /　 KNOWLEDGE OBJECTS',17,500,'#8894a2');
+const ys=[272,556,840],offsets=[-100,-50,0,50,100];
+
+
+
+domains.forEach((d,i)=>{
+ const left=d.side==='L',cy=ys[i%3],root=left?826:1094;
+ const capX=left?600:1105,capW=215,headEdge=left?capX+capW:capX;
+ link(roundedRoute(left?[[843,556],[826,556],[826,cy],[headEdge,cy]]:[[1077,556],[1094,556],[1094,cy],[headEdge,cy]]),'#aeb8c5',2);
+ const headStart=draw.children.length;
+ node('rect',{x:capX,y:cy-34,width:capW,height:68,rx:34,fill:'#fff'});
+ familyIcon(i,capX+23,cy-12);
+ text(capX+64,cy+1,d.name,27,630,'#303d4b');
+ const head=node('g',{'data-family-head':i});Array.from(draw.children).slice(headStart,-1).forEach(n=>head.append(n));familyHeads[i]={node:head,x:capX,y:cy};
+ d.rows.forEach((r,j)=>{
+  const rowY=cy+offsets[j];
+  const end=left?495:1425;
+  const curve=roundedRoute(left?[[600,cy],[550,cy],[550,rowY],[end,rowY]]:[[1320,cy],[1374,cy],[1374,rowY],[end,rowY]]);
+  const branch=node('path',{d:curve,fill:'none',stroke:'#cbd1d9','stroke-width':1.6,'stroke-linecap':'round'});
+  const entries=window.KnowledgeLegend[i+':'+j]||[],available=entries.length>0;
+  const g=node('g',{'data-domain':i,'data-row':j,'data-has-legend':String(available),...(available?{role:'button',tabindex:'0','aria-pressed':'false',style:'cursor:pointer'}:{}),'aria-label':`${d.name}：${r[0]}，${r[1]}`});
+  g.classList.add('map-leaf');g._source={i,j,y:rowY,x:left?417.5:1502.5};leafNodes.push(g);
+  g._branch=branch;
+  node('rect',{class:'leaf-pill',x:left?340:1425,y:rowY-19,width:155,height:38,rx:19,fill:'#fff'},g);
+  node('circle',{cx:end,cy:rowY,r:2.4,fill:'#b9c1cb'},g);
+  const terms=termLabel(left?334:1586,rowY,r[1],left?'end':'start',g);terms.classList.add('leaf-terms');const termBox=terms.getBBox();g._termCenter=termBox.x+termBox.width/2;
+  text(left?417.5:1502.5,rowY,r[0],20,580,'#32404f','middle',g);
+  if(available)node('rect',{class:'row-hit',x:left?8:1425,y:rowY-22,width:487,height:44,rx:8,fill:'none','pointer-events':'all'},g);
+  if(available){
+   const highlight=on=>{if(current===g)return;g.querySelector('.leaf-pill').setAttribute('fill',on?'#eee9fc':'#fff');branch.setAttribute('stroke',on?'#a18bd8':'#cbd1d9')};
+   g.addEventListener('mouseenter',()=>highlight(true));g.addEventListener('mouseleave',()=>highlight(false));
+   g.addEventListener('focus',()=>highlight(true));g.addEventListener('blur',()=>highlight(false));
+   g.addEventListener('click',()=>{if(current===g)hide();else show(i,j,r,g)});
+   g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();show(i,j,r,g)}});
+  }
+ });
+});
+
+node('rect',{x:843,y:515,width:234,height:82,rx:41,fill:'#242b34'});
+text(960,557,'智能计算',34,600,'#fff','middle');
+
+// Anchored click panel: preserve the complete map layout.
+const reader=document.getElementById('panelDiagram');
+function preload(entry){
+ if(!decodeCache.has(entry.href)){const image=new Image();image.src=entry.href;decodeCache.set(entry.href,image.decode().catch(()=>{}))}
+ return decodeCache.get(entry.href);
+}
+function buildRow(i,j){
+ const key=i+':'+j;if(rowCache.has(key))return rowCache.get(key);
+ const entries=window.KnowledgeLegend[key]||[],host=document.createElement('div');host.className='focus-reader';
+ const record={host,entries,buttons:[],figures:[],index:0};
+ if(entries.length>1){
+  const tabs=document.createElement('div');tabs.className='legend-tabs';tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','来源图解');
+  entries.forEach((e,k)=>{const button=document.createElement('button');button.type='button';button.textContent=e.title;button.dataset.legendIndex=k;button.setAttribute('role','tab');button.title='查看'+e.title;button.addEventListener('click',()=>switchLegend(k));tabs.append(button);record.buttons.push(button)});host.append(tabs);
+ }
+ const stage=document.createElement('div');stage.className='figure-stage';host.append(stage);
+ entries.forEach(e=>{
+  const figure=document.createElement('figure');figure.className='legend-entry';figure.dataset.libraryItem=e.id;figure.setAttribute('aria-hidden','true');
+  const image=document.createElement('img');image.src=e.href;image.alt=e.title;image.draggable=false;
+  const caption=document.createElement('figcaption');caption.textContent=(e.kind==='diagram'?'来源图解 · ':'正式图例 · ')+e.title;
+  figure.append(image,caption);stage.append(figure);record.figures.push(figure);
+ });
+ rowCache.set(key,record);return record;
+}
+function positionPopup(g){
+ const frame=slide.getBoundingClientRect(),anchor=g.querySelector('.leaf-pill').getBoundingClientRect();
+ const diagram=activeRow?.entries.some(e=>e.kind==='diagram'),width=Math.min(560,frame.width-24),height=Math.min(diagram?480:320,frame.height-24);
+ let x=Number(g.dataset.domain)<3?anchor.right-frame.left+18:anchor.left-frame.left-width-18;
+ x=Math.max(12,Math.min(frame.width-width-12,x));
+ const y=Math.max(12,Math.min(frame.height-height-12,anchor.top-frame.top+anchor.height/2-height/2));
+ panel.style.setProperty('--popup-x',x+'px');panel.style.setProperty('--popup-y',y+'px');panel.style.setProperty('--popup-width',width+'px');panel.style.setProperty('--popup-height',height+'px');
+}
+function show(i,j,row,g){
+ const entries=window.KnowledgeLegend[i+':'+j]||[];if(!entries.length||!g)return;
+ reportInteraction(true);renderTicket++;
+ if(current&&current!==g)resetObject(current);
+ current=g;slide.classList.add('detail-open');
+ g.querySelector('.leaf-pill').setAttribute('fill','#eee9fc');g._branch.setAttribute('stroke','#a18bd8');g.setAttribute('aria-pressed','true');
+ activeRow=buildRow(i,j);reader.replaceChildren(activeRow.host);positionPopup(g);panel.classList.add('show');switchLegend(activeRow.index);
+}
+function resetObject(g){
+ g.querySelector('.leaf-pill').setAttribute('fill','#fff');g._branch.setAttribute('stroke','#cbd1d9');g.setAttribute('aria-pressed','false');
+}
+function hide(restoreFocus=false){
+ const old=current;renderTicket++;slide.classList.remove('detail-open');panel.classList.remove('show');
+ if(old)resetObject(old);current=null;activeRow=null;reportInteraction(false);
+ if(restoreFocus&&old)old.focus({preventScroll:true});
+}
+async function switchLegend(index,focus=false){
+ const record=activeRow;if(!record||!record.entries[index])return;
+ const ticket=++renderTicket;record.index=index;
+ record.buttons.forEach((button,k)=>{button.setAttribute('aria-selected',String(k===index));button.tabIndex=k===index?0:-1});
+ await preload(record.entries[index]);
+ if(ticket!==renderTicket||record!==activeRow)return;
+ record.figures.forEach((figure,k)=>{figure.classList.toggle('figure-active',k===index);figure.setAttribute('aria-hidden',String(k!==index))});
+ if(record.entries[index+1])preload(record.entries[index+1]);if(record.entries[index-1])preload(record.entries[index-1]);
+ if(focus)record.buttons[index]?.focus();
+}
+panel.addEventListener('keydown',e=>{
+ const button=e.target.closest('[data-legend-index]');if(!button||!activeRow||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+ e.preventDefault();e.stopPropagation();
+ const index=e.key==='Home'?0:e.key==='End'?activeRow.entries.length-1:(activeRow.index+(e.key==='ArrowRight'?1:-1)+activeRow.entries.length)%activeRow.entries.length;
+ switchLegend(index,true);
+});
+panel.querySelector('.panel-close').addEventListener('click',()=>hide(true));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&current){e.preventDefault();hide(true)}});
+window.addEventListener('resize',()=>{if(current)positionPopup(current)});
+svg.addEventListener('click',e=>{if(current&&!e.target.closest('g[data-has-legend="true"]'))hide()});
+window.addEventListener('message',e=>{if(e.source===parent&&e.origin===location.origin&&e.data?.type==='knowledge-map-reset')hide()});
+const warm=()=>['0:1','0:2','2:2'].forEach(key=>{const e=window.KnowledgeLegend[key]?.[0];if(e)preload(e)});
+if('requestIdleCallback' in window)requestIdleCallback(warm);else setTimeout(warm,250);
+function download(b,name){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}function svgText(){const c=svg.cloneNode(true);c.setAttribute('xmlns',NS);c.setAttribute('width',1920);c.setAttribute('height',1080);c.setAttribute('font-family','Arial, PingFang SC, sans-serif');return new XMLSerializer().serializeToString(c)}document.getElementById('svgBtn').onclick=()=>download(new Blob([svgText()],{type:'image/svg+xml;charset=utf-8'}),'ai-compute-six-object-mindmap-light.svg');document.getElementById('pngBtn').onclick=()=>{const u=URL.createObjectURL(new Blob([svgText()],{type:'image/svg+xml;charset=utf-8'})),im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=3840;c.height=2160;c.getContext('2d').drawImage(im,0,0,3840,2160);c.toBlob(b=>{if(b)download(b,'ai-compute-six-object-mindmap-light-4k.png');URL.revokeObjectURL(u)},'image/png')};im.src=u};
+</script><script>document.addEventListener("keydown",e=>{if(!e.target.closest(".legend-tabs")&&(e.key==="ArrowLeft"||e.key==="ArrowRight")&&!e.altKey&&!e.ctrlKey&&!e.metaKey){e.preventDefault();parent.postMessage({type:"knowledge-map-slide-nav",direction:e.key==="ArrowRight"?1:-1},location.origin)}});</script><script>if(new URLSearchParams(location.search).get('mode')==='stage1'){svg.setAttribute('viewBox','0 145 1920 850');document.querySelectorAll('#drawing>text').forEach(n=>{if(Number(n.getAttribute('y'))<145)n.remove()})}</script><script>
+window.getKnowledgeAnchors=()=>{
+ const definitions={Layer:[0,1,'Layer'],Operator:[0,3,'MatMul'],Tensor:[1,1,'Tensor'],Kernel:[2,2,'Kernel'],Task:[4,1,'Task'],Rank:[4,1,'Rank'],GPU:[3,0,'GPU'],Core:[3,0,'Core'],Event:[4,4,'Event'],Trace:[5,0,'Trace']},out={};
+ for(const [id,[i,j,term]] of Object.entries(definitions)){
+  const text=document.querySelector('g[data-domain="'+i+'"][data-row="'+j+'"] .leaf-terms');if(!text)continue;
+  const walker=document.createTreeWalker(text,NodeFilter.SHOW_TEXT);let child;
+  while(child=walker.nextNode()){const index=child.textContent.indexOf(term);if(index<0)continue;
+   const range=document.createRange();range.setStart(child,index);range.setEnd(child,index+term.length);const b=range.getBoundingClientRect();
+   out[id]={x:b.x+b.width/2,y:b.y+b.height/2,width:b.width,height:b.height,label:term};break;
+  }
+ }
+ return out;
+};
+</script></body></html>

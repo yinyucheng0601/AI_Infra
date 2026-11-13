@@ -1,9 +1,9 @@
 {
   "authoritativeSource": "prototypes/rmsnorm-performance-investigation/index.html",
-  "sourceSha256": "4abcfe206111b91fa3cdeabdcb93f42c0f109f714c1da0111285d374a35d4fbf",
+  "sourceSha256": "e825157f8deaf32135e694ddf39db7dba41a35937fa3c5a5ae2f1a3a346fd40b",
   "files": {
-    "index.html": "4abcfe206111b91fa3cdeabdcb93f42c0f109f714c1da0111285d374a35d4fbf",
-    "provenance.json": "feff733c4bd8adc5b1fae0ed36518e4d1966604f2c63432d3255e48ee358f50a",
+    "index.html": "e825157f8deaf32135e694ddf39db7dba41a35937fa3c5a5ae2f1a3a346fd40b",
+    "provenance.json": "edd661466e19692ac80ffa23bbf4022c08954f7e0ec4f6e1457dcd34d4bf82e9",
     "fused-add.html": "23756ca27044067fde1a6fa43ceda6f250cbb9c0f98a5b7cfe76a2dd1c09c869",
     "fused-add-provenance.json": "e46e9d382f8c64468bac9dca73c8fb185d7314554cc47cbf0f741dedc7e4c4f4"
   },

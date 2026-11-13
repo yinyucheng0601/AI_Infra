@@ -1,0 +1,98 @@
+[
+  {
+    "id": "agent",
+    "title": "人辅助定位，把问题上下文交回 Agent 修复",
+    "principle": "有效控制",
+    "bg": "#d9f550",
+    "ink": "#10160c",
+    "pain": "Agent 的解释需要人核查；参数影响难以对应到输出；只说“有问题”，Agent 难以接着修",
+    "theory": "Human Verification / Problem Context / Agent Fix",
+    "mechanism": "人补充什么判断，Agent 才能接着修？",
+    "opportunity": "指认对象 → 核查解释 → 整理问题 → 交回修复",
+    "points": [
+      "关联对象：指认待核查的参数与输出",
+      "展开算式：核查关系与影响范围",
+      "交接问题包：对象、条件、证据与待做动作"
+    ],
+    "diagram": [
+      "QUESTION",
+      "EVIDENCE",
+      "EXPRESSION"
+    ],
+    "source": "Human Verification / Problem Context / Agent Fix",
+    "url": "assets/reference-handoff.md",
+    "boundary": "Scale 演示对象联动、关系核查与上下文准备；没有故障样本或修复执行记录，不宣称发现真实缺陷或已完成 Agent 修复。"
+  },
+  {
+    "id": "attention",
+    "title": "总耗时解释不了差异，才展开执行证据",
+    "principle": "问题 / 结果驱动",
+    "bg": "#c19cf0",
+    "ink": "#fff",
+    "pain": "总耗时看不出阶段先后；日志读数难比较进入差异；最晚进入不等于设备根因",
+    "theory": "Problem-driven Visualization / Visualization Trigger",
+    "mechanism": "差异出现在哪个阶段、哪条泳道？",
+    "opportunity": "总量 → 阶段关系 → 候选范围 → 原始事件",
+    "points": [
+      "同轴排列：比较各阶段的事件窗口",
+      "聚焦 Lane 6：核查最晚进入的记录",
+      "回到原始事件：保留候选解释与缺口"
+    ],
+    "diagram": [
+      "QUESTION",
+      "EVIDENCE",
+      "EXPRESSION"
+    ],
+    "source": "Problem-driven Visualization / Visualization Trigger",
+    "url": "assets/reference-handoff.md",
+    "boundary": "当前数据支持比较 Host 事件窗口和进入时刻；不包含独立 Device Trace，不能据此判定设备根因。"
+  },
+  {
+    "id": "layers",
+    "title": "从跨层查找，推导连续的对象与证据关系",
+    "principle": "认知减负",
+    "bg": "#789ee5",
+    "ink": "#fff",
+    "pain": "从模型到层，重新找位置；从层到节点，重新找对应；从节点到采样，重新建上下文",
+    "theory": "Object Continuity / Context Preservation",
+    "mechanism": "调查对象一致，证据逐级深入",
+    "opportunity": "跨层、节点与采样保留同一对象身份",
+    "points": [
+      "连续画布：保留层序和当前位置",
+      "局部展开：沿当前层进入计算节点",
+      "身份携带：定位到同一对象的采样"
+    ],
+    "diagram": [
+      "QUESTION",
+      "EVIDENCE",
+      "EXPRESSION"
+    ],
+    "source": "Object Continuity / Context Preservation",
+    "url": "assets/reference-handoff.md",
+    "boundary": "当前展示对象连续与采样关联；64×64 原型采样不等于设备观测或完整张量映射。"
+  },
+  {
+    "id": "system",
+    "title": "把双钻中的设计判断，沉淀为 Agent 输出约束",
+    "principle": "有效控制",
+    "bg": "#9c87e9",
+    "ink": "#fff",
+    "pain": "换任务后，对象语义容易漂移；关系图可用，页面仍需重新组装；只有样式要求，生成结果难以核查",
+    "theory": "Glyph / Pattern / Framework / Skill",
+    "mechanism": "如何让 Agent 沿用已有设计判断？",
+    "opportunity": "先收敛问题与证据，再组合表达并核查",
+    "points": [
+      "图元：固定对象角色与视觉语义",
+      "Pattern + 框架：固定关系与空间职责",
+      "Skill：串联问题、证据、组装与核查"
+    ],
+    "diagram": [
+      "QUESTION",
+      "EVIDENCE",
+      "EXPRESSION"
+    ],
+    "source": "Glyph / Pattern / Framework / Skill",
+    "url": "assets/reference-handoff.md",
+    "boundary": "已有图元、Pattern、框架样本与 Skill 是输出约束基础；它们支持生成与审阅，不代表自动诊断、修复或已证明输出质量提升。"
+  }
+]

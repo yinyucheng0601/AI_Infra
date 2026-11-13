@@ -1,68 +1,44 @@
-# Liquid Glass Controls
+# Liquid glass · v2 定稿
 
-从 [Liquid Glass 衍生方案](../npu-memory-atlas/variants/liquid-glass.html) 提取的深色画布玻璃材质。原页面未修改。零依赖、无构建步骤，普通 HTML、file://、Vue / React 页面均可使用。CSS 仅作用于带属性的元素，不接管布局、字号、圆角、按钮事件、焦点或选中态。
+方案 B 厚板玻璃（Canvas 位移图 + SVG 背景滤镜，无 WebGL）。
+control 用于整组工具栏，icon 用于独立按钮，panel 是透明磨砂，不折射正文。
 
-## 最短接入
+| 参数 | 定稿值 |
+|---|---:|
+| 折射强度 | 100 |
+| 折射覆盖宽度 | 36px |
+| 玻璃厚度 | 37px |
+| 默认背景模糊 | 1px |
+| 高光强度 · 浅色 / 深色 | 2.2 / 0.8 |
+| 高光聚焦 | 28 |
+| 侧壁取色 | 95 |
+| 侧壁宽度 | 2.75px |
+| 折射率 | 1.50 |
+| 背景 · 浅色 / 深色 | 透明 / 5% 白色 |
+| 控件外投影 | 0 7px 20px，黑色 8% |
 
-复制本目录，加载两个文件（CSS 放在业务 CSS 之后）：
+高光从左上向右衰减，右下局部反光，彩色侧壁外侧保留细白光；弱化内阴影，不加整圈 border。
+panel：24px blur、深色 78% / 浅色 74% 背板，无 border，柔和 shadow。
+设置控件使用紧凑胶囊选择器、细轨道 Slider、小圆点和清晰读数。
+主体图元与告警保持语义材质，不接玻璃。
 
-```html
-<link rel="stylesheet" href="./liquid-glass-controls/liquid-glass.css">
-<script defer src="./liquid-glass-controls/liquid-glass.js"></script>
+## 接入与 API
 
-<nav data-liquid-glass="control" style="border-radius:999px;padding:8px">
-  <button>缩小</button><span data-liquid-readout>100%</span><button>放大</button>
-</nav>
-<aside data-liquid-glass="panel" style="border-radius:20px;padding:20px">
-  <h2>配置</h2><p>清晰阅读的磨砂面板</p>
-</aside>
-<button data-liquid-glass="icon" style="border-radius:50%" aria-label="设置">⚙</button>
-```
+加载本目录 liquid-glass.css、liquid-glass.js，保留 LICENSE。
+宿主负责布局、圆角与定位；控件需 relative/absolute/fixed 定位上下文。
+在整组背板上添加 data-liquid-glass="control"，独立按钮用 icon，磨砂面板用 panel。
+不要在整组背板和内部按钮重复添加滤镜。
 
-把 `control` 加在整组控件的背板上，不要同时给容器和每个内部按钮叠加滤镜。独立圆按钮使用 `icon`。实际圆角从 CSS 读取；给页面留出有图形的背景，纯色背后不会出现明显折射。
+根元素 data-theme 为 light 或 dark（缺省深色），变化时自动更新。
+LiquidGlassControls.getSettings() 返回当前参数；
+configure({blur:1}) 调整背景模糊（0–20px），文字与高光保持清晰。
+深色高光独立保存，其余参数共享。
+init(element,'control'|'icon'|'panel')、destroy(element)、refresh()、disconnect()、start() 管理生命周期。
 
-## 固定效果参数
+## 验证与边界
 
-| 参数 | control：顶部/底部控件 | panel：配置/数据面板 | icon：独立圆按钮 |
-|---|---:|---:|---:|
-| 折射 scale | -110 | -12 | -36 |
-| RGB 色散 | 0 / 4 / 8 | 0 / 0 / 0 | 0 / 1 / 2 |
-| 折射后背景模糊 | 4px | 18px | 4px |
-| 深色背板不透明度 | 28% | 94% | 72% |
-| 位移图边缘平滑 blur | 8px | 8px | 6px |
-
-`alpha=1`、`saturation=1`、`frost=0`；背板颜色由 CSS 管理。文字与图标自身不模糊。圆角、尺寸、排版和交互状态沿用宿主页面。
-
-## 动态页面
-
-脚本自动处理新插入的元素、属性切换、隐藏浮层和卸载。可通过 `hidden`、class 或 style 控制面板，无需手动重建滤镜。
-
-```js
-LiquidGlassControls.init(element, 'control'); // 给已有元素接入
-LiquidGlassControls.init(element, 'panel');   // 切换预设
-LiquidGlassControls.refresh();               // 特殊布局变更后同步
-LiquidGlassControls.destroy(element);        // 移除属性、滤镜；还原原内联背景/滤镜
-LiquidGlassControls.disconnect();            // 停止自动管理，清理全部实例
-LiquidGlassControls.start();                 // 恢复自动管理
-```
-
-React / Vue 在挂载后加载一次脚本，模板直接声明 `data-liquid-glass` 即可；如由组件调用 `init`，卸载时调用 `destroy`。这些框架接入方式未做运行验证。不要让其他脚本同时改写同一元素的内联 `background` / `backdrop-filter`。
-
-## 兼容与边界
-
-- 完整折射沿用上游 Chromium 检测；Safari / Firefox 回退为背景模糊（control / icon 12px，panel 18px）。未在这些浏览器逐一验证。
-- 无背景模糊支持时使用实色背板。
-- 当前版本针对深色背景；浅色主题需要另行调整对比度。
-- 不扫描 Shadow DOM；祖先 opacity/filter 和嵌套玻璃可能改变背景采样。
-- CSS 动画改变祖先可见性而不触发属性变化时，可在动画结束调用 `refresh()`。
-- 包不会加载网络资源或持续播放动画。大面积或大量滤镜仍需结合宿主页面测性能。
-
-## 文件与验证
-
-- `liquid-glass.js`：上游光学实现及预设/自动生命周期封装。
-- `liquid-glass.css`：局部材质样式。
-- `demo.html`：三个预设、面板开关的独立示例，可直接打开。
-- `test.cjs`：Node 下的生命周期逻辑回归（使用 DOM 替身，不代替浏览器渲染验证）。运行 `node test.cjs`。
-- `LICENSE`：保留上游 MIT 许可证。
-
-上游：https://github.com/rizzytoday/liquid-glass 。本地仅对上游 ResizeObserver 回调增加隐藏元素零尺寸保护，光学算法保持不变。源页面效果经用户确认；独立示例尚未进行浏览器视觉验收。
+Chromium 支持 SVG 背景折射；其他浏览器回退为按实际参数驱动的背景模糊，尚未逐一验收。
+尺寸变化自动重建；大量实例与大尺寸需按宿主测性能，不扫描 Shadow DOM。
+node test.cjs 检查默认参数、主题隔离、存储与边界，不替代浏览器光学验收。
+demo.html 为深浅色与模糊调节预览；Pass Error Cases 为已调整的业务接入。
+基于 rizzytoday/liquid-glass MIT 扩展；v2 厚板位移、侧壁采样与方向高光为本地实现。

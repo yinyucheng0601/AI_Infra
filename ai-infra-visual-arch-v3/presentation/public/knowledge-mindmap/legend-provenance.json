@@ -1,0 +1,200 @@
+{
+  "source": "ai-infra-research/reports/llm-compute/diagram-legend-library/index.html?v=69860fd1f593&theme=light",
+  "sha256": "3ad38df6b34839e92916ce58f7571355c11edd649dab1df094c505a78ed8053c",
+  "theme": "Unmodified template.html themedSvg; images isolate source styles",
+  "mapping": {
+    "0:0": [],
+    "0:1": [
+      {
+        "id": "transformer-diagram-5",
+        "title": "Layer · Attention / FFN 子层",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(5)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      },
+      {
+        "id": "transformer-diagram-0",
+        "title": "Model · Token 到模型输出",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(0)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      }
+    ],
+    "0:2": [
+      {
+        "id": "transformer-diagram-2",
+        "title": "Attention · 计算结构",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(2)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      },
+      {
+        "id": "transformer-diagram-3",
+        "title": "FFN · 计算结构",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(3)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      },
+      {
+        "id": "transformer-diagram-5",
+        "title": "Layer · 两个子层",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(5)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      }
+    ],
+    "0:3": [
+      {
+        "title": "MatMul",
+        "id": "system-op"
+      },
+      {
+        "title": "Reduce / Pool",
+        "id": "system-op"
+      },
+      {
+        "title": "Softmax",
+        "id": "system-op"
+      }
+    ],
+    "0:4": [
+      {
+        "id": "transformer-diagram-7",
+        "title": "Loss · 梯度与参数更新",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(7)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      }
+    ],
+    "1:0": [
+      {
+        "id": "transformer-diagram-0",
+        "title": "Token · Embedding · 模型计算",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(0)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      }
+    ],
+    "1:1": [
+      {
+        "id": "transformer-diagram-1",
+        "title": "激活、参数与梯度",
+        "kind": "diagram",
+        "source": "ai-infra-research/reports/llm-compute/transformer-layer-guide-v3.html / diagram(1)",
+        "sha256": "a56e481ccd6a63fdbdf268bf09f88b7437b6fbb556531e5575cb8398661d8a45"
+      }
+    ],
+    "1:2": [
+      {
+        "title": "值／视图／存储",
+        "id": "pattern-storage"
+      }
+    ],
+    "1:3": [
+      {
+        "title": "Reshape",
+        "id": "system-op"
+      },
+      {
+        "title": "Transpose",
+        "id": "system-op"
+      }
+    ],
+    "1:4": [
+      {
+        "title": "KV cache",
+        "id": "system-value"
+      }
+    ],
+    "2:0": [
+      {
+        "title": "中间表示 · IR",
+        "id": "ir"
+      }
+    ],
+    "2:1": [
+      {
+        "title": "编译步骤",
+        "id": "system-pass"
+      }
+    ],
+    "2:2": [
+      {
+        "title": "核函数",
+        "id": "system-kernel"
+      },
+      {
+        "title": "循环范围",
+        "id": "system-loop"
+      }
+    ],
+    "2:3": [
+      {
+        "title": "设备指令",
+        "id": "system-instruction"
+      }
+    ],
+    "2:4": [],
+    "3:0": [],
+    "3:1": [],
+    "3:2": [],
+    "3:3": [],
+    "3:4": [],
+    "4:0": [],
+    "4:1": [
+      {
+        "title": "Rank 进程",
+        "id": "system-rank"
+      },
+      {
+        "title": "调度任务",
+        "id": "system-task"
+      }
+    ],
+    "4:2": [
+      {
+        "title": "分片／复制／部分结果",
+        "id": "pattern-distribution"
+      }
+    ],
+    "4:3": [
+      {
+        "title": "通信操作",
+        "id": "system-op"
+      }
+    ],
+    "4:4": [
+      {
+        "title": "依赖汇合 / 栅栏",
+        "id": "logic-barrier"
+      }
+    ],
+    "5:0": [
+      {
+        "title": "执行与等待区间",
+        "id": "runtime-intervals"
+      }
+    ],
+    "5:1": [],
+    "5:2": [
+      {
+        "title": "中间表示 · IR",
+        "id": "ir"
+      }
+    ],
+    "5:3": [
+      {
+        "title": "检查结果",
+        "id": "checks"
+      }
+    ],
+    "5:4": []
+  },
+  "unregistered": "Empty entries show terms only; no invented glyph.",
+  "sourceDiagramAdaptation": "Original Transformer diagram renderer, original layout, light theme with dark role-label ink.",
+  "presentationOverrides": {
+    "op": "No stroke; source topology and glyph proportions retained",
+    "tensorLabels": "Dark ink #253344; no text outline",
+    "interaction": "Hover pauses stage playback; entering card pins it; close/Escape resumes; local tabs support click and arrows; navigation returns focus to PPT."
+  }
+}

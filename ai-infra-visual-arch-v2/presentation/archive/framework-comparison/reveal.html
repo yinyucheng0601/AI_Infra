@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Reveal real-scene trial</title>
+<link rel="stylesheet" href="/node_modules/reveal.js/dist/reveal.css">
+<link rel="stylesheet" href="/original.css"><link rel="stylesheet" href="/trial.css">
+<style>.reveal{font-family:inherit}.reveal .slides>section{height:100%;padding:0}.reveal .trial-stage{text-align:left}</style>
+</head><body>
+<div class="reveal"><div class="slides"><section><div class="trial-stage" data-scene="language"></div></section><section><div class="trial-stage" data-scene="agent"></div></section><section><div class="trial-stage" data-scene="system"></div></section></div></div>
+<script src="/assets/scale-model.js"></script><script src="/assets/visual-system.js"></script>
+<script type="module">
+import Reveal from 'reveal.js';
+import {mountFixture} from '/fixture.js';
+const deck=new Reveal({width:1440,height:810,margin:0,hash:true,transition:'fade'});
+// Keep all scenes mounted here to expose the default retained-iframe cost.
+await Promise.all([...document.querySelectorAll('[data-scene]')].map(el=>mountFixture(el,el.dataset.scene)));
+await deck.initialize();window.trialDeck=deck;
+</script></body></html>

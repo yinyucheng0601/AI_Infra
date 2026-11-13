@@ -4,7 +4,7 @@
     "renderer": "comparison.js",
     "compute_golden": {
       "source": "compute-golden.js",
-      "sha256": "c897f96688363f0aca07be8be4286f62373a5fed5975ae5bede14d946c1ab4cf",
+      "sha256": "66f32d724332eff7b6ae2495cdb714d96b09d90e448e80e95bfe04f1b183a1bd",
       "numeric_data": "local CPU Golden windows; deterministic explicitly Mock NPU values and derived differences; no device validation",
       "golden_sha256": "93650b3c8795b4ad9f179ad59cf013860c02f1a83f2a48947ed96c53a222bf2f",
       "op_renderer": "diagram-legend-library/build.cjs opNode/opGlyph; visual-system.js add/multiply",

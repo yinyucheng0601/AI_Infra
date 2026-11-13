@@ -1,0 +1,18 @@
+{
+  "source": "/Users/yin/Downloads/ai-compute-knowledge-mindmap-light(1) (1).html",
+  "sourceSha256": "9cdbd8b58f0880aac0640fc0ea536fd7473e45bc8e5c694c0a1bd0b3f5f9fe53",
+  "adaptations": [
+    "Full-slide embed; standalone toolbar hidden",
+    "Canvas background F0F1F3",
+    "Keyboard navigation forwarded to PPT; native hover/pin/Escape retained",
+    "Keyboard focus uses fill without selection outline"
+  ],
+  "interaction": {
+    "overview": "Map stays in place; hover highlights only; click supported objects for anchored popup",
+    "unregistered": "No click handler, button role, tab stop or pointer cursor",
+    "popup": "560px width, up to 480px height; anchored to clicked pill, clamped inside slide; cached figures crossfade",
+    "return": "Close, Escape, click outside; no navigation or map relayout",
+    "playback": "Paused while popup is open",
+    "stageTransition": "getKnowledgeAnchors returns real term ranges; parent translates 10 corresponding nodes to stage02 over 720ms, then reveals formal glyphs; reverse supported"
+  }
+}

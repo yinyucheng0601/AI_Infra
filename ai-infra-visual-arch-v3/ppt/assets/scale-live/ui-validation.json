@@ -1,0 +1,35 @@
+{
+  "desktop": [
+    1600,
+    1000
+  ],
+  "narrow": [
+    700,
+    900
+  ],
+  "passed": [
+    "default canvas rendered",
+    "ordinary and last-element selection",
+    "scale edit + explicit apply: -0.625 to -3.125",
+    "channel config reshape [1,6,1]",
+    "source lines match revision",
+    "view preserved across selection, config and panel toggle",
+    "zoom and fit",
+    "question follows handoff preview",
+    "clipboard copy success",
+    "JSON download scale-evidence.json",
+    "formal multiply/add SVG visible",
+    "2026-10-29 repair: bottom parameter and zoom controls both 44px measured",
+    "all button/input/textarea/summary/link controls carry data-tip, including dynamic grid and config controls",
+    "single tooltip appears on keyboard focus",
+    "matrix-edge to operator-port arrow routing; no-bias bypass"
+  ],
+  "not_verified": [
+    "pointer pan gesture",
+    "panel drag and resize gesture",
+    "all keyboard paths",
+    "full Liquid Glass optical audit",
+    "NPU"
+  ],
+  "visual_limit": "overview uses compact rounded numbers; exact values available in inspector; small viewport requires zoom for element reading"
+}

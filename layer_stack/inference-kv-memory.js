@@ -27,7 +27,7 @@
   ratios.forEach((_,index)=>{
    const selected=index===layer&&ready;
    const z=kvBase+index*pitch;
-   markup+=`<g class="kv-storage-layer" role="button" tabindex="0" data-layer="${index}" aria-label="查看 L${index} KV" aria-pressed="${index===layer}">${selected?block(z,Math.max(2,pitch*.65),fill):''}${polygon([[239,6,z],[239,149,z],[239,149,z+pitch],[239,6,z+pitch]],'transparent')}</g>`;
+   markup+=`<g data-branch-focus="${selected?state.branch||'': ''}" class="kv-storage-layer" role="button" tabindex="0" data-layer="${index}" aria-label="查看 L${index} KV" aria-pressed="${index===layer}">${selected?block(z,Math.max(2,pitch*.65),fill):''}${polygon([[239,6,z],[239,149,z],[239,149,z+pitch],[239,6,z+pitch]],'transparent')}</g>`;
   });
   // Free space is the open headroom inside the wireframe, never a dark solid lid.
   markup+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="${light?'#777':'#eee'}" stroke-width="2.4"/>`;
@@ -42,7 +42,7 @@
   bandLabel(base+nonKVHeight*.5,'权重/运行缓冲 · 8.62 GiB',13);
   bandLabel(kvBase+kvHeight*.52,'KV 池 · 63.44 GiB',18);
   bandLabel((kvBase+kvHeight+height)/2,'剩余 · 7.04 GiB',13);
-  markup+=`<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${layer} · ${kind}</text>`;
+  markup+=`<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${layer} · ${state.branch==='swa'?'SWA':state.branch==='compressed'?kind+' 压缩':kind}</text>`;
   if(ratio===128&&compressedCount){
    markup+=`<g class="kv-storage-slot" role="button" tabindex="0" data-first="0" data-last="${compressedCount*128-1}" aria-label="HCA 压缩记录 · 来源 0–${compressedCount*128-1}"><title>在底部 Token 表查看 HCA 压缩来源 0–${compressedCount*128-1}</title><text x="575" y="803" text-anchor="middle" fill="${muted}" font-size="15">HCA · ${compressedCount} 条压缩记录 ↗</text></g>`;
   }
@@ -57,7 +57,7 @@
    node.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();callback();}});
   };
   target.querySelectorAll('[data-layer]').forEach(node=>activate(node,()=>state.onLayer(Number(node.dataset.layer))));
-  target.querySelectorAll('[data-first]').forEach(node=>activate(node,()=>state.onToken(Number(node.dataset.first),[Number(node.dataset.first),Number(node.dataset.last)])));
+  target.querySelectorAll('[data-first]').forEach(node=>activate(node,()=>state.onBranch?state.onBranch('compressed'):state.onToken(Number(node.dataset.first),[Number(node.dataset.first),Number(node.dataset.last)])));
  }
  global.InferenceKVMemory={render,budget};
 })(window);
