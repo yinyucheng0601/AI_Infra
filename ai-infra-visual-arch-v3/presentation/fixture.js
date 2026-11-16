@@ -2,7 +2,7 @@ import captions from './captions.json';
 import {mountChapterDiamonds} from './chapter-diamonds.js';
 // Shared port, intentionally separate from each framework's navigation.
 export async function mountFixture(root, id) {
-  const markup = await fetch(`/scenes/${id}.html`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
+  const markup = await fetch(`/scenes/${id}.html?v=20261116-r2`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
   root.innerHTML = markup.replace(/<section\b/g,'<div').replace(/<\/section>/g,'</div>');
   const scene = root.querySelector('.slide');
   mountChapterDiamonds(root,id);
