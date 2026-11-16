@@ -1,12 +1,13 @@
 <template>
 <div class="method-page">
+<CollaborationFrame color="#d3d3d3" label="人机协同方法" />
 <header><small>人机协同方法 / HUMAN–AGENT COLLABORATION</small><h1>聚焦问题，理解证据，介入并验证</h1><p>人明确判断与行动，Agent 组织证据并执行；阶段成果持续传递，必要时返回核查。</p></header>
 <svg viewBox="0 0 1440 720" role="img" aria-label="Focus、Uncover、Intervene 三钻人机协同方法及返回核查闭环">
 <defs><marker id="method-return" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#929ba4" stroke-width="1.6"/></marker></defs>
 <g font-family="sans-serif" fill="#17242e">
 <g v-for="(s,i) in stages" :key="s.name" :transform="`translate(${35+i*460},100) translate(195,195) scale(1.05) translate(-195,-195)`">
-<path d="M0 195 Q0 175 20 155 L150 25 Q195 -20 240 25 L370 155 Q390 175 390 195 Z" :fill="i===1 ? '#ebebed' : '#f5f6f8'"/>
-<path d="M0 195 H390 Q390 215 370 235 L240 365 Q195 410 150 365 L20 235 Q0 215 0 195 Z" :fill="i===1 ? '#f5f6f8' : '#ebebed'"/>
+<path d="M0 195 Q0 175 20 155 L150 25 Q195 -20 240 25 L370 155 Q390 175 390 195 Z" :fill="stageFills[i][0]"/>
+<path d="M0 195 H390 Q390 215 370 235 L240 365 Q195 410 150 365 L20 235 Q0 215 0 195 Z" :fill="stageFills[i][1]"/>
 <path d="M20 155 L150 25 Q195 -20 240 25 L370 155 M370 235 L240 365 Q195 410 150 365 L20 235" fill="none" stroke="#fff" stroke-width="2.6"/>
 <path v-if="i===0" d="M20 155 Q-20 195 20 235" fill="none" stroke="#fff" stroke-width="2.6"/>
 <path v-if="i===2" d="M370 155 Q410 195 370 235" fill="none" stroke="#fff" stroke-width="2.6"/>
@@ -30,6 +31,8 @@
 </g></svg></div>
 </template>
 <script setup>
+import CollaborationFrame from './CollaborationFrame.vue'
+const stageFills=[['#c19cf033','#c19cf066'],['#9189ed33','#9189ed66'],['#d9f55033','#d9f55066']]
 const outputs=[{title:'调查任务',detail:'判断问题 · 对象与范围 · 候选证据'},{title:'证据支持的判断',detail:'关系与解释 · 依据 · 待核查疑点'},{title:'行动与复核记录',detail:'执行结果 · 验证结论 · 保留上下文'}]
 const stageIcons=["<path d=\"M8 3H3v5m13-5h5v5m0 8v5h-5m-8 0H3v-5M12 9v6m-3-3h6\"/>", "<circle cx=\"12\" cy=\"6\" r=\"2\"/><circle cx=\"6\" cy=\"17\" r=\"2\"/><circle cx=\"18\" cy=\"17\" r=\"2\"/><path d=\"m11 8-4 7m6-7 4 7M8 17h8\"/>", "<path d=\"M3 12h17m-6-6 6 6-6 6\"/>"]
 const basisIcons=["<path d=\"M12 6c-2-2-5-2.5-8-2v14c3-.5 6 0 8 2 2-2 5-2.5 8-2V4c-3-.5-6 0-8 2v14\"/>", "<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\"/><rect x=\"9\" y=\"9\" width=\"6\" height=\"6\" rx=\"1\"/><path d=\"M9 3v3m6-3v3M9 18v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3\"/>", "<path d=\"M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z\"/><circle cx=\"12\" cy=\"12\" r=\"2.5\"/>"]
@@ -41,5 +44,5 @@ const principles=[{name:'证据驱动',desc:'按判断需要展开证据',color:
 </script>
 
 <style scoped>
-.method-page{width:100%;height:100%;padding:26px 30px 12px;background:#f0f1f3;box-sizing:border-box}header small{font-size:15px;letter-spacing:2px;color:#677482}header h1{font-size:38px;margin:16px 0 10px;line-height:1.2;font-weight:600}header p{font-size:19px;color:#677482;margin:0}svg{width:100%;height:calc(100% - 130px);display:block;overflow:visible}
+.method-page{width:100%;height:100%;position:relative;padding:40px 54px 58px;background:#f5f5f7;box-sizing:border-box}header small{font-size:15px;letter-spacing:2px;color:#677482}header h1{font-size:38px;margin:16px 0 10px;line-height:1.2;font-weight:600}header p{font-size:19px;color:#677482;margin:0}svg{width:100%;height:calc(100% - 130px);display:block;overflow:visible}
 </style>

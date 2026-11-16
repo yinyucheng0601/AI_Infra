@@ -1,6 +1,7 @@
 ---
 layout: architecture
 embedded: true
+transition: view-transition
 ---
 
 <CollaborationMethod />

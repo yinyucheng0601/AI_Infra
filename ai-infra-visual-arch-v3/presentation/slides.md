@@ -13,6 +13,10 @@ src: ./pages/09-knowledge.md
 ---
 
 ---
+src: ./pages/10-computation.md
+---
+
+---
 src: ./pages/11-visual-cognition.md
 ---
 

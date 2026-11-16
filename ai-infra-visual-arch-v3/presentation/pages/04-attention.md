@@ -1,6 +1,7 @@
 ---
 layout: concept
 embedded: true
+transition: view-transition
 ---
 
 <DeckScene scene="attention" subtitle-html="D23：在同一时间参照下比较 Host 调用窗口，定位进入时刻的差异。" />

@@ -179,6 +179,25 @@ body[data-ablation="lean"] .rows.loop-mode .span-row,body[data-ablation="lean"] 
 .eyebrow{font:500 12.48px/1.4 SFMono-Regular,Consolas,monospace;letter-spacing:.17em}
 .mast h1{position:absolute;top:33.653px;margin:0;font:600 43.2px/1.16 "PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;letter-spacing:-.04em}
 .mast p{position:absolute;top:101.5px;font-size:16.32px;line-height:1.5;letter-spacing:.01em}
+
+/* Fill the timeline vertically without scaling text or the artboard. */
+.trace .rows,body[data-ablation="lean"] .trace .rows{flex:1;min-height:0;height:auto;display:flex;flex-direction:column}
+.trace .rows .span-row,body[data-ablation="lean"] .trace .rows .span-row{flex:1;min-height:0;height:auto}
+.trace .rows .bar-track,body[data-ablation="lean"] .trace .rows .bar-track{height:100%}
+.inspector .explain{font-size:16px;line-height:1.55}
+.inspector .case-meta{font-size:14px}
+.inspector .badge{font-size:12px}
+.inspector .loop-context{font-size:15px;line-height:1.5}
+.inspector .evid-head{font-size:14px}
+.inspector .evidence-item{font-size:14px;line-height:1.45;padding:8px 10px}
+.inspector .evidence-item i{font-size:12px}
+.inspector .decision-title{font-size:18px}
+.inspector .decision-buttons button{font-size:14px;height:38px}
+
+/* Reclaim the removed subtitle space for the timeline and inspector. */
+.mast p,body[data-ablation="lean"] .mast p{display:none}
+.journey,body[data-ablation="lean"] .journey{top:150px}
+.body-grid,body[data-ablation="lean"] .body-grid{top:205px;height:633px}
 </style>
 </head>
 <body>
@@ -187,7 +206,7 @@ body[data-ablation="lean"] .rows.loop-mode .span-row,body[data-ablation="lean"] 
     <div class="mast-main">
       <div class="eyebrow">HUMAN × AGENT · INTERACTION MODEL</div>
       <h1>从资产到执行：人机协同持续推进调查</h1>
-      <p>在 Agent 工程调查中，通过证据交接、人工决策和执行验证持续推进任务。</p>
+
     </div>
     <div class="mast-no"><b>09</b><small>HUMAN × AGENT</small></div>
   </header>

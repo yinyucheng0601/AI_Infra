@@ -1389,3 +1389,21 @@ body.navigator-open .navigator-hover-zone{pointer-events:none}
 .shift-questions small{font:500 .85cqw monospace;color:#657481}.shift-questions h2{font-size:2.5cqw;font-weight:700;margin:1.5cqh 0 2cqh}.shift-questions p{font-size:1.25cqw;color:#53616f;margin:0;line-height:1.5}
 .shift-guidance{text-align:center;background:#d9f550;color:#17242e;border-radius:1cqw;padding:2.8cqh 1.5cqw;font-size:1.85cqw;font-weight:600}
 @media(prefers-reduced-motion:no-preference){.shift-questions article{animation:shift-question-in .4s ease-out both}.shift-questions article:nth-child(2){animation-delay:.4s}.shift-questions article:nth-child(3){animation-delay:.8s}.shift-guidance{animation:shift-question-in .4s 1.2s ease-out both}@keyframes shift-question-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}}
+
+/* Agent engineering supports the design task from the bottom of the opening map. */
+#domain-theory .domain-map{gap:2.3cqw}
+#domain-theory .domain-agent{position:relative}
+#domain-theory .domain-support-arrow{position:absolute;left:50%;top:-2.3cqw;transform:translateX(-50%);width:2.3cqw;height:2.3cqw;color:#8c8c8c;overflow:visible}
+
+/* A single centered upward support arrow, matching the reference. */
+#domain-theory .domain-support-arrow{display:block;width:0;height:2.3cqw;border-left:1.6px solid #8c8c8c;transform:none}
+#domain-theory .domain-support-arrow::before{content:'';position:absolute;top:1px;left:-6px;width:9px;height:9px;border-top:1.6px solid #8c8c8c;border-left:1.6px solid #8c8c8c;transform:rotate(45deg)}
+
+/* Two opposing support arrows, following the reference. */
+#domain-theory .domain-map{top:29% ;bottom:12%}
+#domain-theory .domain-support-arrow{width:20px;border:0;transform:translateX(-50%)}
+#domain-theory .domain-support-arrow::before{left:0;top:0;width:0;height:100%;border:0;border-left:1.6px solid #8c8c8c;transform:none}
+#domain-theory .domain-support-arrow::after{content:'';position:absolute;right:0;top:0;height:100%;border-left:1.6px solid #8c8c8c}
+#domain-theory .domain-support-arrow i{position:absolute;width:8px;height:8px;border-top:1.6px solid #8c8c8c;border-left:1.6px solid #8c8c8c}
+#domain-theory .domain-support-arrow i:first-child{top:1px;left:-3.5px;transform:rotate(45deg)}
+#domain-theory .domain-support-arrow i:last-child{bottom:1px;right:-3.5px;transform:rotate(225deg)}

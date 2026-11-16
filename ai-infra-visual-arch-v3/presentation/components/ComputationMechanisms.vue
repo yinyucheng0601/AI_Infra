@@ -1,76 +1,70 @@
 <script setup>
-import KnowledgeGlyph from './KnowledgeGlyph.vue'
-// Causal comparison, not measured trace: equal compute work, relative event order only.
-// Input transfer and inter-device receive can overlap. Dispatch waits for both data
-// readiness and resource availability; synchronization is a dependency gate, not a core.
-const cases=[
- {name:'供给及时 · 资源可用',y:477,transfer:[0,190],comm:[15,145],queue:[0,90],start:190,end:390},
- {name:'供给延后 · 资源排队',y:579,transfer:[0,280],comm:[15,240],queue:[0,330],start:330,end:530},
-]
-const origin=610
-const lanes=['搬运 / 通信','资源队列','AIC 计算']
+const emit=defineEmits(['open-hardware'])
+// Relative causal comparison, not sampled trace. Equal compute intervals;
+// both inputs are ready at the same point, while resource availability differs.
+const cases=[{name:'A · 资源及时可用',y:493,start:140,end:440},{name:'B · 资源排队延迟',y:594,start:330,end:630}]
+const origin=440,ready=140
+const lanes=['数据就绪','资源状态','AIC 计算']
+const constraints=[{name:'访存',x:250,y:187},{name:'通信',x:435,y:187},{name:'同步',x:250,y:268},{name:'调度',x:435,y:268}]
 </script>
 <template>
-<g class="mechanism-scene" aria-label="计算机制、执行映射与运行结果：相同计算量在数据依赖与资源约束下形成不同延迟">
+<g class="mechanism-scene" aria-label="计算机制、执行映射与运行结果：五类机制相互制约，执行等待影响完成时延">
 <defs>
- <marker id="mechanism-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="#777" stroke-width="1.5"/></marker>
- <pattern id="mechanism-wait" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M-1 1L1 -1M0 6L6 0M5 7L7 5" stroke="#c2c2c2" stroke-width="1"/></pattern>
+<marker id="mechanism-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="var(--line-color)" stroke-width="1.5"/></marker>
+<pattern id="mechanism-wait" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="3" height="7" fill="#aaa"/></pattern>
 </defs>
-<!-- 01: a dependency graph, not a row of independent icons. -->
 <rect x="40" y="174" width="1240" height="137" rx="16" class="panel"/>
-<text x="60" y="202" class="section">01 / 计算机制</text>
-<text x="60" y="227" class="muted">什么决定开始执行？</text>
-<g class="dependency">
- <path d="M400 210H450M400 270H450M590 210H650V240H690M590 270H650V240M830 240H890M1030 240H1080"/>
- <path d="M960 275V260"/>
-</g>
-<g transform="translate(260,192)"><rect width="140" height="36" rx="18" class="capsule"/><text x="70" y="24" class="node">访存 · GM → 片上</text></g>
-<g transform="translate(260,252)"><rect width="140" height="36" rx="18" class="comm"/><text x="70" y="24" class="node">通信 · 跨设备输入</text></g>
-<g transform="translate(450,192)"><rect width="140" height="36" rx="18" class="soft"/><text x="70" y="24" class="node dark">本地数据就绪</text></g>
-<g transform="translate(450,252)"><rect width="140" height="36" rx="18" class="soft"/><text x="70" y="24" class="node dark">远端数据就绪</text></g>
-<g transform="translate(690,220)"><rect width="140" height="40" rx="20" class="capsule"/><text x="70" y="26" class="node">同步 · 依赖满足</text></g>
-<g transform="translate(890,220)"><rect width="140" height="40" rx="20" class="compute"/><text x="70" y="26" class="node dark">计算 · MatMul</text></g>
-<text x="1110" y="235" class="strong">结果可用</text><text x="1110" y="257" class="muted">交给后续任务</text>
-<text x="678" y="205" class="small">输入共同约束</text>
-<rect x="705" y="275" width="360" height="28" rx="14" class="soft"/><text x="885" y="294" text-anchor="middle" class="small dark">资源调度 · 排队后获得可用计算资源</text>
-<!-- 02: retain cross-layer mapping as a subordinate resource binding. -->
-<rect x="40" y="326" width="1240" height="106" rx="16" class="panel"/>
+<text x="60" y="202" class="section">01 / 计算机制</text><text x="60" y="227" class="muted">什么决定开始执行？</text>
+<!-- Integrate the accepted mutual-constraint graph into the restored first band. -->
+<g class="constraint-links"><path d="M290 215L475 268M290 268L475 215"/></g>
+<g v-for="item in constraints" :key="item.name" :transform="`translate(${item.x},${item.y})`"><rect width="80" height="28" rx="5" fill="#eee"/><text x="40" y="19" text-anchor="middle" class="constraint">{{item.name}}</text></g>
+<rect x="342" y="228" width="80" height="27" rx="5" class="compute"/><text x="382" y="247" text-anchor="middle" class="constraint">计算</text>
+<text x="548" y="245" class="small">相互制约</text>
+<path d="M620 242H650" class="dependency"/>
+<text x="714" y="207" text-anchor="middle" class="small">数据就绪</text><circle cx="714" cy="220" r="4" fill="#888"/>
+<text x="714" y="290" text-anchor="middle" class="small">资源可用</text><circle cx="714" cy="273" r="4" fill="#888"/>
+<path d="M718 220H767V242H805M718 273H767V242M915 242H950M1100 242H1140" class="dependency"/>
+<rect x="805" y="222" width="110" height="40" rx="5" fill="#eee"/><text x="860" y="247" text-anchor="middle" class="constraint">依赖满足</text>
+<rect x="950" y="222" width="150" height="40" rx="5" class="compute"/><text x="1025" y="247" text-anchor="middle" class="constraint">计算执行</text>
+<text x="1160" y="246" class="strong">结果可用</text>
+<rect x="40" y="326" width="1240" height="151" rx="16" class="panel"/>
 <text x="60" y="355" class="section">02 / 执行映射</text><text x="60" y="380" class="muted">任务在哪里执行？</text>
-<g transform="translate(313,373) scale(.75)"><KnowledgeGlyph label="Operator"/></g>
-<g transform="translate(480,373) scale(.75)"><KnowledgeGlyph label="Task"/></g>
-<path d="M365 373H420" class="dependency"/><text x="392" y="354" class="small" text-anchor="middle">编译 / 任务拆分</text>
-<path d="M540 373H584V350H620M584 373V402H620M584 373H855" class="mapping"/>
-<g transform="translate(620,337)"><rect width="195" height="28" rx="6" class="soft"/><text x="98" y="19" class="small dark" text-anchor="middle">AIC · 矩阵计算</text></g>
-<g transform="translate(620,389)"><rect width="195" height="28" rx="6" class="soft"/><text x="98" y="19" class="small dark" text-anchor="middle">AIV · 向量后处理</text></g>
-<g transform="translate(855,352)"><rect width="175" height="42" rx="6" class="soft"/><text x="88" y="19" class="node dark">Memory / DMA</text><text x="88" y="34" class="small" text-anchor="middle">数据驻留与搬运</text></g>
-<path d="M540 373H570V422H1122V394" class="mapping"/>
+<rect x="232" y="355" width="175" height="36" rx="5" class="compute"/><text x="319" y="378" text-anchor="middle" class="constraint">计算逻辑</text>
+<rect x="435" y="355" width="90" height="36" rx="5" class="compute"/><text x="480" y="378" text-anchor="middle" class="constraint">任务</text>
+<path d="M407 373H435" class="dependency"/><text x="408" y="343" class="small" text-anchor="middle">拆分为任务</text>
+<path d="M525 373H584V386H610M584 373H855" class="mapping"/>
+<g class="core-container" aria-label="Core 计算资源">
+<g class="hardware-trigger" role="button" tabindex="0" aria-label="查看 Core 硬件执行结构" @click.stop="emit('open-hardware','Core')" @keydown.enter.stop.prevent="emit('open-hardware','Core')" @keydown.space.stop.prevent="emit('open-hardware','Core')">
+<title>查看 Core 硬件执行结构</title>
+<rect x="610" y="333" width="220" height="137" rx="8" class="core-surface"/>
+<text x="621" y="350" class="core-title">Core</text>
+<rect x="625" y="365" width="190" height="40" rx="3" class="compute"/><text x="720" y="390" text-anchor="middle" class="core-label">AIC · 矩阵计算</text>
+<rect x="625" y="416" width="190" height="40" rx="3" class="compute"/><text x="720" y="441" text-anchor="middle" class="core-label">AIV · 向量计算</text>
+</g></g>
+<g transform="translate(855,352)"><rect width="175" height="42" rx="6" class="soft"/><text x="88" y="19" class="node dark">存储 / 搬运</text><text x="88" y="34" class="small" text-anchor="middle">数据驻留与搬运</text></g>
+<path d="M525 373H570V464H1122V394" class="mapping"/>
 <g transform="translate(1060,352)"><rect width="175" height="42" rx="6" class="soft"/><text x="88" y="19" class="node dark">通信资源</text><text x="88" y="34" class="small" text-anchor="middle">跨设备交换</text></g>
-<!-- 03: aligned evidence with equal compute duration and different start times. -->
+<g transform="translate(0,45)">
 <rect x="40" y="447" width="1240" height="229" rx="16" class="panel"/>
-<text x="60" y="477" class="section">03 / 运行结果</text>
-<text x="60" y="503" class="muted">同一 MatMul</text><text x="60" y="525" class="muted">计算区间相同</text>
-<text x="60" y="562" class="strong">开始时间不同</text><text x="60" y="585" class="muted">数据就绪 + 资源可用</text>
-<text x="60" y="622" class="small">Trace 关联：Task ID · 资源 · 起止事件</text>
-<g v-for="(item,index) in cases" :key="item.name">
- <text x="270" :y="item.y+4" class="strong">{{item.name}}</text>
- <g v-for="(lane,i) in lanes" :key="lane"><text x="585" :y="item.y+5+i*22" text-anchor="end" class="small">{{lane}}</text><path :d="`M610 ${item.y+i*22}H1190`" class="lane"/></g>
- <rect :x="origin+item.transfer[0]" :y="item.y-8" :width="item.transfer[1]" height="7" rx="2" fill="#929292"/>
- <rect :x="origin+item.comm[0]" :y="item.y+1" :width="item.comm[1]" height="7" rx="2" fill="#ccc"/>
- <rect :x="origin" :y="item.y+15" :width="item.queue[1]" height="14" fill="url(#mechanism-wait)"/>
- <rect :x="origin+item.queue[1]" :y="item.y+37" :width="item.start-item.queue[1]" height="14" fill="url(#mechanism-wait)"/>
- <rect :x="origin+item.start" :y="item.y+37" :width="item.end-item.start" height="14" rx="2" class="compute"/>
- <text :x="origin+item.start+100" :y="item.y+48" text-anchor="middle" class="small dark">MatMul</text>
- <path :d="`M${origin+item.start} ${item.y+9}V${item.y+36}`" class="event"/>
- <path :d="`M${origin+item.end} ${item.y-10}V${item.y+53}`" class="event"/>
- <text :x="origin+item.end+9" :y="item.y+49" class="small">完成</text>
+<text x="60" y="477" class="section">03 / 运行结果</text><text x="60" y="503" class="muted">相同计算，不同资源等待</text>
+<g v-for="item in cases" :key="item.name">
+<text x="270" :y="item.y-18" class="strong">{{item.name}}</text>
+<g v-for="(lane,i) in lanes" :key="lane"><text x="420" :y="item.y+5+i*22" text-anchor="end" class="small">{{lane}}</text></g>
+<path :d="`M440 ${item.y-9}V${item.y+52}H1190`" class="lane"/>
+<path :d="`M${origin+ready} ${item.y-9}V${item.y+52}`" class="event"/><circle :cx="origin+ready" :cy="item.y" r="5" fill="#888"/>
+<rect :x="origin" :y="item.y+15" :width="item.start" height="14" rx="3" fill="#ddd"/>
+<rect v-if="item.start>ready" :x="origin+ready" :y="item.y+37" :width="item.start-ready" height="14" fill="url(#mechanism-wait)"/>
+<rect :x="origin+item.start" :y="item.y+37" :width="item.end-item.start" height="14" rx="2" class="compute"/>
+<text :x="origin+(item.start+item.end)/2" :y="item.y+49" text-anchor="middle" class="small dark">计算</text>
+<path :d="`M${origin+item.end} ${item.y+33}V${item.y+55}`" stroke="var(--line-color)" stroke-width="1.5"/>
 </g>
-<g v-for="(item,i) in [{label:'搬运',fill:'#929292'},{label:'通信',fill:'#ccc'},{label:'等待',fill:'url(#mechanism-wait)'},{label:'计算',fill:'#def46c'}]" :key="item.label" :transform="`translate(${270+i*78},650)`"><rect width="16" height="8" y="-7" rx="1" :fill="item.fill"/><text x="22" class="small">{{item.label}}</text></g>
-<path d="M1000 530V661M1140 632V661M1000 657H1140" class="delta"/>
-<text x="1070" y="650" text-anchor="middle" class="small dark">总时延增加</text>
-<path d="M610 666H1190" class="lane"/><text x="1210" y="669" class="small">时间 →</text>
+<g v-for="(item,i) in [{label:'资源占用',fill:'#ddd'},{label:'排队等待',fill:'url(#mechanism-wait)'}]" :key="item.label" :transform="`translate(60,${623+i*24})`"><rect width="16" height="8" y="-7" rx="1" :fill="item.fill"/><text x="23" class="small">{{item.label}}</text></g>
+<path d="M880 549V669H1070V650" class="delta"/><text x="975" y="662" text-anchor="middle" class="small dark">完成延迟 Δt</text><text x="1200" y="649" class="small">时间 →</text>
 <text x="660" y="711" text-anchor="middle" class="conclusion">以计算与硬件约束为基础，关联执行行为和运行证据，解释性能差异的形成机制。</text>
+</g>
 </g>
 </template>
 <style scoped>
-.mechanism-scene{font-family:Inter,'PingFang SC',sans-serif;fill:#202020}.panel{fill:white}.section{font-size:18px;font-weight:600}.muted{font-size:13px;fill:#777}.strong{font-size:14px;font-weight:600}.small{font-size:12px;fill:#777}.capsule{fill:#555}.comm{fill:#555;stroke:#888;stroke-dasharray:4 3}.node{font-size:13px;fill:#fff;text-anchor:middle}.soft{fill:#efefef}.compute{fill:#def46c}.dark{fill:#222}.dependency{fill:none;stroke:#888;stroke-width:1.4;marker-end:url(#mechanism-arrow)}.mapping{fill:none;stroke:#aaa;stroke-width:1.2;stroke-dasharray:3 4}.lane{fill:none;stroke:#e1e1e1;stroke-width:1}.event{fill:none;stroke:#888;stroke-width:1;stroke-dasharray:2 3}.delta{fill:none;stroke:#999;stroke-width:1}.conclusion{font-size:17px;font-weight:500}
+.mechanism-scene{--compute-color:#def46c;--line-color:#d8dadd;font-family:Inter,'PingFang SC',sans-serif;fill:#202020}.panel{fill:white}.section{font-size:18px;font-weight:600}.muted{font-size:13px;fill:#777}.strong{font-size:14px;font-weight:600}.small{font-size:12px;fill:#777}.constraint{font-size:14px}.constraint-links{fill:none;stroke:var(--line-color);stroke-width:1.3;stroke-dasharray:5 4}.node{font-size:13px;text-anchor:middle}.soft{fill:#efefef}.dark{fill:#222}.dependency{fill:none;stroke:var(--line-color);stroke-width:1.4;marker-end:url(#mechanism-arrow)}.mapping{fill:none;stroke:var(--line-color);stroke-width:1.2;stroke-dasharray:3 4}.lane{fill:none;stroke:var(--line-color);stroke-width:1}.event{fill:none;stroke:var(--line-color);stroke-width:1;stroke-dasharray:2 3}.delta{fill:none;stroke:var(--line-color);stroke-width:1}.conclusion{font-size:17px;font-weight:500}
+.hardware-trigger{cursor:pointer}.hardware-trigger:focus{outline:none!important}.compute{fill:var(--compute-color)}.core-surface{fill:#efefef}.core-title{font-size:12px;font-weight:600}.core-label{font-size:12px}.hardware-trigger:hover .core-surface,.hardware-trigger:focus-visible .core-surface{fill:#e3e3e3}.hardware-trigger:focus-visible text{text-decoration:underline}
 </style>

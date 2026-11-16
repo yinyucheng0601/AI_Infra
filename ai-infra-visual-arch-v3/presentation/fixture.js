@@ -13,7 +13,7 @@ export async function mountFixture(root, id) {
   const descriptions=['固定对象语义','组织关系与联动','保留上下文，按需核查'];
   function renderTitle(){if(id!=='system'||step<0||step>2)return;const title=root.querySelector('[data-series-title]'),description=root.querySelector('[data-series-description]');if(title)title.textContent=titles[step];if(description)description.textContent=descriptions[step];}
 
-  const max = ['domain-theory','agenda'].includes(id)?0:id==='summary'?4:id==='system'?2:id==='language'?4:5;
+  const max = ({summary:4,system:2,language:4,attention:5,layers:5,agent:5})[id]??0;
   const {createSceneRuntime}=await import('./scene-runtime.js');
   const runtime=await createSceneRuntime(root,scene,id);
   scene.dataset.active='true';
