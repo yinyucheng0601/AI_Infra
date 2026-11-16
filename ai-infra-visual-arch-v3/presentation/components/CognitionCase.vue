@@ -31,4 +31,4 @@ function bind(win){
 onMounted(()=>{window.addEventListener('keydown',key,true)})
 onBeforeUnmount(()=>{window.removeEventListener('keydown',key,true);cleanups.forEach(fn=>fn())})
 </script>
-<template><iframe ref="frame" src="/cases/transformer-cognition-case.html?v=20261116-r3" title="认知机制在 Transformer 图元中的应用" @load="bind(frame.contentWindow);frame.contentWindow?.setCaseActive?.(active)" /></template>
+<template><iframe ref="frame" src="/cases/transformer-cognition-case.html?v=20261116-r4" title="认知机制在 Transformer 图元中的应用" @load="bind(frame.contentWindow);frame.contentWindow?.setCaseActive?.(active)" /></template>

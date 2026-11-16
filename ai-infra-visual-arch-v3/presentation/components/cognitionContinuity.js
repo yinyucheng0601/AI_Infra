@@ -5,69 +5,48 @@ export function useCognitionContinuity(){
  const router=useRouter()
  if(installed.has(router)||typeof document==='undefined')return
  installed.add(router)
- let overlays=[],animations=[]
- let stepTransition=null,finishStep=null
- const clickStep=route=>Number(route.query.clicks||0)
- const isStepPair=(to,from)=>String(to.params.no)===String(from.params.no)&&clickStep(to)!==clickStep(from)
- // Slidev's native transition covers page changes, but skips click states on one page.
- // Hold this route boundary so the same five HTML cards are captured before/after.
- router.beforeResolve((to,from)=>{
-  if(!isStepPair(to,from)||cards(from.params.no).length!==5||!document.startViewTransition||matchMedia('(prefers-reduced-motion: reduce)').matches)return
-  stepTransition?.skipTransition()
-  finishStep?.()
-  document.documentElement.dataset.cognitionContinuity='true'
-  let releaseRoute
-  const routeReady=new Promise(resolve=>releaseRoute=resolve)
-  const rendered=new Promise(resolve=>finishStep=resolve)
-  const transition=document.startViewTransition(()=>{releaseRoute();return rendered})
-  stepTransition=transition
-  transition.finished.catch(()=>{}).finally(()=>{
-   if(stepTransition!==transition)return
-   stepTransition=null;finishStep=null
-   delete document.documentElement.dataset.cognitionContinuity
-  })
-  return routeReady
- })
- router.afterEach(async()=>{
-  if(!finishStep)return
-  const finish=finishStep
-  await nextTick()
-  await new Promise(resolve=>requestAnimationFrame(resolve))
-  finish()
- })
- const cleanup=()=>{overlays.forEach(n=>n.remove());overlays=[];animations.forEach(a=>a.cancel());animations=[]}
- const cards=no=>Array.from(document.querySelectorAll(`.slidev-page-${no} [data-cognition-card]`)).filter(el=>el.getBoundingClientRect().width>0)
- let captured=[]
+ let overlays=[],animations=[],captured=[],version=0
+ const cards=no=>[...document.querySelectorAll(`.slidev-page-${no} [data-cognition-card]`)].filter(el=>el.getBoundingClientRect().width>0)
+ function cleanup(){
+  overlays.forEach(el=>el.remove());overlays=[]
+  animations.forEach(a=>a.cancel());animations=[]
+  delete document.documentElement.dataset.cognitionContinuity
+ }
  router.beforeEach((to,from)=>{
-  cleanup();captured=[]
-  if('startViewTransition' in document||matchMedia('(prefers-reduced-motion: reduce)').matches)return
-  const old=cards(from.params.no),isPair=old.length===5&&(isStepPair(to,from)||Math.abs(Number(to.params.no)-Number(from.params.no))===1)
-  if(!isPair)return
-  captured=old.map(el=>({node:el.cloneNode(true),rect:el.getBoundingClientRect(),size:getComputedStyle(el.querySelector('h3')).fontSize}))
+  version++;cleanup();captured=[]
+  if(String(to.params.no)!==String(from.params.no)||Number(to.query.clicks||0)===Number(from.query.clicks||0)||matchMedia('(prefers-reduced-motion: reduce)').matches)return
+  const source=cards(from.params.no)
+  if(source.length!==5)return
+  document.documentElement.dataset.cognitionContinuity='true'
+  captured=source.map(el=>{
+   const title=el.querySelector('h3'),rect=el.getBoundingClientRect(),tr=title.getBoundingClientRect(),style=getComputedStyle(title)
+   return {rect,title:title.textContent,titleRect:tr,font:parseFloat(style.fontSize)*rect.width/el.clientWidth,weight:style.fontWeight,family:style.fontFamily}
+  })
  })
  router.afterEach(async(to)=>{
   if(!captured.length)return
-  const old=captured;captured=[]
-  await nextTick();await new Promise(resolve=>requestAnimationFrame(resolve))
-  const targets=cards(to.params.no)
-  if(targets.length!==5)return
-  const duration=400,easing='cubic-bezier(0.22,1,0.36,1)'
-  old.forEach((item,i)=>{
-   const target=targets[i],end=target.getBoundingClientRect(),box=document.createElement('div'),node=item.node
-   // A fixed overlay preserves the actual rendered card across the route boundary.
-   Object.assign(box.style,{position:'fixed',left:item.rect.x+'px',top:item.rect.y+'px',width:item.rect.width+'px',height:item.rect.height+'px',zIndex:'9999',pointerEvents:'none'})
-   Object.assign(node.style,{width:'100%',height:'100%',viewTransitionName:'none',overflow:'hidden',padding:(18*item.rect.width/222)+'px'})
-   const title=node.querySelector('h3'),targetTitle=target.querySelector('h3')
-   Object.assign(title.style,{viewTransitionName:'none',fontSize:parseFloat(item.size)*item.rect.width/222+'px'})
-   node.querySelectorAll('p,svg').forEach(n=>n.style.opacity='0')
-   box.append(node);document.body.append(box);overlays.push(box)
-   animations.push(box.animate([{left:item.rect.x+'px',top:item.rect.y+'px',width:item.rect.width+'px',height:item.rect.height+'px'},{left:end.x+'px',top:end.y+'px',width:end.width+'px',height:end.height+'px'}],{duration,easing,fill:'forwards'}))
-   animations.push(title.animate([{fontSize:title.style.fontSize},{fontSize:parseFloat(getComputedStyle(targetTitle).fontSize)*end.width/222+'px'}],{duration,easing,fill:'forwards'}))
-   animations.push(target.animate([{opacity:0},{opacity:1}],{duration:200,delay:200,fill:'backwards'}))
+  const ownVersion=version,source=captured;captured=[]
+  await nextTick()
+  if(ownVersion!==version)return
+  const target=cards(to.params.no)
+  if(target.length!==5){cleanup();return}
+  const easing='cubic-bezier(.22,1,.36,1)',duration=320
+  source.forEach((item,i)=>{
+   const end=target[i].getBoundingClientRect(),title=target[i].querySelector('h3'),tr=title.getBoundingClientRect(),scale=end.width/target[i].clientWidth
+   const box=document.createElement('div'),text=document.createElement('h3')
+   box.dataset.cognitionOverlay=String(i)
+   Object.assign(box.style,{position:'fixed',left:'0',top:'0',width:end.width+'px',height:end.height+'px',background:'#fff',borderRadius:'12px',boxShadow:'0 3px 12px #0000000c',overflow:'hidden',zIndex:'9999',pointerEvents:'none',transform:`translate3d(${end.x}px,${end.y}px,0)`})
+   text.textContent=item.title
+   Object.assign(text.style,{position:'absolute',margin:'0',whiteSpace:'nowrap',fontFamily:item.family,fontWeight:item.weight,color:'#242424',left:(tr.x-end.x)+'px',top:(tr.y-end.y)+'px',fontSize:parseFloat(getComputedStyle(title).fontSize)*scale+'px'})
+   box.append(text);document.body.append(box);overlays.push(box)
+   animations.push(box.animate([{transform:`translate3d(${item.rect.x}px,${item.rect.y}px,0)`,width:item.rect.width+'px',height:item.rect.height+'px',opacity:1},{transform:`translate3d(${end.x}px,${end.y}px,0)`,width:end.width+'px',height:end.height+'px',opacity:1}],{duration,easing}))
+   animations.push(text.animate([{left:(item.titleRect.x-item.rect.x)+'px',top:(item.titleRect.y-item.rect.y)+'px',fontSize:item.font+'px'},{left:(tr.x-end.x)+'px',top:(tr.y-end.y)+'px',fontSize:parseFloat(getComputedStyle(title).fontSize)*scale+'px'}],{duration,easing}))
+   animations.push(box.animate([{opacity:1},{opacity:0}],{delay:260,duration:80,fill:'forwards'}))
   })
-  const active=animations.slice()
-  await Promise.allSettled(active.map(a=>a.finished))
-  if(animations===active)return
-  if(active.every(a=>animations.includes(a)))cleanup()
+  const page=document.querySelector(`.slidev-page-${to.params.no}`)
+  const svg=page?.querySelector('.cognition-theory')
+  if(svg)animations.push(svg.animate([{opacity:0},{opacity:1}],{delay:150,duration:180,fill:'backwards'}))
+  await Promise.allSettled(animations.map(a=>a.finished))
+  if(version===ownVersion)cleanup()
  })
 }

@@ -1,13 +1,15 @@
 import captions from './captions.json';
 import {mountChapterDiamonds} from './chapter-diamonds.js';
+const sceneSteps=new Map();
 // Shared port, intentionally separate from each framework's navigation.
-export async function mountFixture(root, id) {
-  const markup = await fetch(`/scenes/${id}.html?v=20261116-r3`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
+export async function mountFixture(root, id, navigation={}) {
+  const markup = await fetch(`/scenes/${id}.html?v=20261116-r4`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
+  if(!root.isConnected)return null;
   root.innerHTML = markup.replace(/<section\b/g,'<div').replace(/<\/section>/g,'</div>');
   const scene = root.querySelector('.slide');
   mountChapterDiamonds(root,id);
   const firstStep=['attention','layers','agent','system'].includes(id)?-1:0;
-  let step = firstStep;let active=true;
+  let step = sceneSteps.get(id)??firstStep;let active=true;
   const syncLayer=()=>{const frame=root.querySelector('#layer-live-frame');if(frame?.contentWindow)frame.contentWindow.postMessage({type:'deck-layer-playback',playing:active&&step===0},location.origin);};
   let titles=['01 原子图元','02 组合 Pattern','03 框架画布 · Pass Error Cases'];
   const descriptions=['固定对象语义','组织关系与联动','保留上下文，按需核查'];
@@ -38,7 +40,7 @@ export async function mountFixture(root, id) {
     cards.forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
     const before=cards.map(el=>el.getBoundingClientRect());
     const previous=step;
-    step=Math.max(firstStep,Math.min(max,n));scene.dataset.direction=step<previous?'back':'forward';scene.dataset.depth=step>=3?'detail':'overview';scene.dataset.step=String(step);scene.dataset.chapterReady='true';
+    step=Math.max(firstStep,Math.min(max,n));sceneSteps.set(id,step);scene.dataset.direction=step<previous?'back':'forward';scene.dataset.depth=step>=3?'detail':'overview';scene.dataset.step=String(step);scene.dataset.chapterReady='true';
     const caption=root.querySelector('[data-caption]');if(caption&&captions[id]?.[step])caption.textContent=captions[id][step];
     runtime.update(step,model);
     syncLayer();
@@ -52,11 +54,26 @@ export async function mountFixture(root, id) {
       for(const [b,i] of [0,60].entries())root.querySelector(`[data-readout="${b}"]`).textContent=String(window.ScaleModel.element(model,i).y);
     }
   }
+  scene.__deckAdvance=direction=>{
+    if(!isCurrent()||!((direction>0&&step<max)||(direction<0&&step>firstStep)))return false;
+    render(step+direction);return true;
+  };
   buttons.children[0].onclick=()=>render(step-1);buttons.children[1].onclick=()=>render(step+1);
-  render(firstStep);
+  render(step);
   const boundDocs=new Set();
-  function isCurrent(){if(root.closest('.slidev-page'))return active;const section=root.closest('.reveal .slides > section');return !!section?.classList.contains('present');}
-  function onKey(event){if(!isCurrent()||event.ctrlKey||event.metaKey||event.altKey||event.target.closest('input,textarea,select,[contenteditable="true"],.cm-editor'))return;const direction=event.key==='ArrowRight'?1:event.key==='ArrowLeft'?-1:0;if(!direction)return;if((direction>0&&step<max)||(direction<0&&step>firstStep)){event.preventDefault();event.stopImmediatePropagation();render(step+direction);}else if(event.currentTarget!==document){event.preventDefault();document.dispatchEvent(new KeyboardEvent('keydown',{key:event.key,bubbles:true}));}}
+  function isCurrent(){const host=root.closest('.slidev-page');if(host){const no=Number(host.className.match(/slidev-page-(\d+)/)?.[1]);const current=Number(location.pathname.match(/\/(\d+)\/?$/)?.[1]);return no===current&&root.isConnected;}const section=root.closest('.reveal .slides > section');return !!section?.classList.contains('present');}
+  function onKey(event){
+    if(!isCurrent()||event.ctrlKey||event.metaKey||event.altKey||event.target?.closest?.('input,textarea,select,[contenteditable="true"],.cm-editor'))return;
+    const direction=event.key===' '&&event.shiftKey?-1:['ArrowRight','ArrowDown','PageDown',' '].includes(event.key)?1:['ArrowLeft','ArrowUp','PageUp'].includes(event.key)?-1:0;
+    if(!direction)return;
+    if((direction>0&&step<max)||(direction<0&&step>firstStep)){
+      event.preventDefault();event.stopImmediatePropagation();render(step+direction);
+    }else if(event.currentTarget!==document){
+      event.preventDefault();event.stopImmediatePropagation();
+      if(direction>0)navigation.next?.();else navigation.prev?.();
+    }
+  }
+
   function onClick(event){
     if(!isCurrent()||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||step>=max)return;
     const target=event.target;
@@ -66,7 +83,7 @@ export async function mountFixture(root, id) {
   }
   document.addEventListener('click',onClick,true);
   function bind(doc){if(!doc||boundDocs.has(doc))return;doc.addEventListener('keydown',onKey,true);boundDocs.add(doc);}
-  bind(document);
+  if(!root.closest('.slidev-page'))bind(document);
   const frames=[...root.querySelectorAll('iframe')];
   const onLoad=event=>{try{bind(event.target.contentDocument);syncLayer()}catch{}};
   frames.forEach(frame=>{frame.addEventListener('load',onLoad);try{bind(frame.contentDocument)}catch{}});
