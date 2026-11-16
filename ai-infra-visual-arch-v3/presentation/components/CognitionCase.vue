@@ -1,10 +1,13 @@
 <script setup>
-import {ref,onMounted,onBeforeUnmount,computed} from 'vue'
+import {useEntrance} from './useEntrance'
+useEntrance()
+import {ref,onMounted,onBeforeUnmount,computed,watch} from 'vue'
 import {useNav,useSlideContext} from '@slidev/client'
 const frame=ref(null)
 const {next,prev,currentPage}=useNav()
 const {$page}=useSlideContext()
 const active=computed(()=>currentPage.value===$page.value)
+watch(active,value=>frame.value?.contentWindow?.setCaseActive?.(value))
 const cleanups=[]
 function key(event){
  if(!active.value||!['ArrowLeft','ArrowRight'].includes(event.key)||event.altKey||event.ctrlKey||event.metaKey)return
@@ -28,4 +31,4 @@ function bind(win){
 onMounted(()=>{window.addEventListener('keydown',key,true)})
 onBeforeUnmount(()=>{window.removeEventListener('keydown',key,true);cleanups.forEach(fn=>fn())})
 </script>
-<template><iframe ref="frame" src="/cases/transformer-cognition-case.html?v=cognition-link-5" title="认知机制在 Transformer 图元中的应用" @load="bind(frame.contentWindow)" /></template>
+<template><iframe ref="frame" src="/cases/transformer-cognition-case.html?v=20261116-r3" title="认知机制在 Transformer 图元中的应用" @load="bind(frame.contentWindow);frame.contentWindow?.setCaseActive?.(active)" /></template>

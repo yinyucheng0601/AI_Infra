@@ -1,4 +1,6 @@
 <script setup>
+import {useEntrance} from './useEntrance'
+useEntrance()
 import DesignBasisHeader from './DesignBasisHeader.vue'
 import {computed,onMounted,onBeforeUnmount,ref,unref} from 'vue'
 import {useNav,useSlideContext} from '@slidev/client'

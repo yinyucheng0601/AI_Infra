@@ -6,13 +6,42 @@ export function useCognitionContinuity(){
  if(installed.has(router)||typeof document==='undefined')return
  installed.add(router)
  let overlays=[],animations=[]
+ let stepTransition=null,finishStep=null
+ const clickStep=route=>Number(route.query.clicks||0)
+ const isStepPair=(to,from)=>String(to.params.no)===String(from.params.no)&&clickStep(to)!==clickStep(from)
+ // Slidev's native transition covers page changes, but skips click states on one page.
+ // Hold this route boundary so the same five HTML cards are captured before/after.
+ router.beforeResolve((to,from)=>{
+  if(!isStepPair(to,from)||cards(from.params.no).length!==5||!document.startViewTransition||matchMedia('(prefers-reduced-motion: reduce)').matches)return
+  stepTransition?.skipTransition()
+  finishStep?.()
+  document.documentElement.dataset.cognitionContinuity='true'
+  let releaseRoute
+  const routeReady=new Promise(resolve=>releaseRoute=resolve)
+  const rendered=new Promise(resolve=>finishStep=resolve)
+  const transition=document.startViewTransition(()=>{releaseRoute();return rendered})
+  stepTransition=transition
+  transition.finished.catch(()=>{}).finally(()=>{
+   if(stepTransition!==transition)return
+   stepTransition=null;finishStep=null
+   delete document.documentElement.dataset.cognitionContinuity
+  })
+  return routeReady
+ })
+ router.afterEach(async()=>{
+  if(!finishStep)return
+  const finish=finishStep
+  await nextTick()
+  await new Promise(resolve=>requestAnimationFrame(resolve))
+  finish()
+ })
  const cleanup=()=>{overlays.forEach(n=>n.remove());overlays=[];animations.forEach(a=>a.cancel());animations=[]}
- const cards=no=>Array.from(document.querySelectorAll(`[data-slidev-no="${no}"] [data-cognition-card]`)).filter(el=>el.getBoundingClientRect().width>0)
+ const cards=no=>Array.from(document.querySelectorAll(`.slidev-page-${no} [data-cognition-card]`)).filter(el=>el.getBoundingClientRect().width>0)
  let captured=[]
  router.beforeEach((to,from)=>{
   cleanup();captured=[]
   if('startViewTransition' in document||matchMedia('(prefers-reduced-motion: reduce)').matches)return
-  const old=cards(from.params.no),isPair=old.length===5&&Math.abs(Number(to.params.no)-Number(from.params.no))===1
+  const old=cards(from.params.no),isPair=old.length===5&&(isStepPair(to,from)||Math.abs(Number(to.params.no)-Number(from.params.no))===1)
   if(!isPair)return
   captured=old.map(el=>({node:el.cloneNode(true),rect:el.getBoundingClientRect(),size:getComputedStyle(el.querySelector('h3')).fontSize}))
  })

@@ -2,7 +2,7 @@ import captions from './captions.json';
 import {mountChapterDiamonds} from './chapter-diamonds.js';
 // Shared port, intentionally separate from each framework's navigation.
 export async function mountFixture(root, id) {
-  const markup = await fetch(`/scenes/${id}.html?v=20261116-r2`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
+  const markup = await fetch(`/scenes/${id}.html?v=20261116-r3`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
   root.innerHTML = markup.replace(/<section\b/g,'<div').replace(/<\/section>/g,'</div>');
   const scene = root.querySelector('.slide');
   mountChapterDiamonds(root,id);
@@ -71,5 +71,5 @@ export async function mountFixture(root, id) {
   const onLoad=event=>{try{bind(event.target.contentDocument);syncLayer()}catch{}};
   frames.forEach(frame=>{frame.addEventListener('load',onLoad);try{bind(frame.contentDocument)}catch{}});
   root.dataset.ready='true';
-  return {step:render,setActive(value){active=value;scene.dataset.active=String(value);syncLayer();}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
+  return {step:render,setActive(value){active=value;scene.dataset.active=String(value);syncLayer();if(value&&id==='domain-theory'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const els=[...root.querySelectorAll('.domain-inputs article'),root.querySelector('.domain-outcome'),root.querySelector('.domain-agent')].filter(Boolean);els.forEach((el,i)=>el.animate([{opacity:0,translate:'0 8px'},{opacity:1,translate:'0 0'}],{duration:400,delay:100+i*100,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));}}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
 }

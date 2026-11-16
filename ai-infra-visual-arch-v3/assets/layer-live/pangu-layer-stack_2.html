@@ -135,7 +135,16 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 </style>
 <link rel="stylesheet" href="layer-front.css">
 <link rel="stylesheet" href="layer-stack-face.css">
-</head>
+<style>
+body.architecture-only{background:#111}
+.architecture-only main{padding:0;display:block}
+.architecture-only main>:not(.workspace-split),.architecture-only .workspace-split>:not(.atlas-pane),.architecture-only .atlas-pane>:not(.view),.architecture-only .view>:not(#scene){display:none!important}
+.architecture-only .workspace-split,.architecture-only .atlas-pane,.architecture-only .view{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;display:block!important}
+.architecture-only #scene{position:absolute!important;inset:0;width:100%;height:100%;min-height:0;max-height:none;pointer-events:none;transform:none!important}
+.architecture-only .ground-rail,.architecture-only #guides,.architecture-only #flow-ports,.architecture-only #side-rms,.architecture-only .layer-rms-value,.architecture-only .layer-rms-label{display:none!important}
+.architecture-only *{animation:none!important;transition:none!important}
+.architecture-only .plane .outline{stroke:#666!important;stroke-width:1!important;fill:#131313!important}
+</style></head>
 <body>
 <main>
 <header class="compact-header"><h1>Layer Atlas <span>/ 92B Omni MoE</span></h1><span class="run-context">Step 1280</span></header>
@@ -174,6 +183,9 @@ html,body{height:100%;overflow:hidden}main{height:100dvh;padding:0;display:block
 (()=>{
 'use strict';
 const NS='http://www.w3.org/2000/svg';
+const architectureOnly=new URLSearchParams(location.search).get('presentation')==='architecture';
+const architectureAutoplay=architectureOnly&&new URLSearchParams(location.search).get('autoplay')==='1';
+if(architectureOnly)document.body.classList.add('architecture-only');
 // Foreshorten the horizontal basis for perceptually narrower matrix cells.
 let projectionX=.72,projectionY=.46*projectionX;
 const planeWidth=362,planeHeight=462;
@@ -194,7 +206,7 @@ const mbTickMs=32,mbTotalTicks=4*2*49,mbFinishMs=14244;
 let stepDemo=true;
 const stepTensorCache=new Map();
 const mbFactors=[.7,.9,1.1,1.3],demoLearningRate=.01;
-let selected=0,mode='activation',scenario='propagation',showAnomaly=true;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
+let selected=0,mode='activation',scenario='propagation',showAnomaly=!architectureOnly;const layers=[],buttons=[],cells=[],groups=[],labels=[],bars=[],textures=[];let summaries=[],blocks=[],maximum=1,currentData=[],blockLimit=1;
 const modes={weight:{name:'权重',code:'W',axes:'输出维度 × 输入维度'},gradient:{name:'参数梯度',code:'dL/dW',axes:''},activation:{name:'激活',code:'H',axes:'Token × 特征维度 · 单样本示意'}};
 function el(tag,attrs={},text){const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n}
 // Neutral grayscale shared by both matrices and RMS charts; orange-red is reserved for alerts.
@@ -208,7 +220,7 @@ const displayedPositions=[],sideRmsLabels=[];
 const sideRmsGroup=document.getElementById('side-rms');
 function position(l,focus=focusPosition){
  // Keep horizontal coordinates invariant; selection only raises its layer.
- return {x:170+l*layerStepX,y:365-l*layerStepY-(l===selected?210:0)};
+ return {x:170+l*layerStepX,y:365-l*layerStepY-((!architectureOnly||architectureAutoplay)&&l===selected?210:0)};
 }
 // Test the label footprint / top-left corner against foreground parallelograms.
 // Painter order is L48 ... L0, so only lower-index planes can occlude this layer.
@@ -804,12 +816,26 @@ zoomScene.addEventListener('wheel',event=>{
  hideMagnifier();previewLayer(null);document.getElementById('hover-preview').hidden=true;
 },{passive:false});
 
-let embeddedPlayback=false;
-window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='deck-layer-playback')return;embeddedPlayback=event.data.playing===true;if(embeddedPlayback)startMB(true);else pauseMB();});
+let embeddedPlayback=false,architectureReady=false;
+window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==parent||event.data?.type!=='deck-layer-playback')return;embeddedPlayback=event.data.playing===true;if(architectureAutoplay&&!architectureReady)return;if(embeddedPlayback)startMB(true);else pauseMB();});
 async function boot(){
+ if(architectureOnly&&!architectureAutoplay){
+  stepDemo=false;showAnomaly=false;selected=-1;
+  for(const l of layers){
+   const g=groups[l];g.classList.remove('chosen','has-anomaly','preview');
+   g.querySelector('[data-matrix]').innerHTML=window.LayerStackFace.render({layer:l,mode:'activation',ready:true,detailed:false,anomalySamples:[],rms:0});
+   displayedPositions[l]=position(l);
+  }
+  paintGeometry();
+  for(const l of layers){annotation.append(labels[l]);labels[l].textContent='L'+l;labels[l].style.display=l%8===0||l===48?'':'none';labels[l].setAttribute('opacity','1');labels[l].setAttribute('font-size','24')}
+  document.getElementById('scene').setAttribute('viewBox','40 -300 2400 1370');
+  document.getElementById('scene').setAttribute('aria-label','模型的 49 层 2.5D 架构：从 L0 到 L48');
+  parent.postMessage({type:'layer-architecture-ready'},location.origin);return;
+ }
+
  const hiddenResults=await Promise.all(Array.from({length:50},(_,boundary)=>dataSource.queryHidden(queryContext(),boundary)));
  hiddenResults.forEach((result,boundary)=>{if(result.status!=='missing')hiddenSnapshots.set(boundary,result)});
- if(await syncScenarioData()){if(parent===window)startMB(true);paintGeometry();if(parent!==window)parent.postMessage({type:'layer-demo-ready'},location.origin)}
+ if(await syncScenarioData()){architectureReady=true;if(parent===window||(architectureAutoplay&&embeddedPlayback))startMB(true);paintGeometry();if(parent!==window)parent.postMessage({type:'layer-demo-ready'},location.origin)}
 }
 boot();
 })();

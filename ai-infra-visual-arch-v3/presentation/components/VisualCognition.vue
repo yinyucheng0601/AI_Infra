@@ -1,4 +1,6 @@
 <script setup>
+import {useEntrance} from './useEntrance'
+useEntrance()
 import DesignBasisHeader from "./DesignBasisHeader.vue"
 import {useCognitionContinuity} from './cognitionContinuity'
 useCognitionContinuity()
@@ -87,4 +89,9 @@ const abilities=[
 :root{--resize-dur:300ms;--resize-ease:cubic-bezier(0.22,1,0.36,1)}
 ::view-transition-group(*){animation-duration:400ms;animation-timing-function:cubic-bezier(0.22,1,0.36,1)}
 @media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation-duration:1ms!important}}
+</style>
+
+<style>
+html[data-cognition-continuity]::view-transition-old(root){animation-duration:160ms}
+html[data-cognition-continuity]::view-transition-new(root){animation-duration:220ms;animation-delay:180ms}
 </style>

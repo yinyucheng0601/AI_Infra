@@ -3,9 +3,11 @@ title: 【认知机制】从人的视知觉理解复杂计算
 layout: architecture
 embedded: true
 transition: view-transition
+clicks: 1
 ---
 
-<VisualCognition />
+<VisualCognition v-if="$clicks === 0" />
+<VisualCognitionTranslation v-else />
 
 <!--
 内容来源：ai-infra-research/docs/visual-frame.md 第二部分，五种重要能力：空间定位、视觉分组、特征识别、运动感知、视觉记忆。

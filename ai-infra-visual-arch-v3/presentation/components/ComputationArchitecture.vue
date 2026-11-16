@@ -1,4 +1,6 @@
 <script setup>
+import {useEntrance} from './useEntrance'
+useEntrance()
 import {ref,onMounted,onBeforeUnmount} from 'vue'
 import DesignBasisHeader from './DesignBasisHeader.vue'
 import ComputationMechanisms from './ComputationMechanisms.vue'
@@ -18,7 +20,7 @@ onMounted(()=>{document.addEventListener('pointerdown',dismiss);window.addEventL
 onBeforeUnmount(()=>{document.removeEventListener('pointerdown',dismiss);window.removeEventListener('keydown',onKey,true)})
 </script>
 <template>
-<DesignBasisHeader title="计算、访存、通信、同步与调度共同决定执行与性能" />
+<DesignBasisHeader title="【计算机制】计算、访存、通信、同步与调度共同决定执行与性能" />
 <svg class="computation-story" viewBox="25 160 1270 610" role="img" aria-label="计算机制与运行行为"><ComputationMechanisms @open-hardware="openHardware" /></svg>
 <aside v-if="hardwareOpen" class="hardware-popover" role="region" :aria-label="hardware+' 硬件结构预览'">
 <header><strong>Core · AIC / AIV</strong><button title="关闭硬件结构面板" aria-label="关闭硬件结构面板" @click="hardwareOpen=false">×</button></header>
