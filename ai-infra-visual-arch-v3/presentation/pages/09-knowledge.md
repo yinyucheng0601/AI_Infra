@@ -1,4 +1,6 @@
 ---
+chapterLabel: 1 设计依据与任务
+chapterLabelEn: DOMAIN KNOWLEDGE
 title: 【领域知识】多对象、跨层级与语义关系
 layout: architecture
 embedded: true
@@ -7,8 +9,7 @@ embedded: true
 <KnowledgeArchitecture />
 
 <!--
-第一项设计依据：系统中有哪些计算对象，对象之间有什么语义关系。
-六类知识对象使用既有导图与浮层，保留原布局、图元与交互。
-图元与导图来源见 knowledgeGlyphManifest.json、public/knowledge-mindmap/provenance.json。
-iframe 内方向键通过 knowledge-map-slide-nav 接续整页翻页，不再切换 Tab。
+不管是开发一个小算子，还是让一个 DeepSeek 这样的大模型跑起来，背后都涉及大量专业知识。过去，开发者需要学透这些类目，凭经验把这些知识关联起来，才能理解计算过程发生了什么。
+
+对设计师来说，我们也需要从这些领域知识入手，梳理计算中有哪些基本对象、层级和关系，思考如何把它们转化为一套可复用的视觉积木。
 -->

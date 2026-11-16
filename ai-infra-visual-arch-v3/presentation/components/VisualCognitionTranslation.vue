@@ -1,7 +1,6 @@
 <script setup>
+defineProps({detailOnly:Boolean})
 import DesignBasisHeader from "./DesignBasisHeader.vue"
-import {useCognitionContinuity} from './cognitionContinuity'
-useCognitionContinuity()
 import {computed,unref} from 'vue'
 import {useNav,useSlideContext} from '@slidev/client'
 const {currentSlideNo}=useNav()
@@ -12,15 +11,15 @@ const domains=[{title:'空间结构与分组',context:'Layer / Rank / Core',line
 const values=[{title:'明晰',lines:['结构可辨，异常可定位','空间定位 · 视觉分组 · 特征识别']},{title:'连贯',lines:['对象可追，上下文不断','对象连续性 · 视觉记忆']},{title:'可控',lines:['按需深入，证据可核查','有限注意 · 工作记忆 · 认知负荷']}]
 </script>
 <template>
-<DesignBasisHeader title="【认知机制】从感知基础到设计推导" />
+<DesignBasisHeader v-if="!detailOnly" title="【认知机制】从感知基础到设计推导" />
 <svg viewBox="-20 -27 1360 790" role="img" aria-label="从感知基础到领域转译与体验准则" class="cognition-theory">
 <defs><filter id="translation-shadow" x="-15%" y="-15%" width="130%" height="140%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#242424" flood-opacity="0.07"/></filter></defs>
 <g font-family="sans-serif" fill="#242424">
 
 <g class="translation-content" transform="translate(0,12)">
-<text x="0" y="140" class="label">01 / 感知基础</text>
+<g v-if="!detailOnly"><text x="0" y="140" class="label">01 / 感知基础</text>
 <foreignObject v-for="(a,i) in senses" :key="a[0]" :x="150+i*237" y="112" width="222" height="70" overflow="visible"><div xmlns="http://www.w3.org/1999/xhtml" class="sense-summary t-resize" :data-cognition-card="i" :style="{viewTransitionName:shared?'cognition-card-'+i:'none'}"><h3 :style="{viewTransitionName:shared?'cognition-title-'+i:'none'}">{{a[0]}}</h3><p>{{a[1]}}</p></div></foreignObject>
-<text x="150" y="207" class="body" fill="#727272">↓ 视觉编码需要对应真实的计算关系</text>
+</g><text x="150" y="207" class="body" fill="#727272">↓ 视觉编码需要对应真实的计算关系</text>
 <g transform="translate(0,-20)"><text x="0" y="276" class="label">02 / 领域转译</text>
 <g v-for="(d,i) in domains" :key="d.title" :transform="`translate(${150+i*395},242)`"><rect width="380" height="278" rx="12" fill="#fff" filter="url(#translation-shadow)"/><text x="18" y="34" class="ability-title" style="font-size:24px">{{d.title}}</text><text x="18" y="66" class="body" fill="#727272">{{d.context}}</text><text x="18" y="231" class="body">{{d.lines[0]}}</text><text x="18" y="256" class="body">{{d.lines[1]}}</text></g>
 <!-- Topology expresses containment and allocation without treating Rank and Core as the same entity. -->

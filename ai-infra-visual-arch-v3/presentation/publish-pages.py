@@ -3,7 +3,7 @@ from pathlib import Path
 import re
 import subprocess
 import json
-RELEASE = "20261116-r4"
+RELEASE = "20261116-r5"
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT.parent / "ppt"

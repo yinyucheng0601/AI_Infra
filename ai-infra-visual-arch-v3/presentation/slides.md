@@ -25,10 +25,6 @@ src: ./pages/13-cognition-case.md
 ---
 
 ---
-src: ./pages/14-agent-visual-shift.md
----
-
----
 src: ./pages/03-language.md
 ---
 

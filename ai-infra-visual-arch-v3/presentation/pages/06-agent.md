@@ -1,6 +1,9 @@
 ---
+chapterLabel: 3.3 人机协同方法 / 介入
+chapterLabelEn: DECISION SUPPORT / CONTROL
 layout: concept
 embedded: true
+clicks: 6
 ---
 
 <DeckScene scene="agent" title-html="以可计算交互&lt;em&gt;支持人机协同验证&lt;/em&gt;" subtitle-html="以 Scale 为例：两批输入共用一个倍率。把倍率从 −1 改为 1，核查输出变化，再交回算式与配置。" />

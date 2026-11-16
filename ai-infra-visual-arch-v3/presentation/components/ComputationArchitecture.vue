@@ -1,6 +1,4 @@
 <script setup>
-import {useEntrance} from './useEntrance'
-useEntrance()
 import {ref,onMounted,onBeforeUnmount} from 'vue'
 import DesignBasisHeader from './DesignBasisHeader.vue'
 import ComputationMechanisms from './ComputationMechanisms.vue'

@@ -1,7 +1,8 @@
 <template>
 <div class="method-page">
 <CollaborationFrame color="#d3d3d3" label="人机协同方法" />
-<header><small>人机协同方法 / HUMAN–AGENT COLLABORATION</small><h1>聚焦问题，理解证据，介入并验证</h1><p>人明确判断与行动，Agent 组织证据并执行；阶段成果持续传递，必要时返回核查。</p></header>
+<div class="method-brand">3 人机协同方法<span>HUMAN–AGENT COLLABORATION</span></div>
+<header><h1>聚焦问题，理解证据，介入并验证</h1><p>人明确判断与行动，Agent 组织证据并执行；阶段成果持续传递，必要时返回核查。</p></header>
 <svg viewBox="0 0 1440 720" role="img" aria-label="Focus、Uncover、Intervene 三钻人机协同方法及返回核查闭环">
 <defs><marker id="method-return" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#929ba4" stroke-width="1.6"/></marker></defs>
 <g font-family="sans-serif" fill="#17242e">
@@ -44,5 +45,13 @@ const principles=[{name:'证据驱动',desc:'按判断需要展开证据',color:
 </script>
 
 <style scoped>
-.method-page{width:100%;height:100%;position:relative;padding:40px 54px 58px;background:#f5f5f7;box-sizing:border-box}header small{font-size:15px;letter-spacing:2px;color:#677482}header h1{font-size:38px;margin:16px 0 10px;line-height:1.2;font-weight:600}header p{font-size:19px;color:#677482;margin:0}svg{width:100%;height:calc(100% - 130px);display:block;overflow:visible}
+/* Match the 3.1–3.3 chapter headers on the 1440 × 810 Slidev canvas. */
+.method-page{width:100%;height:100%;position:relative;background:#f5f5f7;box-sizing:border-box}
+.method-brand{position:absolute;left:53.875px;right:53.875px;top:36.859375px;font-size:12px;font-weight:500;font-family:SFMono-Regular,Consolas,monospace;line-height:normal;letter-spacing:.12em;color:#3f4952}
+.method-brand span{float:right;font-size:10px;color:#737e89}
+header{position:absolute;left:53.875px;right:53.875px;top:79.796875px}
+header h1{font:600 38.88px/1.16 "PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;color:#13191e;margin:0 0 12.15px}
+header p{font-size:14.832px;line-height:1.7;color:#77818b;margin:0}
+.method-page>svg:not(.collaboration-frame){position:absolute;top:162.6px;left:54px;width:calc(100% - 108px);height:calc(100% - 228px);display:block;overflow:visible}
+
 </style>

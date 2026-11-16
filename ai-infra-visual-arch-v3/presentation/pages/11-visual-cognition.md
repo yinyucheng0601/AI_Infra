@@ -1,19 +1,21 @@
 ---
+chapterLabel: 1 设计依据与任务
+chapterLabelEn: VISUAL COGNITION
 title: 【认知机制】从人的视知觉理解复杂计算
 layout: architecture
 embedded: true
-transition: view-transition
+transition: fade
 clicks: 1
 ---
 
-<VisualCognition v-if="$clicks === 0" />
-<VisualCognitionTranslation v-else />
+<CognitionTheory />
 
 <!--
-内容来源：ai-infra-research/docs/visual-frame.md 第二部分，五种重要能力：空间定位、视觉分组、特征识别、运动感知、视觉记忆。
-科学表述参考 AI_Infra_Visual_Cognition_Review_Revised.md；五种能力为面向设计任务的综合归纳，不是研究中的标准能力模型。
-分组必须对应真实归属；跨层派生实体通过来源映射关联，不用视觉连续性冒充同一实体。
-图中 DMA 的 t0–t2 仅表达时序关系，不含实测性能值。动态过程应可暂停回放，定量比较保留共同时间轴。
-研究依据：Palmer 1992；Cleveland & McGill 1984；Heer & Bostock 2010；Baldonado et al. 2000；Sweller et al. 2019；Tversky et al. 2002。
-五种能力与三原则的衔接属于设计综合推导。
+前面讲了计算领域的复杂性。对设计师来说，问题不只是界面够不够美观、功能够不够完善，而是这些复杂关系有没有符合人的基本认知方式。
+
+我们可以借鉴一些成熟的视觉感知规律。比如人擅长通过空间位置和分组理解结构，通过形状和差异识别对象，通过变化感知理解动态过程。
+
+结合计算领域的特点，我们可以把这些规律转化为具体的视觉表达，让开发者能够在同一个视觉空间中，理解原本需要在代码、日志和指标之间反复切换才能建立的关系。
+
+最终，我们希望形成一套**明晰、连贯、可控**的视觉表达，并以此作为计算领域视觉设计的基础体验标准。
 -->

@@ -1,6 +1,9 @@
 ---
+chapterLabel: 3.2 人机协同方法 / 理解
+chapterLabelEn: DECISION SUPPORT / CONTINUITY
 layout: concept
 embedded: true
+clicks: 6
 ---
 
 <DeckScene scene="layers" subtitle-html="Layer Stack：从模型到局部采样，随尺度改变表达，保留对象身份、关系与证据引用。" />

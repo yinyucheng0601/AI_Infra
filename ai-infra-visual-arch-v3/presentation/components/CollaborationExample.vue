@@ -16,4 +16,4 @@ watch(isSlideActive,sync)
 onMounted(()=>window.addEventListener('message',navigate))
 onBeforeUnmount(()=>window.removeEventListener('message',navigate))
 </script>
-<template><iframe ref="frame" src="/agent-human-collaboration-16x9.html?v=20261116-r4" title="Human × Agent 可核查、可接管的协作过程" style="position:absolute;inset:0;width:100%;height:100%;border:0" @load="sync" /></template>
+<template><iframe ref="frame" src="/agent-human-collaboration-16x9.html?v=20261116-r5&amp;deck=1" title="Human × Agent 可核查、可接管的协作过程" style="position:absolute;inset:0;width:100%;height:100%;border:0" @load="sync" /></template>

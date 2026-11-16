@@ -1,21 +1,33 @@
 import captions from './captions.json';
 import {mountChapterDiamonds} from './chapter-diamonds.js';
 const sceneSteps=new Map();
+const sceneSources=import.meta.glob('./scenes/*.html',{query:'?raw',import:'default',eager:true});
 // Shared port, intentionally separate from each framework's navigation.
 export async function mountFixture(root, id, navigation={}) {
-  const markup = await fetch(`/scenes/${id}.html?v=20261116-r4`).then(r=>{if(!r.ok)throw new Error(`Scene ${id}: ${r.status}`);return r.text()});
+  const markup=sceneSources[`./scenes/${id}.html`];
+  if(!markup)throw new Error(`Unknown scene: ${id}`);
   if(!root.isConnected)return null;
-  root.innerHTML = markup.replace(/<section\b/g,'<div').replace(/<\/section>/g,'</div>');
+  const template=document.createElement('template');
+  template.innerHTML=markup.replace(/<section\b/g,'<div').replace(/<\/section>/g,'</div>');
+  // A fixed page only needs its own live canvas, not hidden canvases from other steps.
+  for(const frame of template.content.querySelectorAll('iframe')){
+    const n=navigation.fixedStep;
+    const unused=n!==undefined&&((['attention','layers'].includes(id)&&n!==0)
+      ||(id==='system'&&!frame.closest(['.asset-glyph','.asset-pattern','.asset-framework'][n]||'.no-live-canvas')));
+    if(navigation.preview||unused)frame.removeAttribute('src');
+  }
+  root.replaceChildren(template.content);
   const scene = root.querySelector('.slide');
   mountChapterDiamonds(root,id);
+  if(navigation.fixedStep!==undefined||navigation.initialStep!==undefined)scene.dataset.step=String(navigation.fixedStep??navigation.initialStep);
   const firstStep=['attention','layers','agent','system'].includes(id)?-1:0;
-  let step = sceneSteps.get(id)??firstStep;let active=true;
+  let step = navigation.fixedStep??navigation.initialStep??sceneSteps.get(id)??firstStep;let active=true;
   const syncLayer=()=>{const frame=root.querySelector('#layer-live-frame');if(frame?.contentWindow)frame.contentWindow.postMessage({type:'deck-layer-playback',playing:active&&step===0},location.origin);};
   let titles=['01 原子图元','02 组合 Pattern','03 框架画布 · Pass Error Cases'];
   const descriptions=['固定对象语义','组织关系与联动','保留上下文，按需核查'];
-  function renderTitle(){if(id!=='system'||step<0||step>2)return;const title=root.querySelector('[data-series-title]'),description=root.querySelector('[data-series-description]');if(title)title.textContent=titles[step];if(description)description.textContent=descriptions[step];}
+  function renderTitle(){if(id!=='system')return;if(step===3){root.querySelector('.launch-head .title').textContent='用 Skill 约束可视化生成与核查';root.querySelector('.launch-head .subtitle').textContent='从工程问题出发，选择最小充分的表达，交付可回查的视图。';return;}if(step<0||step>2)return;const title=root.querySelector('[data-series-title]'),description=root.querySelector('[data-series-description]');if(title)title.textContent=titles[step];if(description)description.textContent=descriptions[step];}
 
-  const max = ({summary:4,system:2,language:4,attention:5,layers:5,agent:5})[id]??0;
+  const max = ({summary:4,system:3,language:5,attention:5,layers:5,agent:5})[id]??0;
   const {createSceneRuntime}=await import('./scene-runtime.js');
   const runtime=await createSceneRuntime(root,scene,id);
   scene.dataset.active='true';
@@ -38,7 +50,7 @@ export async function mountFixture(root, id, navigation={}) {
   function render(n) {
     const cards=id==='language'?[...root.querySelectorAll('.principle-card')]:[];
     cards.forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
-    const before=cards.map(el=>el.getBoundingClientRect());
+    const before=navigation.fixedStep===undefined?cards.map(el=>el.getBoundingClientRect()):[];
     const previous=step;
     step=Math.max(firstStep,Math.min(max,n));sceneSteps.set(id,step);scene.dataset.direction=step<previous?'back':'forward';scene.dataset.depth=step>=3?'detail':'overview';scene.dataset.step=String(step);scene.dataset.chapterReady='true';
     const caption=root.querySelector('[data-caption]');if(caption&&captions[id]?.[step])caption.textContent=captions[id][step];
@@ -46,7 +58,7 @@ export async function mountFixture(root, id, navigation={}) {
     syncLayer();
     renderTitle();
     buttons.children[0].disabled=step===firstStep;buttons.children[1].disabled=step===max;
-    if(cards.length){const focus=[-1,1,0,0,2,-1][step];cards.forEach(el=>el.classList.toggle('is-focused',Number(el.dataset.module)===focus));if(step!==previous&&!matchMedia('(prefers-reduced-motion:reduce)').matches)cards.forEach((el,i)=>{const a=before[i],b=el.getBoundingClientRect();if(a.width&&b.width)el.animate([{transform:`translate(${a.left-b.left}px,${a.top-b.top}px) scale(${a.width/b.width},${a.height/b.height})`},{transform:'none'}],{duration:850,easing:'cubic-bezier(.22,1,.36,1)'});});}
+    if(cards.length){const focus=[-1,1,0,0,2,-1][step];cards.forEach(el=>el.classList.toggle('is-focused',Number(el.dataset.module)===focus));if(navigation.fixedStep===undefined&&step!==previous&&!matchMedia('(prefers-reduced-motion:reduce)').matches)cards.forEach((el,i)=>{const a=before[i],b=el.getBoundingClientRect();if(a.width&&b.width)el.animate([{transform:`translate(${a.left-b.left}px,${a.top-b.top}px) scale(${a.width/b.width},${a.height/b.height})`},{transform:'none'}],{duration:250,easing:'cubic-bezier(.22,1,.36,1)'});});}
     if(model) {
       model.s[0]=step>=2?1:-1;
       root.querySelector('[data-scale-value]').textContent=String(model.s[0]);
@@ -55,6 +67,7 @@ export async function mountFixture(root, id, navigation={}) {
     }
   }
   scene.__deckAdvance=direction=>{
+    if(navigation.fixedStep!==undefined||navigation.nativeClicks)return false;
     if(!isCurrent()||!((direction>0&&step<max)||(direction<0&&step>firstStep)))return false;
     render(step+direction);return true;
   };
@@ -66,6 +79,10 @@ export async function mountFixture(root, id, navigation={}) {
     if(!isCurrent()||event.ctrlKey||event.metaKey||event.altKey||event.target?.closest?.('input,textarea,select,[contenteditable="true"],.cm-editor'))return;
     const direction=event.key===' '&&event.shiftKey?-1:['ArrowRight','ArrowDown','PageDown',' '].includes(event.key)?1:['ArrowLeft','ArrowUp','PageUp'].includes(event.key)?-1:0;
     if(!direction)return;
+    if(navigation.fixedStep!==undefined||navigation.nativeClicks){event.preventDefault();event.stopImmediatePropagation();
+      if(event.key==='ArrowDown'||event.key==='ArrowRight'&&event.shiftKey)navigation.nextSlide?.();
+      else if(event.key==='ArrowUp'||event.key==='ArrowLeft'&&event.shiftKey)navigation.prevSlide?.();
+      else direction>0?navigation.next?.():navigation.prev?.();return;}
     if((direction>0&&step<max)||(direction<0&&step>firstStep)){
       event.preventDefault();event.stopImmediatePropagation();render(step+direction);
     }else if(event.currentTarget!==document){
@@ -75,11 +92,13 @@ export async function mountFixture(root, id, navigation={}) {
   }
 
   function onClick(event){
+    if(navigation.fixedStep!==undefined||navigation.nativeClicks)return;
     if(!isCurrent()||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||step>=max)return;
     const target=event.target;
     if(!root.contains(target)||target.closest('button,a,input,textarea,select,[contenteditable="true"],[role="button"],[role="tab"],.trial-controls,svg,canvas,iframe,.data-cell,[data-index]'))return;
     if(window.getSelection()?.toString())return;
-    event.preventDefault();event.stopImmediatePropagation();render(step+1);
+    event.preventDefault();event.stopImmediatePropagation();
+    if(id==='language'&&navigation.next)navigation.next();else render(step+1);
   }
   document.addEventListener('click',onClick,true);
   function bind(doc){if(!doc||boundDocs.has(doc))return;doc.addEventListener('keydown',onKey,true);boundDocs.add(doc);}
@@ -88,5 +107,5 @@ export async function mountFixture(root, id, navigation={}) {
   const onLoad=event=>{try{bind(event.target.contentDocument);syncLayer()}catch{}};
   frames.forEach(frame=>{frame.addEventListener('load',onLoad);try{bind(frame.contentDocument)}catch{}});
   root.dataset.ready='true';
-  return {step:render,setActive(value){active=value;scene.dataset.active=String(value);syncLayer();if(value&&id==='domain-theory'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const els=[...root.querySelectorAll('.domain-inputs article'),root.querySelector('.domain-outcome'),root.querySelector('.domain-agent')].filter(Boolean);els.forEach((el,i)=>el.animate([{opacity:0,translate:'0 8px'},{opacity:1,translate:'0 0'}],{duration:400,delay:100+i*100,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));}}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
+  return {step:render,setActive(value){if(active===value)return;active=value;scene.dataset.active=String(value);syncLayer();if(value&&id==='domain-theory'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const els=[...root.querySelectorAll('.domain-inputs article'),root.querySelector('.domain-outcome'),root.querySelector('.domain-agent')].filter(Boolean);els.forEach((el,i)=>el.animate([{opacity:0,translate:'0 8px'},{opacity:1,translate:'0 0'}],{duration:400,delay:100+i*100,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));}}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
 }

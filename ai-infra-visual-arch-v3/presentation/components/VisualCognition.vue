@@ -1,9 +1,7 @@
 <script setup>
-import {useEntrance} from './useEntrance'
-useEntrance()
+const props=defineProps({compact:Boolean})
+const keywords=['位置 · 顺序','邻近 · 边界','形状 · 差异','连续 · 转换','锚点 · 记忆']
 import DesignBasisHeader from "./DesignBasisHeader.vue"
-import {useCognitionContinuity} from './cognitionContinuity'
-useCognitionContinuity()
 import {computed,unref} from 'vue'
 import {useNav,useSlideContext} from '@slidev/client'
 const {currentSlideNo}=useNav()
@@ -18,8 +16,8 @@ const abilities=[
 ]
 </script>
 <template>
-<DesignBasisHeader title="【认知机制】从人的视知觉理解复杂计算" subtitle="人的认知优势，是视觉组织的依据：让用户先识别结构与变化，再理解计算关系。" />
-<svg viewBox="-20 -27 1360 790" role="img" aria-label="视觉认知理论：空间定位、视觉分组、特征识别、变化感知、对象连续性" class="cognition-theory">
+<DesignBasisHeader :title="compact?'【认知机制】从感知基础到设计推导':'【认知机制】从人的视知觉理解复杂计算'" :subtitle="compact?undefined:'人的认知优势，是视觉组织的依据：让用户先识别结构与变化，再理解计算关系。'" />
+<svg viewBox="-20 -27 1360 790" role="img" aria-label="视觉认知理论：空间定位、视觉分组、特征识别、变化感知、对象连续性" class="cognition-theory" :class="{compact}">
 <defs>
  <filter id="cognition-card-shadow" x="-15%" y="-15%" width="130%" height="140%" color-interpolation-filters="sRGB">
   <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#242424" flood-opacity="0.07"/>
@@ -28,11 +26,11 @@ const abilities=[
 <g font-family="sans-serif" fill="#242424">
 
 
- <text x="0" y="260" class="label">01 / 感知基础</text>
- <foreignObject v-for="(a,i) in abilities" :key="a.name" :x="150+i*237" y="225" width="222" height="294" overflow="visible">
+ <text x="0" y="260" class="label cognition-label">01 / 感知基础</text>
+ <foreignObject v-for="(a,i) in abilities" :key="a.name" :x="150+i*237" y="225" width="222" height="420" overflow="visible" class="cognition-card-position">
  <div xmlns="http://www.w3.org/1999/xhtml" class="sense-card t-resize" :data-cognition-card="i" :style="{viewTransitionName:shared?'cognition-card-'+i:'none'}">
  <h3 :style="{viewTransitionName:shared?'cognition-title-'+i:'none'}">{{a.name}}</h3>
- <p>{{a.ability[0]}}<br/>{{a.ability[1]}}</p>
+ <p class="sense-description">{{a.ability[0]}}<br/>{{a.ability[1]}}</p><p class="sense-keywords">{{keywords[i]}}</p>
  <svg viewBox="0 0 196 132" class="sense-figure" aria-hidden="true">
 <g v-if="i===0"><g transform="translate(8,8)">
   <text x="25" y="14" class="tiny">Core 0</text><text x="102" y="14" class="tiny">Core 1</text>
@@ -68,15 +66,15 @@ const abilities=[
  </g>
 </g>
  </svg></div></foreignObject>
- <text x="150" y="575" class="heading">理论来源</text>
+ <g class="foundation-sources"><text x="150" y="575" class="heading">理论来源</text>
  <text x="150" y="610" class="source-note" fill="#727272">知觉分组：Palmer（1992） · 图形感知：Cleveland &amp; McGill（1984）、Heer &amp; Bostock（2010）</text>
  <text x="150" y="640" class="source-note" fill="#727272">变化与动画：Tversky 等（2002） · 多视图与对象关联：Baldonado 等（2000）</text>
-</g>
+</g></g>
 </svg>
 </template>
 <style scoped>
 .source-note{font-size:13px;fill:#727272;font-weight:400}
-.cognition-theory{width:100%;height:100%;background:#f5f5f5}.label{font-size:18px;font-weight:600}.title{font-size:26px;font-weight:600}.intro{font-size:17px;fill:#727272}.ability-title{font-size:26px;font-weight:600}.heading{font-size:20px;font-weight:600}.body{font-size:16px}.small{font-size:13px;fill:#727272}.tiny{font-size:12px}.principle{font-size:17px;font-weight:600;fill:#646464}
+.cognition-theory{width:100%;height:100%;background:transparent}.label{font-size:18px;font-weight:600}.title{font-size:26px;font-weight:600}.intro{font-size:17px;fill:#727272}.ability-title{font-size:26px;font-weight:600}.heading{font-size:20px;font-weight:600}.body{font-size:16px}.small{font-size:13px;fill:#727272}.tiny{font-size:12px}.principle{font-size:17px;font-weight:600;fill:#646464}
 
 .sense-card{box-sizing:border-box;width:222px;height:auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 3px 10px #0000000d;color:#242424;font-family:sans-serif}
 .sense-card h3{font-size:26px;font-weight:600;line-height:1.3;margin:0 0 16px;white-space:nowrap}
@@ -84,6 +82,19 @@ const abilities=[
 .sense-figure{display:block;width:100%;height:auto;aspect-ratio:196/132;margin-top:24px;overflow:visible}
 .t-resize{transition:width var(--resize-dur) var(--resize-ease),height var(--resize-dur) var(--resize-ease);will-change:width,height}
 @media(prefers-reduced-motion:reduce){.t-resize{transition:none!important}}
+
+.cognition-card-position,.cognition-label{transition:transform 380ms cubic-bezier(.22,1,.36,1)}
+.compact .cognition-card-position{transform:translateY(-101px)}
+.compact .cognition-label{transform:translateY(-108px)}
+.sense-card{position:relative;interpolate-size:allow-keywords;transition:height 380ms cubic-bezier(.22,1,.36,1),padding 380ms cubic-bezier(.22,1,.36,1);overflow:hidden}
+.compact .sense-card{height:70px;padding:12px 18px}
+.sense-card h3{transition:font-size 380ms cubic-bezier(.22,1,.36,1),line-height 380ms cubic-bezier(.22,1,.36,1),margin 380ms cubic-bezier(.22,1,.36,1)}
+.compact .sense-card h3{font-size:20px;line-height:26px;margin-bottom:0}
+.sense-description,.sense-figure,.foundation-sources{transition:opacity 120ms ease}
+.compact :is(.sense-description,.sense-figure,.foundation-sources){opacity:0}
+.sense-card .sense-keywords{position:absolute;top:38px;left:18px;color:#727272;line-height:24px;opacity:0;transition:opacity 160ms ease}
+.compact .sense-keywords{opacity:1;transition-delay:220ms}
+@media(prefers-reduced-motion:reduce){.cognition-theory :is(.cognition-card-position,.cognition-label,.sense-card,.sense-card h3,.sense-description,.sense-figure,.sense-keywords,.foundation-sources){transition:none!important}}
 </style>
 <style>
 :root{--resize-dur:300ms;--resize-ease:cubic-bezier(0.22,1,0.36,1)}
