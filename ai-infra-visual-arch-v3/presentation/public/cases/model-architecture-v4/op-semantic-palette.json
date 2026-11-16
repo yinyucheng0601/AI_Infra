@@ -1,0 +1,21 @@
+{
+  "reference": "截屏2026-11-16 11.44.36.png",
+  "sampled": [
+    "#e08d58",
+    "#7773e6",
+    "#66bfde",
+    "#9068d6"
+  ],
+  "extended": [
+    "#20a58d"
+  ],
+  "categories": {
+    "linear": "#24a7cf",
+    "attention": "#7773e6",
+    "communication": "#24a7cf",
+    "mixing": "#9068d6",
+    "normalization": "#20a58d",
+    "routing": "#e08d58",
+    "other": "#858594"
+  }
+}

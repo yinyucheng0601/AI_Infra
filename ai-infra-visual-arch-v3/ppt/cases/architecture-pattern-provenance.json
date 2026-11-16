@@ -1,0 +1,6 @@
+{
+  "source": "ai-infra-research/patterns/model-architecture-v41/vendor",
+  "entry": "patterns/model-architecture-v41/pattern.html",
+  "query": "level=l0&layer=24&theme=dark&infoLayers=shape,precision,control",
+  "reuse": "Vendor directory with external analysis link rebased; pattern owns glyphs, zoom, pan, expand and inspector."
+}

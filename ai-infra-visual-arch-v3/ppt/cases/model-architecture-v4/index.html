@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DeepSeek V4 · Model Architecture Pattern</title>
+<link rel="stylesheet" href="vendor/tokens/foundation.css"><link rel="stylesheet" href="vendor/tokens/semantic.css"><link rel="stylesheet" href="vendor/tokens/components.css"><link rel="stylesheet" href="vendor/css/style.css">
+<link rel="stylesheet" href="vendor/patterns/model-graphviz/pattern.css"><link rel="stylesheet" href="vendor/patterns/model-architecture-training-sidecar/pattern.dv4.css"><link rel="stylesheet" href="vendor/patterns/model-architecture-v4/pattern.css?v=20261023-op-icons">
+<style>
+html,body,.v4-preview{width:100%;height:100%;margin:0;overflow:hidden}.v4-preview{display:block!important}.v4-preview__toolbar,.v4-preview__info,.pto-dv4-architecture__toolbar,.pto-dv4-architecture__footer{display:none!important}.v4-preview__stage,#v4Graph,.pto-dv4-architecture{height:100%!important}.pto-dv4-architecture__viewport{inset:0!important;height:100%!important}
+#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='value']>rect{fill:#86b451!important;fill-opacity:1!important;stroke:#B1EF6B!important}
+#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter']>rect{fill:#8d78b6!important;fill-opacity:1!important;stroke:#BCA0F3!important}
+#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='value'] .v4-report-grid>rect{fill:#B1EF6B!important;opacity:1!important}#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] .v4-report-grid>rect{fill:#BCA0F3!important;opacity:1!important}
+#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='value'] text,#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] text{fill:#101010!important;stroke:none!important;font-weight:600}
+</style><style>#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='value']>.pto-model-graphviz-node-label,#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter']>.pto-model-graphviz-node-label{font-size:22px!important}#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='value'] .v4-overlay-property,#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind='parameter'] .v4-overlay-property{font-size:17px!important}</style><style>
+.mode-control{position:fixed;left:24px;bottom:24px;z-index:50;padding:8px;background:#1c1c1cee;border-radius:22px;display:flex;gap:4px}.mode-control button{border:0;border-radius:18px;background:transparent;color:#aaa;padding:8px 14px;font:14px Inter,sans-serif;cursor:pointer}.mode-control button[aria-pressed=true]{background:#fff;color:#111}.mode-control button:focus-visible{outline:2px solid white;outline-offset:2px}.op-mode-legend{position:fixed;bottom:82px;left:28px;z-index:50;display:none;gap:10px;flex-wrap:wrap;max-width:340px;font:12px Inter,sans-serif;color:#ccc;background:#111d;padding:10px;border-radius:8px}.op-mode-legend span:before{content:'';display:inline-block;width:9px;height:9px;background:var(--c);border-radius:3px;margin-right:5px}
+html[data-view-mode=op] .op-mode-legend{display:flex}
+html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=value]>rect,html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=parameter]>rect{fill:#797979!important;stroke:#aaa!important}
+html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node .v4-report-grid>rect{fill:#aaa!important;opacity:1!important}
+html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-edge{stroke:#777!important}
+html[data-view-mode=op] #v4Graph [data-op-semantic=attention]{--op-semantic:#7773e6}
+html[data-view-mode=op] #v4Graph [data-op-semantic=linear]{--op-semantic:#24a7cf}
+html[data-view-mode=op] #v4Graph [data-op-semantic=normalization]{--op-semantic:#20a58d}
+html[data-view-mode=op] #v4Graph [data-op-semantic=routing]{--op-semantic:#e08d58}
+html[data-view-mode=op] #v4Graph [data-op-semantic=mixing]{--op-semantic:#9068d6}
+html[data-view-mode=op] #v4Graph [data-op-semantic=communication]{--op-semantic:#24a7cf}
+html[data-view-mode=op] #v4Graph [data-op-semantic=other]{--op-semantic:#858594}
+html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=compute]>rect{fill:var(--op-semantic,#aaa)!important}
+html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=compute]>.pto-model-graphviz-node-label{fill:#fff!important}
+</style><style>html[data-view-mode=op] #v4Graph [data-op-semantic=linear]{ --op-badge:#b54700; }
+html[data-view-mode=op] #v4Graph [data-op-semantic=attention]{ --op-badge:#0700c8; }
+html[data-view-mode=op] #v4Graph [data-op-semantic=communication]{ --op-badge:#008bbc; }
+html[data-view-mode=op] #v4Graph [data-op-semantic=mixing]{ --op-badge:#4508b1; }
+html[data-view-mode=op] #v4Graph [data-op-semantic=normalization]{ --op-badge:#15856e; }
+html[data-view-mode=op] #v4Graph [data-op-semantic=routing]{ --op-badge:#a41461; }
+html[data-view-mode=op] #v4Graph [data-op-semantic=other]{ --op-badge:#49495a; }
+html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=compute] .case-op-badge circle{fill:var(--op-badge,#444)!important}html[data-view-mode=op] #v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=compute] .v4-overlay-property{fill:#fff!important;opacity:.9}</style><style>
+html[data-view-mode=op] #v4Graph [data-op-semantic=routing]{--op-badge:#aa4e16}html[data-view-mode=op] #v4Graph [data-op-semantic=linear]{--op-badge:#087eaa}
+#v4Graph .pto-model-graphviz-node[data-report-kind=compute]>.pto-model-graphviz-node-type{display:none}
+#v4Graph .pto-model-graphviz-node[data-report-kind=compute] .pto-model-graphviz-toggle-hit{fill:transparent!important;stroke:none!important}
+#v4Graph .pto-model-graphviz-node[data-report-kind=compute] .pto-model-graphviz-toggle{fill:#ffffff20!important;stroke:none!important}
+#v4Graph .pto-model-graphviz-node[data-report-kind=compute] .pto-model-graphviz-toggle-icon{stroke:#fff!important}
+</style><style>#v4Graph.is-report-architecture .pto-model-graphviz-node[data-report-kind=compute]>.pto-model-graphviz-node-label{font-size:24px!important;font-weight:550}html[data-view-mode=op] #v4Graph [data-op-semantic=normalization]{--op-badge:#087b69}html[data-view-mode=op] #v4Graph [data-op-semantic=linear],html[data-view-mode=op] #v4Graph [data-op-semantic=communication]{--op-badge:#087d9f}</style><style>#v4Graph.is-report-architecture .pto-model-graphviz-cluster>rect:first-child{stroke:none!important;stroke-width:0!important;fill:#fff!important;fill-opacity:.05!important;filter:none!important}</style></head><body><main class="v4-preview">
+<header class="v4-preview__toolbar"><strong>DeepSeek V4 · 整网架构</strong>
+<button class="btn btn-ghost btn-sm" id="theme">浅色模式</button><div id="information-layers" role="group" aria-label="信息叠加"></div></header>
+<section class="v4-preview__stage"><div id="v4Graph" style="height:100%" aria-label="DeepSeek V4 整网架构图"></div>
+<button id="legend-toggle" class="btn btn-ghost v4-preview__info" aria-label="图例与源码" title="图例与源码" aria-expanded="false" aria-controls="legend-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7"/><circle cx="12" cy="7" r=".75" fill="currentColor" stroke="none"/></svg></button>
+<aside id="legend-panel" class="v4-preview__legend" aria-label="图例与源码" hidden><strong>图例与源码</strong>
+<p><i class="v4-legend-mark is-compute"></i>计算 / 聚合模块</p>
+<p><i class="v4-legend-mark is-value"></i>激活 / 中间值 / 缓存状态</p>
+<p><i class="v4-legend-mark is-parameter"></i>模型参数</p>
+<p><i class="v4-legend-mark is-flow"></i>数据传递 →</p>
+<p><i class="v4-legend-mark is-read"></i>参数读取 →</p>
+<p>单线表示张量流；四路维度由 shape 标注。＋ ×4：四路逐元素合并。Mix B 对残差流混合，HC Post 对分支输出加权。</p>
+<p>依据 model.py 与 inference-config.json；B、T 为动态维度。网格仅区分张量类型，格数不表示 shape 或实测数值。</p>
+<p>源码返回 Logits；Token 选择与回送由调用方处理。点击节点查看来源位置。</p>
+</aside><aside id="runtime-evidence" class="v4-runtime-evidence" hidden><button id="close-evidence" class="btn btn-ghost btn-sm" aria-label="关闭运行证据">×</button><div id="runtime-evidence-content"></div></aside></section>
+</main>
+<script src="vendor/patterns/op-icons/pattern.js"></script>
+<script src="vendor/patterns/model-graphviz/pattern.js"></script>
+<script src="vendor/patterns/model-architecture-v4/source-manifest.js"></script><script src="vendor/patterns/model-architecture-v4/implementation-programs.js"></script><script src="vendor/patterns/model-architecture-v4/mapping-registry.js"></script>
+<script src="vendor/patterns/model-architecture-training-sidecar/pattern.dv4-architecture-data.js"></script><script src="vendor/patterns/model-architecture-training-sidecar/pattern.dv4.js"></script>
+<script src="vendor/patterns/model-architecture-v4/pattern.js?v=20261023-op-icons"></script><script src="vendor/patterns/model-architecture-v4/information-layers.js"></script>
+<script src="vendor/patterns/model-architecture-v4/preview.js?v=20261022-refine3"></script>
+<div class="mode-control" role="group" aria-label="架构着色模式"><button data-mode="flow" aria-pressed="true">数据流</button><button data-mode="op" aria-pressed="false">计算操作</button></div><div class="op-mode-legend" aria-label="操作语义色标"><span style="--c:#7773e6">注意力</span><span style="--c:#24a7cf">线性 / 嵌入</span><span style="--c:#20a58d">归一化</span><span style="--c:#e08d58">路由 / 专家</span><span style="--c:#9068d6">混合 / 合并</span><span style="--c:#24a7cf">通信</span><span style="--c:#858594">其他 / 聚合</span></div><script>document.documentElement.dataset.viewMode='flow';document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{document.documentElement.dataset.viewMode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});</script></body></html>

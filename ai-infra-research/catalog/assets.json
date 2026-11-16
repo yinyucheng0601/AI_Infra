@@ -2,6 +2,58 @@
   "version": 1,
   "assets": [
     {
+      "id": "ai-infra-visual-framework-v2",
+      "title": "AI Infra视觉设计框架v2",
+      "type": "case",
+      "form": "设计汇报",
+      "summary": "从领域语义与视觉认知推导设计原则，结合三钻协作、执行泳道、Layer Stack 与 Scale，沉淀设计资产与 Agent 协作框架。",
+      "designValue": "把业务痛点、设计依据与具体设计响应连接成渐进式汇报，沉淀视觉设计的论证方式与演示结构。",
+      "outline": [
+        "领域知识与认知机制",
+        "Tensor / OP 设计推导与体验指导",
+        "证据驱动、认知减负、协同控制",
+        "三钻与三个交互案例",
+        "设计资产与 Design Skill",
+        "Agent 调查闭环与总体架构"
+      ],
+      "domains": [
+        "AI Infra",
+        "Visualization",
+        "Agent"
+      ],
+      "topics": [
+        "experience",
+        "visual",
+        "operators",
+        "inference"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "internal",
+      "content": "reports/ai-infra-visual-framework-v2/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-visual-arch-v3/presentation/slides.md",
+          "sha256": "9b44b4b9c55ab186cf73314cd091021125ce2d108d3d45f5d77d479f8e3e288c",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-11-16：收录当前 13 页 Slidev 汇报；原型交互、预设 Gantt 与未来 Skill 自动接入分别表述。",
+        "本轮执行构建及目录校验，视觉和交互效果由用户验收。"
+      ],
+      "related": [
+        "critical-path-swimlane",
+        "observability-design-style"
+      ],
+      "reviewedAt": "2026-11-16",
+      "author": "Yucheng"
+    },
+    {
       "id": "ai-infra-visual-review",
       "title": "AI Infra 视觉设计复盘 · Keynote",
       "type": "case",

@@ -27,7 +27,7 @@
 </g></g>
 <path d="M125 426 H140 Q150 426 157.1 418.9 L299.2 276.8 Q345 231 390.8 276.8 L689.2 575.2 Q735 621 780.8 575.2 L1079.2 276.8 Q1125 231 1170.8 276.8 L1312.9 418.9 Q1320 426 1330 426 H1345" fill="none" stroke="url(#theory-line-fade)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
 <g v-for="(s,i) in stages" :key="s.result" :transform="`translate(${345+i*390},617)`"><text text-anchor="middle" style="font-size:13px" fill="#677482">{{s.result}}</text></g>
-<text x="0" y="325" style="font-size:18px" font-weight="600">三钻模型</text><text x="0" y="353" style="font-size:13px" fill="#677482"><tspan x="0">可循环的人机协同</tspan><tspan x="0" dy="21">分析机制</tspan></text>
+<text x="0" y="325" style="font-size:18px" font-weight="600">人机协同</text><text x="0" y="353" style="font-size:13px" fill="#677482"><tspan x="0">可循环的三钻模型</tspan><tspan x="0" dy="21">分析机制</tspan></text>
 <g v-for="(x,i) in [540,930]" :key="x" :transform="`translate(${x},426)`"><circle r="25" fill="#f0f1f3"/><path d="M-10 -10L10 10M-10 10L10 -10" stroke="#000" stroke-width="1.8" fill="none"/></g>
 <g v-for="(s,i) in principles" :key="s.name" :fill="i<2 ? '#fff' : '#17242e'" :style="{color:i<2 ? '#fff' : '#17242e'}" :transform="`translate(${150+i*390},166)`"><rect width="365" height="72" rx="12" :fill="s.color"/><g transform="translate(18,13)" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" v-html="principleIcons[i]"/><text x="52" y="31" style="font-size:20px" font-weight="600">{{s.name}}</text><text x="18" y="56" style="font-size:15px">{{s.desc}}</text></g>
 <text x="0" y="207" style="font-size:18px" font-weight="600">设计原则</text>

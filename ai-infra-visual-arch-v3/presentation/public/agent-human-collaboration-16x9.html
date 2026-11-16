@@ -162,6 +162,23 @@
   .loop-context[hidden]{display:none}
 .gantt-loop-edge{position:absolute;inset:0;z-index:5;pointer-events:none;height:66px}.gantt-loop-edge svg{width:100%;height:66px}.gantt-loop-edge[hidden]{display:none}
 .rows.loop-mode .span-row,.rows.loop-mode .bar-track{height:26px}
+body[data-ablation="lean"] .mast p{display:block}
+/* Match the P8 header coordinates on the 1600-unit artboard. */
+.mast{top:36px;height:155px}
+.eyebrow{font-size:13.6px;font-weight:500;letter-spacing:.12em}
+.mast h1{font-size:43.2px;font-weight:650;line-height:1.25;letter-spacing:-.03em;margin:33px 0 14px}
+.mast p{font-size:19.2px;letter-spacing:0}
+.journey,body[data-ablation="lean"] .journey{top:205px}
+.body-grid,body[data-ablation="lean"] .body-grid{top:260px;height:578px}
+body[data-ablation="lean"] .rows{height:390px}
+body[data-ablation="lean"] .span-row,body[data-ablation="lean"] .bar-track{height:30px}
+body[data-ablation="lean"] .rows.loop-mode .span-row,body[data-ablation="lean"] .rows.loop-mode .bar-track{height:23px}
+
+.mast{top:36px}
+.mast-main{max-width:1472px;width:100%}
+.eyebrow{font:500 12.48px/1.4 SFMono-Regular,Consolas,monospace;letter-spacing:.17em}
+.mast h1{position:absolute;top:33.653px;margin:0;font:600 43.2px/1.16 "PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;letter-spacing:-.04em}
+.mast p{position:absolute;top:101.5px;font-size:16.32px;line-height:1.5;letter-spacing:.01em}
 </style>
 </head>
 <body>
@@ -169,11 +186,12 @@
   <header class="mast">
     <div class="mast-main">
       <div class="eyebrow">HUMAN × AGENT · INTERACTION MODEL</div>
-      <h1>让 Agent 的执行，成为可核查、可接管的过程</h1>
-      <p>Agent 持续调查与组织证据；人在关键节点理解依据、修正方向并决定下一步。</p>
+      <h1>从资产到执行：人机协同持续推进调查</h1>
+      <p>在 Agent 工程调查中，通过证据交接、人工决策和执行验证持续推进任务。</p>
     </div>
-    <div class="mast-no"><b>04</b><small>EXPERIENCE DESIGN</small></div>
+    <div class="mast-no"><b>09</b><small>HUMAN × AGENT</small></div>
   </header>
+<div style="position:absolute;bottom:14px;left:48px;font-size:15px;color:#657180">当前：预设协作流程　·　下一步：接通 Design Skill，以新证据驱动 Pattern 选择与视图更新</div>
   <nav class="journey" aria-label="三钻人机协作阶段">
     <button class="phase focus" data-phase="focus" type="button">
       <span class="phase-name">Focus</span>

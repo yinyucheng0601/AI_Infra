@@ -1,4 +1,5 @@
 ---
+title: 【认知机制】从人的视知觉理解复杂计算
 layout: architecture
 embedded: true
 transition: view-transition

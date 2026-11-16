@@ -13,7 +13,7 @@ export async function mountFixture(root, id) {
   const descriptions=['固定对象语义','组织关系与联动','保留上下文，按需核查'];
   function renderTitle(){if(id!=='system'||step<0||step>2)return;const title=root.querySelector('[data-series-title]'),description=root.querySelector('[data-series-description]');if(title)title.textContent=titles[step];if(description)description.textContent=descriptions[step];}
 
-  const max = ['domain-theory','agenda'].includes(id)?0:id==='summary'?4:id==='system'?3:id==='language'?4:5;
+  const max = ['domain-theory','agenda'].includes(id)?0:id==='summary'?4:id==='system'?2:id==='language'?4:5;
   const {createSceneRuntime}=await import('./scene-runtime.js');
   const runtime=await createSceneRuntime(root,scene,id);
   scene.dataset.active='true';
@@ -57,11 +57,19 @@ export async function mountFixture(root, id) {
   const boundDocs=new Set();
   function isCurrent(){if(root.closest('.slidev-page'))return active;const section=root.closest('.reveal .slides > section');return !!section?.classList.contains('present');}
   function onKey(event){if(!isCurrent()||event.ctrlKey||event.metaKey||event.altKey||event.target.closest('input,textarea,select,[contenteditable="true"],.cm-editor'))return;const direction=event.key==='ArrowRight'?1:event.key==='ArrowLeft'?-1:0;if(!direction)return;if((direction>0&&step<max)||(direction<0&&step>firstStep)){event.preventDefault();event.stopImmediatePropagation();render(step+direction);}else if(event.currentTarget!==document){event.preventDefault();document.dispatchEvent(new KeyboardEvent('keydown',{key:event.key,bubbles:true}));}}
+  function onClick(event){
+    if(!isCurrent()||event.button!==0||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||step>=max)return;
+    const target=event.target;
+    if(!root.contains(target)||target.closest('button,a,input,textarea,select,[contenteditable="true"],[role="button"],[role="tab"],.trial-controls,svg,canvas,iframe,.data-cell,[data-index]'))return;
+    if(window.getSelection()?.toString())return;
+    event.preventDefault();event.stopImmediatePropagation();render(step+1);
+  }
+  document.addEventListener('click',onClick,true);
   function bind(doc){if(!doc||boundDocs.has(doc))return;doc.addEventListener('keydown',onKey,true);boundDocs.add(doc);}
   bind(document);
   const frames=[...root.querySelectorAll('iframe')];
   const onLoad=event=>{try{bind(event.target.contentDocument);syncLayer()}catch{}};
   frames.forEach(frame=>{frame.addEventListener('load',onLoad);try{bind(frame.contentDocument)}catch{}});
   root.dataset.ready='true';
-  return {step:render,setActive(value){active=value;scene.dataset.active=String(value);syncLayer();}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
+  return {step:render,setActive(value){active=value;scene.dataset.active=String(value);syncLayer();}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
 }

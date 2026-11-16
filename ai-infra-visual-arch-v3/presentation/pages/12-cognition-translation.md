@@ -1,6 +1,8 @@
 ---
+title: 【认知机制】从感知基础到设计推导
 layout: architecture
 embedded: true
+hideInToc: true
 ---
 
 <VisualCognitionTranslation />

@@ -1,0 +1,66 @@
+{
+  "id": "model-architecture-v4",
+  "name": "DeepSeek V4 Model Architecture",
+  "type": "hybrid",
+  "description": "Standalone extraction of the user-approved V4 Mapping Explorer whole-model graph.",
+  "source": {
+    "classification": "hybrid-pattern",
+    "originalModule": "pangu-moe-trainviz/architecture/deepseek_v4_flash_csa/workbench.html",
+    "patternHtml": "patterns/model-architecture-v4/pattern.html",
+    "patternCss": "patterns/model-architecture-v4/pattern.css",
+    "renderScript": "patterns/model-architecture-v4/pattern.js",
+    "visualContract": "Shared Graphviz geometry and anchored expansion; L0 folds Attention/MoE internals while retaining both mHC residual paths. Flash report presentation uses neutral computation, green value/state grids, purple parameter grids and dashed parameter reads. Main and residual tensor flows use single connectors; Mix B is a vertical text annotation. Report layout packs sublayers with 48px clear main-node gaps and fits expanded containers to visible descendants. Tensor grids have 2px channels and 8px border insets; unselected compute pills have no border. Preview legend uses an info icon button.",
+    "parityNote": "Original module imports shared renderer and CSS. Supporting registry files are frozen V4 source snapshots; compare hashes before updating either. Shared model-graphviz and DV4 sidecar remain dependencies."
+  },
+  "globalApi": "window.PtoV4ModelArchitecturePattern",
+  "legacyAlias": "window.PtoCsaImplementationPattern",
+  "requiredApis": [
+    "render(root, {modelGraph:true,level,initialTheme,onEvent})",
+    "controller.setRootFolded(boolean)",
+    "controller.setAllCompounds(boolean)",
+    "controller.fit({whole:true})",
+    "controller.setTheme(theme)",
+    "controller.getState()",
+    "controller.destroy()"
+  ],
+  "allowedOverrides": [
+    "host dimensions",
+    "initialTheme",
+    "l1/l2 initial level",
+    "onEvent selection callback",
+    "sourceGraph/sourceGraphUrl for existing L3 consumers"
+  ],
+  "forbiddenOverrides": [
+    "Rebuilding SVG node/edge geometry in the preview",
+    "Changing model facts while extracting presentation",
+    "Copying V4 facts into V4.1",
+    "Adding synthetic implementation/runtime mappings"
+  ],
+  "useWhen": [
+    "previewing the approved V4 whole-model architecture alone",
+    "reusing Mapping Explorer graph behavior without its implementation/source panes"
+  ],
+  "limitations": [
+    "Source references are metadata; source files are not bundled in this preview.",
+    "Flash layer 2 is calibrated against the local model.py and inference-config.json; runtime values are not collected.",
+    "V4-specific fixture, not a generic schema adapter."
+  ],
+  "fixtures": {
+    "source-manifest.js": "58fd2a6eae18242235cd467906663711759087c0ac33cdad111be0cd602b4e19",
+    "implementation-programs.js": "4add35dc2eb56cc839c30fc50341ceb7118c3803cb865db8892a013cb0dd06a2",
+    "mapping-registry.js": "a5134ef26d0a75b81fd9319f158e710c1570a1463d4675e777235043b9f51638"
+  },
+  "layoutRouting": {
+    "expanded": "Three branch columns; persistent states beside compute flow",
+    "ports": "Independent ports with aligned local paths preferred",
+    "routing": "Orthogonal obstacle avoidance; no shared segments",
+    "validation": "report-layout.test.cjs checks 63 expansion combinations for invalid routes, shared segments and node intersections"
+  },
+  "collection": {
+    "status": "reviewed",
+    "reviewedAt": "2026-10-22",
+    "entry": "index.html",
+    "sourceRepository": "pto-design-system",
+    "snapshotManifest": "source-manifest.json"
+  }
+}

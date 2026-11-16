@@ -1,4 +1,5 @@
 <script setup>
+import DesignBasisHeader from "./DesignBasisHeader.vue"
 import {useCognitionContinuity} from './cognitionContinuity'
 useCognitionContinuity()
 import {computed,unref} from 'vue'
@@ -15,6 +16,7 @@ const abilities=[
 ]
 </script>
 <template>
+<DesignBasisHeader title="【认知机制】从人的视知觉理解复杂计算" subtitle="人的认知优势，是视觉组织的依据：让用户先识别结构与变化，再理解计算关系。" />
 <svg viewBox="-20 -27 1360 790" role="img" aria-label="视觉认知理论：空间定位、视觉分组、特征识别、变化感知、对象连续性" class="cognition-theory">
 <defs>
  <filter id="cognition-card-shadow" x="-15%" y="-15%" width="130%" height="140%" color-interpolation-filters="sRGB">
@@ -22,8 +24,8 @@ const abilities=[
  </filter>
 </defs>
 <g font-family="sans-serif" fill="#242424">
- <text x="0" y="44" class="title">从人的视知觉出发：如何让复杂计算变得可理解？</text>
- <text x="0" y="85" class="intro">人的认知优势，是视觉组织的依据：让用户先识别结构与变化，再理解计算关系。</text>
+
+
  <text x="0" y="260" class="label">01 / 感知基础</text>
  <foreignObject v-for="(a,i) in abilities" :key="a.name" :x="150+i*237" y="225" width="222" height="294" overflow="visible">
  <div xmlns="http://www.w3.org/1999/xhtml" class="sense-card t-resize" :data-cognition-card="i" :style="{viewTransitionName:shared?'cognition-card-'+i:'none'}">
@@ -65,12 +67,13 @@ const abilities=[
 </g>
  </svg></div></foreignObject>
  <text x="150" y="575" class="heading">理论来源</text>
- <text x="150" y="610" class="body" fill="#727272">知觉分组：Palmer（1992） · 图形感知：Cleveland &amp; McGill（1984）、Heer &amp; Bostock（2010）</text>
- <text x="150" y="640" class="body" fill="#727272">变化与动画：Tversky 等（2002） · 多视图与对象关联：Baldonado 等（2000）</text>
+ <text x="150" y="610" class="source-note" fill="#727272">知觉分组：Palmer（1992） · 图形感知：Cleveland &amp; McGill（1984）、Heer &amp; Bostock（2010）</text>
+ <text x="150" y="640" class="source-note" fill="#727272">变化与动画：Tversky 等（2002） · 多视图与对象关联：Baldonado 等（2000）</text>
 </g>
 </svg>
 </template>
 <style scoped>
+.source-note{font-size:13px;fill:#727272;font-weight:400}
 .cognition-theory{width:100%;height:100%;background:#f5f5f5}.label{font-size:18px;font-weight:600}.title{font-size:26px;font-weight:600}.intro{font-size:17px;fill:#727272}.ability-title{font-size:26px;font-weight:600}.heading{font-size:20px;font-weight:600}.body{font-size:16px}.small{font-size:13px;fill:#727272}.tiny{font-size:12px}.principle{font-size:17px;font-weight:600;fill:#646464}
 
 .sense-card{box-sizing:border-box;width:222px;height:auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 3px 10px #0000000d;color:#242424;font-family:sans-serif}

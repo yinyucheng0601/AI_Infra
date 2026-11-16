@@ -9,7 +9,19 @@ src: ./pages/01-domain-theory.md
 ---
 
 ---
-src: ./pages/02-agenda.md
+src: ./pages/09-knowledge.md
+---
+
+---
+src: ./pages/11-visual-cognition.md
+---
+
+---
+src: ./pages/13-cognition-case.md
+---
+
+---
+src: ./pages/14-agent-visual-shift.md
 ---
 
 ---
@@ -18,10 +30,6 @@ src: ./pages/03-language.md
 
 ---
 src: ./pages/03-collaboration-method.md
----
-
----
-src: ./pages/03-collaboration-example.md
 ---
 
 ---
@@ -41,19 +49,9 @@ src: ./pages/07-system.md
 ---
 
 ---
+src: ./pages/03-collaboration-example.md
+---
+
+---
 src: ./pages/08-summary.md
 ---
-
----
-src: ./pages/11-visual-cognition.md
----
-
----
-src: ./pages/12-cognition-translation.md
----
-
----
-src: ./pages/09-knowledge.md
----
-
-
