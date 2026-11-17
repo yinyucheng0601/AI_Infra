@@ -37,7 +37,7 @@ $('detail').innerHTML=`<h3>${e.id}</h3><p>axis=${model.config.axis} → ${model.
 $('live').textContent=e.id+' = '+e.y;handoff();transform();}
 function handoff(){const t=JSON.stringify(M.context(model,selected,$('question').value),null,2);$('handoff').textContent=t;return t;}
 function transform(){$('scene').setAttribute('transform',`translate(${view.x} ${view.y}) scale(${view.s})`);$('zoom').value=Math.round(view.s*100)+'%';}
-function fit(){const w=svg.clientWidth,h=svg.clientHeight;view.s=Math.max(.12,Math.min((w-100)/1280,(h-(w<1100?330:210))/900));view.x=(w-1250*view.s)/2;view.y=w<1100?175:120;transform();}
+function fit(){const w=svg.clientWidth,h=svg.clientHeight;if(!w||!h)return;const b=$('scene').getBBox();if(!b.width||!b.height)return;const narrow=w<1100,top=narrow?165:145,bottom=narrow?160:100,pad=36;view.s=Math.max(.12,Math.min((w-pad*2)/b.width,(h-top-bottom)/b.height));view.x=(w-b.width*view.s)/2-b.x*view.s;view.y=top+(h-top-bottom-b.height*view.s)/2-b.y*view.s;transform();}
 $('configs').innerHTML=M.configs.map((c,i)=>`<button data-tip="${esc(c.label)}：axis=${c.axis}，axes_num=${c.axes_num}，scale_from_blob=${c.blob}；切换会重置参数" data-config="${i}" aria-pressed="${i===0}">${c.label}</button>`).join('');
 $('configs').onclick=ev=>{const b=ev.target.closest('[data-config]');if(!b)return;model=M.create(+b.dataset.config);document.querySelectorAll('[data-config]').forEach(x=>x.setAttribute('aria-pressed',x===b));render();};
 $('scene').onclick=ev=>{const c=ev.target.closest('[data-kind]');if(!c)return;selected=c.dataset.kind==='x'||c.dataset.kind==='y'?+c.dataset.i:M.affected(model,+c.dataset.i)[0].i;render();};
@@ -66,4 +66,5 @@ document.addEventListener('pointerout',e=>{if(tipTarget&&!tipTarget.contains(e.r
 document.addEventListener('focusin',e=>showTip(e.target.closest('[data-tip]')));
 document.addEventListener('focusout',hideTip);document.addEventListener('pointerdown',hideTip);document.addEventListener('keydown',e=>{if(e.key==='Escape')hideTip();});
 render();fit();
+new ResizeObserver(()=>requestAnimationFrame(fit)).observe(svg);
 </script><script>/* GLASS_JS */</script></html>

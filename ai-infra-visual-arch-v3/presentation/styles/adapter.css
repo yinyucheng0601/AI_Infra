@@ -58,3 +58,30 @@ nav:has(button[title="Show slide overview"]):hover,nav:has(button[title="Show sl
 
 /* Leave room for the persistent label above embedded asset titles. */
 .trial-stage #system:is([data-step="0"],[data-step="1"]) .asset-series-head{top:37px}
+
+/* Live demo states occupy the canvas; only presentation copy floats above them. */
+.trial-stage :is(#attention,#layers)[data-step="0"] .scene,
+.trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .system-scene{inset:0!important;width:100%!important;height:100%!important}
+.trial-stage :is(#attention,#layers)[data-step="0"] .case-full,
+.trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .asset-full{inset:0!important;width:100%!important;height:100%!important;padding:0!important}
+.trial-stage :is(#attention,#layers)[data-step="0"] .launch-head,
+.trial-stage #agent[data-step="0"] .launch-head,
+.trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .asset-series-head{display:block;position:absolute;top:8cqh;left:4cqw;right:auto;bottom:auto;height:auto;max-width:88cqw;background:none!important;pointer-events:none!important;z-index:120;animation:none!important;transition:opacity 400ms cubic-bezier(.22,1,.36,1)}
+.trial-stage .slide.demo-copy-dim :is(.launch-head,.asset-series-head){opacity:.5!important}
+.trial-stage :is(#attention,#layers)[data-step="0"] .case-full figcaption{display:none}
+.scale-live-demo{position:absolute;inset:0;z-index:110;display:none}
+#agent[data-step="0"] .scale-live-demo{display:block}
+.scale-live-demo iframe{display:block;width:100%;height:100%;border:0}
+#agent[data-step="0"] :is(.scale-scene,.scale-context,.scale-verification,.scale-audit-trigger,.scale-story-inspector){visibility:hidden!important}
+#system .pass-dimension{z-index:3}
+#system .pass-dimension [data-frame-target]:not([data-target-ready]){visibility:hidden}
+@media(prefers-reduced-motion:reduce){.trial-stage .slide :is(.launch-head,.asset-series-head){transition:none!important}}
+
+/* Match the deck title baseline without invisible brand rows or inherited padding. */
+.trial-stage :is(#attention,#layers,#agent)[data-step="0"] .launch-head,
+.trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .asset-series-head{top:80px;left:54px;right:54px;max-width:none;padding:0;margin:0;transform:none}
+.trial-stage :is(#attention,#layers,#agent)[data-step="0"] .launch-head .brand,
+.trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .asset-series-head small{display:none!important}
+.trial-stage :is(#attention,#layers,#agent)[data-step="0"] .launch-head .title,
+.trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .asset-series-head h2{margin:0;font-size:44px;line-height:1.18}
+.trial-stage :is(#attention,#layers,#agent)[data-step="0"] .launch-head .subtitle{display:none}

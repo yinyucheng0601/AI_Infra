@@ -66,7 +66,30 @@ export async function createSceneRuntime(root,scene,id){
  passAudit.querySelector('[data-pass-copy]').onclick=async()=>{try{await navigator.clipboard.writeText(evidence());passAudit.querySelector('output').textContent='已复制证据与调查问题'}catch{passAudit.querySelector('output').textContent='复制失败，可展开交接预览手动复制。'}};
  passAudit.querySelector('[data-pass-export]').onclick=()=>download(evidence(),'cp-01-handoff.json');
  }
- const refresh=()=>{if(id==='agent')updateScaleConnections();if(id==='layers')updateQueryLink();};
+ // Anchor presentation annotations to the original iframe controls, not guessed percentages.
+ const frameworkFrame=root.querySelector('.asset-framework iframe');
+ let frameObserver,frameMutation;
+ function syncFrameAnnotations(){
+  if(!frameworkFrame?.contentDocument)return;
+  const doc=frameworkFrame.contentDocument,win=frameworkFrame.contentWindow;
+  root.querySelectorAll('[data-frame-target]').forEach(label=>{
+   const target=doc.querySelector(label.dataset.frameTarget);
+   if(!target)return;
+   const b=target.getBoundingClientRect();if(!b.width||!b.height)return;
+   for(const [key,value] of Object.entries({x:b.left/win.innerWidth*100,y:b.top/win.innerHeight*100,w:b.width/win.innerWidth*100,h:b.height/win.innerHeight*100}))label.style.setProperty('--'+key,value+'%');
+   label.dataset.targetReady='true';
+  });
+ }
+ function bindFrameAnnotations(){
+  frameObserver?.disconnect();frameMutation?.disconnect();
+  const doc=frameworkFrame?.contentDocument;if(!doc?.body)return;
+  frameObserver=new ResizeObserver(syncFrameAnnotations);frameObserver.observe(doc.body);
+  frameMutation=new MutationObserver(syncFrameAnnotations);frameMutation.observe(doc.body,{childList:true,subtree:true});
+  syncFrameAnnotations();
+ }
+ frameworkFrame?.addEventListener('load',bindFrameAnnotations);
+ if(frameworkFrame)bindFrameAnnotations();
+ const refresh=()=>{syncFrameAnnotations();if(id==='agent')updateScaleConnections();if(id==='layers')updateQueryLink();};
  const observer=new ResizeObserver(refresh);observer.observe(root);
- return {update(n,model){step=n;currentModel=model;if(id==='agent'){scene.classList.toggle('audit-open',step===4);updateAudit()}requestAnimationFrame(refresh)},destroy(){observer.disconnect()}};
+ return {update(n,model){step=n;currentModel=model;if(id==='agent'){scene.classList.toggle('audit-open',step===4);updateAudit()}requestAnimationFrame(refresh)},destroy(){observer.disconnect();frameObserver?.disconnect();frameMutation?.disconnect();frameworkFrame?.removeEventListener('load',bindFrameAnnotations)}};
 }

@@ -23,6 +23,12 @@ export async function mountFixture(root, id, navigation={}) {
   const firstStep=['attention','layers','agent','system'].includes(id)?-1:0;
   let step = navigation.fixedStep??navigation.initialStep??sceneSteps.get(id)??firstStep;let active=true;
   const syncLayer=()=>{const frame=root.querySelector('#layer-live-frame');if(frame?.contentWindow)frame.contentWindow.postMessage({type:'deck-layer-playback',playing:active&&step===0},location.origin);};
+  let copyTimer;
+  function syncDemoCopy(){
+    clearTimeout(copyTimer);scene.classList.remove('demo-copy-dim');
+    if(active&&(['attention','layers','agent'].includes(id)&&step===0||id==='system'&&step>=0&&step<=2))
+      copyTimer=setTimeout(()=>scene.classList.add('demo-copy-dim'),3000);
+  }
   let titles=['01 原子图元','02 组合 Pattern','03 框架画布 · Pass Error Cases'];
   const descriptions=['固定对象语义','组织关系与联动','保留上下文，按需核查'];
   function renderTitle(){if(id!=='system')return;if(step===3){root.querySelector('.launch-head .title').textContent='用 Skill 约束可视化生成与核查';root.querySelector('.launch-head .subtitle').textContent='从工程问题出发，选择最小充分的表达，交付可回查的视图。';return;}if(step<0||step>2)return;const title=root.querySelector('[data-series-title]'),description=root.querySelector('[data-series-description]');if(title)title.textContent=titles[step];if(description)description.textContent=descriptions[step];}
@@ -55,6 +61,7 @@ export async function mountFixture(root, id, navigation={}) {
     step=Math.max(firstStep,Math.min(max,n));sceneSteps.set(id,step);scene.dataset.direction=step<previous?'back':'forward';scene.dataset.depth=step>=3?'detail':'overview';scene.dataset.step=String(step);scene.dataset.chapterReady='true';
     const caption=root.querySelector('[data-caption]');if(caption&&captions[id]?.[step])caption.textContent=captions[id][step];
     runtime.update(step,model);
+    syncDemoCopy();
     syncLayer();
     renderTitle();
     buttons.children[0].disabled=step===firstStep;buttons.children[1].disabled=step===max;
@@ -107,5 +114,5 @@ export async function mountFixture(root, id, navigation={}) {
   const onLoad=event=>{try{bind(event.target.contentDocument);syncLayer()}catch{}};
   frames.forEach(frame=>{frame.addEventListener('load',onLoad);try{bind(frame.contentDocument)}catch{}});
   root.dataset.ready='true';
-  return {step:render,setActive(value){if(active===value)return;active=value;scene.dataset.active=String(value);syncLayer();if(value&&id==='domain-theory'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const els=[...root.querySelectorAll('.domain-inputs article'),root.querySelector('.domain-outcome'),root.querySelector('.domain-agent')].filter(Boolean);els.forEach((el,i)=>el.animate([{opacity:0,translate:'0 8px'},{opacity:1,translate:'0 0'}],{duration:400,delay:100+i*100,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));}}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
+  return {step:render,setActive(value){if(active===value)return;active=value;scene.dataset.active=String(value);syncDemoCopy();syncLayer();if(value&&id==='domain-theory'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const els=[...root.querySelectorAll('.domain-inputs article'),root.querySelector('.domain-outcome'),root.querySelector('.domain-agent')].filter(Boolean);els.forEach((el,i)=>el.animate([{opacity:0,translate:'0 8px'},{opacity:1,translate:'0 0'}],{duration:400,delay:100+i*100,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));}}, setTitles(values){titles=titles.map((t,i)=>values[i]??t);renderTitle();}, destroy(){clearTimeout(copyTimer);document.removeEventListener('click',onClick,true);runtime.destroy();boundDocs.forEach(doc=>doc.removeEventListener('keydown',onKey,true));frames.forEach(frame=>frame.removeEventListener('load',onLoad));root.replaceChildren();}};
 }

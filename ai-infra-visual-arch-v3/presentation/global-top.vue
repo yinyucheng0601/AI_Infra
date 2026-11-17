@@ -4,12 +4,13 @@ import {useNav} from '@slidev/client'
 const {currentFrontmatter,currentSlideNo,clicks}=useNav()
 const label=computed(()=>currentFrontmatter.value.chapterLabel)
 const english=computed(()=>currentFrontmatter.value.chapterLabelEn)
+const demoOverlay=computed(()=>[8,9,10].includes(currentSlideNo.value)&&clicks.value===1 || currentSlideNo.value===11&&clicks.value>=1&&clicks.value<=3)
 const dark=computed(()=>currentSlideNo.value===5
  || currentSlideNo.value===11&&clicks.value>=1&&clicks.value<=3
  || [8,9,10].includes(currentSlideNo.value)&&clicks.value>0)
 </script>
 <template>
-<div v-show="label" class="deck-chapter-label" :class="{'on-dark':dark}" aria-label="当前章节">
+<div v-show="label" class="deck-chapter-label" :class="{'on-dark':dark,'over-demo':demoOverlay}" aria-label="当前章节">
  <span class="deck-chapter-label__text">{{label}}</span><span class="deck-chapter-label__english">{{english}}</span>
 </div>
 </template>
@@ -19,6 +20,7 @@ const dark=computed(()=>currentSlideNo.value===5
 .deck-chapter-label__english{font-size:10px;letter-spacing:.1em;color:#737e89}
 .deck-chapter-label.on-dark{color:#c6c9cc}
 .deck-chapter-label.on-dark .deck-chapter-label__english{color:#9a9ea2}
+.deck-chapter-label.over-demo{top:14px;left:auto;right:54px;gap:24px}
 /* Keep the old elements' layout space so titles and diagrams do not reflow. */
 .slidev-page :is(.trial-stage .launch-head .brand,.trial-stage .chapter-theory .theory-brand,.basis-header>small,.method-brand,.asset-series-head>div>small:first-child){visibility:hidden!important}
 </style>
