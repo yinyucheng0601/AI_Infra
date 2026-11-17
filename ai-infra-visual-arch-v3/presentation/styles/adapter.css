@@ -85,3 +85,21 @@ nav:has(button[title="Show slide overview"]):hover,nav:has(button[title="Show sl
 .trial-stage :is(#attention,#layers,#agent)[data-step="0"] .launch-head .title,
 .trial-stage #system:is([data-step="0"],[data-step="1"],[data-step="2"]) .asset-series-head h2{margin:0;font-size:44px;line-height:1.18}
 .trial-stage :is(#attention,#layers,#agent)[data-step="0"] .launch-head .subtitle{display:none}
+
+/* Keep the explanatory row above the chapter footer. */
+.chapter-diamonds .ds-reason p{font-size:22px;line-height:1.4}
+/* Match the original toolbar controls rather than scaling the audit button with canvas width. */
+.trial-stage #system .pass-audit>summary{width:36px;height:36px;min-height:0;padding:0;font-size:18px}
+.trial-stage #system .pass-audit>summary svg{width:18px;height:18px}
+.trial-stage #system .pass-audit{top:24px;right:17%}
+.trial-stage #system .pass-dimension .dimension-audit{top:24px;left:auto;right:17%;width:36px;height:36px}
+.trial-stage #system[data-step="2"] .asset-series-head{top:4px;left:54px;right:auto}
+.trial-stage #system[data-step="2"] .asset-series-head h2{font-size:28px;line-height:1.1}
+.trial-stage #system .pass-audit aside{top:46px}
+.trial-stage #system .pass-audit[open]::after{top:46px}
+
+/* Review: annotation labels sit outside the controls and source heading. */
+.trial-stage #system .pass-dimension .dimension-audit{font-size:0}
+.trial-stage #system .pass-dimension .dimension-audit::before{content:"核查";position:absolute;right:calc(100% + 6px);top:50%;transform:translateY(-50%);font-size:11px;white-space:nowrap}
+.trial-stage #system .pass-dimension [data-frame-target=".focus-heading"]{font-size:0}
+.trial-stage #system .pass-dimension [data-frame-target=".focus-heading"]::before{content:"01 对象与上下文";position:absolute;left:calc(100% + 8px);top:0;font-size:10px;white-space:nowrap}

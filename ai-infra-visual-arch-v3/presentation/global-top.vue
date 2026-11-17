@@ -10,7 +10,7 @@ const dark=computed(()=>currentSlideNo.value===5
  || [8,9,10].includes(currentSlideNo.value)&&clicks.value>0)
 </script>
 <template>
-<div v-show="label" class="deck-chapter-label" :class="{'on-dark':dark,'over-demo':demoOverlay}" aria-label="当前章节">
+<div v-show="label" class="deck-chapter-label" :class="{'on-dark':dark,'over-demo':demoOverlay,'over-framework':currentSlideNo===11&&clicks===3}" aria-label="当前章节">
  <span class="deck-chapter-label__text">{{label}}</span><span class="deck-chapter-label__english">{{english}}</span>
 </div>
 </template>
@@ -21,6 +21,7 @@ const dark=computed(()=>currentSlideNo.value===5
 .deck-chapter-label.on-dark{color:#c6c9cc}
 .deck-chapter-label.on-dark .deck-chapter-label__english{color:#9a9ea2}
 .deck-chapter-label.over-demo{top:14px;left:auto;right:54px;gap:24px}
+.deck-chapter-label.over-framework{top:auto;bottom:14px;left:54px;right:auto}
 /* Keep the old elements' layout space so titles and diagrams do not reflow. */
 .slidev-page :is(.trial-stage .launch-head .brand,.trial-stage .chapter-theory .theory-brand,.basis-header>small,.method-brand,.asset-series-head>div>small:first-child){visibility:hidden!important}
 </style>
