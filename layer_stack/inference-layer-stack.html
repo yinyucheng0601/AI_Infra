@@ -769,9 +769,35 @@ function inspectCacheToken(index,range=null){
 }
 get('kv-inspect-clear').onclick=()=>{cacheFocus=null;inspectedToken=null;inspectedRange=null;render();};
 let rankPrimary=false,selectedRank=0;
-function setRankPrimary(value){
- rankPrimary=value;document.body.classList.toggle('rank-primary',value);
- get('rank-return').hidden=!value;renderKVMemory();
+let rankSwapTransition=null;
+function setRankPrimary(value,animate=true){
+ if(value===rankPrimary)return;
+ const update=()=>{
+  rankPrimary=value;document.body.classList.toggle('rank-primary',value);
+  get('rank-return').hidden=!value;renderKVMemory();
+ };
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!animate||reduced){rankSwapTransition?.skipTransition?.();update();return;}
+ if(rankSwapTransition)return;
+ const front=document.body.classList.contains('front-view');
+ const stage=front?get('inference-front'):get('scene');
+ stage.style.viewTransitionName='rank-swap-stage';
+ if(document.startViewTransition){
+  document.body.classList.add('rank-swapping');
+  rankSwapTransition=document.startViewTransition(update);
+  rankSwapTransition.finished.catch(()=>{}).finally(()=>{
+   rankSwapTransition=null;stage.style.viewTransitionName='';document.body.classList.remove('rank-swapping');
+  });
+ }else{
+  const oldRank=get('kv-memory-graphic').getBoundingClientRect();
+  const oldStage=stage.getBoundingClientRect();update();
+  const move=(node,from)=>{
+   const to=node.getBoundingClientRect();if(!to.width||!to.height)return null;
+   return node.animate([{transformOrigin:'0 0',transform:`translate(${from.left-to.left}px,${from.top-to.top}px) scale(${from.width/to.width},${from.height/to.height})`},{transformOrigin:'0 0',transform:'none'}],{duration:value?400:350,easing:'cubic-bezier(.22,1,.36,1)'});
+  };
+  const motions=[move(get('kv-memory-graphic'),oldRank),move(stage,oldStage)].filter(Boolean);
+  rankSwapTransition={};Promise.all(motions.map(m=>m.finished.catch(()=>{}))).finally(()=>{rankSwapTransition=null;stage.style.viewTransitionName='';});
+ }
 }
 get('rank-return').onclick=()=>setRankPrimary(false);
 function renderProfileRanks(){
@@ -793,7 +819,7 @@ function renderProfileRanks(){
   const wall=g.P(0,140,height);
   return `<svg viewBox="335 220 505 610" aria-hidden="true">${body}${frame}<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-75})" fill="${ink}"><text font-size="25" font-weight="600">Rank ${rank} · 内存</text><text y="23" font-size="13">TP 2 · 结构分区</text></g>${label(30,'权重 / 运行缓冲',13)}${label(210,'KV 缓存',20)}${label(385,'可用容量待接入',13)}<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${selected} · Paged KV</text></svg>`;
  };
- if(!rankPrimary){entry.innerHTML=cube(selectedRank);entry.onclick=()=>setRankPrimary(true);target.append(entry);}
+ if(!rankPrimary){entry.innerHTML=cube(selectedRank);entry.querySelector('svg').style.viewTransitionName='rank-swap-cube';entry.onclick=()=>setRankPrimary(true);target.append(entry);}
  else {
   const pair=document.createElement('div');pair.className='rank-pair';
   for(let rank=0;rank<2;rank++){
@@ -801,7 +827,7 @@ function renderProfileRanks(){
    const heading=document.createElement('button');heading.className='rank-select';heading.textContent='Rank '+rank;
    heading.setAttribute('aria-pressed',String(selectedRank===rank));heading.setAttribute('data-tooltip','检查 Rank '+rank);
    heading.onclick=()=>{selectedRank=rank;renderKVMemory();};column.append(heading);
-   const drawing=document.createElement('div');drawing.className='rank-cube';drawing.innerHTML=cube(rank);column.append(drawing);
+   const drawing=document.createElement('div');drawing.className='rank-cube';drawing.innerHTML=cube(rank);drawing.querySelector('svg').style.viewTransitionName=rank===selectedRank?'rank-swap-cube':'rank-swap-secondary';column.append(drawing);
    const layers=document.createElement('div');layers.className='rank-layers';
    for(let layer=0;layer<40;layer++){
     const button=document.createElement('button');button.textContent='L'+layer;button.className=layer===selected&&rank===selectedRank?'current':'';
@@ -1222,7 +1248,7 @@ get('model-select').onchange=()=>{
  const resume=playback!==null;pausePlayback();
  if(viewIndex===1){viewIndex=returnView;document.body.classList.remove('front-view','request-inspecting');syncFrontVisibility();}
  modelId=get('model-select').value;model=modelSpecs[modelId];ratios=model.ratios;lastLayer=ratios.length-1;
- setRankPrimary(false);selectedRank=0;requestSteps=isQwen()?qwenRequestSteps:demoRequestSteps;requestIndex=0;paExpanded=false;paReturnCamera=null;buildRequestButtons();
+ setRankPrimary(false,false);selectedRank=0;requestSteps=isQwen()?qwenRequestSteps:demoRequestSteps;requestIndex=0;paExpanded=false;paReturnCamera=null;buildRequestButtons();
  stageStride=ratios.length;requestAxis.max=requestSteps.length*stageStride-1;
  if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;hovered=null;
  for(const group of groups)group.remove();for(const label of labels)label.remove();sideRmsGroup.replaceChildren();

@@ -97,10 +97,21 @@ main{height:100dvh}.compact-header{position:fixed;top:28px;left:32px;z-index:8;p
 .rank-layers{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}.rank-layers button{padding:7px 0;border:0;border-radius:3px;background:var(--surface);color:var(--muted);font:11px ui-monospace,monospace;cursor:pointer}.rank-layers button.current{background:#3187EC;color:white}.rank-column p{font-size:11px;color:var(--muted)}
 .rank-primary .atlas-pane .view{inset:auto 24px calc(90px + var(--token-clearance,0px)) auto;width:230px;height:180px;pointer-events:none;visibility:visible}.rank-primary #inference-front,.rank-primary .identity,.rank-primary .view-dial{visibility:hidden}
 #rank-return{position:fixed;right:24px;bottom:calc(85px + var(--token-clearance,0px));width:230px;height:185px;display:flex;align-items:flex-end;justify-content:center;z-index:20;border:0;background:transparent;color:var(--ink);padding:10px;cursor:pointer}#rank-return[hidden]{display:none}
-@media(prefers-reduced-motion:no-preference){#kv-memory{transition:inset .4s ease,width .4s ease}.atlas-pane .view{transition:width .4s ease,height .4s ease}}
+
 
 button.token-empty-slot{border:0;cursor:pointer;opacity:.32}button.token-empty-slot:hover,button.token-empty-slot:focus-visible{opacity:1;background:#3187EC;outline:none}
 
 button.token-empty-slot[data-read=true]{opacity:.75;background:var(--muted)}button.token-empty-slot[aria-pressed=true]{opacity:1;background:#3187EC}.token-page-label[aria-pressed=true]{background:var(--surface);color:var(--ink)}
 
 button.token-empty-slot[data-inspect=true]:not([aria-pressed=true]){opacity:1;background:#ccc}
+
+/* Shared snapshots move the same cube and architecture, instead of resizing layout per frame. */
+.rank-primary.front-view #inference-front{visibility:visible!important;position:fixed;inset:auto 24px calc(90px + var(--token-clearance,0px)) auto!important;width:230px!important;height:180px!important;pointer-events:none}
+.rank-primary.front-view #inference-front .architecture-nav{display:none}.rank-primary.front-view .atlas-pane .view{visibility:hidden}
+.rank-swapping #kv-memory,.rank-swapping #rank-return{pointer-events:none}
+::view-transition-group(rank-swap-cube),::view-transition-group(rank-swap-stage){animation-duration:400ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(rank-swap-cube),::view-transition-new(rank-swap-cube),::view-transition-old(rank-swap-stage),::view-transition-new(rank-swap-stage){height:100%;width:100%;object-fit:contain;animation-duration:400ms;mix-blend-mode:normal}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*){animation-duration:0s!important}}
+
+::view-transition-group(rank-swap-secondary){animation-duration:350ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
