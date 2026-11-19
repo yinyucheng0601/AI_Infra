@@ -42,3 +42,5 @@ header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.
 .expert-label{font-size:32px}.compact-expert.off-route{opacity:.62}
 
 #expert-count-input:focus-visible{outline:none}#expert-count-input:focus-visible::-webkit-slider-runnable-track{background:#bbb}
+
+body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:600px){body[data-step="7"] #token-controls{bottom:180px}}

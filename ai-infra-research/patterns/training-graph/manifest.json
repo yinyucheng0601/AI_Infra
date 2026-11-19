@@ -6,7 +6,7 @@
     "index.html": "cfc0dba1975fdba598e15f3daaf028e7688a731f783414c5b56ce7a7255d1e71",
     "canonical.js": "cfef5923432fd8a374c92cf33ce1474663a4d35f3ac7d29927a61948ac49b41a",
     "content.js": "9ff8cf48840af2f9b788a8655666c7d4ea1183cec9b76f5e8fb8af88a5388a9d",
-    "demo.css": "f30ace16aa29ab2742c3e3d751704c163415154d41349d6a60a29f4ae482cf1b",
+    "demo.css": "6f9cdfc87b921a8f927b2cb7457996ddea647b8746db4b3b8673d9c65ccb2583",
     "demo.js": "7562dece319ef1eb4b118145893c7396db03d4e163200d5aabde2b5d7fcb5daa",
     "design-tokens.css": "e34f224f6f86db4ae0bc9097ff08b98f8712b2d913e706b3a15eb2e4cdf2884e",
     "graph-layout.js": "74e22c96db79d6afe07050ba906a6a3610add70a8a38b09c5450a0d7d38ec3bc",
@@ -15,7 +15,7 @@
     "layer-stack-progress.css": "ca209226c07d63470c0b0cc9b7eb644de93c75d9eff0773cf1e1dcfad38ff15f",
     "liquid-glass.css": "70742469fd0bace18b22a97b97be7ddf2dc3344146eeecd57d9f5ab022ad8b6d",
     "liquid-glass.js": "8123f18de99d7371b68aaf66ae344bbbb6b5e4d187b6daeaf2d8759c6b1780b9",
-    "secondary.js": "9c35379e235051f42110925c247542be229be75cb889bd927593667c40155a14",
+    "secondary.js": "23a4829d25571e7531bfd3fba8c9855d9314693997207a7d20753a1461961ab8",
     "training-graph.js": "374ea44968511991750ecb0174cb5052fc5832eda424724fcbb71731db675a4b",
     "model.py": "2e1ed3e97426837d7176dc6889a08c33f863fd2e23991fdb81ebfdfaf27951a5",
     "verify-graph.cjs": "81bc9b81d19e5a2904933aedb00b81f74496114af887786aa37265fe28bd6939",
@@ -24,6 +24,6 @@
     "build-offline.py": "586e64952855c7bdbaa4545e09cfb710d65ffb122a583bbfc29ca64a052cc4ff",
     "LICENSE": "62d298ef9dab08ee1ceb20877aa4ad38c3bb71aa0cb779a8738ecfa652160052",
     "sources-audit.md": "054b79bd0a2161392c169a887ac682f14815c6334074404141acf24090c88ed0",
-    "verify-browser-experts.cjs": "166ee04e3dfc9c6d7c3dd3450803026be78743b32a3111fc6ade139bcb8878ed"
+    "verify-browser-experts.cjs": "b5ff071a73b7a19f9560291adbaa33f3be5aba56b8b9d763217b968f09b665d0"
   }
 }
