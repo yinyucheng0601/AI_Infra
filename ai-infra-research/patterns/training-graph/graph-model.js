@@ -1,11 +1,12 @@
 // Pure model/configuration layer: no DOM or SVG dependency.
-const TRAINING_MODEL=Object.freeze({tokens:8,hidden:8,ffn:16,heads:4,experts:4});
+const TRAINING_MODEL=Object.freeze({tokens:8,hidden:8,ffn:16,heads:4,defaultExperts:4});
 function deriveTrainingConfig(stage,parameters){
  if(!Number.isInteger(stage)||stage<0||stage>8)throw Error('Unknown training stage');
  if(![1,2,4].includes(parameters.tp)||![1,2,4].includes(parameters.ep??1))throw Error('Invalid parallel degree');
+ const experts=parameters.experts??4;if(![4,8,16,32,64].includes(experts))throw Error('Invalid expert count');
  const moe=stage>=7&&parameters.ffn==='moe',ep=moe&&stage>=8?parameters.ep:1;
  const tp=stage>=4?parameters.tp:1,sp=stage>=5&&(parameters.sp||moe&&ep>1)&&tp>1;
- return Object.freeze({stage,moe,ep,tp,sp,seq:TRAINING_MODEL.tokens/(sp?tp:1),detailed:stage>=1,training:stage>=2,wgrad:stage>=3,recollect:stage>=6&&sp&&parameters.cache==='shard',worldSize:tp*ep});
+ return Object.freeze({stage,experts,moe,ep,tp,sp,seq:TRAINING_MODEL.tokens/(sp?tp:1),detailed:stage>=1,training:stage>=2,wgrad:stage>=3,recollect:stage>=6&&sp&&parameters.cache==='shard',worldSize:tp*ep});
 }
 function buildTrainingRows({detailed,tp,sp,seq,moe}){
  const rows=[],byId={};
@@ -38,8 +39,8 @@ function buildTrainingRows({detailed,tp,sp,seq,moe}){
  return {rows,byId};
 }
 function trainingGraphSnapshot(config,rows,positions,edges,registry){
- return {schema:'training-graph.v1',model:TRAINING_MODEL,config,
- nodes:Object.entries(registry).map(([id,n])=>({id,label:n.title,description:n.body,kind:n.role?'tensor':rows.find(r=>r.id===id)?.kind==='moe'?'module':positions[id]?'operation':'module',shape:n.shape||null,role:n.role||null,objectId:n.objectId||id,sources:[...(n.docs||[])],layout:positions[id]||null})),
- groups:config.moe?Array.from({length:config.ep},(_,ep)=>({id:'expert-group-'+ep,parallelism:'EP',ranks:Array.from({length:config.tp},(_,tp)=>ep*config.tp+tp),experts:Array.from({length:TRAINING_MODEL.experts/config.ep},(_,i)=>ep*TRAINING_MODEL.experts/config.ep+i)})):[],
+ return {schema:'training-graph.v1',model:{...TRAINING_MODEL,experts:config.experts},config,
+ nodes:Object.entries(registry).map(([id,n])=>({id,label:n.title,description:n.body,kind:n.role?'tensor':(n.expert!==undefined||rows.find(r=>r.id===id)?.kind==='moe')?'module':positions[id]?'operation':'module',shape:n.shape||null,role:n.role||null,objectId:n.objectId||id,sources:[...(n.docs||[])],layout:positions[id]||null})),
+ groups:config.moe?Array.from({length:config.ep},(_,ep)=>({id:'expert-group-'+ep,parallelism:'EP',ranks:Array.from({length:config.tp},(_,tp)=>ep*config.tp+tp),experts:Array.from({length:config.experts/config.ep},(_,i)=>ep*config.experts/config.ep+i)})):[],
  edges:edges.map(e=>({...e})),sequence:rows.map(r=>r.id)};
 }

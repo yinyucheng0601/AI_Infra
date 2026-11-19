@@ -5,14 +5,25 @@ let graphModel=null;
 // Router inputs and weights reused from dense-ffn-to-moe-v1; pad H=3 to H=8.
 const MOE_INPUT_BASE=[[1,0,1],[0,1,0],[1,1,0],[0,0,1]];
 const MOE_WR_BASE=[[2,.1,-1,-1],[0,1.8,-1,1.2],[.2,.3,2,1.5]];
-function moeRoute(t){const input=MOE_INPUT_BASE[t%4].concat([0,0,0,0,0]);const scores=[0,1,2,3].map(e=>input.slice(0,3).reduce((s,v,j)=>s+v*MOE_WR_BASE[j][e],0));const chosen=[0,1,2,3].sort((a,b)=>scores[b]-scores[a]).slice(0,2),m=scores[chosen[0]],z=chosen.reduce((a,e)=>a+Math.exp(scores[e]-m),0);return {input,scores,chosen,alpha:chosen.map(e=>Math.exp(scores[e]-m)/z)};}
+function moeRoute(t,count=4){
+ const input=MOE_INPUT_BASE[t%4].concat([0,0,0,0,0]);
+ const scores=Array.from({length:count},(_,e)=>input.slice(0,3).reduce((s,v,j)=>s+v*(e<4?MOE_WR_BASE[j][e]:2*Math.sin((e+1)*(j+2)*1.37)),0));
+ const chosen=Array.from({length:count},(_,e)=>e).sort((a,b)=>scores[b]-scores[a]||a-b).slice(0,2),m=scores[chosen[0]],z=chosen.reduce((a,e)=>a+Math.exp(scores[e]-m),0);
+ return {input,scores,chosen,alpha:chosen.map(e=>Math.exp(scores[e]-m)/z)};
+}
+function moeStatistics(count){
+ const loads=Array(count).fill(0);for(let t=0;t<8;t++)for(const e of moeRoute(t,count).chosen)loads[e]++;
+ return {loads,active:loads.filter(n=>n>0).length,assignments:16,expertParameters:256,totalParameters:264*count,perTokenParameters:512+8*count};
+}
+
 
 function trainingGraph(){
  const config=deriveTrainingConfig(current,parameterState);
- const {moe,ep,detailed,training,wgrad,tp,sp,seq,recollect}=config;
+ const {moe,ep,experts,detailed,training,wgrad,tp,sp,seq,recollect}=config;
+ const expertLayout=layoutExpertGrid(experts,ep),stats=moeStatistics(experts);
  const cf=358,cw=moe?1850:1030,cb=moe?2600:wgrad?1702:1030,ow=256,oh=ow*64/360;
  const {rows,byId}=buildTrainingRows(config),positions={},semanticEdges=[],sides={forward:cf,backward:cb,wgrad:cw};
- const cursorY=layoutTrainingRows(rows);
+ const cursorY=layoutTrainingRows(rows,{expertLayout});
  const color=C.i;let links='',nodes='',notes='';
  function remember(id,name,body,docs,extra={}){Object.assign(registry[id],{title:name,body,docs,audited:true,...extra});}
  function edge(id,a,b,col='i',dash=false,via=null){semanticEdges.push({id,from:a.id,to:b.id,role:col,relation:'data-dependency',sourcePort:{x:a.x,y:a.y},targetPort:{x:b.x,y:b.y}});const d=via||`M${a.x} ${a.y}V${b.y}`;return `<path class="wire" data-edge="${id}" d="${d}" stroke="${C[col]}" ${dash?'stroke-dasharray="6 5"':''} marker-end="url(#m-${col})"/>`;}
@@ -23,35 +34,44 @@ function trainingGraph(){
 
  function drawMoe(r){
  const deployed=current>=8;
- const t=parameterState.token,{chosen,alpha,scores}=moeRoute(t),ys=r.y;
+ const t=parameterState.token,{chosen,alpha,scores}=moeRoute(t,experts),ys=r.y;
  // Same Top-2 / dispatch / independent expert / weighted-combine grammar as dense-ffn-to-moe-v1.
- nodes+=glyph('moe-router',cf,ys,'Router · Top-2','router',`S=A·Wr，Wr[8,4]。每个 token 选两位专家，对入选分数做 softmax。本例路由输入与 Wr 复用 Dense→MoE 报告的数值，扩展至 H=8；当前 t${t} 的分数为 [${scores.map(s=>s.toFixed(1))}]，系数由 top-2 softmax 实际计算。`,['moe']);
+ nodes+=glyph('moe-router',cf,ys,'Router · Top-2','router',`S=A·Wr，Wr[8,${experts}]。每个 token 选两位专家，对入选分数做 softmax。本例路由输入与 Wr 复用 Dense→MoE 报告的数值，扩展至 H=8；当前 t${t} 的分数为 [${scores.map(s=>s.toFixed(1))}]，系数由 top-2 softmax 实际计算。`,['moe']);
  if(deployed)nodes+=text(cf+190,ys+118,ep>1?'来源组 0 · 虚线跨组 / 实线本组':'EP=1 · 所有专家在同一 TP 组','small','start');
  nodes+=glyph('moe-dispatch',cf,ys+95,!deployed?'按专家重排 token':ep>1?'Dispatch · All-to-All':'Dispatch · 本地分组','reshape',ep>1?'EP 组之间按专家归属交换 token。每个 TP lane 与其他专家组的相同 TP lane 组成 EP 通信组。':'按专家重排 token，保留原 token 索引和合并系数；EP=1 不产生跨专家组通信。',['moe','parallel'],ep>1);
  links+=edge('moe-router-dispatch',port('moe-router',cf,ys+oh),port('moe-dispatch',cf,ys+95));
- nodes+=matrixNode('moe-router-weight',cf+240,ys-10,'Wr',[8,4],'w','Router 参数在前向中共享于所有 token；每列对应一位专家的评分。',['moe']);
+ nodes+=matrixNode('moe-router-weight',cf+240,ys-10,'Wr',[8,experts],'w','Router 参数在前向中共享于所有 token；每列对应一位专家的评分。',['moe']);
  links+=edge('moe-wr-router',port('moe-router-weight',cf+198,ys+oh/2),port('moe-router',cf+128,ys+oh/2),'w',true,`M${cf+198} ${ys+oh/2}H${cf+128}`);
  if(deployed){for(let g=0;g<ep;g++){
- const first=g*(4/ep),last=first+4/ep-1,left=cf+(first-1.5)*300+(g-(ep-1)/2)*70-150,right=cf+(last-1.5)*300+(g-(ep-1)/2)*70+150;
- notes+=`<rect class="module-frame" x="${left}" y="${ys+180}" width="${right-left}" height="370" rx="12"/>`+text(left+14,ys+200,`组 ${g} · Rank {${Array.from({length:tp},(_,i)=>g*tp+i).join(',')}}`,'small','start');
+ const members=expertLayout.cards.filter(c=>c.owner===g),left=cf+Math.min(...members.map(c=>c.x-c.width/2))-10,right=cf+Math.max(...members.map(c=>c.x+c.width/2))+10,top=ys+Math.min(...members.map(c=>c.y))-70,bottom=ys+Math.max(...members.map(c=>c.y+c.height));
+ notes+=`<rect class="module-frame" x="${left}" y="${top}" width="${right-left}" height="${bottom-top}" rx="12"/>`+text(left+14,top+20,`组 ${g} · Rank {${Array.from({length:tp},(_,i)=>g*tp+i).join(',')}}`,'small','start');
  }}
- for(let e=0;e<4;e++){
- const owner=Math.floor(e/(4/ep)),x=cf+(e-1.5)*300+(owner-(ep-1)/2)*70,y=ys+250,active=chosen.includes(e),a=active?alpha[chosen.indexOf(e)]:0;
+ for(const card of expertLayout.cards){
+ const e=card.id,owner=card.owner,x=cf+card.x,y=ys+card.y,active=chosen.includes(e),a=active?alpha[chosen.indexOf(e)]:0;
  const ranks=Array.from({length:tp},(_,i)=>owner*tp+i),remote=owner!==0;
- notes+=`<rect class="module-frame" x="${x-140}" y="${y-55}" width="280" height="300" rx="10"/>`+text(x,y-32,`专家 E${e}`,'small','middle');
+ if(expertLayout.compact){
+ const id='moe-e'+e,icon=window.PtoOpIcons.find(i=>i.id==='linear'),scale=card.width/360;
+ const body=`专家 E${e}：当前 8 token 样本分到 ${stats.loads[e]} 次调用。每位专家全局 W1[8,16]、W2[16,8]，256 个参数；${deployed?'Rank {'+ranks+'}。':''}点击查看内部计算。`;
+ nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,`<g data-kind="op" transform="translate(${x-card.width/2} ${y}) scale(${scale})">${opNode({...icon,name:''},0,0)}</g>${text(x+12,y+22,'E'+e+' · '+stats.loads[e],'text expert-label','middle')}`, '专家 E'+e,body)+'</g>';
+ remember(id,'专家 E'+e,body,['moe','linear'],{expert:e});positions[id]={x:x-card.width/2,y,width:card.width,height:64*scale};
+
+ if(active){links+=edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}H${cf-expertLayout.halfWidth+40}V${y-12}H${x}V${y}`);links+=edge('moe-return-'+e,port(id,x,y+64*scale),port('moe-combine',cf,ys+expertLayout.combineY),'i',remote,`M${x} ${y+64*scale}V${y+70}H${cf+expertLayout.halfWidth-40}V${ys+expertLayout.combineY-20}H${cf}V${ys+expertLayout.combineY}`);}
+ continue;
+ }
+ notes+=`<rect class="module-frame" x="${x-140}" y="${y-55}" width="280" height="300" rx="10"/>`+text(x,y-32,`专家 E${e} · nᵢ=${stats.loads[e]}`,'small','middle');
  const start=nodes.length;
- nodes+=glyph('moe-e'+e+'-fc1',x,y,'E'+e+' · FC1','linear',`专家 E${e} 的参数独立。${deployed?'位于 Rank {'+ranks+'}。':''}W1ᵢ[8,${16/tp}]，W2ᵢ[${16/tp},8]；专家组内 TP=${tp}。四位专家的参数相互独立。`,['moe','linear','tp']);
+ nodes+=glyph('moe-e'+e+'-fc1',x,y,'E'+e+' · FC1','linear',`专家 E${e} 的参数独立。${deployed?'位于 Rank {'+ranks+'}。':''}W1ᵢ[8,${16/tp}]，W2ᵢ[${16/tp},8]；专家组内 TP=${tp}。各专家的参数相互独立。`,['moe','linear','tp']);
  nodes+=glyph('moe-e'+e+'-gelu',x,y+65,'GeLU','activation','沿用 Dense 的 GeLU，不改变专家激活函数；Vᵢ=GELU(AᵢW1ᵢ)。',['gelu','moe']);
  nodes+=text(x,y+226,`W1ᵢ [8,${16/tp}] · W2ᵢ [${16/tp},8]`,'tiny','middle',C.w);
  nodes+=glyph('moe-e'+e+'-fc2',x,y+130,'E'+e+' · FC2','linear',`E${e}(a)=GELU(aW1ᵢ)W2ᵢ。此处保留组内各 TP lane 的部分输出，返回来源后加权合并，再由外部 TP 归约得到完整结果或 SP 分片。`,['moe','tp']);
  if(deployed&&tp>1)nodes+=text(x,y+198,'TP 部分输出 [nᵢ,8] · 外部归约','tiny','middle');
  const chunk=nodes.slice(start);nodes=nodes.slice(0,start)+`<g class="moe-expert ${active?'is-route':'off-route'}" data-expert="${e}">${chunk}</g>`;
- const id='moe-e'+e+'-fc1';links+=`<g class="${active?'is-route':'off-route'}">`+edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}V${y-18}H${x}V${y}`)+text(x,y-7,active?`t${t}${deployed?' · '+(remote?'跨组':'本组'):''} · α=${a.toFixed(2)}`:'','tiny','middle')+edge('moe-fc1-gelu-'+e,port(id,x,y+oh),port('moe-e'+e+'-gelu',x,y+65))+edge('moe-gelu-fc2-'+e,port('moe-e'+e+'-gelu',x,y+65+oh),port('moe-e'+e+'-fc2',x,y+130))+edge('moe-return-'+e,port('moe-e'+e+'-fc2',x,y+130+oh),port('moe-combine',cf,ys+580),'i',remote,`M${x} ${y+130+oh}V${ys+555}H${cf}V${ys+580}`)+'</g>';
+ const id='moe-e'+e+'-fc1';links+=`<g class="${active?'is-route':'off-route'}">`+edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}V${y-18}H${x}V${y}`)+text(x,y-7,active?`t${t}${deployed?' · '+(remote?'跨组':'本组'):''} · α=${a.toFixed(2)}`:'','tiny','middle')+edge('moe-fc1-gelu-'+e,port(id,x,y+oh),port('moe-e'+e+'-gelu',x,y+65))+edge('moe-gelu-fc2-'+e,port('moe-e'+e+'-gelu',x,y+65+oh),port('moe-e'+e+'-fc2',x,y+130))+edge('moe-return-'+e,port('moe-e'+e+'-fc2',x,y+130+oh),port('moe-combine',cf,ys+expertLayout.combineY),'i',remote,`M${x} ${y+130+oh}V${ys+expertLayout.combineY-25}H${cf}V${ys+expertLayout.combineY}`)+'</g>';
  }
- nodes+=glyph('moe-combine',cf,ys+580,ep>1?'返回 All-to-All · 加权合并':'按 token 加权合并','mix','按原 token 索引恢复顺序，rₜ=Σᵢ αₜ,ᵢ Eᵢ(aₜ)。这是专家路径合并；下方 Residual Add 才是子层残差相加。',['moe'],ep>1);
+ nodes+=glyph('moe-combine',cf,ys+expertLayout.combineY,ep>1?'返回 All-to-All · 加权合并':'按 token 加权合并','mix','按原 token 索引恢复顺序，rₜ=Σᵢ αₜ,ᵢ Eᵢ(aₜ)。这是专家路径合并；下方 Residual Add 才是子层残差相加。',['moe'],ep>1);
  // Virtual module endpoints connect the outer FFN boundary to the expanded subgraph.
- registry['module-moe']={title:'MoE FFN',body:'4 位 GeLU 专家、Top-2。输入输出保持相同隐藏维，专家选择与跨 Rank 部署是独立变量。',docs:['moe'],audited:true};
- positions['module-moe']={x:cf-740,y:ys,width:1480,height:660};
+ registry['module-moe']={title:'MoE FFN',body:`${experts} 位 GeLU 专家、Top-2。每位专家 256 个参数，输入输出保持 H=8。`,docs:['moe'],audited:true};
+ positions['module-moe']={x:cf-expertLayout.halfWidth,y:ys,width:expertLayout.halfWidth*2,height:expertLayout.height};
  }
  const roleBodies={
  'model-input-H0':'H₀ 是当前 Block 的输入。SP 开启时仅持有本 Rank 的 token 行。',
@@ -80,9 +100,9 @@ function trainingGraph(){
  }
  if(i){const prev=rows[i-1];links+=edge('f-'+prev.id+'-'+r.id,port(prev.id,cf,prev.bottom),port(r.id,cf,r.top));}
  }
- for(const [src,dst] of [['model-input-H0','module-add1'],['model-boundary-Y','module-add2']]){const a=byId[src],b=byId[dst],rail=moe&&dst==='module-add2'?cf-820:cf-220;links+=edge('residual-'+dst,port(src,cf-25,a.cy),port(dst,cf-22,b.cy),'i',false,`M${cf-25} ${a.cy}H${rail}V${b.cy}H${cf-22}`);}
- const bands=[['module-norm1','module-add1','Attention 子层'],['module-norm2','module-add2','FFN 子层']];for(const [first,last,label] of bands){const a=byId[first],b=byId[last];notes+=`<rect class="module-frame" x="${moe&&first==='module-norm2'?cf-860:cf-250}" y="${a.y-20}" width="${moe&&first==='module-norm2'?1720:550}" height="${b.bottom-a.y+40}" rx="12"/>`+text(cf-234,a.y-30,label,'small');}
- if(!detailed){graphModel={moe,ep,tp,sp,seq,rows,positions,edges:semanticEdges};graphModel.snapshot=trainingGraphSnapshot(config,rows,positions,semanticEdges,registry);return svg(notes+links+nodes,820,cursorY+30);}
+ for(const [src,dst] of [['model-input-H0','module-add1'],['model-boundary-Y','module-add2']]){const a=byId[src],b=byId[dst],rail=moe&&dst==='module-add2'?cf-expertLayout.halfWidth+20:cf-220;links+=edge('residual-'+dst,port(src,cf-25,a.cy),port(dst,cf-22,b.cy),'i',false,`M${cf-25} ${a.cy}H${rail}V${b.cy}H${cf-22}`);}
+ const bands=[['module-norm1','module-add1','Attention 子层'],['module-norm2','module-add2','FFN 子层']];for(const [first,last,label] of bands){const a=byId[first],b=byId[last];notes+=`<rect class="module-frame" x="${moe&&first==='module-norm2'?cf-expertLayout.halfWidth:cf-250}" y="${a.y-20}" width="${moe&&first==='module-norm2'?expertLayout.halfWidth*2:550}" height="${b.bottom-a.y+40}" rx="12"/>`+text(cf-234,a.y-30,label,'small');}
+ if(!detailed){graphModel={experts,stats,moe,ep,tp,sp,seq,rows,positions,edges:semanticEdges};graphModel.snapshot=trainingGraphSnapshot(config,rows,positions,semanticEdges,registry);return svg(notes+links+nodes,820,cursorY+30);}
  // Shared parameter identity is retained when TP changes shape.
  const weights={qkv:[8,24/tp],proj:[8/tp,8],...(!moe?{fc1:[8,16/tp],fc2:[16/tp,8]}:{})},inputId={qkv:sp?'full-value-f-0':'full-input-X',proj:'full-value-f-2',fc1:sp?'full-value-f-5':'full-value-f-4',fc2:'full-value-f-7'};
  const outputId={qkv:'full-value-f-1',proj:tp>1?'full-value-f-3':'model-attn-result',fc1:'full-value-f-6',fc2:tp>1?'full-value-f-8':'full-value-f-9'};
@@ -140,5 +160,5 @@ function trainingGraph(){
  }
  if(moe&&training){const r=byId['module-moe'];nodes+=glyph('moe-wgrad',cw,r.y+400,'专家 / Router WGRAD','linear','各专家保存 dispatch 后的前向输入和 GeLU 输出，计算 dW1=AᵀdU、dW2=VᵀdE；Router 参数梯度来自被选分数的 softmax 路径。每位专家的权重独立。',['moe','grad']);if(recollect){nodes+=glyph('moe-router-regather',cw,r.y+280,'AG(Aᵣ) · Router WGRAD','expand','只保存序列分片时，Router WGRAD 重新收集完整 A。专家 WGRAD 另外读取保留的 dispatch 后输入。',['moe','tp','grad'],true);links+=edge('moe-router-cache',port('full-value-f-4',cf+38,byId['full-value-f-4'].cy),port('moe-router-regather',cw-128,r.y+280+oh/2),'i',false,`M${cf+38} ${byId['full-value-f-4'].cy}H${cw-190}V${r.y+280+oh/2}H${cw-128}`);links+=edge('moe-router-cache-wgrad',port('moe-router-regather',cw,r.y+280+oh),port('moe-wgrad',cw,r.y+400));}else{const source=byId[sp?'full-value-f-5':'full-value-f-4'];links+=edge('moe-wgrad-input',port(source.id,cf+38,source.cy),port('moe-wgrad',cw-128,r.y+400+oh/2),'i',false,`M${cf+38} ${source.cy}H${cw-180}V${r.y+400+oh/2}H${cw-128}`);} links+=edge('moe-wgrad-packed',port('moe-dispatch',cf+128,r.y+95+oh/2),port('moe-wgrad',cw-128,r.y+400+oh/2),'i',false,`M${cf+128} ${r.y+95+oh/2}H${cw-220}V${r.y+400+oh/2}H${cw-128}`);links+=edge('moe-wgrad-grad',port('moe-backward',cb-128,r.y+oh/2),port('moe-wgrad',cw,r.y+400),'g',true,`M${cb-128} ${r.y+oh/2}H${cw}V${r.y+400}`);}
  const titles=text(cf,28,'Forward / 前向','text','middle')+(training?text(cb,28,'DGRAD / 输入梯度','text','middle'):'')+(wgrad?text(cw,28,'WGRAD / 参数梯度','text','middle'):'');
- graphModel={moe,ep,tp,sp,seq,rows,positions,edges:semanticEdges,weights,inputId,outputId,recollect};graphModel.focusBounds=current>=7?{x:cf-(moe?900:330),y:byId['module-norm2'].y-50,width:moe?1800:800,height:byId['model-output'].bottom-byId['module-norm2'].y+100}:null;graphModel.snapshot=trainingGraphSnapshot(config,rows,positions,semanticEdges,registry);return svg(notes+links+nodes+titles,training?cb+320:850,cursorY+30);
+ graphModel={experts,stats,moe,ep,tp,sp,seq,rows,positions,edges:semanticEdges,weights,inputId,outputId,recollect};graphModel.focusBounds=current>=7?{x:cf-(moe?expertLayout.halfWidth+50:330),y:byId['module-norm2'].y-50,width:moe?expertLayout.halfWidth*2+100:800,height:byId['model-output'].bottom-byId['module-norm2'].y+100}:null;graphModel.snapshot=trainingGraphSnapshot(config,rows,positions,semanticEdges,registry);return svg(notes+links+nodes+titles,training?cb+320:850,cursorY+30);
 }

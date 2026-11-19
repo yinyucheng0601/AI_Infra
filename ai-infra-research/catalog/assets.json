@@ -37,12 +37,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/training-graph/index.html",
-          "sha256": "c15daeaa423c5f55eb49c080b398d48fe8db57d88b337dfbe3a475450adff0f6",
+          "sha256": "cfc0dba1975fdba598e15f3daaf028e7688a731f783414c5b56ce7a7255d1e71",
           "url": null,
           "revision": null
         }
       ],
       "validation": [
+        "2026-11-19：1440×1000 浏览器验证专家数切换、64 专家阵列、点击展开、EP 联动及原生键盘调参通过；未覆盖移动端。",
+        "2026-11-19：支持 4/8/16/32/64 专家，固定专家大小与 Top-2；612 配置及参数/路由/分组检查通过。",
         "2026-11-19：324 配置、路由一致性、DOM 复用/帧调度与 TP 求导检查通过。",
         "最新浏览器视觉复验未完成；不声明实测训练性能或通用代码工程导入。"
       ],
