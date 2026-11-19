@@ -113,7 +113,7 @@ footer .evolution-bottom{align-items:flex-start}#play{align-self:flex-start;marg
 @media(min-width:601px){#stage{grid-column:1/-1;grid-row:3}#impact{position:relative;z-index:2;pointer-events:none}#impact a,#impact button{pointer-events:auto}}
 header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.context-row #rankbar{display:none}
 
-.off-route{opacity:.25}.is-route{opacity:1}#token-controls{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 52px);display:flex;gap:4px;background:#222;border-radius:30px;padding:4px}#token-controls button{font:10px ui-monospace,monospace;padding:4px 10px}#token-controls button.active{background:#eee;color:#111}#token-controls button:focus-visible{background:#777;color:white}footer .evolution-bottom{max-width:810px;flex-basis:810px}#stage-labels button{font-size:11px}@media(max-width:600px){#stage-labels button{font-size:7px}#token-controls{position:fixed;bottom:180px}#token-controls button{padding:4px 8px}}
+.off-route{opacity:.14}.is-route{opacity:1}#token-controls{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 52px);display:flex;gap:4px;background:#222;border-radius:30px;padding:4px}#token-controls button{font:10px ui-monospace,monospace;padding:4px 10px}#token-controls button.active{background:#eee;color:#111}#token-controls button:focus-visible{background:#777;color:white}footer .evolution-bottom{max-width:810px;flex-basis:810px}#stage-labels button{font-size:11px}@media(max-width:600px){#stage-labels button{font-size:7px}#token-controls{position:fixed;bottom:180px}#token-controls button{padding:4px 8px}}
 
 /* Window-sized canvas; editorial and controls are overlay surfaces. */
 #stage{position:fixed;inset:0;width:100vw;height:100svh;z-index:0;grid-column:auto;grid-row:auto;cursor:grab}#stage:active{cursor:grabbing}header,.context-row,.explanation-row{position:relative;z-index:3;pointer-events:none}header button,header a,.context-row button,.context-row a{pointer-events:auto}#impact{pointer-events:none}footer{z-index:10;pointer-events:none}footer button,footer input,footer nav,#secondary-control,#token-controls{pointer-events:auto}
@@ -122,11 +122,14 @@ header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.
 
 
 
-.compact-expert.off-route{opacity:.62}
+.compact-expert.off-route{opacity:.14}
 
 #expert-count-input:focus-visible{outline:none}#expert-count-input:focus-visible::-webkit-slider-runnable-track{background:#bbb}
 
 body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:600px){body[data-step="7"] #token-controls{bottom:180px}}
+
+/* Current token's Top-2 paths use filled emphasis, independent of inspection. */
+.moe-expert.is-route .hit [data-kind=op]>rect,.compact-expert.is-route .hit [data-kind=op]>rect{fill:#f4f4f4}.moe-expert.is-route .hit [data-kind=op] text,.compact-expert.is-route .hit [data-kind=op] text{fill:#111}
 </style></head><body>
 <header><div><h1>分布式训练</h1><small>模型 → 计算 → 通信</small></div><div id="config"></div></header>
 <div class="context-row"><div id="rankbar"></div><button id="info-icon" type="button" aria-label="图例与官方依据" aria-expanded="false" aria-controls="info-panel" data-tip="图例与官方依据"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></button></div>
