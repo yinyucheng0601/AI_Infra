@@ -2,6 +2,55 @@
   "version": 1,
   "assets": [
     {
+      "id": "training-graph",
+      "title": "分布式训练 · 计算与通信",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "从 Transformer 模型结构逐步展开训练计算、TP/SP 与 MoE/EP，调节参数观察张量、专家归属和通信路径变化。",
+      "designValue": "以稳定对象身份、渐进展开、参数轨道和自动聚焦连接模型结构、计算依赖与 Rank 部署。",
+      "outline": [
+        "模型结构 → 前向 → 输入与参数梯度",
+        "TP/SP 与缓存取数",
+        "Dense → MoE 专家展开",
+        "EP 归属与 token 路径",
+        "全窗口画布与 FFN 聚焦"
+      ],
+      "domains": [
+        "AI Infra",
+        "Distributed Training",
+        "Visualization"
+      ],
+      "topics": [
+        "training",
+        "operators",
+        "experience",
+        "visual"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "public",
+      "publicationReview": "2026-11-19：用户明确授权收录 Library / Pattern 并 push 发布。",
+      "content": "patterns/training-graph/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/training-graph/index.html",
+          "sha256": "c15daeaa423c5f55eb49c080b398d48fe8db57d88b337dfbe3a475450adff0f6",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-11-19：324 配置、路由一致性、DOM 复用/帧调度与 TP 求导检查通过。",
+        "最新浏览器视觉复验未完成；不声明实测训练性能或通用代码工程导入。"
+      ],
+      "related": [],
+      "reviewedAt": "2026-11-19",
+      "author": "Yucheng"
+    },
+    {
       "id": "ai-infra-visual-framework-v2",
       "title": "AI Infra视觉设计框架v2",
       "type": "case",

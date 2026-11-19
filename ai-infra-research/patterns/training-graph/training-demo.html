@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>分布式训练 · 从模型到通信</title>
+<style>/* Import explicitly; map to existing tokens rather than overriding global elements.
+   These are defaults, not evidence of accessibility compliance on every surface. */
+:root {
+  --ss-bg: #111111;
+  --ss-surface: #181818;
+  --ss-inspector: #202020;
+  --ss-text: #e8e8e8;
+  --ss-text-secondary: #b0b0b0;
+  --ss-text-muted: #a0a0a0;
+  --ss-divider: #383838; /* Decorative only. */
+  --ss-boundary: #858585; /* Necessary interactive boundaries. */
+  --ss-selection: #f0f0f0;
+  --ss-anomaly: #fd5644;
+  --ss-font: Arial, "Noto Sans CJK SC", sans-serif;
+  --ss-font-data: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --ss-type-focus: clamp(2.75rem, 4vw, 4.5rem);
+  --ss-type-title: clamp(1.375rem, 2vw, 2rem);
+  --ss-type-value: 0.9375rem;
+  --ss-type-label: 0.8125rem;
+  --ss-type-body: 0.875rem;
+  --ss-space-1: 4px;
+  --ss-space-2: 8px;
+  --ss-space-3: 12px;
+  --ss-space-4: 20px;
+  --ss-space-5: 32px;
+  --ss-space-6: 48px;
+  --ss-page-inset: clamp(16px, 3vw, 48px);
+  --ss-line: 1px;
+  --ss-line-focus: 2px;
+  --ss-radius-control: 2px;
+  --ss-radius-panel: 4px;
+  /* Dark spatial-canvas Liquid Glass materials. Optical parameters live in the bundled JS presets. */
+  --ss-ui-fill: rgb(26 26 26 / 28%);
+  --ss-ui-border: rgb(255 255 255 / 28%); /* Decorative, not the sole affordance. */
+  --ss-ui-blur: blur(12px); /* CSS fallback; control optical blur is 4px in JS. */
+  --ss-ui-panel-fill: rgb(26 26 26 / 94%);
+  --ss-ui-panel-border: rgb(255 255 255 / 18%);
+  --ss-ui-panel-blur: blur(18px);
+  --ss-ui-icon-fill: rgb(26 26 26 / 72%);
+  --ss-ui-icon-border: rgb(255 255 255 / 18%);
+  --ss-ui-fallback: #242424;
+  --ss-ui-radius: 999px;
+  --ss-ui-panel-radius: 20px;
+  --ss-ui-selected-fill: #ffffff;
+  --ss-ui-selected-text: #111111;
+  --ss-ui-icon-size: 18px;
+  --ss-ui-hit-size: 36px;
+  --ss-ui-touch-hit-size: 44px;
+  /* Context volumes only, not numerical data encoding. */
+  --ss-context-top: #272727;
+  --ss-context-side-light: #222222;
+  --ss-context-side-dark: #1f1f1f;
+  --ss-context-occluder-opacity: 0.25; /* Apply once to the whole group. */
+  --ss-motion-feedback: 160ms;
+  --ss-motion-structure: 320ms;
+  --ss-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ss-motion-feedback: 0ms;
+    --ss-motion-structure: 0ms;
+  }
+}
+</style><style>/* Liquid glass v2; host owns layout, radius, positioning and interaction. */
+[data-liquid-glass]{--glass-ink:#eee;--glass-fill:rgb(255 255 255 / 5%);color:var(--glass-ink);border:0}
+[data-theme=light] [data-liquid-glass]{--glass-ink:#252525;--glass-fill:transparent}
+[data-liquid-glass=control],[data-liquid-glass=icon]{background:var(--glass-fill);box-shadow:0 7px 20px rgb(0 0 0 / 8%);isolation:isolate}
+.liquid-b-shine{position:absolute!important;inset:0;display:block;pointer-events:none;border-radius:inherit;z-index:-1}
+[data-liquid-glass=control] :is(button:not([aria-pressed=true]),select,[data-liquid-readout]){color:var(--glass-ink);text-shadow:none}
+[data-liquid-glass=panel]{background:rgb(26 26 26 / 78%);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 16px 48px rgb(0 0 0 / 18%),0 3px 10px rgb(0 0 0 / 8%)}
+[data-theme=light] [data-liquid-glass=panel]{background:rgb(255 255 255 / 74%);box-shadow:0 16px 48px rgb(0 0 0 / 10%),0 3px 10px rgb(0 0 0 / 5%)}
+[data-liquid-glass=panel] :is(p,legend,[data-liquid-muted]){color:var(--glass-ink);opacity:.7}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ [data-liquid-glass]{background:#242424}
+ [data-theme=light] [data-liquid-glass]{background:#f3f3f3}
+}
+</style><style>/* Extracted from layer_stack/pangu-layer-stack_2.html bottom track, 2026-11-18. */
+.evolution-bottom{position:fixed;left:50%;right:auto;transform:translateX(-50%);bottom:24px;width:44%;background:none;border:0;padding:0;z-index:10}.bar-heading{display:none}.layer-scroll{padding:26px 0 0;overflow:visible}.layer-list{position:relative;min-width:0;display:grid;grid-template-columns:repeat(49,1fr);gap:0;touch-action:none}.layer-button{position:relative;height:38px;padding:0;background:none!important;box-shadow:none!important}.bar-track{height:5px;background:#292929;border:0!important;margin-top:5px;width:100%}.layer-bar{display:none}.layer-button[aria-pressed="true"] .bar-track{background:#eee;height:15px;margin-top:0}.layer-number{display:none;position:absolute;top:23px;font-size:11px}.layer-button:first-child .layer-number,.layer-button:last-child .layer-number,.layer-button:nth-child(9n + 1) .layer-number,.layer-button[aria-pressed="true"] .layer-number{display:block}.layer-button[aria-pressed="true"] .layer-number{top:-22px;color:#fff}.layer-button.has-alert:after{content:'';position:absolute;top:15px;left:40%;width:3px;height:3px;background:#FD5644}.layer-button:hover .bar-track{background:#999}
+.evolution-bottom{width:54%;bottom:23px}.layer-list{user-select:none}.layer-button{border-radius:0!important}.layer-button .layer-number{white-space:nowrap}.layer-button:focus-visible .bar-track{background:#bbb}.layer-button:focus-visible{outline:none}.layer-button:hover{background:none!important}.layer-number{color:#aaa}.layer-button[aria-pressed=true] .layer-number{font-size:12px}.layer-list{cursor:ew-resize}.layer-scroll{padding-top:26px} @media(max-width:760px){.evolution-bottom{width:85%;bottom:26px}}
+
+.layer-button{min-width:0;border:0;padding:0;color:#888;cursor:pointer;font:10px ui-monospace,monospace;display:flex;flex-direction:column;align-items:center;gap:9px}.bar-track{display:flex;align-items:flex-end}.evolution-bottom .layer-number{pointer-events:none}.evolution-bottom .layer-bar{display:none}
+</style><style>
+:root{--duration-fast:250ms;--duration-slow:400ms;--ease-smooth-out:cubic-bezier(.22,1,.36,1);--duration-layout:500ms;--ease-layout:cubic-bezier(.2,.7,.2,1)}
+*{box-sizing:border-box}body{margin:0;background:var(--ss-bg);color:var(--ss-text);font:14px/1.6 Inter,"PingFang SC",sans-serif;height:100svh;padding:22px 34px 18px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:10px;overflow:hidden}header{display:flex;align-items:center;justify-content:space-between;gap:20px}header small{font-size:10px;color:#aaa;letter-spacing:2px}h1{font-size:25px;font-weight:450;line-height:1.4;margin:3px 0}#config{text-align:right;font:12px/1.7 ui-monospace,monospace;color:#bbb;flex-shrink:0}#config strong{color:#eee;font-size:20px;font-weight:450}.context-row{display:flex;align-items:center;gap:24px;min-height:36px}#legend{color:#bbb;font-size:12px}#legend i{display:inline-block;width:8px;height:8px;margin-right:5px}#rankbar{display:flex;align-items:center;gap:6px}#rankbar small{color:#999;font-size:11px}#rankbar button{font-size:11px;padding:4px 10px;background:#292929}button{border:0;background:transparent;color:#bbb;cursor:pointer;font:inherit;border-radius:30px;padding:7px 12px}button.active,#rankbar button.active{background:#f0f0f0;color:#111}button:hover,button:focus-visible{background:#444;color:#fff;outline:none}button.active:hover{background:white;color:#111}button:disabled{opacity:.35;cursor:default}#compare{margin-left:auto;background:#292929;font-size:12px;white-space:nowrap}#stage{min-height:0;min-width:0;position:relative;overflow:hidden;touch-action:none}#stage>svg{width:100%;height:100%;display:block;overflow:visible}svg text{font-family:inherit}.text{font-size:18px;fill:#e8e8e8}.small{font-size:14px;fill:#bbb}.tiny{font-size:12px;fill:#bbb}.mono{font-family:ui-monospace,monospace}.wire{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.hit{cursor:pointer}.hit:hover [data-kind=op]>rect{fill:#626262}.hit.selected [data-kind=op]>rect,.hit.selected [data-kind=communication]>rect{fill:#f0f0f0}.hit.selected [data-kind] text{fill:#111}.hit.selected [data-object]>rect{fill:#eee}.hit:focus{outline:none}.hit:focus text{text-decoration:underline}.context{opacity:.18}.stage-hidden{opacity:0;pointer-events:none}.explanation-row{display:flex;gap:20px;align-items:center;justify-content:space-between;min-height:55px}#impact{display:flex;gap:20px;align-items:baseline;flex-wrap:wrap;min-width:0}#impact b{font-size:18px;font-weight:450;white-space:nowrap}#impact span{color:#bbb;font-size:12px;max-width:650px}#extension{display:flex;align-items:center;gap:4px;flex-shrink:0;font-size:10px}#extension button{font-size:10px;padding:5px 7px}#extension span{color:#999}footer{display:flex;align-items:center;gap:28px;min-height:83px}footer .evolution-bottom{position:relative;left:auto;right:auto;bottom:auto;transform:none;flex:1;width:auto;display:flex;align-items:center;gap:24px;min-width:0}#play{flex-shrink:0;display:grid;place-items:center;width:42px;height:42px;padding:11px;background:#272727;color:#eee}#play svg{width:20px;height:20px}#play path{fill:currentColor;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round}#play:focus-visible{background:#555}footer .layer-scroll{position:relative;flex:1;min-width:0;padding:12px 4px 0}footer .layer-list{height:28px}footer .layer-button{height:28px}footer .layer-number{display:none!important}#stage-labels{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));margin:0 -12px;gap:4px}#stage-labels button{padding:5px 3px;font-size:12px;white-space:nowrap;text-align:center}#stage-labels button:first-child{text-align:left}#stage-labels button:last-child{text-align:right}#stage-labels button.active{background:transparent;color:white}#stage-labels button:hover,#stage-labels button:focus-visible{background:#292929}#tools{display:flex;position:relative;border-radius:30px;padding:5px;flex-shrink:0;font-size:12px}#panel{position:fixed;right:34px;top:145px;width:330px;padding:24px;border-radius:22px;max-height:calc(100svh - 300px);overflow:auto;z-index:8}#panel h2{font-size:20px;font-weight:450;margin:0 0 12px}#panel p{color:#ccc}#close{float:right}a{color:#ddd}#tip{position:fixed;background:#333;padding:6px 10px;border-radius:6px;pointer-events:none;z-index:20;font-size:12px;max-width:260px}[hidden]{display:none!important}
+@media(max-width:1000px){body{padding:18px 22px 12px;gap:8px}.context-row{flex-wrap:wrap;gap:10px}#rankbar small{display:none}.explanation-row{align-items:flex-start;flex-direction:column;gap:5px}#impact{gap:6px}#impact span{max-width:none}#extension{align-self:flex-end}footer{gap:12px}#stage-labels button{font-size:10px}footer .evolution-bottom{gap:12px}}
+@media(max-width:600px){body{padding:12px 14px 8px;gap:6px}header{align-items:flex-start;gap:8px}header small{font-size:7px;letter-spacing:1px}h1{font-size:18px;max-width:210px}#config{font-size:8px}#config strong{font-size:10px}.context-row{gap:5px}#legend{font-size:9px;flex-basis:100%}#rankbar{gap:3px}#rankbar button{font-size:9px;padding:4px 7px}#compare{font-size:9px;padding:5px 8px}#impact b{font-size:14px}#impact span{font-size:10px;line-height:1.5}footer{display:grid;grid-template-columns:1fr;gap:2px;min-height:100px}footer .evolution-bottom{gap:10px;grid-row:2}#tools{justify-self:end;padding:2px;font-size:10px}#tools button{padding:4px 8px}#play{width:32px;height:32px;padding:8px}#stage-labels{margin:0 -5px;gap:0}#stage-labels button{font-size:8px;padding:4px 0}#panel{top:130px;right:12px;width:min(330px,calc(100vw - 24px));max-height:50svh}#extension{font-size:9px}#extension button{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#stage-labels{display:block;position:relative;height:30px;margin:0}#stage-labels button{position:absolute;top:0}#stage-labels button:first-child,#stage-labels button:last-child{text-align:center}footer .layer-scroll{overflow:visible}footer .layer-list{isolation:isolate}
+
+/* Reading layout: identity at left, fitted graph in the remaining open stage. */
+body{grid-template-columns:260px minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto}header,.context-row,footer,.explanation-row{grid-column:1/-1}#impact{grid-column:1;grid-row:3;align-self:start;display:flex;flex-direction:column;gap:20px;padding-top:38px}#impact .step-number{font-size:96px;font-weight:350;line-height:1;letter-spacing:-5px}#impact b{font-size:22px;white-space:normal;font-weight:450}#impact span{font-size:14px;line-height:1.9;color:#bbb}#impact small{font:11px/1.9 ui-monospace,monospace;color:#aaa}#stage{grid-column:2;grid-row:3}.explanation-row{min-height:20px;justify-content:flex-end}footer{justify-content:center;position:relative}footer .evolution-bottom{flex:0 1 730px;max-width:730px;width:64%;gap:18px}#tools{position:absolute;right:0}#play,#play *{pointer-events:auto}#play{position:relative;z-index:12}#play svg{pointer-events:none}
+@media(max-width:1000px){body{grid-template-columns:210px minmax(0,1fr)}#impact .step-number{font-size:76px}#impact b{font-size:19px}#impact span{font-size:12px}footer .evolution-bottom{width:72%;margin-right:90px}}
+@media(max-width:600px){body{grid-template-columns:1fr;grid-template-rows:auto auto auto minmax(0,1fr) auto auto}#impact{grid-column:1;grid-row:3;padding:8px 0;gap:6px;display:grid;grid-template-columns:50px 1fr}#impact .step-number{font-size:44px;grid-row:1/4;letter-spacing:-2px}#impact b{font-size:15px}#impact span{font-size:10px}#impact small{font-size:8px}#stage{grid-column:1;grid-row:4}.explanation-row{grid-row:5}footer{grid-row:6}footer .evolution-bottom{width:100%;margin:0;max-width:none}#tools{position:relative;right:auto}}
+
+.panel-frame{fill:none;stroke:#353535;stroke-width:1}.module-frame{fill:#fff;fill-opacity:.05;stroke:none;stroke-width:0}
+
+#settings{font-size:12px;margin-left:auto}#compare{margin-left:0}#rankbar{color:#aaa;font-size:11px}#extension{position:fixed;right:34px;top:135px;max-width:350px;background:#242424;padding:20px;z-index:9;border-radius:18px;flex-wrap:wrap}.settings-help{flex-basis:100%;font-size:12px!important;line-height:1.8;color:#ccc!important}#extension button{font-size:12px;padding:7px 10px}#extension button:disabled{opacity:.35}@media(max-width:600px){#settings{font-size:9px;padding:4px 6px}#rankbar{font-size:9px}#extension{right:12px;max-width:calc(100vw - 24px)}}
+
+.stage-formula{font:12px/1.8 ui-monospace,monospace;white-space:pre-wrap;color:#ddd;margin:0}.source-links{display:flex;flex-direction:column;gap:6px}.source-links a{font-size:10px;color:#aaa;text-decoration:none}.source-links a:hover{text-decoration:underline;color:white}#impact{gap:16px}#impact span{line-height:1.75}#secondary-control{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);width:min(640px,calc(100vw - 40px));margin:0;padding:9px 16px;background:#202020;border-radius:14px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:17px 9px 17px;column-gap:24px;z-index:14}#secondary-control .secondary-heading{grid-column:1;grid-row:1;display:flex;justify-content:space-between;gap:15px;font-size:11px;color:#ccc}#secondary-value{color:#fff;font:11px ui-monospace,monospace}#secondary-input{appearance:none;width:100%;height:5px;background:#484848;margin:2px 0;grid-column:1;grid-row:2;display:block;cursor:ew-resize;touch-action:pan-y}#secondary-input::-webkit-slider-thumb{appearance:none;width:13px;height:18px;border-radius:0;background:#eee}#secondary-input::-moz-range-thumb{width:13px;height:18px;border:0;border-radius:0;background:#eee}#secondary-input:focus-visible{outline:none;background:#888}#secondary-input:disabled{opacity:.3;cursor:default}#secondary-labels{grid-column:1;grid-row:3;display:flex;justify-content:space-between;gap:8px}#secondary-labels button{font-size:9px;line-height:17px;padding:0 2px;border-radius:16px}#secondary-labels button.active{background:#eee;color:#111}#secondary-hint{grid-column:2;grid-row:1/4;align-self:center;display:block;color:#bbb;font-size:11px;margin:0;line-height:1.7}footer{align-items:flex-start;min-height:85px}#play{margin-top:4px}#tools{top:0}#stage-labels{height:32px}#panel .source-links{padding-top:12px;border-top:1px solid #444}@media(max-width:600px){.stage-formula{font-size:10px}#impact .source-links{display:none}#impact{gap:5px}#impact .step-number{grid-row:1/6}#impact .stage-formula,#impact small{grid-column:2}.source-links a{font-size:9px}#secondary-control{position:fixed;left:50%;bottom:112px;width:calc(100vw - 28px);padding:9px 12px;margin:0;column-gap:14px;grid-template-rows:17px 9px 17px}#secondary-hint{font-size:9px}footer{min-height:100px}#tools{top:auto}#secondary-labels button{font-size:9px}}
+
+footer .evolution-bottom{align-items:flex-start}#play{align-self:flex-start;margin-top:4px}#secondary-labels button.active{background:transparent;color:#fff}#secondary-labels button{color:#aaa}@media(max-width:600px){header h1{font-size:16px;white-space:nowrap}header small{font-size:6px;letter-spacing:.6px}#config strong{font-size:9px}#config{font-size:7px}}
+
+/* Compact parameter rail: no card, no repeated selected-value headline. */
+#secondary-control{width:min(640px,calc(100vw - 40px));padding:4px 0;background:none;border-radius:0;grid-template-columns:120px minmax(160px,1fr) 200px;grid-template-rows:18px 18px;column-gap:18px;bottom:calc(100% + 4px)}#secondary-control .secondary-heading{grid-column:1;grid-row:1/3;align-items:center;justify-content:flex-start;font-size:11px;color:#bbb;line-height:1.5}#secondary-value{display:none}#secondary-input{grid-column:2;grid-row:1;align-self:center;margin:0;height:3px;background:#454545}#secondary-input::-webkit-slider-thumb{width:10px;height:14px}#secondary-input::-moz-range-thumb{width:10px;height:14px}#secondary-labels{grid-column:2;grid-row:2;align-items:center}#secondary-labels button{font-size:9px;padding:0;line-height:18px}#secondary-hint{grid-column:3;grid-row:1/3;font-size:10px;line-height:1.7;color:#aaa}#info-icon{margin-left:auto;display:grid;place-items:center;width:32px;height:32px;padding:7px;background:#272727;color:#ccc;flex-shrink:0}#info-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}#info-panel{position:fixed;right:34px;top:132px;width:360px;max-height:calc(100svh - 180px);overflow:auto;padding:22px;border-radius:18px;z-index:25;font-size:12px;line-height:1.8}#info-panel h2{font-size:18px;font-weight:450;margin:0 0 18px}#info-panel h3{font-size:12px;color:#eee;font-weight:500;margin:18px 0 8px}#info-panel p{color:#bbb;margin:8px 0}#info-close{float:right;padding:0 7px}#info-panel summary{cursor:pointer;color:#bbb;margin-top:18px}.info-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;color:#bbb}.info-legend i{display:inline-block;width:8px;height:8px;margin-right:7px}#info-panel .source-links a{font-size:11px}#play{pointer-events:auto;isolation:isolate;touch-action:manipulation;z-index:30}#play[data-playing=true]{background:#eee;color:#111}#play svg,#play path{pointer-events:none}
+@media(max-width:600px){#secondary-control{position:fixed;width:calc(100vw - 40px);left:50%;bottom:112px;grid-template-columns:100px minmax(0,1fr);grid-template-rows:18px 18px 18px;column-gap:12px;padding:4px 0}#secondary-control .secondary-heading{font-size:10px}#secondary-input{grid-column:2}#secondary-labels{grid-column:2}#secondary-hint{grid-column:1/-1;grid-row:3;font-size:9px;text-align:center}#info-panel{right:12px;top:115px;width:min(360px,calc(100vw - 24px));max-height:calc(100svh - 160px)}#info-icon{width:28px;height:28px;padding:5px}}
+
+#secondary-input{height:20px;background:transparent}#secondary-input::-webkit-slider-runnable-track{height:3px;background:#454545}#secondary-input::-webkit-slider-thumb{margin-top:-5.5px}#secondary-input::-moz-range-track{height:3px;background:#454545}#secondary-input:focus-visible::-webkit-slider-runnable-track{background:#888}
+
+/* Center the graph on the page, independently of the editorial overlay. */
+@media(min-width:601px){#stage{grid-column:1/-1;grid-row:3}#impact{position:relative;z-index:2;pointer-events:none}#impact a,#impact button{pointer-events:auto}}
+header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.context-row #rankbar{display:none}
+
+.off-route{opacity:.25}.is-route{opacity:1}#token-controls{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 52px);display:flex;gap:4px;background:#222;border-radius:30px;padding:4px}#token-controls button{font:10px ui-monospace,monospace;padding:4px 10px}#token-controls button.active{background:#eee;color:#111}#token-controls button:focus-visible{background:#777;color:white}footer .evolution-bottom{max-width:810px;flex-basis:810px}#stage-labels button{font-size:11px}@media(max-width:600px){#stage-labels button{font-size:7px}#token-controls{position:fixed;bottom:180px}#token-controls button{padding:4px 8px}}
+
+/* Window-sized canvas; editorial and controls are overlay surfaces. */
+#stage{position:fixed;inset:0;width:100vw;height:100svh;z-index:0;grid-column:auto;grid-row:auto;cursor:grab}#stage:active{cursor:grabbing}header,.context-row,.explanation-row{position:relative;z-index:3;pointer-events:none}header button,header a,.context-row button,.context-row a{pointer-events:auto}#impact{pointer-events:none}footer{z-index:10;pointer-events:none}footer button,footer input,footer nav,#secondary-control,#token-controls{pointer-events:auto}
+</style></head><body>
+<header><div><h1>分布式训练</h1><small>模型 → 计算 → 通信</small></div><div id="config"></div></header>
+<div class="context-row"><div id="rankbar"></div><button id="info-icon" type="button" aria-label="图例与官方依据" aria-expanded="false" aria-controls="info-panel" data-tip="图例与官方依据"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></button></div>
+<div id="impact" aria-live="polite"></div><main id="stage"><svg viewBox="0 0 1810 1830" aria-label="Transformer 训练推导图"><g id="world"></g></svg></main>
+<div class="explanation-row"><div id="extension" hidden></div></div>
+<footer><div class="evolution-bottom"><button id="play" aria-label="播放推导过程" aria-pressed="false" data-tip="播放七个推导阶段"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-symbol" d="M8 5L19 12L8 19Z"/></svg></button><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="推导进度，点击或拖动选择阶段"></nav><div id="stage-labels" aria-label="推导阶段"></div><div id="token-controls" aria-label="跟踪来源组 0 的 token" hidden></div><section id="secondary-control" hidden aria-label="当前步骤的参数"><div class="secondary-heading"><span id="secondary-title"></span><output id="secondary-value"></output></div><input id="secondary-input" type="range" min="0" max="2" step="1" value="2"><div id="secondary-labels"></div><small id="secondary-hint"></small></section></div></div><div id="tools" data-liquid-glass="control"><button id="minus" data-tip="缩小画布">−</button><button id="fit" data-tip="自动适配当前阶段">适应</button><button id="plus" data-tip="放大画布">＋</button></div></footer>
+<aside id="info-panel" data-liquid-glass="panel" hidden aria-label="图例与官方依据"><button id="info-close" aria-label="关闭图例与依据" data-tip="关闭">×</button><h2>图例与官方依据</h2><div id="info-content"></div></aside><aside id="panel" data-liquid-glass="panel" hidden><button id="close" data-tip="关闭详情">×</button><h2 id="ptitle"></h2><div id="pbody"></div></aside><div id="tip" hidden></div>
+<script>
+const opGlyph=(i,x,y)=>`<path d="${i.path}" transform="translate(${x} ${y}) scale(1.25)" fill="none" stroke="#eee" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+const opNode=(i,x,y)=>i.id==='add'?`<circle cx="${x+180}" cy="${y+32}" r="30" fill="#101010" stroke="#aaa" stroke-width="2"/><path d="M${x+168} ${y+32}h24M${x+180} ${y+20}v24" stroke="#eee" stroke-width="2.5"/>`:`<rect x="${x}" y="${y}" width="360" height="64" rx="32" fill="#4f4f4f"/><circle cx="${x+32}" cy="${y+32}" r="22" fill="#101010"/>${opGlyph(i,x+17,y+17)}<text x="${x+180}" y="${y+33}" fill="#eee" font-size="20" text-anchor="middle" dominant-baseline="middle">${esc(i.name)}</text>`;
+
+window.PtoOpIcons = [
+  {
+    "id": "add",
+    "name": "Residual Add",
+    "description": "残差相加",
+    "path": "M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0 M7 12h10 M12 7v10"
+  },
+  {
+    "id": "matmul",
+    "name": "MatMul",
+    "description": "矩阵乘法",
+    "path": "M3 4h4M3 4v16h4M21 4h-4M21 4v16h-4M8 7h3v3H8zM14 7h3v3h-3zM8 14h3v3H8zM14 14h3v3h-3z"
+  },
+  {
+    "id": "linear",
+    "name": "Linear Projection",
+    "description": "线性投影",
+    "path": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2"
+  },
+  {
+    "id": "norm",
+    "name": "RMSNorm",
+    "description": "归一化",
+    "path": "M4 6h16M7 12h10M9 18h6"
+  },
+  {
+    "id": "embedding",
+    "name": "Embedding",
+    "description": "嵌入查表",
+    "path": "M4 4h9v16H4zM4 9h9M4 15h9M16 12h5M19 10l2 2-2 2"
+  },
+  {
+    "id": "attention",
+    "name": "Attention",
+    "description": "注意力计算",
+    "path": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6"
+  },
+  {
+    "id": "rope",
+    "name": "RoPE",
+    "description": "旋转位置编码",
+    "path": "M5 8a8 8 0 0 1 14 0M19 4v4h-4M19 16a8 8 0 0 1-14 0M5 20v-4h4"
+  },
+  {
+    "id": "compress",
+    "name": "Compress",
+    "description": "压缩聚合",
+    "path": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
+  },
+  {
+    "id": "expand",
+    "name": "Expand",
+    "description": "展开广播",
+    "path": "M10 10L4 4M14 10l6-6M10 14l-6 6M14 14l6 6M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
+  },
+  {
+    "id": "mix",
+    "name": "HC Mix",
+    "description": "流间混合",
+    "path": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16"
+  },
+  {
+    "id": "gate",
+    "name": "Gate / Multiply",
+    "description": "门控乘法",
+    "path": "M3 7h6M3 17h6M9 5v14h4a7 7 0 0 0 0-14H9M20 12h3"
+  },
+  {
+    "id": "activation",
+    "name": "SiLU",
+    "description": "激活函数",
+    "path": "M4 19h16M5 19V4M5 16c8 4 7-8 14-12"
+  },
+  {
+    "id": "softmax",
+    "name": "Softmax",
+    "description": "归一化概率",
+    "path": "M5 20v-5M12 20V5M19 20v-9M3 3h18"
+  },
+  {
+    "id": "topk",
+    "name": "Top-K",
+    "description": "候选选择",
+    "path": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6"
+  },
+  {
+    "id": "router",
+    "name": "Router / MoE",
+    "description": "专家路由",
+    "path": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"
+  },
+  {
+    "id": "concat",
+    "name": "Concat",
+    "description": "拼接",
+    "path": "M3 5h6v5H3zM15 5h6v5h-6zM6 10v4h12v-4M12 14v6M8 20h8"
+  },
+  {
+    "id": "split",
+    "name": "Split",
+    "description": "分支拆分",
+    "path": "M12 3v7M5 20v-5l7-5 7 5v5M3 18l2 2 2-2M17 18l2 2 2-2"
+  },
+  {
+    "id": "reshape",
+    "name": "Reshape",
+    "description": "形状变换",
+    "path": "M4 4h10v7H4zM10 15h10v5H10zM18 5h3v7M3 14v6h4"
+  },
+  {
+    "id": "transpose",
+    "name": "Transpose",
+    "description": "维度交换",
+    "path": "M4 7h15M16 4l3 3-3 3M7 20V5M4 8l3-3 3 3"
+  },
+  {
+    "id": "reduce",
+    "name": "Reduce / Pool",
+    "description": "规约汇聚",
+    "path": "M4 4l8 8 8-8M4 10l8 8 8-8M12 18v3"
+  },
+  {
+    "id": "cache",
+    "name": "KV Read / Write",
+    "description": "状态读写",
+    "path": "M5 4h14v16H5zM5 8h14M9 12h6M9 16h6"
+  },
+  {
+    "id": "conv",
+    "name": "Conv / Patch",
+    "description": "卷积与分块",
+    "path": "M4 4h16v16H4zM4 10h16M10 4v16M14 14h6M14 14v6"
+  },
+  {
+    "id": "exchange",
+    "name": "All-to-All",
+    "description": "通信交换",
+    "path": "M3 8h17M16 4l4 4-4 4M21 16H4M8 12l-4 4 4 4"
+  },
+  {
+    "id": "sample",
+    "name": "Sampling",
+    "description": "采样选择",
+    "path": "M5 5h2M11 5h2M17 5h2M5 11h2M17 11h2M5 17h2M11 17h2M17 17h2M10 10l6 3-3 1-1 3z"
+  }
+];
+
+window.PtoOpIconFor = function(label){
+ const rules=[['add',/residual.*(add|merge)|add shared/i],['embedding',/embedding|lookup|engram|hash/i],['attention',/attention|sdpa/i],['topk',/top.?k|candidate|filter|sort/i],['router',/router|routed|expert|moe/i],['compress',/compress/i],['expand',/expand/i],['mix',/hc pre|mix|sinkhorn/i],['norm',/norm/i],['rope',/rope/i],['concat',/concat|merge/i],['softmax',/softmax/i],['gate',/gate|weight/i],['activation',/silu|swiglu|gelu|relu|softplus|clamp/i],['reduce',/reduce|mean|pool|sum/i],['conv',/patch|conv/i],['reshape',/unfold|pad|resize/i],['sample',/sample|sampling|draft input/i],['cache',/kv|cache|mask/i],['linear',/projection|linear|head|aligner/i]];
+ const id=rules.find(([,r])=>r.test(label))?.[0]||'linear';return window.PtoOpIcons.find(i=>i.id===id);
+};
+
+/* Reusable SVG grammar. No DOM or report runtime dependency. */
+(function(root){
+'use strict';
+const tokens=Object.freeze({font:14,gap:24,dataWidth:160,dataHeight:64,opWidth:260,opHeight:48,cell:24,role:{activation:'#B1EF6B',weight:'#BCA0F3',aggregate:'#F2C45F',gradient:'#79D4F2',optimizer:'#B0B0B0'},parallel:{DP:'#8CE580',TP:'#B58AF7',SP:'#80B7F7',CP:'#80E5D3',PP:'#E580CF',EP:'#F7B080'}});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const text=(x,y,s,size=14,color='#E8E8E8',anchor='start')=>`<text x="${x}" y="${y}" font-size="${size}" fill="${color}" text-anchor="${anchor}" dominant-baseline="middle">${esc(s)}</text>`;
+const rect=(x,y,w,h,rx=4,stroke='#888',fill='#202020',extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" stroke="${stroke}" fill="${fill}" ${extra}/>`;
+function rankBoard(x,y,w,h,fill='#393939'){
+const compact=h<64,inset=compact?9:16,r=compact?3:5;
+let body=`<rect class="rank-outline outline" x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}"/>`;
+for(const px of [x+inset,x+w-inset])for(const py of [y+inset,y+h-inset])body+=`<circle class="rank-pin" cx="${px}" cy="${py}" r="${r}" fill="#2b2b2b"/>`;
+return body;
+}
+function data(o,x,y,opts={}){
+ const expanded=opts.expanded,shape=o.shape||[2,4],rows=shape.length===1?1:shape[0],cols=shape.length===1?shape[0]:shape[1],w=expanded?cols*tokens.cell:tokens.dataWidth,h=expanded?rows*tokens.cell:tokens.dataHeight,color=tokens.role[o.role]||'#B0B0B0';
+ let body=expanded?'':rect(x,y,w,h,6,'none','#2d2d2d');
+ if(expanded){for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){body+=rect(x+c*24+2,y+r*24+2,20,20,1,'none',color,'fill-opacity=".18" data-element="true"');if(o.values)body+=text(x+c*24+12,y+r*24+12,o.values[r*cols+c],11,color,'middle')}body+=text(x,y-14,`${o.label} · [${shape}]`,14)}
+ else {
+  for(let i=0;i<4;i++)body+=rect(x+8,y+8+i*12,10,10,0,'none',color,`fill-opacity="${[1,.8,.6,.4][i]}"`);
+  body+=text(x+27,y+22,o.label,16,'#fff')+text(x+27,y+46,`${shape.join(' × ')}  ${o.dtype||'FP16'}`,12,'#ccc');
+ }
+ if(opts.parallel&&opts.parallel!=='none'){let pc=tokens.parallel[opts.parallel];body+=`<path data-decoration="distribution" d="M${x},${y+h+8}v6h${w}v-6" stroke="${pc}" fill="none"/>`+text(x+w/2,y+h+30,`${opts.parallel} · ${opts.placement||'分片'}`,12,pc,'middle')}
+ return `<g data-object="${esc(o.id)}" data-kind="${o.kind||'value'}" data-role="${esc(o.role||'activation')}" data-representation="${expanded?'expanded':'collapsed'}">${body}</g>`;
+}
+// Memory grid is a surface texture, not an element or capacity scale.
+function memory(id,label,detail,x,y,w=300,h=106,physical=false){
+ let b=rect(x,y,w,h,12,'none',physical?'#087CFA':'#2d2d2d');
+ const cols=17,rows=5,gap=3,pad=9,cw=(w-pad*2-gap*(cols-1))/cols,ch=(h-pad*2-gap*(rows-1))/rows;
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=rect(x+pad+c*(cw+gap),y+pad+r*(ch+gap),cw,ch,1.5,physical?'#B3D7FF':'#aaa','#000','fill-opacity=".10" style="stroke-width:.65;stroke-opacity:.30"');
+ b+=text(x+24,y+h*.36,label,Math.min(32,w*.09),'#fff')+text(x+24,y+h*.74,detail,Math.min(18,w*.047),'#eee');
+ return `<g data-object="${esc(id)}" data-kind="${physical?'storage':'memref'}">${b}</g>`;
+}
+function node(kind,id,label,x,y){let w=180,h=64,b='';
+ if(kind==='op'||kind==='communication'){w=tokens.opWidth;h=tokens.opHeight;b=rect(x,y,w,h,24,'#858585','#505050',kind==='communication'?'stroke-dasharray="5 4"':'')+`<g font-weight="650">${text(x+w/2,y+24,label,18,'#fff','middle')}</g>`}
+ else if(kind==='add'||kind==='multiply'){w=h=48;const cx=x+24,cy=y+24;b=`<circle cx="${cx}" cy="${cy}" r="24" stroke="#ddd" fill="#111" style="stroke-width:1.5"/><path d="${kind==='add'?`M${cx-8} ${cy}H${cx+8} M${cx} ${cy-8}V${cy+8}`:`M${cx-6} ${cy-6}L${cx+6} ${cy+6} M${cx-6} ${cy+6}L${cx+6} ${cy-6}`}" stroke="#eee" fill="none" style="stroke-width:2" stroke-linecap="round"/>`}
+ else if(kind==='memref'||kind==='storage'){return memory(id,label,kind==='memref'?'MemRef':'内存分配',x,y,w,h,kind==='storage')}
+ else if(kind==='instruction'||kind==='task'){
+ w=260;h=60;const green='#9EF04B';
+ b=rect(x,y,w,h,0,'none',green)+rect(x+10,y+12,36,36,3,'none','#080b05');
+ const icon=kind==='instruction'?'M9 9 L16 17 L9 25 M20 25 H29':'M9 10 H27 M9 18 H20 M9 26 H16 M23 22 L28 26 L23 30';
+ b+=`<path data-icon="${kind}" transform="translate(${x+10} ${y+12})" d="${icon}" fill="none" stroke="${green}" style="stroke-width:2.6"/>`;
+ b+=`<g font-weight="650">${text(x+62,y+30,label,20,'#080b05')}</g>`;
+ }
+ else if(kind==='rank'){b=rankBoard(x,y,w,h)+text(x+24,y+27,label,14)}
+ else if(kind==='pass'){h=32;b=rect(x,y,w,h,0,'#aaa')+text(x+w/2,y+16,label,14,'#eee','middle')}
+ else {const purple=['kernel','task','function','loop'].includes(kind),color=purple?'#9B91FF':'#999';b=rect(x,y,w,h,kind==='task'?8:2,color,'#202020',kind==='loop'?'stroke-dasharray="5 4"':'')+text(x+12,y+17,kind.toUpperCase(),10,color)+text(x+12,y+43,label);if(['kernel','function','rank','storage'].includes(kind))b+=`<path d="M${x},${y+28}h${w}" stroke="${color}"/>`;if(kind==='loop')b+=`<path d="M${x},${y}v${h}" stroke="${color}" stroke-width="3"/>`}
+ return `<g data-object="${esc(id)}" data-kind="${kind}">${b}</g>`;
+}
+function edge(x1,y1,x2,y2,kind='data',label=''){let binding=kind==='binding',mapping=kind==='mapping',dash=kind==='call'?'8 5':mapping?'2 5':'';return `<path data-relation="${kind}" d="M${x1} ${y1} H${(x1+x2)/2} V${y2} H${x2}" fill="none" stroke="#aaa" ${dash?`stroke-dasharray="${dash}"`:''} marker-end="url(#${binding?'bind':mapping?'map':'arrow'})"/>`+(label?text((x1+x2)/2,(y1+y2)/2-12,label,12,'#aaa','middle'):'')}
+function wrap(body,w=900,h=340){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="对象与关系示例"><style>text{font-family:Inter,'PingFang SC',system-ui,sans-serif}path,rect,circle{stroke-width:1.5}</style><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" stroke="#aaa" fill="none"/></marker><marker id="bind" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3" stroke="#aaa" fill="#202020"/></marker><marker id="map" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8"><path d="M1 5L5 1L9 5L5 9Z" stroke="#aaa" fill="#202020"/></marker></defs>${body}</svg>`}
+function render(id,o={}){let b='',ex=!!o.expanded;const v=(id,label,role,shape,values)=>({id,label,role,shape,values});
+ if(id==='pattern-compute'){
+ // Expanded dimensions: X 2x4, W 4x3, Y 2x3. Fixed cell pitch throughout.
+ b=edge(ex?136:200,190,350,190)+edge(480,ex?126:94,480,166,'data','参数输入')+edge(610,190,680,190)+data(v('X','X','activation',[2,4]),40,166,{expanded:ex})+data(v('W','W','weight',[4,3]),ex?444:400,30,{expanded:ex})+node('op','matmul','MatMul',350,166)+data(v('Y','Y','activation',[2,3]),680,166,{expanded:ex})+text(40,290,'X [2,4] × W [4,3] → Y [2,3]；示例尺寸，格子不编码数值。',14);
+ }else if(id==='pattern-distribution'){
+ const mode=o.mode||'shard',lab={shard:'分片',replica:'复制',partial:'部分结果'}[mode];
+ b=text(40,26,mode==='shard'?'按列切分 W：局部 [4,2]，全局 [4,4]':mode==='replica'?'每个 Rank 保存完整 W [4,4] 的副本':'沿 K 维切分 MatMul：Y = Y₀ + Y₁，各部分结果均为 [2,4]',16);
+ for(let i=0;i<2;i++){let x=40+i*440;b+=rankBoard(x,55,390,235)+text(x+24,82,'Rank '+i,14)+data(v(mode==='replica'?'W':mode==='partial'?'Y'+i:'W'+i,mode==='replica'?'W · 副本 '+i:mode==='partial'?'Y'+i+' · 待求和':'W'+i+' · 列 '+(i===0?'[0,2)':'[2,4)'),mode==='partial'?'activation':'weight',mode==='shard'?[4,2]:mode==='partial'?[2,4]:[4,4]),x+45,110,{expanded:ex,parallel:'TP',placement:lab})}b+=text(40,320,mode==='partial'?'部分结果不是输出的互斥分片；求和归约后得到完整输出。':'角色色位于数据内部；TP 标记位于对象外侧。Rank 表示进程身份。',13);
+ }else if(id==='pattern-storage'){
+ b=data(v('V','V','activation',[4,4]),40,70,{expanded:ex})+data({...v('view','V 的视图','activation',[2,4]),kind:'view'},40,225,{expanded:ex})+node('memref','M0','M0 · offset 0 B',345,70)+node('memref','M1','M1 · offset 16 B',345,225)+node('storage','B0','B0 · 32 B',660,135)+edge(ex?136:200,102,345,102,'binding')+edge(ex?136:200,257,345,257,'binding')+edge(525,102,660,167,'binding')+edge(525,257,660,183,'binding')+text(660,240,'FP16 · 连续行布局',13)+text(660,265,'视图引用 [16,32) B',13)+text(40,335,'同一底层分配 B0；视图改变索引范围，不创建新的数据副本。示例偏移以字节计。',13);
+ return wrap(b,900,375);
+ }else if(id==='system-value') b=data(v(o.vector?'vector-0':'value-0',o.vector?'v':'X',o.role||'activation',o.vector?[6]:[2,4],o.vector?[1,2,3,4,5,6]:undefined),80,65,{...o,expanded:ex});
+ else if(id.startsWith('relation-')) b=edge(60,100,330,100,id.slice(9))+text(195,155,{data:'生产者 → 消费者',call:'调用方 → 被调用函数',binding:'值 / 视图 — 存储引用',mapping:'跨阶段对应（需要证据）'}[id.slice(9)],13,'#aaa','middle');
+ else b=node(id.replace('system-',''),id,'示例 '+id.replace('system-',''),85,75);
+ return wrap(b,id.startsWith('pattern-')?900:420,id.startsWith('pattern-')?350:280);
+}
+const api={tokens,rankBoard,data,memory,node,edge,wrap,render};if(typeof module!=='undefined')module.exports=api;root.VisualSystem=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+
+const C={i:'#B1EF6B',w:'#BCA0F3',g:'#79D4F2',a:'#F2C45F',n:'#d6d6d6'};
+let registry={},selected='',shown=0,page=1,phase=0;const pages=[{}, {title:'从模型架构到完整分布式训练计算图'}];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function text(x,y,t,cls='text',anchor='start',fill=''){return `<text x="${x}" y="${y}" class="${cls}" text-anchor="${anchor}"${fill?` style="fill:${fill}"`:''}>${esc(t)}</text>`}
+function register(id,title,body){registry[id]={title,body};return id}
+function hit(id,svg,title,body){if(title)register(id,title,body);return `<g data-layer="${/^full-(w-|dw-|cache-|regather-)/.test(id)?'wgrad':/^full-b-|^full-input-dY|^full-value-b-|^full-param-b-/.test(id)?'backward':'forward'}" class="hit${selected===id?' selected':''}" role="button" tabindex="0" data-node="${esc(id)}" aria-label="${esc(title||registry[id]?.title||id)}">${svg}</g>`}
+function opCategory(name){
+ if(/^(QKV|PROJ|FC[12]|DGRAD|WGRAD)/i.test(name))return 'linear';
+ if(/MHA|Attention/i.test(name))return 'attention';
+ if(/GeLU/i.test(name))return 'activation';
+ if(/Softmax/i.test(name))return 'softmax';
+ if(/QK|^PV$|^d[P VQK]\s*=/i.test(name))return 'matmul';
+ if(/Scale/.test(name))return 'cache';
+ if(/^dQKV/.test(name))return 'concat';
+ return null;
+}
+function op(x,y,name,id,body,w=260){
+ const category=opCategory(name);
+ if(!category)return hit(id,`<g data-kind="view"><rect class="outline" x="${x}" y="${y}" width="${w}" height="48" rx="4" fill="#242424"/>${text(x+w/2,y+30,name,'small','middle')}</g>`,name,body);
+ const icon=window.PtoOpIcons.find(i=>i.id===category);
+ const scale=Math.min(w/360,48/64),nw=360*scale,nh=64*scale;
+ let node=opNode({...icon,name},0,0).replace('<rect ','<rect class="outline" ');
+ return hit(id,`<g data-kind="op" data-category="${category}" data-renderer="legend-library/opNode" transform="translate(${x+(w-nw)/2} ${y+(48-nh)/2}) scale(${scale})">${node}</g>`,name,body);
+}
+function comm(x,y,name,id,body,w=140){
+ let node=opNode({...window.PtoOpIcons.find(i=>i.id=== (/^RS/.test(name)?'reduce':'expand')),name},0,0).replace('<rect ','<rect class="outline" ').replace('fill="#4f4f4f"','fill="#292929" stroke="#aaa" stroke-width="2" stroke-dasharray="6 5"');
+ const scale=Math.min(w/360,48/64);
+ return hit(id,`<g data-kind="communication" data-category="${/^RS/.test(name)?'reduce':'expand'}" transform="translate(${x+(w-360*scale)/2} ${y+(48-64*scale)/2}) scale(${scale})">${node}</g>`,name,body);
+}
+function path(d,col='n',dash=false,arrow=true){return `<path class="wire" d="${d}" stroke="${C[col]||col}"${dash?' stroke-dasharray="6 5"':''}${arrow?` marker-end="url(#m-${col in C?col:'n'})"`:''}/>`}
+function line(x1,y1,x2,y2,c='n',dash=false){return path(`M${x1} ${y1}L${x2} ${y2}`,c,dash)}
+function frame(x,y,w,h,label){return `<rect class="panel-frame" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/>${text(x+18,y+27,label,'small')}`}
+function tensor(x,y,rows,cols,role,label,shape,id,body,cell=10){const gap=3,c=C[role],w=cols*(cell+gap)+9,h=rows*(cell+gap)+9;let s=`<rect class="outline" x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="#111" stroke="${c}" stroke-opacity=".7"/>`;for(let r=0;r<rows;r++)for(let k=0;k<cols;k++)s+=`<rect x="${x+6+k*(cell+gap)}" y="${y+6+r*(cell+gap)}" width="${cell}" height="${cell}" fill="${c}" opacity="${.23+((r*3+k*5)%7)*.075}"/>`;s+=text(x+w/2,y+h+23,label,'text','middle',c)+text(x+w/2,y+h+43,shape,'small mono','middle');return hit(id,s,label+' '+shape,body)}
+function rankBox(x,y,label,id,body,extra=''){let s=GLYPHS.rank.replace(/R00/g,label);return hit(id,`<g transform="translate(${x-70} ${y-30})">${s}</g>${extra}`,label,body)}
+function svg(body,w=900,h=650){const pre='figure-'+page+'-';const content=body.replace(/url\(#m-([^)]+)\)/g,(_,k)=>'url(#'+pre+'m-'+k+')').replace(/url\(#map\)/g,'url(#'+pre+'map)');return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(pages[page].title||'模型计算与集群通信主题图')}"><defs>${Object.entries(C).map(([k,c])=>`<marker id="${pre}m-${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M1 1L9 5L1 9" fill="none" stroke="${c}" stroke-width="1.4"/></marker>`).join('')}<marker id="${pre}map" viewBox="0 0 12 12" refX="6" refY="6" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 6L6 1L11 6L6 11Z" fill="#131313" stroke="#aaa"/></marker></defs><g data-viewport="true">${content}</g></svg>`}
+function mapline(d){return `<path d="${d}" fill="none" stroke="#888" stroke-width="1.3" stroke-dasharray="2 5" marker-end="url(#map)"/>`}
+/* Full forward/backward graph, with each relation retained in a single canvas. */
+const B=C.i;
+function group(key,body){return body;}
+function matrix(x,y,w=190,h=54,key='x',color=B,rows=3,cols=12,seed=0){const pitch=Math.min(w/cols,h/rows),gw=pitch*cols,gh=pitch*rows,sx=x+(w-gw)/2,sy=y+(h-gh)/2,cell=pitch-2;let a=`<rect x="${sx-3}" y="${sy-3}" width="${gw+6}" height="${gh+6}" fill="#111" stroke="${color}" stroke-opacity=".5"/>`;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const o=.22+((r*17+c*7+seed*3)%11)/15;a+=`<rect class="grid-cell" x="${sx+c*pitch}" y="${sy+r*pitch}" width="${cell}" height="${cell}" fill="${color}" opacity="${o}"/>`}return group(key,a)}
+/* Approved matrix geometry: square cells, role colors, stable data identity. */
+function valueGeometry(cx,y,shape){const [rows,cols]=shape,pitch=Math.min(72/cols,72/rows),gw=pitch*cols,gh=pitch*rows;return {cx,cy:y+36,x:cx-gw/2,y:y+(72-gh)/2,w:gw,h:gh,pitch,cell:pitch-2,top:y+(72-gh)/2-3,bottom:y+(72+gh)/2+3,left:cx-gw/2-3,right:cx+gw/2+3};}
+function matrixValue(cx,y,label,shape,role,id,objectId,body,labelSide='right'){
+ const g=valueGeometry(cx,y,shape),color=C[role];let b=`<g data-object="${esc(objectId)}" data-role="${role==='w'?'weight':role==='g'?'gradient':role==='a'?'aggregate':'activation'}" data-representation="matrix">`+matrix(cx-36,y,72,72,id,color,shape[0],shape[1],0).replace('<rect ','<rect class="outline" ');
+ const sh='['+shape.join(',')+']';if(labelSide==='bottom')b+=text(cx,y+94,label,'small','middle',color)+text(cx,y+114,sh,'small mono','middle');else{const lx=cx+(labelSide==='left'?-52:52),an=labelSide==='left'?'end':'start';b+=text(lx,y+28,label,'small',an,color)+text(lx,y+52,sh,'small mono',an);}
+ b+='</g>';const rendered=hit(id,b,label+' '+sh,body);Object.assign(registry[id],{objectId,shape,role});return rendered;
+}
+function cachedCollection(x,y,id){const objectId='attention-state';let b=`<g data-object="${objectId}" data-role="activation" data-representation="collapsed"><rect class="outline" x="${x}" y="${y}" width="160" height="64" rx="4" stroke="#888" fill="#202020"/><rect x="${x+10}" y="${y+12}" width="4" height="40" rx="1" stroke="none" fill="${C.i}"/>${text(x+24,y+24,'Attention 状态','small','start','#E8E8E8')}${text(x+24,y+46,'Qᵣ / Kᵣ / Vᵣ / P','tiny','start')}</g>`;const r=hit(id,b,'Attention 前向状态','折叠的数据集合图元：包含 Qᵣ、Kᵣ、Vᵣ 各 [8,2] 与 P[8,8]。MHA grad 使用这些前向状态；实现可选择保存或重计算。');registry[id].objectId=objectId;return r;}
+const LINEAR_WEIGHTS={qkv:{name:'Wqkvᵣ',shape:[8,6]},proj:{name:'Wprojᵣ',shape:[2,8]},fc1:{name:'W1ᵣ',shape:[8,4]},fc2:{name:'W2ᵣ',shape:[4,8]}};
+function paramRef(cx,y,key,id,side='bottom'){const p=LINEAR_WEIGHTS[key];return matrixValue(cx,y,p.name,p.shape,'w',id,'weight-'+key,'本 Rank 的同一份参数 '+p.name+'，shape ['+p.shape+']。前向线性计算读取 W；DGRAD 读取其转置。两处图形是同一对象的不同引用，选中时联动。',side);}
+function parameterWire(x1,y,x2,transpose=false){return path(`M${x1} ${y}H${x2}`,'w',true)+ (transpose?text((x1+x2)/2,y-30,'Wᵀ','tiny','middle',C.w):'');}
+</script><script>
+// Technical copy: audited against official docs on 2026-11-18.
+// Matrix convention here is Y=XW (W is input×output), unlike nn.Linear's stored W.
+const DOCS={
+ moe:['Megatron Core · Mixture of Experts','https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/features/moe.html'],
+ parallel:['Megatron Core · Parallelism strategies','https://docs.nvidia.com/megatron-core/developer-guide/latest/user-guide/parallelism-guide.html'],
+ model:['PyTorch · TransformerEncoderLayer','https://docs.pytorch.org/docs/2.15/generated/torch.nn.TransformerEncoderLayer.html'],
+ linear:['PyTorch · Linear','https://docs.pytorch.org/docs/2.15/generated/torch.nn.Linear.html'],
+ grad:['PyTorch · Autograd','https://docs.pytorch.org/docs/2.15/notes/autograd.html'],
+ attention:['PyTorch · Scaled dot-product attention','https://docs.pytorch.org/docs/2.15/generated/torch.nn.functional.scaled_dot_product_attention.html'],
+ gelu:['PyTorch · GELU','https://docs.pytorch.org/docs/2.15/generated/torch.nn.GELU.html'],
+ tp:['Megatron Core · Parallel linear layers','https://docs.nvidia.com/megatron-core/developer-guide/latest/apidocs/core/core.tensor_parallel.layers.html'],
+ nccl:['NCCL · Collective operations','https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/usage/collectives.html'],
+ zero:['DeepSpeed · ZeRO','https://deepspeed.readthedocs.io/en/latest/zero3.html']};
+const STAGE_DOCS=[['model'],['linear','attention'],['grad','linear'],['grad','linear'],['tp'],['tp','nccl'],['tp','grad']];
+const STAGE_FORMULAS=[
+ 'Y = X + Attention(Norm₁(X))\nZ = Y + FFN(Norm₂(Y))',
+ 'P = softmax(mask(QKᵀ / √dₖ))\nAttention(Q,K,V) = PV',
+ '前向：Y = XW\n输入梯度：dX = dY · Wᵀ',
+ '前向：Y = XW\n参数梯度：dW = Xᵀ · dY',
+ 'Wqkvᵣ [8,6] · Wprojᵣ [2,8]\nW1ᵣ [8,4] · W2ᵣ [4,8]',
+ 'AG：[2,8] × 4 → [8,8]\nRS：Σᵣ Zᵣ[8,8] → [2,8]',
+ 'DGRAD 读取 dY 与 W\nWGRAD 读取 dY 与前向 X'];
+function docLinks(keys){return [...new Set(keys)].map(key=>`<a href="${DOCS[key][1]}" target="_blank" rel="noopener">${esc(DOCS[key][0])} ↗</a>`).join('');}
+function auditedNode(id,d){if(!d.audited||!d.docs?.length)throw Error('Missing verified copy: '+id);return {title:d.title,body:d.body,docs:d.docs};}
+
+STAGE_DOCS.push(['moe','gelu'],['moe','parallel','nccl']);
+STAGE_FORMULAS.push('rₜ = Σᵢ αₜ,ᵢ Eᵢ(aₜ)','专家组内 TP；专家组间 EP');
+</script><script>// Pure model/configuration layer: no DOM or SVG dependency.
+const TRAINING_MODEL=Object.freeze({tokens:8,hidden:8,ffn:16,heads:4,experts:4});
+function deriveTrainingConfig(stage,parameters){
+ if(!Number.isInteger(stage)||stage<0||stage>8)throw Error('Unknown training stage');
+ if(![1,2,4].includes(parameters.tp)||![1,2,4].includes(parameters.ep??1))throw Error('Invalid parallel degree');
+ const moe=stage>=7&&parameters.ffn==='moe',ep=moe&&stage>=8?parameters.ep:1;
+ const tp=stage>=4?parameters.tp:1,sp=stage>=5&&(parameters.sp||moe&&ep>1)&&tp>1;
+ return Object.freeze({stage,moe,ep,tp,sp,seq:TRAINING_MODEL.tokens/(sp?tp:1),detailed:stage>=1,training:stage>=2,wgrad:stage>=3,recollect:stage>=6&&sp&&parameters.cache==='shard',worldSize:tp*ep});
+}
+function buildTrainingRows({detailed,tp,sp,seq,moe}){
+ const rows=[],byId={};
+ function add(id,kind,name,shape,extra={}){const r={id,kind,name,shape,...extra};rows.push(r);byId[id]=r;return r;}
+ const val=(id,name,shape,extra)=>add(id,'value',name,shape,extra);
+ const opR=(id,name,category,extra)=>add(id,'op',name,null,{category,...extra});
+ val('model-input-H0','H₀',[seq,8]);
+ opR('module-norm1','Norm 1','norm');val('full-input-X',sp?'Xᵣ':'X',[seq,8]);
+ if(!detailed)opR('module-attn','Attention','attention');
+ else{
+ if(sp){opR('full-f-agq','AG(Xᵣ)','expand',{communication:true});val('full-value-f-0','X',[8,8]);}
+ opR('full-f-qkv','QKV','linear',{linear:'qkv'});val('full-value-f-1','QKVᵣ',[8,24/tp]);
+ opR('full-f-mha','MHA','attention');val('full-value-f-2','Oᵣ',[8,8/tp]);
+ opR('full-f-proj','PROJ','linear',{linear:'proj'});
+ if(tp>1){val('full-value-f-3','Zprojᵣ',[8,8]);opR('full-f-rsp',sp?'RS(R_Attn)':'AR(R_Attn)','reduce',{communication:true});}
+ }
+ val('model-attn-result',sp?'R_Attnᵣ':'R_Attn',[seq,8]);
+ add('module-add1','add','Residual Add 1');val('model-boundary-Y',sp?'Hₐᵣ':'Hₐ',[seq,8]);
+ opR('module-norm2','Norm 2','norm');val('full-value-f-4',sp?'Aᵣ':'A',[seq,8]);
+ if(!detailed)opR('module-mlp','FFN','linear');
+ else{
+ if(sp){opR('full-f-agf','AG(Aᵣ)','expand',{communication:true});val('full-value-f-5','A',[8,8]);}
+ if(moe)add('module-moe','moe','MoE');else{opR('full-f-fc1','FC1','linear',{linear:'fc1'});val('full-value-f-6','Uᵣ',[8,16/tp]);
+ opR('full-f-gelu','GeLU','activation');val('full-value-f-7','Vᵣ',[8,16/tp]);
+ opR('full-f-fc2','FC2','linear',{linear:'fc2'});
+ }
+ if(tp>1){val('full-value-f-8','Z2ᵣ',[8,8]);opR('full-f-rsf',sp?'RS(Y)':'AR(Y)','reduce',{communication:true});}
+ }
+ val('full-value-f-9',sp?'Yᵣ':'Y',[seq,8]);add('module-add2','add','Residual Add 2');val('model-output',sp?'H₁ᵣ':'H₁',[seq,8]);
+ return {rows,byId};
+}
+function trainingGraphSnapshot(config,rows,positions,edges,registry){
+ return {schema:'training-graph.v1',model:TRAINING_MODEL,config,
+ nodes:Object.entries(registry).map(([id,n])=>({id,label:n.title,description:n.body,kind:n.role?'tensor':rows.find(r=>r.id===id)?.kind==='moe'?'module':positions[id]?'operation':'module',shape:n.shape||null,role:n.role||null,objectId:n.objectId||id,sources:[...(n.docs||[])],layout:positions[id]||null})),
+ groups:config.moe?Array.from({length:config.ep},(_,ep)=>({id:'expert-group-'+ep,parallelism:'EP',ranks:Array.from({length:config.tp},(_,tp)=>ep*config.tp+tp),experts:Array.from({length:TRAINING_MODEL.experts/config.ep},(_,i)=>ep*TRAINING_MODEL.experts/config.ep+i)})):[],
+ edges:edges.map(e=>({...e})),sequence:rows.map(r=>r.id)};
+}
+</script><script>// Layout consumes semantic rows. It does not choose model or parallelism.
+function layoutTrainingRows(rows,{opWidth=256,startY=82,gap=25}={}){
+ const oh=opWidth*64/360;
+ let cursorY=startY;
+ for(const r of rows){r.y=cursorY;r.h=r.kind==='moe'?660:r.kind==='value'?Math.max(42,72*r.shape[0]/Math.max(...r.shape)):r.kind==='add'?44:oh;r.cy=r.y+r.h/2;r.top=r.y+(r.kind==='value'?(r.h-72*r.shape[0]/Math.max(...r.shape))/2-3:0);r.bottom=r.kind==='moe'?r.y+580+oh:r.y+r.h-(r.kind==='value'?(r.h-72*r.shape[0]/Math.max(...r.shape))/2-3:0);cursorY+=r.h+gap;}
+ return cursorY;
+}
+</script><script>// Keyed SVG reconciliation. Unchanged nodes and their descendants retain DOM identity.
+function graphElementKey(el){return el.nodeType===1?(el.getAttribute('data-node')||el.getAttribute('data-edge')||el.id||null):null;}
+function patchGraphElement(target,source,stats){
+ if(target.isEqualNode(source)){stats.unchanged++;return;}
+ if(target.nodeType!==1||source.nodeType!==1){if(target.nodeValue!==source.nodeValue){target.nodeValue=source.nodeValue;stats.updated++;}return;}
+ for(const attr of Array.from(target.attributes))if(!source.hasAttribute(attr.name))target.removeAttribute(attr.name);
+ for(const attr of Array.from(source.attributes))if(target.getAttribute(attr.name)!==attr.value){target.setAttribute(attr.name,attr.value);stats.updated++;}
+ patchGraphChildren(target,source,stats);
+}
+function patchGraphChildren(target,source,stats){
+ const old=Array.from(target.childNodes),keyed=new Map(old.map(n=>[graphElementKey(n),n]).filter(([k])=>k));
+ const used=new Set();let cursor=target.firstChild;
+ for(const candidate of Array.from(source.childNodes)){
+  const key=graphElementKey(candidate);
+  let match=key?keyed.get(key):old.find(n=>!used.has(n)&&!graphElementKey(n)&&n.nodeType===candidate.nodeType&&n.nodeName===candidate.nodeName);
+  if(match&&(match.nodeType!==candidate.nodeType||match.nodeName!==candidate.nodeName))match=null;
+  if(match){used.add(match);if(match!==cursor)target.insertBefore(match,cursor);patchGraphElement(match,candidate,stats);stats.reused++;}
+  else{match=target.ownerDocument.importNode(candidate,true);target.insertBefore(match,cursor);stats.created++;}
+  cursor=match.nextSibling;
+ }
+ for(const n of old)if(!used.has(n)&&n.parentNode===target){target.removeChild(n);stats.removed++;}
+}
+function updateGraphSvg(target,markup){
+ const source=new DOMParser().parseFromString(markup,'image/svg+xml');
+ if(source.querySelector('parsererror'))throw Error('Invalid graph SVG');
+ target.querySelectorAll('[data-animation-exit]').forEach(el=>el.remove());
+ const stats={reused:0,unchanged:0,updated:0,created:0,removed:0};
+ patchGraphChildren(target,source.documentElement,stats);return stats;
+}
+function createFrameScheduler(callback,request=requestAnimationFrame,cancel=cancelAnimationFrame){
+ let frame=null;
+ const schedule=()=>{if(frame!==null)return;frame=request(()=>{frame=null;callback();});};
+ schedule.cancel=()=>{if(frame!==null)cancel(frame);frame=null;};
+ return schedule;
+}
+</script><script>
+// One graph schema for all stages. Row positions come from visible records, not stage-specific drawings.
+// Row-vector convention: Y=XW; T=8,H=8,F=16,heads=4. Batch dimension omitted.
+let graphModel=null;
+// Router inputs and weights reused from dense-ffn-to-moe-v1; pad H=3 to H=8.
+const MOE_INPUT_BASE=[[1,0,1],[0,1,0],[1,1,0],[0,0,1]];
+const MOE_WR_BASE=[[2,.1,-1,-1],[0,1.8,-1,1.2],[.2,.3,2,1.5]];
+function moeRoute(t){const input=MOE_INPUT_BASE[t%4].concat([0,0,0,0,0]);const scores=[0,1,2,3].map(e=>input.slice(0,3).reduce((s,v,j)=>s+v*MOE_WR_BASE[j][e],0));const chosen=[0,1,2,3].sort((a,b)=>scores[b]-scores[a]).slice(0,2),m=scores[chosen[0]],z=chosen.reduce((a,e)=>a+Math.exp(scores[e]-m),0);return {input,scores,chosen,alpha:chosen.map(e=>Math.exp(scores[e]-m)/z)};}
+
+function trainingGraph(){
+ const config=deriveTrainingConfig(current,parameterState);
+ const {moe,ep,detailed,training,wgrad,tp,sp,seq,recollect}=config;
+ const cf=358,cw=moe?1850:1030,cb=moe?2600:wgrad?1702:1030,ow=256,oh=ow*64/360;
+ const {rows,byId}=buildTrainingRows(config),positions={},semanticEdges=[],sides={forward:cf,backward:cb,wgrad:cw};
+ const cursorY=layoutTrainingRows(rows);
+ const color=C.i;let links='',nodes='',notes='';
+ function remember(id,name,body,docs,extra={}){Object.assign(registry[id],{title:name,body,docs,audited:true,...extra});}
+ function edge(id,a,b,col='i',dash=false,via=null){semanticEdges.push({id,from:a.id,to:b.id,role:col,relation:'data-dependency',sourcePort:{x:a.x,y:a.y},targetPort:{x:b.x,y:b.y}});const d=via||`M${a.x} ${a.y}V${b.y}`;return `<path class="wire" data-edge="${id}" d="${d}" stroke="${C[col]}" ${dash?'stroke-dasharray="6 5"':''} marker-end="url(#m-${col})"/>`;}
+ function port(id,x,y){return {id,x,y};}
+ function glyph(id,x,y,name,category,body,docs,communication=false){const icon=window.PtoOpIcons.find(i=>i.id===category);if(!icon)throw Error('Unknown op category '+category);let g=opNode({...icon,name},0,0).replace('<rect ','<rect class="outline" ');if(communication)g=g.replace('fill="#4f4f4f"','fill="#292929" stroke="#aaa" stroke-width="2" stroke-dasharray="7 6"');const s=hit(id,`<g data-kind="${communication?'communication':'op'}" data-category="${category}" transform="translate(${x-128} ${y}) scale(${ow/360})">${g}</g>`,name,body);remember(id,name,body,docs);positions[id]={x:x-128,y,width:ow,height:oh};return s;}
+ function matrixNode(id,cx,top,name,shape,role,body,docs,objectId=id){const g=valueGeometry(cx,top-36+Math.max(42,72*shape[0]/Math.max(...shape))/2,shape);const y=top+(Math.max(42,72*shape[0]/Math.max(...shape))-72)/2;const s=matrixValue(cx,y,name,shape,role,id,objectId,body,'right');remember(id,name+' ['+shape+']',body,docs,{shape,role,objectId});positions[id]={x:g.left,y:g.top,width:g.right-g.left,height:g.bottom-g.top};return s;}
+ function addNode(id,x,cy,body,role='i'){const icon=window.PtoOpIcons.find(i=>i.id==='add'),s=hit(id,`<g data-kind="op" transform="translate(${x-126} ${cy-22.4}) scale(.7)">${opNode(icon,0,0)}</g>`,role==='i'?'Residual Add':'梯度相加',body);remember(id,role==='i'?'Residual Add':'梯度相加',body,['model','grad']);positions[id]={x:x-22,y:cy-22,width:44,height:44};return s;}
+
+ function drawMoe(r){
+ const deployed=current>=8;
+ const t=parameterState.token,{chosen,alpha,scores}=moeRoute(t),ys=r.y;
+ // Same Top-2 / dispatch / independent expert / weighted-combine grammar as dense-ffn-to-moe-v1.
+ nodes+=glyph('moe-router',cf,ys,'Router · Top-2','router',`S=A·Wr，Wr[8,4]。每个 token 选两位专家，对入选分数做 softmax。本例路由输入与 Wr 复用 Dense→MoE 报告的数值，扩展至 H=8；当前 t${t} 的分数为 [${scores.map(s=>s.toFixed(1))}]，系数由 top-2 softmax 实际计算。`,['moe']);
+ if(deployed)nodes+=text(cf+190,ys+118,ep>1?'来源组 0 · 虚线跨组 / 实线本组':'EP=1 · 所有专家在同一 TP 组','small','start');
+ nodes+=glyph('moe-dispatch',cf,ys+95,!deployed?'按专家重排 token':ep>1?'Dispatch · All-to-All':'Dispatch · 本地分组','reshape',ep>1?'EP 组之间按专家归属交换 token。每个 TP lane 与其他专家组的相同 TP lane 组成 EP 通信组。':'按专家重排 token，保留原 token 索引和合并系数；EP=1 不产生跨专家组通信。',['moe','parallel'],ep>1);
+ links+=edge('moe-router-dispatch',port('moe-router',cf,ys+oh),port('moe-dispatch',cf,ys+95));
+ nodes+=matrixNode('moe-router-weight',cf+240,ys-10,'Wr',[8,4],'w','Router 参数在前向中共享于所有 token；每列对应一位专家的评分。',['moe']);
+ links+=edge('moe-wr-router',port('moe-router-weight',cf+198,ys+oh/2),port('moe-router',cf+128,ys+oh/2),'w',true,`M${cf+198} ${ys+oh/2}H${cf+128}`);
+ if(deployed){for(let g=0;g<ep;g++){
+ const first=g*(4/ep),last=first+4/ep-1,left=cf+(first-1.5)*300+(g-(ep-1)/2)*70-150,right=cf+(last-1.5)*300+(g-(ep-1)/2)*70+150;
+ notes+=`<rect class="module-frame" x="${left}" y="${ys+180}" width="${right-left}" height="370" rx="12"/>`+text(left+14,ys+200,`组 ${g} · Rank {${Array.from({length:tp},(_,i)=>g*tp+i).join(',')}}`,'small','start');
+ }}
+ for(let e=0;e<4;e++){
+ const owner=Math.floor(e/(4/ep)),x=cf+(e-1.5)*300+(owner-(ep-1)/2)*70,y=ys+250,active=chosen.includes(e),a=active?alpha[chosen.indexOf(e)]:0;
+ const ranks=Array.from({length:tp},(_,i)=>owner*tp+i),remote=owner!==0;
+ notes+=`<rect class="module-frame" x="${x-140}" y="${y-55}" width="280" height="300" rx="10"/>`+text(x,y-32,`专家 E${e}`,'small','middle');
+ const start=nodes.length;
+ nodes+=glyph('moe-e'+e+'-fc1',x,y,'E'+e+' · FC1','linear',`专家 E${e} 的参数独立。${deployed?'位于 Rank {'+ranks+'}。':''}W1ᵢ[8,${16/tp}]，W2ᵢ[${16/tp},8]；专家组内 TP=${tp}。四位专家的参数相互独立。`,['moe','linear','tp']);
+ nodes+=glyph('moe-e'+e+'-gelu',x,y+65,'GeLU','activation','沿用 Dense 的 GeLU，不改变专家激活函数；Vᵢ=GELU(AᵢW1ᵢ)。',['gelu','moe']);
+ nodes+=text(x,y+226,`W1ᵢ [8,${16/tp}] · W2ᵢ [${16/tp},8]`,'tiny','middle',C.w);
+ nodes+=glyph('moe-e'+e+'-fc2',x,y+130,'E'+e+' · FC2','linear',`E${e}(a)=GELU(aW1ᵢ)W2ᵢ。此处保留组内各 TP lane 的部分输出，返回来源后加权合并，再由外部 TP 归约得到完整结果或 SP 分片。`,['moe','tp']);
+ if(deployed&&tp>1)nodes+=text(x,y+198,'TP 部分输出 [nᵢ,8] · 外部归约','tiny','middle');
+ const chunk=nodes.slice(start);nodes=nodes.slice(0,start)+`<g class="moe-expert ${active?'is-route':'off-route'}" data-expert="${e}">${chunk}</g>`;
+ const id='moe-e'+e+'-fc1';links+=`<g class="${active?'is-route':'off-route'}">`+edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}V${y-18}H${x}V${y}`)+text(x,y-7,active?`t${t}${deployed?' · '+(remote?'跨组':'本组'):''} · α=${a.toFixed(2)}`:'','tiny','middle')+edge('moe-fc1-gelu-'+e,port(id,x,y+oh),port('moe-e'+e+'-gelu',x,y+65))+edge('moe-gelu-fc2-'+e,port('moe-e'+e+'-gelu',x,y+65+oh),port('moe-e'+e+'-fc2',x,y+130))+edge('moe-return-'+e,port('moe-e'+e+'-fc2',x,y+130+oh),port('moe-combine',cf,ys+580),'i',remote,`M${x} ${y+130+oh}V${ys+555}H${cf}V${ys+580}`)+'</g>';
+ }
+ nodes+=glyph('moe-combine',cf,ys+580,ep>1?'返回 All-to-All · 加权合并':'按 token 加权合并','mix','按原 token 索引恢复顺序，rₜ=Σᵢ αₜ,ᵢ Eᵢ(aₜ)。这是专家路径合并；下方 Residual Add 才是子层残差相加。',['moe'],ep>1);
+ // Virtual module endpoints connect the outer FFN boundary to the expanded subgraph.
+ registry['module-moe']={title:'MoE FFN',body:'4 位 GeLU 专家、Top-2。输入输出保持相同隐藏维，专家选择与跨 Rank 部署是独立变量。',docs:['moe'],audited:true};
+ positions['module-moe']={x:cf-740,y:ys,width:1480,height:660};
+ }
+ const roleBodies={
+ 'model-input-H0':'H₀ 是当前 Block 的输入。SP 开启时仅持有本 Rank 的 token 行。',
+ 'model-boundary-Y':'Hₐ = H₀ + R_Attn；同一张量同时进入 Norm₂ 和第二条恒等残差旁路。',
+ 'model-output':'H₁ = Hₐ + Y，是当前 Block 的输出。输入、分支结果与残差相加保持相同隐藏维。',
+ 'model-attn-result':'R_Attn 是 Attention 输出投影经 TP 归约后的分支输出，与 H₀ 逐元素相加。',
+ 'full-value-f-9':'Y 是 FFN 分支结果，经第二次残差相加形成 H₁。',
+ 'full-input-X':'X = Norm₁(H₀)，供 QKV 投影使用。SP 开启时，先保存本地 token 分片 Xᵣ，再通过 AG 取得完整 X。',
+ 'full-value-f-4':moe?'A = Norm₂(Hₐ)，供 Router 与入选专家共同读取；SP 开启时先收集 token 行。':'A = Norm₂(Hₐ)，供 FC1 使用。SP 开启时本 Rank 持有 Aᵣ，计算前经 AG 恢复 A。',
+ 'full-value-f-0':`X 由 TP 组内 ${tp} 份 Xᵣ 沿 token 维拼接得到，供 QKV 使用。`,
+ 'full-value-f-1':`QKVᵣ = X Wqkvᵣ，合并 ${4/tp} 个注意力头的 Q、K、V；每头宽度为2。`,
+ 'full-value-f-2':`Oᵣ 由本 Rank 的 ${4/tp} 个头执行 P·V 后拼接得到，供 PROJ 使用。`,
+ 'full-value-f-3':'Zprojᵣ = Oᵣ Wprojᵣ，是本 Rank 对 Attention 分支结果的数值贡献；不能当作完整 R_Attn。',
+ 'full-value-f-5':`A 由 ${tp} 份 Aᵣ 沿 token 维拼接得到，供 FC1 使用。`,
+ 'full-value-f-6':'Uᵣ = A W1ᵣ，是 FC1 的输出，也是 GELU 求导所需的前向输入。',
+ 'full-value-f-7':'Vᵣ = GELU(Uᵣ)，供 FC2 前向及 FC2_WGRAD 读取。',
+ 'full-value-f-8':'Z2ᵣ = Vᵣ W2ᵣ，是本 Rank 对 FFN 分支结果的贡献，随后经 TP 求和。'};
+ for(let i=0;i<rows.length;i++){
+ const r=rows[i];
+ if(r.kind==='moe'){drawMoe(r);}
+ else if(r.kind==='value')nodes+=matrixNode(r.id,cf,r.y,r.name,r.shape,'i',(roleBodies[r.id]||'前向计算产生的激活；形状由相邻矩阵乘法和 TP 切分决定。')+' 形状 ['+r.shape+']。',['model','linear','tp']);
+ else if(r.kind==='add')nodes+=addNode(r.id,cf,r.cy,r.id==='module-add1'?'Hₐ = H₀ + R_Attn。反向时，上游梯度分别传给两条输入路径。':'H₁ = Hₐ + Y。反向时 dH₁ 同时传给 FFN 分支和恒等旁路。');
+ else{
+ let body=r.id==='module-norm1'?'LayerNorm₁ 沿每个 token 的隐藏维归一化 H₀，得到 X。':r.id==='module-norm2'?'LayerNorm₂ 归一化 Hₐ，得到 A。':r.id==='module-attn'?'QKV 投影生成查询、键和值；各头执行因果 Attention，合并后作输出投影。':r.id==='module-mlp'?'FFN = Linear(8→16) → GELU → Linear(16→8)，每个 token 使用同一组参数。':r.communication?(r.category==='expand'?`AG 沿 token 维拼接 ${tp} 份 [${seq},8] 激活，所有 Rank 得到 [8,8]。`:sp?`RS(sum) 合并 ${tp} 个 Rank 的 [8,8] 部分和，再沿 token 维分发 [${seq},8]。`:`AllReduce(sum) 合并 ${tp} 个 Rank 的 [8,8] 部分和，每 Rank 得到同一完整结果。`):r.name==='MHA'?`本 Rank 有 ${4/tp} 个头，每头宽度2。P=softmax(mask(QKᵀ/√2))；O=PV。因果 Mask 排除未来 token，无 Attention dropout。`:r.name==='GeLU'?'V = GELU(U) = U Φ(U)，不改变形状。':`${r.name} 是线性变换，前向 Y=XW。权重按输入×输出维记，与 PyTorch weight 的存储方向相反。`;
+ nodes+=glyph(r.id,cf,r.y,r.name,r.category,body,r.communication?['nccl','tp']:r.category==='norm'?['model']:r.category==='attention'?['attention']:r.category==='activation'?['gelu']:['linear','tp'],!!r.communication);
+ }
+ if(i){const prev=rows[i-1];links+=edge('f-'+prev.id+'-'+r.id,port(prev.id,cf,prev.bottom),port(r.id,cf,r.top));}
+ }
+ for(const [src,dst] of [['model-input-H0','module-add1'],['model-boundary-Y','module-add2']]){const a=byId[src],b=byId[dst],rail=moe&&dst==='module-add2'?cf-820:cf-220;links+=edge('residual-'+dst,port(src,cf-25,a.cy),port(dst,cf-22,b.cy),'i',false,`M${cf-25} ${a.cy}H${rail}V${b.cy}H${cf-22}`);}
+ const bands=[['module-norm1','module-add1','Attention 子层'],['module-norm2','module-add2','FFN 子层']];for(const [first,last,label] of bands){const a=byId[first],b=byId[last];notes+=`<rect class="module-frame" x="${moe&&first==='module-norm2'?cf-860:cf-250}" y="${a.y-20}" width="${moe&&first==='module-norm2'?1720:550}" height="${b.bottom-a.y+40}" rx="12"/>`+text(cf-234,a.y-30,label,'small');}
+ if(!detailed){graphModel={moe,ep,tp,sp,seq,rows,positions,edges:semanticEdges};graphModel.snapshot=trainingGraphSnapshot(config,rows,positions,semanticEdges,registry);return svg(notes+links+nodes,820,cursorY+30);}
+ // Shared parameter identity is retained when TP changes shape.
+ const weights={qkv:[8,24/tp],proj:[8/tp,8],...(!moe?{fc1:[8,16/tp],fc2:[16/tp,8]}:{})},inputId={qkv:sp?'full-value-f-0':'full-input-X',proj:'full-value-f-2',fc1:sp?'full-value-f-5':'full-value-f-4',fc2:'full-value-f-7'};
+ const outputId={qkv:'full-value-f-1',proj:tp>1?'full-value-f-3':'model-attn-result',fc1:'full-value-f-6',fc2:tp>1?'full-value-f-8':'full-value-f-9'};
+ for(const key of Object.keys(weights)){const r=byId['full-f-'+key],sh=weights[key];nodes+=matrixNode('full-param-f-'+key,cf+238,r.cy-36,LINEAR_WEIGHTS[key].name,sh,'w',`前向读取 W${shapeText(sh)}，DGRAD 读取 Wᵀ。两处引用为同一对象。`,['linear','tp'],'weight-'+key);links+=edge('param-f-'+key,port('full-param-f-'+key,cf+196,r.cy),port(r.id,cf+128,r.cy),'w',true,`M${cf+196} ${r.cy}H${cf+128}`);}
+ function shapeText(a){return '['+a.join(',')+']';}
+ if(training){
+ const gradRows=[];function backValue(id,r,name,shape,body){nodes+=matrixNode(id,cb,r.y,name,shape,'g',body,['grad','linear','tp']);return {id,y:r.y,cy:r.cy,top:r.top,bottom:r.bottom};}
+ // Each backward record occupies its corresponding forward row; no forward node is replaced.
+ let reverse=[];
+ const bOpMap={
+ 'module-moe':['moe-backward','MoE · 输入梯度','router'],
+ 'full-f-qkv':['full-b-dq','QKV_DGRAD','linear'], 'full-f-mha':['full-b-dm','MHA grad','attention'], 'full-f-proj':['full-b-dp','PROJ_DGRAD','linear'],
+ 'full-f-fc1':['full-b-d1','FC1_DGRAD','linear'],'full-f-gelu':['full-b-dg','GeLU grad','activation'],'full-f-fc2':['full-b-d2','FC2_DGRAD','linear'],
+ 'full-f-agq':['full-b-rsq','RS(dX)','reduce'],'full-f-agf':['full-b-rs1','RS(dA)','reduce'],
+ 'full-f-rsp':sp?['full-b-agp','AG(dR_Attn)','expand']:null,'full-f-rsf':sp?['full-b-ag2','AG(dY)','expand']:null,
+ 'module-norm1':['model-back-norm1','Norm 1 grad','norm'],'module-norm2':['model-back-norm2','Norm 2 grad','norm']};
+ const gradValueMap={
+ 'full-input-X':['full-value-b-0','dXᵣ',[seq,8]],'full-value-f-0':['full-value-b-1','dX⁽ᵖ⁾ᵣ',[8,8]],
+ 'full-value-f-1':['full-value-b-2','dQKVᵣ',[8,24/tp]],'full-value-f-2':['full-value-b-3','dOᵣ',[8,8/tp]],
+ 'full-value-f-3':['full-value-b-4','dR_Attn',[8,8]],'model-attn-result':['model-grad-attn-result','dR_Attnᵣ',[seq,8]],
+ 'model-boundary-Y':['model-grad-boundary','dHₐ,Norm',[seq,8]],'full-value-f-4':['full-value-b-5','dAᵣ',[seq,8]],'full-value-f-5':['full-value-b-6','dA⁽ᵖ⁾ᵣ',[8,8]],
+ 'full-value-f-6':['full-value-b-7','dUᵣ',[8,16/tp]],'full-value-f-7':['full-value-b-8','dVᵣ',[8,16/tp]],
+ 'full-value-f-8':['full-value-b-9','dY',[8,8]],'full-value-f-9':['model-grad-ffn-result','dYᵣ',[seq,8]],
+ 'model-output':['full-input-dY','dH₁ᵣ',[seq,8]]};
+ if(!sp&&tp>1){gradValueMap['full-input-X'][1]='dX⁽ᵖ⁾ᵣ';gradValueMap['full-value-f-4'][1]='dA⁽ᵖ⁾ᵣ';}
+ for(const r of rows){
+ if(r.id==='model-input-H0'){nodes+=addNode('model-back-add0',cb,r.cy,'dH₀ = Norm₁grad(dX) + dHₐ。后一项来自第一条恒等残差旁路。','g');nodes+=text(cb+38,r.cy+5,'dH₀','small','start',C.g);reverse.push({id:'model-back-add0',top:r.cy-22,bottom:r.cy+22,cy:r.cy});continue;}
+ if(r.id==='module-add1'){nodes+=addNode('model-back-add1',cb,r.cy,'dHₐ = Norm₂grad(dA) + dH₁。dH₁ 来自第二条恒等残差旁路；dHₐ 随后同时送往 Attention 分支和 H₀ 的恒等旁路。','g');nodes+=text(cb+38,r.cy+5,'dHₐ','small','start',C.g);reverse.push({id:'model-back-add1',top:r.cy-22,bottom:r.cy+22,cy:r.cy});continue;}
+ if(r.id==='module-add2')continue; // Add adjoint is a fan-out, not an addition.
+ if(gradValueMap[r.id]){const [id,name,shape]=gradValueMap[r.id];const partial=name.includes('⁽ᵖ⁾')||!sp&&tp>1&&['full-input-X','full-value-f-4'].includes(r.id);const body=r.id==='model-boundary-Y'?'dHₐ,Norm 仅来自 Norm₂ 的反向路径；还要与第二条残差旁路返回的 dH₁ 相加，才得到完整 dHₐ。':r.id==='full-value-f-9'?'H₁=Hₐ+Y 的加法反向将 dH₁ 原样传给 Y 分支，因此 dY=dH₁。':partial?'这是本 Rank 对输入梯度的部分贡献；TP 归约完成后才得到完整的输入梯度或其序列分片。':`损失对 ${r.name} 的梯度，形状 ${shapeText(shape)}。它传给前一项计算，与优化器使用的参数梯度 dW 不同。`;reverse.push(backValue(id,r,name,shape,body));}
+ else if(bOpMap[r.id]){const [id,name,cat]=bOpMap[r.id];let body=r.id==='module-moe'?'合并的反向将 αᵢ·dY 送回入选专家；各专家计算 dAᵢ，分发的反向将贡献送回来源并求和；Router 的分数梯度也贡献给 dA。Top-k 的离散专家编号不作连续求导。':name.includes('DGRAD')?'输入梯度 dX=dY·Wᵀ。它读取输出梯度与权重，不需要该线性层的前向输入。':name.includes('Norm')?'归一化的反向读取前向输入与当前输出梯度，计算对归一化输入的梯度。':name==='GeLU grad'?'dU=dV ⊙ GELU′(U)，需要前向 U。':name==='MHA grad'?'从 dO 和前向 Q/K/V/P 的数学依赖计算 dQ、dK、dV；融合实现可保存其他中间量或重计算。':cat==='expand'?'AG 拼接输出梯度的 token 分片，恢复 [8,8]。':'RS(sum) 归约输入梯度的各 Rank 贡献，并沿 token 维分片。';nodes+=glyph(id,cb,r.y,name,cat,body,r.id==='module-moe'?['moe','grad']:['grad','tp','attention'],r.communication);reverse.push({id,top:r.y,bottom:r.y+oh,cy:r.cy});}
+ }
+ for(let i=reverse.length-1;i>0;i--){const a=reverse[i],b=reverse[i-1];if(tp>1&&!sp&&['model-back-norm1','model-back-norm2'].includes(b.id)){const id=b.id==='model-back-norm1'?'full-b-rsq':'full-b-rs1',name=b.id==='model-back-norm1'?'AR(dX)':'AR(dA)',x=cb-230,y=a.top-20;nodes+=glyph(id,x,y,name,'reduce','各 TP Rank 的输入梯度只是部分贡献；AllReduce(sum) 合并为完整 [8,8] 输入梯度，再进入 Norm 的反向。',['tp','nccl'],true);links+=edge('ar-input-'+id,port(a.id,cb,a.top),port(id,x+128,y+oh/2),'g',true,`M${cb} ${a.top}V${y+oh/2}H${x+128}`);links+=edge('ar-output-'+id,port(id,x,y),port(b.id,cb,b.bottom),'g',true,`M${x} ${y}V${b.bottom+12}H${cb}V${b.bottom}`);continue;}links+=edge('b-'+a.id+'-'+b.id,port(a.id,cb,a.top),port(b.id,cb,b.bottom),'g',true);}
+ const identity2=byId['model-output'],sum1=byId['module-add1'],sum0=byId['model-input-H0'];
+ links+=edge('grad-residual2',port('full-input-dY',cb+38,identity2.cy),port('model-back-add1',cb+22,sum1.cy),'g',true,`M${cb+38} ${identity2.cy}H${cb+225}V${sum1.cy}H${cb+22}`);
+ links+=edge('grad-residual1',port('model-back-add1',cb,sum1.cy-22),port('model-back-add0',cb+22,sum0.cy),'g',true,`M${cb} ${sum1.cy-22}H${cb+260}V${sum0.cy}H${cb+22}`);
+ for(const key of Object.keys(weights)){const r=byId['full-f-'+key],sh=weights[key];nodes+=matrixNode('full-param-b-'+key,cb-238,r.cy-36,LINEAR_WEIGHTS[key].name,sh,'w','读取与前向相同的参数对象；DGRAD 使用其转置。',['linear','grad'],'weight-'+key);links+=edge('param-b-'+key,port('full-param-b-'+key,cb-196,r.cy),port(bOpMap[r.id][0],cb-128,r.cy),'w',true,`M${cb-196} ${r.cy}H${cb-128}`);}
+ // Nonlinear and normalization backward dependencies keep explicit object mappings.
+ for(const [source,target,backId] of [['model-input-H0','module-norm1','model-back-norm1'],['model-boundary-Y','module-norm2','model-back-norm2'],...(!moe?[['full-value-f-6','full-f-gelu','full-b-dg']]:[])]){const a=byId[source],b=byId[target];links+=edge('saved-'+backId,port(source,cf+38,a.cy),port(backId,cb-128,b.cy),'i',false,`M${cf+38} ${a.cy}H${cf+330}V${b.cy}H${cb-128}`);}
+ const mha=byId['full-f-mha'];links+=edge('save-attention-state',port('full-f-mha',cf+128,mha.cy),port('full-attention-state',cf+190,mha.cy),'i',false,`M${cf+128} ${mha.cy}H${cf+190}`);nodes+=cachedCollection(cf+190,mha.y-8,'full-attention-state');remember('full-attention-state','Attention 前向状态',`每 Rank ${4/tp} 个头；Q/K/V 各 [8,${8/tp}]，每头 P[8,8]。这是数学反向依赖；实际保存内容由内核和重计算策略决定。`,['attention','grad']);links+=edge('attention-state',port('full-attention-state',cf+350,mha.cy),port('full-b-dm',cb-128,mha.cy),'i',false,`M${cf+350} ${mha.cy}H${cb-128}`);
+ if(wgrad){for(const key of Object.keys(weights)){
+ const r=byId['full-f-'+key],inp=byId[inputId[key]],out=byId[outputId[key]],sh=weights[key],name=key==='qkv'?'QKV':key==='proj'?'PROJ':key.toUpperCase();
+ nodes+=glyph('full-w-'+key,cw,r.y,name+'_WGRAD','linear',`dW = Xᵀ·dY，shape ${shapeText(sh)}。它与 DGRAD 属于同一次反向；WGRAD 需要该线性层的前向输入。`,['linear','grad']);
+ nodes+=matrixNode('full-dw-'+key,cw+220,r.cy-36,'d'+LINEAR_WEIGHTS[key].name,sh,'g','参数梯度与权重分片同形状；优化器使用该梯度更新参数，不作为上游激活梯度传播。',['grad'],'grad-weight-'+key);
+ links+=edge('dw-'+key,port('full-w-'+key,cw+128,r.cy),port('full-dw-'+key,cw+178,r.cy),'g',true,`M${cw+128} ${r.cy}H${cw+178}`);
+ const gradId=gradValueMap[out.id][0];links+=edge('wgrad-dy-'+key,port(gradId,cb-38,out.cy),port('full-w-'+key,cw+64,r.y+oh),'g',true,`M${cb-38} ${out.cy}H${cw+285}V${r.y+80}H${cw+64}V${r.y+oh}`);
+ if(recollect&&['qkv','fc1'].includes(key)){
+ const source=byId[key==='qkv'?'full-input-X':'full-value-f-4'];nodes+=glyph('full-cache-'+key,cw,r.y+95,key==='qkv'?'AG(Xᵣ)':'AG(Aᵣ)','expand','本例只保存序列分片；WGRAD 前重新收集完整输入。保留完整输入时可以省去该次 AG。',['tp','grad'],true);
+ nodes+=matrixNode('full-regather-'+key,cw,r.y-95,key==='qkv'?'X':'A',[8,8],'i','从缓存的序列分片重新收集得到完整线性层输入。',['tp','grad']);
+ links+=edge('cache-source-'+key,port(source.id,cf+38,source.cy),port('full-cache-'+key,cw-128,r.y+95+oh/2),'i',false,`M${cf+38} ${source.cy}H${cf+380}V${r.y+95+oh/2}H${cw-128}`);
+ links+=edge('cache-up-'+key,port('full-cache-'+key,cw,r.y+95),port('full-regather-'+key,cw,r.y-23),'i',false,`M${cw} ${r.y+95}H${cw-190}V${r.y-59}H${cw-38}`);
+ links+=edge('cache-to-w-'+key,port('full-regather-'+key,cw,r.y-23),port('full-w-'+key,cw,r.y),'i');
+ }else{links+=edge('wgrad-x-'+key,port(inp.id,cf+38,inp.cy),port('full-w-'+key,cw-128,r.cy),'i',false,`M${cf+38} ${inp.cy}H${cf+380}V${r.cy}H${cw-128}`);}
+ }}
+ }
+ if(moe&&training){const r=byId['module-moe'];nodes+=glyph('moe-wgrad',cw,r.y+400,'专家 / Router WGRAD','linear','各专家保存 dispatch 后的前向输入和 GeLU 输出，计算 dW1=AᵀdU、dW2=VᵀdE；Router 参数梯度来自被选分数的 softmax 路径。每位专家的权重独立。',['moe','grad']);if(recollect){nodes+=glyph('moe-router-regather',cw,r.y+280,'AG(Aᵣ) · Router WGRAD','expand','只保存序列分片时，Router WGRAD 重新收集完整 A。专家 WGRAD 另外读取保留的 dispatch 后输入。',['moe','tp','grad'],true);links+=edge('moe-router-cache',port('full-value-f-4',cf+38,byId['full-value-f-4'].cy),port('moe-router-regather',cw-128,r.y+280+oh/2),'i',false,`M${cf+38} ${byId['full-value-f-4'].cy}H${cw-190}V${r.y+280+oh/2}H${cw-128}`);links+=edge('moe-router-cache-wgrad',port('moe-router-regather',cw,r.y+280+oh),port('moe-wgrad',cw,r.y+400));}else{const source=byId[sp?'full-value-f-5':'full-value-f-4'];links+=edge('moe-wgrad-input',port(source.id,cf+38,source.cy),port('moe-wgrad',cw-128,r.y+400+oh/2),'i',false,`M${cf+38} ${source.cy}H${cw-180}V${r.y+400+oh/2}H${cw-128}`);} links+=edge('moe-wgrad-packed',port('moe-dispatch',cf+128,r.y+95+oh/2),port('moe-wgrad',cw-128,r.y+400+oh/2),'i',false,`M${cf+128} ${r.y+95+oh/2}H${cw-220}V${r.y+400+oh/2}H${cw-128}`);links+=edge('moe-wgrad-grad',port('moe-backward',cb-128,r.y+oh/2),port('moe-wgrad',cw,r.y+400),'g',true,`M${cb-128} ${r.y+oh/2}H${cw}V${r.y+400}`);}
+ const titles=text(cf,28,'Forward / 前向','text','middle')+(training?text(cb,28,'DGRAD / 输入梯度','text','middle'):'')+(wgrad?text(cw,28,'WGRAD / 参数梯度','text','middle'):'');
+ graphModel={moe,ep,tp,sp,seq,rows,positions,edges:semanticEdges,weights,inputId,outputId,recollect};graphModel.focusBounds=current>=7?{x:cf-(moe?900:330),y:byId['module-norm2'].y-50,width:moe?1800:800,height:byId['model-output'].bottom-byId['module-norm2'].y+100}:null;graphModel.snapshot=trainingGraphSnapshot(config,rows,positions,semanticEdges,registry);return svg(notes+links+nodes+titles,training?cb+320:850,cursorY+30);
+}
+</script><script>
+// Secondary controls alter graph state, never the primary derivation step.
+const secondaryDefinitions={
+ 7:{key:'ffn',title:'FFN 结构',values:['dense','moe'],labels:['Dense','MoE · 4 experts']},
+ 8:{key:'ep',title:'专家并行度 EP',values:[1,2,4],labels:['1 组','2 组','4 组']},
+ 4:{key:'tp',title:'张量并行度 TP',values:[1,2,4],labels:['1 Rank','2 Ranks','4 Ranks']},
+ 5:{key:'sp',title:'序列并行 SP',values:[false,true],labels:['关闭','开启']},
+ 6:{key:'cache',title:'WGRAD 的前向输入',values:['full','shard'],labels:['保留完整输入','只保留序列分片']}};
+function syncSecondary(){const box=document.querySelector('#secondary-control'),d=secondaryDefinitions[current];box.hidden=!d;const tokens=document.querySelector('#token-controls');tokens.hidden=!(current>=7&&graphModel.moe);tokens.innerHTML=Array.from({length:8},(_,t)=>`<button data-token="${t}" data-tip="跟踪${current>=8?'来源组 0 的 ':''}token ${t}" class="${t===parameterState.token?'active':''}" aria-pressed="${t===parameterState.token}">t${t}</button>`).join('');if(!d)return;const input=document.querySelector('#secondary-input'),disabled=current===5&&graphModel.tp===1||current===6&&(graphModel.tp===1||!graphModel.sp)||current===8&&!graphModel.moe;input.min=0;input.max=d.values.length-1;input.step=1;input.value=d.values.indexOf(d.key==='sp'?graphModel.sp:parameterState[d.key]);input.disabled=disabled;input.setAttribute('aria-label',d.title);input.setAttribute('aria-valuetext',d.labels[+input.value]);input.dataset.tip=disabled?(current===8?'Dense 没有专家，EP 不适用':'当前配置不需要跨 Rank 的序列收集'):'拖动修改'+d.title;document.querySelector('#secondary-title').textContent=d.title;document.querySelector('#secondary-value').textContent=d.labels[+input.value];document.querySelector('#secondary-labels').innerHTML=d.labels.map((label,i)=>`<button data-parameter-index="${i}" ${disabled?'disabled':''} data-tip="${label}" class="${i===+input.value?'active':''}">${label}</button>`).join('');document.querySelector('#secondary-hint').textContent=disabled?(current===8?'Dense 没有专家，EP 不适用。':graphModel.tp===1?'TP=1，无跨 Rank 序列通信。':'SP 关闭，前向输入已完整。'):current===7?'结构切换只替换 FFN；保留 GeLU、Norm 与残差。':current===8?`4 个专家分到 ${graphModel.ep} 组；共 ${graphModel.tp*graphModel.ep} 个 Rank。${graphModel.ep>1&&graphModel.tp>1?'TP + EP 使用 SP。':''}`:current===4?`每个 Rank：QKV 宽 ${24/graphModel.tp}，FFN 隐藏宽 ${16/graphModel.tp}。`:current===5?`当前边界张量：[${graphModel.seq},8]；Rank 数 ${graphModel.tp}。`:graphModel.recollect?'图中增加两次缓存输入 AG。':'图中直接连接保存的完整输入。';}
+function setParameter(key,value){const d=Object.values(secondaryDefinitions).find(d=>d.key===key);if(!d||!d.values.includes(value))throw Error('Invalid parameter');pausePlayback();parameterState[key]=value;parameterChanged=true;scheduleRender();}
+document.querySelector('#secondary-input').addEventListener('pointerdown',()=>pausePlayback());document.querySelector('#secondary-input').addEventListener('input',e=>{const d=secondaryDefinitions[current];setParameter(d.key,d.values[+e.target.value])});document.querySelector('#secondary-control').addEventListener('click',e=>{const b=e.target.closest('[data-parameter-index]');if(!b)return;const d=secondaryDefinitions[current];setParameter(d.key,d.values[+b.dataset.parameterIndex]);});
+
+document.querySelector('#token-controls').addEventListener('click',e=>{const b=e.target.closest('[data-token]');if(!b)return;pausePlayback();parameterState.token=+b.dataset.token;scheduleRender();});
+</script><script>
+const $=s=>document.querySelector(s);
+const stages=[
+ ['模型架构','两个带残差的 Pre-Norm 子层','输入先经过 Norm，再进入 Attention；分支结果与输入相加。FFN 子层以相同方式串接。'],
+ ['前向展开','从输入算出新的表示','QKV 将输入投影为查询、键和值；MHA 按注意力权重聚合信息。FFN 用两个线性层和 GELU 变换特征。'],
+ ['输入梯度','DGRAD：梯度传回前层','对线性层 Y=XW，读取输出梯度 dY 与权重 W，计算 dX=dY·Wᵀ。Norm、非线性和残差也各自按链式法则反向求导。'],
+ ['参数梯度','WGRAD：计算参数的梯度','同一次反向还要读取前向输入 X，计算 dW=Xᵀ·dY。dX 继续传向前层；dW 供优化器更新参数。它们不是两次训练阶段。'],
+ ['TP','把一个线性层分给多个 Rank','QKV / FC1 按输出特征切分权重；PROJ / FC2 按输入特征切分。行并行的局部输出需要逐元素归约求和。'],
+ ['SP','让子层边界只保留部分 token','SP 复用 TP 组。Norm 与残差处理本地 token；线性计算前 AG 恢复输入，输出 RS 归约后再次分片。'],
+ ['反向取数','WGRAD 从哪里取回前向输入','本例可比较两种存储策略：保留完整输入时直接读取；只保留序列分片时，在 WGRAD 前再次 AG。']];
+stages.push(['FFN → MoE','在 FFN 位置引入专家选择','保留 Norm 与残差接口。Router 为每个 token 选择两位专家，输出按路由系数合并。'],['专家分布','把专家分配到不同 Rank 组','专家数保持为 4；EP 改变专家归属，跨组 token 分配通过 All-to-All 分发并返回。']);
+const LAST_STAGE=stages.length-1,TRACK_END=LAST_STAGE*8;
+const parameterState={tp:4,sp:true,cache:'shard',ffn:'moe',ep:2,token:0};
+
+let parameterChanged=false;
+let current=0,cursor=0,extension='base',activeRank=0,view={z:1,x:0,y:0},drag=null,moved=false,compare=false,lastStage=-1,panelOpen=false,playing=false,playTimer=null,cameraFrame=0,autoLayout=true,layoutBoxes=[],settingsOpen=false;
+const nav=$('#layer-list');nav.style.gridTemplateColumns=`repeat(${TRACK_END+1},minmax(0,1fr))`;const buttons=[];
+const stageNames=['模型架构','前向','DGRAD','WGRAD','TP','SP','反向取数','FFN→MoE','专家分布'];
+$('#stage-labels').innerHTML=stageNames.map((name,i)=>`<button data-stage="${i}" data-tip="${stages[i][1]}" style="left:${i/LAST_STAGE*100}%;transform:translateX(${i===0?0:i===LAST_STAGE?-100:-50}%)">${name}</button>`).join('');
+// Layer Stack's 49-segment track DOM and pointer mapping; seven semantic anchors replace L0…L48.
+for(let l=0;l<=TRACK_END;l++){const b=document.createElement('button');b.type='button';b.dataset.layer=String(l);b.className='layer-button';const track=document.createElement('span');track.className='bar-track';track.setAttribute('aria-hidden','true');const bar=document.createElement('span');bar.className='layer-bar';track.append(bar);const number=document.createElement('span');number.className='layer-number';b.append(track,number);b.setAttribute('aria-label','推导进度 '+l+'/'+TRACK_END);b.setAttribute('aria-pressed','false');b.dataset.tip=l%8===0?stages[l/8][0]:'拖动查看阶段变化';b.addEventListener('click',()=>setCursor(l));nav.append(b);buttons.push(b);}
+function updateNav(){buttons.forEach((b,l)=>{b.setAttribute('aria-pressed',String(l===cursor));b.querySelector('.layer-number').textContent='';});$('#stage-labels').querySelectorAll('button').forEach((b,i)=>{b.classList.toggle('active',i===current);b.setAttribute('aria-current',i===current?'step':'false')});}
+function syncPlayback(){const button=$('#play');button.setAttribute('aria-pressed',String(playing));button.setAttribute('aria-label',playing?'暂停推导播放':current===LAST_STAGE?'重新播放推导过程':'播放推导过程');button.dataset.playing=String(playing);button.dataset.tip=playing?'暂停播放':current===LAST_STAGE?'从模型架构重新播放':'播放推导过程';$('#play-symbol').setAttribute('d',playing?'M8 5v14M16 5v14':'M8 5L19 12L8 19Z');$('#play-symbol').style.fill=playing?'none':'currentColor';}
+function pausePlayback(){playing=false;clearTimeout(playTimer);playTimer=null;syncPlayback();}
+function advancePlayback(){if(!playing)return;playTimer=setTimeout(()=>{if(current>=LAST_STAGE){pausePlayback();return}setCursor((current+1)*8,true);if(current===LAST_STAGE)pausePlayback();else advancePlayback();},3200);}
+function togglePlayback(){if(playing){pausePlayback();return}const restart=current===LAST_STAGE;if(restart)setCursor(0,true);playing=true;syncPlayback();if(!restart){setCursor(current*8+8,true);if(current===LAST_STAGE){pausePlayback();return}}advancePlayback();}
+$('#play').addEventListener('click',togglePlayback);document.addEventListener('visibilitychange',()=>{if(document.hidden)pausePlayback()});
+
+let navDragging=false;
+function selectFromPointer(e){const rect=nav.getBoundingClientRect(),l=Math.max(0,Math.min(TRACK_END,Math.floor((e.clientX-rect.left)/rect.width*(TRACK_END+1))));if(l!==cursor)setCursor(l)}
+nav.addEventListener('pointerdown',e=>{if(e.button!==0)return;pausePlayback();navDragging=true;nav.setPointerCapture(e.pointerId);selectFromPointer(e)});
+nav.addEventListener('pointermove',e=>{if(navDragging)selectFromPointer(e)});
+nav.addEventListener('pointerup',()=>navDragging=false);nav.addEventListener('pointercancel',()=>navDragging=false);
+function configure(){const {tp}=deriveTrainingConfig(current,parameterState);shown=tp>1?(current>=5&&parameterState.sp?4:3):2;Object.assign(LINEAR_WEIGHTS.qkv,{shape:[8,24/tp]});Object.assign(LINEAR_WEIGHTS.proj,{shape:[8/tp,8]});Object.assign(LINEAR_WEIGHTS.fc1,{shape:[8,16/tp]});Object.assign(LINEAR_WEIGHTS.fc2,{shape:[16/tp,8]});return tp;}
+
+const scheduleRender=createFrameScheduler(()=>render());
+function render(){scheduleRender.cancel();const tp=configure();registry={};const oldStage=lastStage;const needsMotion=oldStage>=0&&(oldStage!==current||parameterChanged);const oldNodes=needsMotion?captureNodes():new Map();const oldWires=needsMotion?new Set(Array.from($('#world').querySelectorAll('.wire')).map(el=>el.getAttribute('d')+'|'+el.getAttribute('stroke'))):new Set();const markup=trainingGraph();const patchStart=performance.now();const patchStats=updateGraphSvg($('#world'),markup);window.trainingRenderStats={...patchStats,patchMs:performance.now()-patchStart};
+const inner=$('#world [data-viewport]');
+
+const sp=graphModel.sp,seq=graphModel.seq;
+const world=tp*(graphModel.ep||1);
+$('#config').innerHTML=`<strong>${current===7?`TP ${tp} · FFN 结构`:current>=8?`${world} 个 Rank · TP ${tp} · EP ${graphModel.ep}`:tp===1?'1 个 Rank':`TP ${tp} · ${tp} 个 Rank`}</strong><br>案例：T=8 · H=8 · FFN=16 · 4 heads`;
+$('#rankbar').textContent=current<2?'Pre-Norm · 因果 Attention · GeLU FFN':tp===1?'同一次反向 · 输入梯度 / 参数梯度':`TP 组 {${Array.from({length:tp},(_,i)=>i).join(',')}} · 每 Rank ${4/tp} 个头`;
+const summary=current===4?`TP=${tp}：QKV 权重 [8,${24/tp}]，FC1 权重 [8,${16/tp}]。${tp===1?'本地即可得到完整结果。':'行并行结果经 AllReduce(sum) 合并。'}`:current===5?(sp?`SP 开启：边界 [${seq},8]；AG 恢复 [8,8]，RS 再输出 [${seq},8]。Rank 数仍为 ${tp}。`:tp===1?'当前 TP=1：不需要跨 Rank 拼接或归约。':'SP 关闭：子层边界保留完整 [8,8]，TP 输出使用 AllReduce。'):current===6?(graphModel.recollect?'仅保存 Xᵣ / Aᵣ：WGRAD 前先 AG，再与输出梯度相乘。':'保留完整 X / A：WGRAD 直接读取，省去这两次重新收集。'):stages[current][2];
+const moeSummary=current===7?(graphModel.moe?'4 个 GeLU 专家平铺展开，每 token 选择 2 个并加权合并。本步只展示结构；下一步再指定专家的 Rank 归属。':'Dense：所有 token 共用 FC1 → GeLU → FC2。切到 MoE 可在原位置展开专家。'):current===8?(graphModel.moe?`EP=${graphModel.ep}，每组 ${4/graphModel.ep} 个专家；组内 TP=${tp}。专家公式不变，改变的是归属和往返通信；虚线标出所选 token 的跨组路径。`:'当前为 Dense，EP 不适用。先在 MoE 步骤切换模型结构。'):summary;
+$('#impact').innerHTML=`<div class="step-number">${String(current+1).padStart(2,'0')}</div><b>${stages[current][1]}</b><span>${moeSummary}</span><pre class="stage-formula">${esc(current>=7?(graphModel.moe?`rₜ = Σᵢ αₜ,ᵢ Eᵢ(aₜ)\nEᵢ(a) = GELU(aW1ᵢ)W2ᵢ\n4 experts · Top-2${current>=8?' · EP '+graphModel.ep:''}`:'Y = GELU(AW1)W2'):current===4?`Wqkvᵣ [8,${24/tp}] · Wprojᵣ [${8/tp},8]\nW1ᵣ [8,${16/tp}] · W2ᵣ [${16/tp},8]`:current===5?(sp?`AG：[${seq},8] × ${tp} → [8,8]\nRS：Σᵣ Zᵣ[8,8] → [${seq},8]`:'边界激活：[8,8]\n'+(tp===1?'单 Rank 本地计算':'AllReduce(sum)：[8,8] → [8,8]')):STAGE_FORMULAS[current])}</pre><small>${current===2||current===3?'同一次反向传播的两个计算目标':`TP ${tp} · SP ${sp?'ON':'OFF'}`}</small>`;
+$('#extension').hidden=true;$('#extension').style.display='none';syncSecondary();if(!$('#info-panel').hidden)updateInfo();
+updateNav();syncPlayback();const graphBounds=inner.getBBox();layoutBoxes=graphModel.focusBounds?[graphModel.focusBounds]:[{x:graphBounds.x,y:graphBounds.y,width:graphBounds.width,height:graphBounds.height}];apply();if(oldStage!==current||parameterChanged){autoLayout=true;view={z:1,x:0,y:0};apply();fitStage(oldStage>=0);animateGraph(oldNodes,oldWires,oldStage);}if(selected&&panelOpen)showPanel();lastStage=current;parameterChanged=false;}
+function setCursor(l,fromPlayback=false){if(!fromPlayback)pausePlayback();cursor=Math.max(0,Math.min(TRACK_END,l));const next=Math.round(cursor/8);if(next!==current){current=next;extension='base';render()}else updateNav();}
+
+const motion=()=>({duration:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--duration-layout'))||500,easing:getComputedStyle(document.documentElement).getPropertyValue('--ease-layout').trim()||'ease-out'});
+function captureNodes(){const result=new Map();$('#world').querySelectorAll('[data-node]').forEach(el=>{if(el.closest('[aria-hidden=true]'))return;const b=el.getBBox();result.set(el.dataset.node,{el,clone:el.cloneNode(true),body:el.innerHTML,b:{x:b.x,y:b.y,width:b.width,height:b.height},opacity:getComputedStyle(el).opacity});});return result;}
+function moduleAnchor(id,oldNodes){let parent;const maps={'full-value-b-0':'full-input-X','full-value-b-1':'full-value-f-0','full-value-b-2':'full-value-f-1','full-value-b-3':'full-value-f-2','full-value-b-4':'full-value-f-3','full-value-b-5':'full-value-f-4','full-value-b-6':'full-value-f-5','full-value-b-7':'full-value-f-6','full-value-b-8':'full-value-f-7','full-value-b-9':'full-value-f-8','model-grad-attn-result':'model-attn-result','model-grad-boundary':'model-boundary-Y','model-grad-ffn-result':'full-value-f-9','full-input-dY':'model-output','full-cache-qkv':'full-input-X','full-cache-fc1':'full-value-f-4','full-regather-qkv':'full-value-f-0','full-regather-fc1':'full-value-f-5'};if(id.startsWith('moe-')){const n=oldNodes.get('moe-router')||oldNodes.get('full-f-fc1');if(n)return {x:n.b.x+n.b.width/2,y:n.b.y+n.b.height/2};}const match=id.match(/^full-(?:param-b|dw)-(.+)$/);const mapped=maps[id]||(match?'full-param-f-'+match[1]:null);if(mapped)parent=oldNodes.get(mapped);if(parent)return {x:parent.b.x+parent.b.width/2,y:parent.b.y+parent.b.height/2};if(/full-f-(qkv|mha|proj)|full-param-f-(qkv|proj)|full-value-f-[123]/.test(id))parent=oldNodes.get('module-attn');if(/full-f-(fc1|gelu|fc2)|full-param-f-(fc1|fc2)|full-value-f-[678]/.test(id))parent=oldNodes.get('module-mlp');if(parent)return {x:parent.b.x+parent.b.width/2,y:parent.b.y+parent.b.height/2};if(id==='model-back-norm1')parent=oldNodes.get('module-norm1');if(id==='model-back-norm2')parent=oldNodes.get('module-norm2');if(id==='model-back-add1')parent=oldNodes.get('module-add1');if(id==='model-back-add0')parent=oldNodes.get('model-input-H0');if(parent)return {x:parent.b.x+parent.b.width/2,y:parent.b.y+parent.b.height/2};const counterpart={'dq':'qkv','dm':'mha','dp':'proj','d1':'fc1','dg':'gelu','d2':'fc2'};let key=id.replace('full-b-','');if(id.startsWith('full-b-')&&counterpart[key])parent=oldNodes.get('full-f-'+counterpart[key]);if(id.startsWith('full-w-'))parent=oldNodes.get('full-f-'+id.slice(7));return parent?{x:parent.b.x+parent.b.width/2,y:parent.b.y+parent.b.height/2}:null;}
+function animateGraph(oldNodes,oldWires,oldStage){if(oldStage<0||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const world=$('#world [data-viewport]'),opts=motion();let exit=document.createElementNS('http://www.w3.org/2000/svg','g');exit.setAttribute('data-animation-exit','true');exit.setAttribute('pointer-events','none');exit.setAttribute('aria-hidden','true');world.append(exit);const newIds=new Set();world.querySelectorAll('[data-node]').forEach(el=>{const id=el.dataset.node;newIds.add(id);const before=oldNodes.get(id);const b=el.getBBox(),opacity=getComputedStyle(el).opacity;const a=moduleAnchor(id,oldNodes);if(!before){const dx=a?a.x-(b.x+b.width/2):0,dy=a?a.y-(b.y+b.height/2):0;el.animate([{opacity:0,transform:`translate(${dx}px,${dy}px)`},{opacity,transform:'translate(0px,0px)'}],opts);}else if(Math.abs(before.b.x-b.x)+Math.abs(before.b.y-b.y)>1){el.animate([{transform:`translate(${before.b.x-b.x}px,${before.b.y-b.y}px)`,opacity:before.opacity},{transform:'translate(0px,0px)',opacity}],opts);}else if(before.body!==el.innerHTML){const clone=before.clone;clone.removeAttribute('tabindex');exit.append(clone);clone.animate([{opacity:before.opacity},{opacity:0}],opts).finished.then(()=>clone.remove()).catch(()=>{});el.animate([{opacity:0},{opacity}],opts);}else if(before.opacity!==opacity)el.animate([{opacity:before.opacity},{opacity}],opts);});
+oldNodes.forEach((before,id)=>{if(newIds.has(id))return;const clone=before.clone;clone.removeAttribute('tabindex');exit.append(clone);let anchor=moduleAnchor(id,oldNodes);const targetId=/full-f-(qkv|mha|proj)|full-param-f-(qkv|proj)|full-value-f-[123]/.test(id)?'module-attn':/full-f-(fc1|gelu|fc2)|full-param-f-(fc1|fc2)|full-value-f-[678]/.test(id)?'module-mlp':null;if(targetId){const target=world.querySelector('[data-node="'+targetId+'"]');if(target){const box=target.getBBox();anchor={x:box.x+box.width/2,y:box.y+box.height/2}}}clone.animate([{opacity:before.opacity},{opacity:0,transform:anchor?`translate(${anchor.x-before.b.x-before.b.width/2}px,${anchor.y-before.b.y-before.b.height/2}px)`:'translate(0px,0px)'}],opts).finished.then(()=>clone.remove()).catch(()=>{});});
+world.querySelectorAll('.wire').forEach(el=>{const key=el.getAttribute('d')+'|'+el.getAttribute('stroke');if(oldWires.has(key))return;const length=el.getTotalLength();el.animate([{strokeDasharray:`${length} ${length}`,strokeDashoffset:length,opacity:0},{strokeDasharray:`${length} ${length}`,strokeDashoffset:0,opacity:1}],{...opts,duration:opts.duration+120});});setTimeout(()=>exit.remove(),opts.duration+150);}
+function fitStage(animate=true){cancelAnimationFrame(cameraFrame);const surface=$('#stage svg');const boxes=layoutBoxes;if(!boxes.length)return;let x=Math.min(...boxes.map(b=>b.x)),y=Math.min(...boxes.map(b=>b.y)),r=Math.max(...boxes.map(b=>b.x+b.width)),bottom=Math.max(...boxes.map(b=>b.y+b.height));x-=70;y-=60;r+=70;bottom+=70;const sw=surface.clientWidth||innerWidth,sh=surface.clientHeight||innerHeight;const scale=Math.min(sw/(r-x),Math.max(100,sh-260)/(bottom-y));const width=sw/scale,height=sh/scale;const target=[(x+r-width)/2,(y+bottom-height)/2,width,height];const from=surface.getAttribute('viewBox').split(' ').map(Number);if(!animate||matchMedia('(prefers-reduced-motion: reduce)').matches){surface.setAttribute('viewBox',target.join(' '));return}const start=performance.now(),duration=motion().duration;function frame(now){const t=Math.min(1,(now-start)/duration),ease=1-Math.pow(1-t,3);surface.setAttribute('viewBox',target.map((v,i)=>from[i]+(v-from[i])*ease).join(' '));if(t<1)cameraFrame=requestAnimationFrame(frame);else cameraFrame=0;}cameraFrame=requestAnimationFrame(frame);}
+function apply(){const outer=$('#world');outer.setAttribute('transform',`translate(${905+view.x} ${915+view.y}) scale(${view.z}) translate(-905 -915)`)}
+function nodeBody(id){const d=registry[id];return d?auditedNode(id,d):null;}
+function showPanel(){const d=nodeBody(selected);if(!d){$('#panel').hidden=true;return}$('#panel').hidden=false;$('#ptitle').textContent=d.title;$('#pbody').innerHTML=`<p>${esc(d.body)}</p>`;}
+
+function updateInfo(){const keys=selected&&registry[selected]?registry[selected].docs:STAGE_DOCS[current];$('#info-content').innerHTML=`<h3>图例</h3><div class="info-legend"><span><i style="background:${C.i}"></i>激活与中间值</span><span><i style="background:${C.w}"></i>参数</span><span><i style="background:${C.g}"></i>梯度</span><span>┄ 通信操作</span></div><h3>公式与范围</h3><p>T=8、H=8、FFN=16、4 个头为本例配置，省略 batch 维。公式采用 Y=XW；PyTorch Linear 的 weight 存储方向相反。</p><p>图中展开 Norm 的输入梯度、残差路径及四个线性层的参数梯度；未展开 Norm 参数梯度与偏置梯度。导航表示依赖的逐步展开，不表示实测执行时间。</p>${graphModel.moe?'<h3>MoE 配置</h3><p>沿用 GeLU 专家，4 专家、Top-2、无容量截断。来源组 0 的 token 仅作路径追踪；其他来源组同样参与 EP 通信。专家组内 TP，组间 EP；总 Rank 数为 TP×EP。TP+EP 时启用 SP。</p><p>路由数值复用 Dense→MoE 报告的输入与 Wr，H=3 补零至 H=8，8 行复用两轮 4 行输入。该路由样本独立于符号 Attention 图，系数按矩阵乘法和 top-2 softmax 计算。MoE 反向与参数梯度在图中折叠显示，包含 Router 与专家的梯度贡献。</p>':''}<h3>当前步骤的官方依据</h3><div class="source-links">${docLinks(keys)}</div><details><summary>全部官方文档</summary><div class="source-links">${docLinks(Object.keys(DOCS).filter(k=>k!=='zero'))}</div></details>`;}
+function choose(id){selected=id;panelOpen=true;$('#world').querySelectorAll('[data-node]').forEach(el=>el.classList.toggle('selected',el.dataset.node===id));showPanel();}
+document.addEventListener('click',e=>{if(e.target.closest('#info-icon')){const opening=$('#info-panel').hidden;$('#info-panel').hidden=!opening;$('#info-icon').setAttribute('aria-expanded',String(opening));if(opening)updateInfo();}if(e.target.closest('#info-close')){$('#info-panel').hidden=true;$('#info-icon').setAttribute('aria-expanded','false');}const stageButton=e.target.closest('[data-stage]');if(stageButton)setCursor(+stageButton.dataset.stage*8);const hit=e.target.closest('[data-node]'),r=e.target.closest('[data-rank]'),ext=e.target.closest('[data-extension]');if(hit&&!moved)choose(hit.dataset.node);if(r){activeRank=+r.dataset.rank;render()}if(ext){extension=ext.dataset.extension;$('#extension').querySelectorAll('button').forEach(el=>el.classList.toggle('active',el===ext));render();if(extension!=='base'){selected='full-f-qkv';choose(selected)}}if(e.target.id==='close'){panelOpen=false;$('#panel').hidden=true;}if(e.target.id==='fit'){autoLayout=true;view={z:1,x:0,y:0};apply();fitStage()}if(e.target.id==='plus'||e.target.id==='minus'){autoLayout=false;cancelAnimationFrame(cameraFrame);view.z=Math.max(.4,Math.min(6,view.z*(e.target.id==='plus'?1.3:1/1.3)));apply()}});
+
+document.addEventListener('keydown',e=>{if(e.target.closest('#secondary-control'))return;if(e.code==='Space'&&!e.target.closest('button,a,input')){e.preventDefault();togglePlayback();return}if(e.key==='Escape'){panelOpen=false;$('#panel').hidden=true;$('#info-panel').hidden=true;$('#info-icon').setAttribute('aria-expanded','false')}if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();setCursor(e.key==='Home'?0:e.key==='End'?TRACK_END:(current+(e.key==='ArrowRight'?1:-1))*8)}if(e.target.dataset.node&&['Enter',' '].includes(e.key)){e.preventDefault();choose(e.target.dataset.node)}});
+const surface=$('#stage svg');surface.addEventListener('wheel',e=>{e.preventDefault();autoLayout=false;cancelAnimationFrame(cameraFrame);const p=surface.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const v=p.matrixTransform(surface.getScreenCTM().inverse()),z=Math.max(.4,Math.min(6,view.z*Math.exp(-e.deltaY*.001))),cx=905,cy=915;view.x=v.x-cx-(v.x-cx-view.x)*z/view.z;view.y=v.y-cy-(v.y-cy-view.y)*z/view.z;view.z=z;apply()},{passive:false});
+surface.onpointerdown=e=>{if(e.button!==0)return;moved=false;drag={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y}};surface.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)moved=true;if(moved){autoLayout=false;cancelAnimationFrame(cameraFrame);surface.setPointerCapture(e.pointerId);const scale=surface.getScreenCTM().a;view.x=drag.vx+dx/scale;view.y=drag.vy+dy/scale;apply()}};surface.onpointerup=()=>{drag=null;setTimeout(()=>moved=false,0)};surface.onpointercancel=()=>drag=null;
+function tooltip(e){const el=e.target.closest('[data-tip]');$('#tip').hidden=!el;if(el){const r=el.getBoundingClientRect();$('#tip').textContent=el.dataset.tip;$('#tip').style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';$('#tip').style.top=Math.max(8,r.top-37)+'px'}}document.addEventListener('pointerover',tooltip);document.addEventListener('focusin',tooltip);document.addEventListener('focusout',()=>$('#tip').hidden=true);
+new ResizeObserver(()=>{if(autoLayout)fitStage(false)}).observe($('#stage'));
+render();
+
+const initial=Number(location.hash.slice(1));if(Number.isInteger(initial)&&initial>=0&&initial<=LAST_STAGE)setCursor(initial*8);
+
+// Serializable handoff for future model/framework adapters.
+window.exportTrainingGraph=()=>structuredClone(graphModel.snapshot);
+</script><script>/* Liquid Glass Controls v2.0.0 — classic script, no build step. */
+(() => {
+"use strict";
+if (window.LiquidGlassControls) return;
+/*
+MIT License
+
+Copyright (c) 2026 Riz Roze
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+/**
+ * Liquid Glass — Real optical refraction for the web.
+ *
+ * Uses Canvas 2D to generate displacement maps fed into SVG feDisplacementMap
+ * filters. Three separate passes (one per RGB channel) with slightly different
+ * scale values create chromatic aberration at the edges.
+ *
+ * Chromium only. Safari/Firefox fall back to regular backdrop-filter: blur().
+ *
+ * @see https://github.com/rizzytoday/liquid-glass
+ * @license MIT
+ */
+function resolveConfig(el, opts) {
+  const rect = el.getBoundingClientRect();
+  const ab = opts.aberration ?? [0, 10, 20];
+  return {
+    width: opts.width ?? Math.round(rect.width),
+    height: opts.height ?? Math.round(rect.height),
+    radius: opts.borderRadius ?? 50,
+    scale: opts.scale ?? -180,
+    border: opts.border ?? 0.07,
+    lightness: opts.lightness ?? 50,
+    alpha: opts.alpha ?? 0.93,
+    blur: opts.blur ?? 11,
+    r: ab[0],
+    g: ab[1],
+    b: ab[2],
+    frost: opts.frost ?? 0,
+    saturation: opts.saturation ?? 1,
+    displace: opts.displaceBlur ?? 0
+  };
+}
+const isChromium = typeof navigator !== "undefined" && /Chrome\//.test(navigator.userAgent);
+const _mapCache = /* @__PURE__ */ new Map();
+function buildDisplacementMap(c) {
+  const key = `${c.width}:${c.height}:${c.radius}:${c.scale}:${c.border}:${c.blur}:${c.lightness}:${c.alpha}`;
+  const cached = _mapCache.get(key);
+  if (cached) return cached;
+  const maxDisplace = Math.max(Math.abs(c.scale) * 0.5, 20);
+  const padX = Math.ceil(maxDisplace);
+  const padY = Math.ceil(maxDisplace);
+  const totalW = c.width + padX * 2;
+  const totalH = c.height + padY * 2;
+  const canvas = document.createElement("canvas");
+  canvas.width = totalW;
+  canvas.height = totalH;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "rgb(128, 128, 128)";
+  ctx.fillRect(0, 0, totalW, totalH);
+  const ox = padX;
+  const oy = padY;
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(ox, oy, c.width, c.height, c.radius);
+  ctx.clip();
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(ox, oy, c.width, c.height);
+  const redGrad = ctx.createLinearGradient(ox + c.width, oy, ox, oy);
+  redGrad.addColorStop(0, "#000000");
+  redGrad.addColorStop(1, "#ff0000");
+  ctx.fillStyle = redGrad;
+  ctx.fillRect(ox, oy, c.width, c.height);
+  ctx.globalCompositeOperation = "difference";
+  const blueGrad = ctx.createLinearGradient(ox, oy, ox, oy + c.height);
+  blueGrad.addColorStop(0, "#000000");
+  blueGrad.addColorStop(1, "#0000ff");
+  ctx.fillStyle = blueGrad;
+  ctx.fillRect(ox, oy, c.width, c.height);
+  ctx.globalCompositeOperation = "source-over";
+  const borderPx = Math.min(c.width, c.height) * (c.border * 0.5);
+  ctx.filter = `blur(${c.blur}px)`;
+  ctx.fillStyle = `hsla(0, 0%, ${c.lightness}%, ${c.alpha})`;
+  ctx.beginPath();
+  ctx.roundRect(
+    ox + borderPx,
+    oy + borderPx,
+    c.width - borderPx * 2,
+    c.height - borderPx * 2,
+    c.radius
+  );
+  ctx.fill();
+  ctx.restore();
+  const uri = canvas.toDataURL();
+  _mapCache.set(key, uri);
+  return uri;
+}
+let _instanceCount = 0;
+function createFilterSVG(id) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  svg.style.cssText = "position:absolute;width:0;height:0;pointer-events:none;";
+  svg.innerHTML = `
+    <defs>
+      <filter id="${id}" color-interpolation-filters="sRGB" x="-38%" y="-188%" width="176%" height="476%">
+        <feImage result="map" preserveAspectRatio="none" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispRed" data-channel="red" />
+        <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispGreen" data-channel="green" />
+        <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
+        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="B" result="dispBlue" data-channel="blue" />
+        <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
+        <feBlend in="red" in2="green" mode="screen" result="rg" />
+        <feBlend in="rg" in2="blue" mode="screen" result="output" />
+        <feGaussianBlur in="output" stdDeviation="0" />
+      </filter>
+    </defs>
+  `;
+  const filter = svg.querySelector("filter");
+  const feImage = svg.querySelector("feImage");
+  const red = svg.querySelector('[data-channel="red"]');
+  const green = svg.querySelector('[data-channel="green"]');
+  const blue = svg.querySelector('[data-channel="blue"]');
+  const blurEl = svg.querySelector("feGaussianBlur");
+  return { svg, feImage, red, green, blue, blur: blurEl, filter };
+}
+function applyConfig(c, refs) {
+  const uri = buildDisplacementMap(c);
+  const maxD = Math.max(Math.abs(c.scale) * 0.5, 20);
+  const pctX = Math.ceil(maxD / c.width * 100);
+  const pctY = Math.ceil(maxD / c.height * 100);
+  refs.filter.setAttribute("x", `-${pctX}%`);
+  refs.filter.setAttribute("y", `-${pctY}%`);
+  refs.filter.setAttribute("width", `${100 + pctX * 2}%`);
+  refs.filter.setAttribute("height", `${100 + pctY * 2}%`);
+  refs.feImage.setAttributeNS("http://www.w3.org/1999/xlink", "href", uri);
+  refs.feImage.setAttribute("href", uri);
+  refs.red.setAttribute("scale", String(c.scale + c.r));
+  refs.green.setAttribute("scale", String(c.scale + c.g));
+  refs.blue.setAttribute("scale", String(c.scale + c.b));
+  refs.blur.setAttribute("stdDeviation", String(c.displace));
+}
+function createLegacyGlass(element, options = {}) {
+  const fallback = options.fallbackFilter ?? "blur(12px)";
+  if (!isChromium) {
+    const prev = element.style.backdropFilter;
+    const prevWebkit = element.style.getPropertyValue("-webkit-backdrop-filter");
+    element.style.backdropFilter = fallback;
+    element.style.setProperty("-webkit-backdrop-filter", fallback);
+    const dummySvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    return {
+      isActive: false,
+      filterElement: dummySvg,
+      update() {
+      },
+      destroy() {
+        element.style.backdropFilter = prev;
+        element.style.setProperty("-webkit-backdrop-filter", prevWebkit);
+      }
+    };
+  }
+  const id = options.filterId ?? `liquid-glass-${++_instanceCount}`;
+  const refs = createFilterSVG(id);
+  document.body.appendChild(refs.svg);
+  let currentOpts = { ...options };
+  let config = resolveConfig(element, currentOpts);
+  applyConfig(config, refs);
+  const applyStyles = (c) => {
+    element.style.backdropFilter = `url(#${id}) saturate(${c.saturation})`;
+    element.style.setProperty(
+      "-webkit-backdrop-filter",
+      `url(#${id}) saturate(${c.saturation})`
+    );
+    if (c.frost > 0) {
+      element.style.background = `hsl(0 0% 0% / ${c.frost})`;
+    }
+  };
+  applyStyles(config);
+  let resizeRaf = 0;
+  const ro = new ResizeObserver(() => {
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(() => {
+      if (currentOpts.width == null || currentOpts.height == null) {
+        config = resolveConfig(element, currentOpts);
+        if (!config.width || !config.height) return;
+        applyConfig(config, refs);
+        applyStyles(config);
+      }
+    });
+  });
+  ro.observe(element);
+  return {
+    isActive: true,
+    filterElement: refs.svg,
+    update(newOpts) {
+      currentOpts = { ...currentOpts, ...newOpts };
+      config = resolveConfig(element, currentOpts);
+      applyConfig(config, refs);
+      applyStyles(config);
+    },
+    destroy() {
+      ro.disconnect();
+      cancelAnimationFrame(resizeRaf);
+      refs.svg.remove();
+      element.style.backdropFilter = "";
+      element.style.setProperty("-webkit-backdrop-filter", "");
+      element.style.background = "";
+    }
+  };
+}
+
+
+// Screen-space slab approximation. Separate transmitted face and compressed
+// sidewall rays; both sample the live DOM backdrop. No WebGL or fixed tint.
+function renderB(el,v,id,r){
+ const w=Math.round(el.clientWidth),h=Math.round(el.clientHeight),ss=3;
+ const W=w*ss,H=h*ss,scale=Math.max(128,h*1.5),c=document.createElement('canvas');c.width=W;c.height=H;
+ const ctx=c.getContext('2d'),face=ctx.createImageData(W,H),rim=ctx.createImageData(W,H),mask=ctx.createImageData(W,H),light=ctx.createImageData(W,H);
+ const bezel=Math.min(h*.44,v.bezel*h/74),rimWidth=v.rimWidth*Math.sqrt(h/74),depth=v.depth*h/74;
+ const faceGain=.23+1.15*Math.min(1,Math.pow(74/h,4));
+ // Focus changes both the radial highlight width and its angular concentration.
+ // Keep the approved default (28) as the width reference.
+ const focus=Math.max(0,Math.min(100,v.power));
+ const spread=Math.exp((28-focus)/45);
+ const angularPower=.45+8*Math.pow(focus/100,1.5);
+ // Do not encode a small face displacement against the much larger rim range:
+ // the previous shared 285px range quantized face offsets to >1 CSS pixel.
+ const faceScale=Math.max(8,Math.ceil(depth*(v.strength/60)*faceGain*2.5));
+ for(let py=0;py<H;py++)for(let px=0;px<W;px++){
+  const x=(px+.5)/ss,y=(py+.5)/ss,i=(py*W+px)*4,d=-sdf(x,y,w,h,r),e=.15;
+  let gx=sdf(x+e,y,w,h,r)-sdf(x-e,y,w,h,r),gy=sdf(x,y+e,w,h,r)-sdf(x,y-e,w,h,r),n=Math.hypot(gx,gy)||1;gx/=n;gy/=n;
+  let dx=0,dy=0,nx=0,ny=0,nz=1;
+  if(d>0&&d<bezel){
+   const t=d/bezel,q=1-t,slope=Math.pow(q,3)/Math.pow(Math.max(.0001,1-q**4),.75);
+   nz=1/Math.sqrt(1+slope*slope);nx=gx*slope*nz;ny=gy*slope*nz;
+   const eta=1/v.ior,f=eta*nz-Math.sqrt(1-eta*eta*(1-nz*nz)),tz=-eta+f*nz;
+   const height=depth*(.28+.72*Math.pow(1-q**4,.25));
+   const travel=height/Math.max(.1,-tz)*(v.strength/60)*faceGain;
+   // feDisplacementMap is an inverse lookup (output -> source), not a forward
+   // motion vector. Sample outward to contract the transmitted image at bevels.
+   const entry=Math.min(1,d/2),fade=entry*entry*(3-2*entry);
+   dx=-f*nx*travel*fade;dy=-f*ny*travel*fade;
+  }
+  function encode(img,a,b,range=scale){img.data.set([Math.round(127.5+a/range*255),Math.round(127.5+b/range*255),128,255],i)}
+  encode(face,dx,dy,faceScale);
+  const t=Math.max(0,Math.min(1,d/Math.max(1,rimWidth)));
+  // The rim transports an interior strip to the narrow thickness band.
+  const reach=Math.max(0,h*.45-d*.8);
+  encode(rim,-gx*reach,-gy*reach);
+  const aa=Math.min(1,Math.max(0,d*ss+.5));
+  // Reserve the outer ~0.8 CSS px for the air/glass highlight. The coloured
+  // thickness starts underneath it, rather than painting over the silhouette.
+  const colourD=d-.85,colourGate=Math.max(0,Math.min(1,colourD*2));
+  const band=(Math.exp(-Math.pow((colourD-rimWidth*.43)/(rimWidth*.36),2))+.16*Math.exp(-Math.pow((colourD-rimWidth*1.15)/(rimWidth*.30),2)))*aa*colourGate;
+  mask.data.set([255,255,255,Math.round(255*Math.min(1,band)*v.rim/100)],i);
+  const facing=-gx*.56-gy*.83;
+  // A nearby upper-left area light also varies with position. Normal-only
+  // lighting makes every pixel along a straight top edge equally bright.
+  // Broad softbox rather than a very close point light: keep a readable top
+  // highlight across long toolbars, with a gentle 1 -> 0.33 horizontal falloff.
+  const lightFalloff=Math.exp(-1.1*Math.pow(x/w,.9)-.35*y/h);
+  const edge=Math.exp(-Math.pow((d-.48)/(.44*Math.sqrt(spread)),2));
+  const bevel=Math.exp(-Math.pow((d-rimWidth*.88)/(rimWidth*.65*spread),2));
+  const soft=Math.exp(-Math.pow((d-rimWidth*1.4)/(rimWidth*1.6*spread),2));
+  const directional=Math.pow(Math.max(0,facing),angularPower);
+  const returnLight=Math.pow(Math.max(0,gx*.62+gy*.78),angularPower);
+  const innerReflection=Math.exp(-Math.pow((d-rimWidth*1.7)/(rimWidth*1.2*spread),2));
+  // No constant rim term: the highlight must disappear away from the light,
+  // otherwise the entire silhouette becomes a white UI border in dark mode.
+  const outerWhite=edge*1.2*Math.pow(Math.max(0,facing),Math.max(2,angularPower))*v.shine*lightFalloff;
+  const primaryReflection=(bevel*.24*directional+soft*.07*directional)*lightFalloff;
+  // Lower-right environment reflection has its own footprint; it must not be
+  // attenuated a second time by the upper-left key light's distance field.
+  const returnFalloff=Math.exp(-Math.pow((x/w-.91)/.30,2));
+  const returnCore=Math.exp(-Math.pow((d-rimWidth*.90)/(rimWidth*.32*spread),2));
+  const returnHalo=Math.exp(-Math.pow((d-rimWidth*1.25)/(rimWidth*.50*spread),2));
+  const secondaryReflection=(returnCore*.45+returnHalo*.12)*returnLight*returnFalloff;
+  const innerWhite=(primaryReflection+secondaryReflection)*v.shine*(h<100?.65:1);
+  const white=outerWhite+innerWhite;
+  const innerShade=Math.exp(-Math.pow((d-h*.085)/(h*.045),2))*.025*Math.max(0,facing);
+  const dark=Math.exp(-Math.pow((d-rimWidth*.8)/.75,2))*(.012+.04*Math.max(0,-facing))+innerShade;
+  const a=Math.max(white,dark)*aa;
+  const tone=white>=dark?255:35;
+  light.data.set([tone,tone,tone,Math.round(Math.min(1,a)*255)],i);
+ }
+ function url(img){ctx.putImageData(img,0,0);return c.toDataURL()}
+ const fURL=url(face),rURL=url(rim),mURL=url(mask),lURL=url(light);
+ el.querySelector('.liquid-b-shine').style.backgroundImage=`url(${lURL})`;
+ el.querySelector('.liquid-b-shine').style.backgroundSize='100% 100%';
+ let svg=document.getElementById(id+'-svg');if(!svg){svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.id=id+'-svg';svg.style.cssText='position:absolute;width:0;height:0;pointer-events:none';document.body.append(svg)}
+ const img=(u,result)=>`<feImage href="${u}" x="0" y="0" width="${w}" height="${h}" preserveAspectRatio="none" result="${result}"/>`;
+ svg.innerHTML=`<filter id="${id}" color-interpolation-filters="sRGB" x="-30%" y="-100%" width="160%" height="300%">${img(fURL,'rawFaceMap')}<feGaussianBlur in="rawFaceMap" stdDeviation=".35" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="${v.strength===0?0:faceScale}" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="${0.22}" result="face"/><feMorphology in="SourceGraphic" operator="erode" radius="2" result="rimChroma"/><feGaussianBlur in="rimChroma" stdDeviation="1" result="rimBackdrop"/>${img(rURL,'rimMap')}<feDisplacementMap in="rimBackdrop" in2="rimMap" scale="${scale}" xChannelSelector="R" yChannelSelector="G" result="sideSample"/><feColorMatrix in="sideSample" type="saturate" values="1.3" result="rimColor"/>${img(mURL,'mask')}<feComposite in="rimColor" in2="mask" operator="in" result="side"/><feComposite in="side" in2="face" operator="over"/></filter>`;
+ const filter=/Chrome/.test(navigator.userAgent)?`url(#${id}) blur(${v.blur}px)`:`blur(${v.blur}px)`;el.style.backdropFilter=filter;el.style.webkitBackdropFilter=filter;
+}
+
+
+function sdf(x,y,w,h,r){let qx=Math.abs(x-w/2)-(w/2-r),qy=Math.abs(y-h/2)-(h/2-r);return Math.hypot(Math.max(qx,0),Math.max(qy,0))+Math.min(Math.max(qx,qy),0)-r}
+let slabId=0;
+function createLiquidGlass(element,options){
+ if(element.dataset.liquidGlass==='panel')return {destroy(){}};
+ const id='liquid-slab-'+(++slabId),shine=document.createElement('span');
+ shine.className='liquid-b-shine';shine.setAttribute('aria-hidden','true');element.append(shine);
+ let raf=0;
+ const render=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>renderB(element,activeSettings(),id,options.borderRadius));};
+ const resize=new ResizeObserver(render);resize.observe(element);render();
+ return {destroy(){resize.disconnect();cancelAnimationFrame(raf);shine.remove();document.getElementById(id+'-svg')?.remove();}};
+}
+
+const presets=Object.freeze({
+ control:Object.freeze({scale:-110,aberration:[0,4,8],alpha:1,blur:8,displaceBlur:4,saturation:1,frost:0,fallbackFilter:'blur(12px)'}),
+ panel:Object.freeze({scale:-12,aberration:[0,0,0],alpha:1,blur:8,displaceBlur:18,saturation:1,frost:0,fallbackFilter:'blur(18px)'}),
+ icon:Object.freeze({scale:-36,aberration:[0,1,2],alpha:1,blur:6,displaceBlur:4,saturation:1,frost:0,fallbackFilter:'blur(12px)'})
+});
+const selector='[data-liquid-glass]:not(.ub-warning)';
+const instances=new Map();
+const defaults={strength:100,bezel:36,shine:2.2,power:28,depth:37,blur:1,rim:95,rimWidth:2.75,ior:1.5};
+const limits={strength:[0,100],bezel:[2,36],shine:[0,6],power:[0,100],depth:[0,48],blur:[0,20],rim:[0,100],rimWidth:[1,6],ior:[1,1.8]};
+let tuning={...defaults};
+let darkShine=.8;
+try{const saved=JSON.parse(localStorage.getItem('liquid-glass-controls-dark-shine'));if(Number.isFinite(saved))darkShine=Math.max(0,Math.min(6,saved));}catch{}
+function activeSettings(){return {...tuning,...(document.documentElement.dataset.theme!=='light'?{shine:darkShine}:{})};}
+function normalize(values){for(const key of Object.keys(defaults))if(Number.isFinite(values?.[key]))tuning[key]=Math.max(limits[key][0],Math.min(limits[key][1],values[key]));}
+try{normalize(JSON.parse(localStorage.getItem('liquid-glass-controls-v2')));}catch{}
+const properties=['backdrop-filter','-webkit-backdrop-filter','background'];
+let observer=null,frame=0,started=false;
+function restore(element,record){
+ record.glass.destroy();
+ for(const [name,value,priority] of record.styles){
+  if(value)element.style.setProperty(name,value,priority);else element.style.removeProperty(name);
+ }
+}
+function remove(element){const record=instances.get(element);if(record){instances.delete(element);restore(element,record);}}
+function refresh(){
+ if(!started)return;
+ const candidates=new Set(document.querySelectorAll(selector));
+ for(const element of instances.keys())if(!candidates.has(element))remove(element);
+ for(const element of candidates){
+  const preset=element.getAttribute('data-liquid-glass');
+  const rect=element.getBoundingClientRect(),css=getComputedStyle(element);
+  const visible=rect.width>0&&rect.height>0&&css.visibility!=='hidden';
+  const radius=Math.min(parseFloat(css.borderTopLeftRadius)||0,rect.width/2,rect.height/2);
+  const record=instances.get(element);
+  if(record&&(!visible||record.preset!==preset||record.radius!==radius))remove(element);
+  if(!visible||!presets[preset]||instances.has(element))continue;
+  const styles=properties.map(name=>[name,element.style.getPropertyValue(name),element.style.getPropertyPriority(name)]);
+  const glass=createLiquidGlass(element,{...presets[preset],borderRadius:radius});
+  instances.set(element,{glass,styles,preset,radius});
+ }
+}
+function schedule(){if(!started||frame)return;frame=requestAnimationFrame(()=>{frame=0;refresh();});}
+function start(){
+ if(started)return;started=true;
+ observer=new MutationObserver(records=>{if(records.some(r=>r.attributeName==='data-theme')){for(const element of [...instances.keys()])remove(element);window.dispatchEvent(new Event('glass-theme-change'));}schedule();});
+ observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-theme','data-liquid-glass','hidden','class','style']});
+ window.addEventListener('resize',schedule);
+ refresh();
+}
+function disconnect(){
+ started=false;if(observer)observer.disconnect();observer=null;
+ cancelAnimationFrame(frame);frame=0;window.removeEventListener('resize',schedule);
+ for(const element of instances.keys())remove(element);
+}
+window.LiquidGlassControls=Object.freeze({
+ version:'2.0.0',
+ init(element,preset='control'){
+  if(!presets[preset])throw new Error('Unknown liquid glass preset: '+preset);
+  element.setAttribute('data-liquid-glass',preset);start();refresh();return element;
+ },
+ destroy(element){element.removeAttribute('data-liquid-glass');remove(element);},
+ getSettings(){return activeSettings();},
+ configure(values){const next={...values};if(document.documentElement.dataset.theme!=='light'){if(Number.isFinite(next.shine))darkShine=Math.max(0,Math.min(6,next.shine));delete next.shine;}normalize(next);try{localStorage.setItem('liquid-glass-controls-dark-shine',JSON.stringify(darkShine));localStorage.setItem("liquid-glass-controls-v2",JSON.stringify(tuning));}catch{}for(const element of [...instances.keys()])remove(element);schedule();},
+ refresh,start,disconnect
+});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+window.addEventListener('pagehide',disconnect);
+window.addEventListener('pageshow',start);
+})();
+</script></body></html>
