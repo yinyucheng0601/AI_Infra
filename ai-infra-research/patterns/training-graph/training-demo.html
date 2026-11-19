@@ -120,9 +120,9 @@ header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.
 
 #expert-count-control{position:absolute;bottom:calc(100% + 48px);left:50%;transform:translateX(-50%);width:min(640px,calc(100vw - 40px));display:grid;grid-template-columns:120px minmax(0,1fr) 200px;gap:18px;align-items:center;font-size:11px;line-height:24px}#expert-count-control output{color:#fff;margin-left:8px}#expert-count-input{appearance:none;width:100%;height:20px;margin:0;background:transparent;cursor:ew-resize}#expert-count-input::-webkit-slider-runnable-track{height:3px;background:#454545}#expert-count-input::-webkit-slider-thumb{appearance:none;background:#eee;width:10px;height:14px;margin-top:-5.5px}#expert-count-input::-moz-range-track{height:3px;background:#454545}#expert-count-input::-moz-range-thumb{background:#eee;border:0;border-radius:0;width:10px;height:14px}#expert-count-labels{color:#aaa;font-size:10px}#expert-count-control{pointer-events:auto}#token-controls{bottom:calc(100% + 88px)}.moe-metrics{display:grid;gap:8px;font-size:12px}.moe-metrics div{display:flex;gap:10px;align-items:baseline}.moe-metrics b{font-size:17px!important;white-space:nowrap!important}.moe-metrics small{font-size:10px!important}.moe-metrics>small{max-width:240px}@media(max-width:600px){#expert-count-control{position:fixed;bottom:174px;grid-template-columns:90px 1fr;gap:8px}#expert-count-labels{grid-column:2;font-size:9px}#token-controls{bottom:238px}.moe-metrics{display:none}}
 
-.hit.selected>.expert-label{fill:#111}
 
-.expert-label{font-size:32px}.compact-expert.off-route{opacity:.62}
+
+.compact-expert.off-route{opacity:.62}
 
 #expert-count-input:focus-visible{outline:none}#expert-count-input:focus-visible::-webkit-slider-runnable-track{background:#bbb}
 
@@ -487,8 +487,8 @@ function trainingGraphSnapshot(config,rows,positions,edges,registry){
 }
 </script><script>// Expert sizes are fixed; only representation and placement change with count.
 function layoutExpertGrid(count,ep){
- const compact=count>=16,columns=Math.min(count,compact?8:4),rows=Math.ceil(count/columns),width=compact?160:280,stride=width+20,rowHeight=compact?100:320;
- const cards=Array.from({length:count},(_,id)=>{const owner=Math.floor(id/(count/ep));return {id,owner,x:(id%columns-(columns-1)/2)*stride+(owner-(ep-1)/2)*50,y:250+Math.floor(id/columns)*rowHeight+(count/ep>=columns?owner*70:0),width,height:compact?72:300};});
+ const compact=count>=16,columns=Math.min(count,compact?8:4),rows=Math.ceil(count/columns),width=compact?256:280,stride=width+20,rowHeight=compact?100:320;
+ const cards=Array.from({length:count},(_,id)=>{const owner=Math.floor(id/(count/ep));return {id,owner,x:(id%columns-(columns-1)/2)*stride+(count/ep>=columns?0:(owner-(ep-1)/2)*50),y:250+Math.floor(id/columns)*rowHeight+(count/ep>=columns?owner*70:0),width,height:compact?72:300};});
  const halfWidth=Math.max(600,...cards.map(c=>Math.abs(c.x)+c.width/2+130));
  const combineY=Math.max(...cards.map(c=>c.y+c.height))+80;return {compact,cards,halfWidth,combineY,height:combineY+80};
 }
@@ -588,7 +588,7 @@ function trainingGraph(){
  if(expertLayout.compact){
  const id='moe-e'+e,icon=window.PtoOpIcons.find(i=>i.id==='linear'),scale=card.width/360;
  const body=`专家 E${e}：当前 8 token 样本分到 ${stats.loads[e]} 次调用。每位专家全局 W1[8,16]、W2[16,8]，256 个参数；${deployed?'Rank {'+ranks+'}。':''}点击查看内部计算。`;
- nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,`<g data-kind="op" transform="translate(${x-card.width/2} ${y}) scale(${scale})">${opNode({...icon,name:''},0,0)}</g>${text(x+12,y+22,'E'+e+' · '+stats.loads[e],'text expert-label','middle')}`, '专家 E'+e,body)+'</g>';
+ nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,`<g data-kind="op" transform="translate(${x-card.width/2} ${y}) scale(${scale})">${opNode({...icon,name:'E'+e+' · '+stats.loads[e]},0,0)}</g>`, '专家 E'+e,body)+'</g>';
  remember(id,'专家 E'+e,body,['moe','linear'],{expert:e});positions[id]={x:x-card.width/2,y,width:card.width,height:64*scale};
 
  if(active){links+=edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}H${cf-expertLayout.halfWidth+40}V${y-12}H${x}V${y}`);links+=edge('moe-return-'+e,port(id,x,y+64*scale),port('moe-combine',cf,ys+expertLayout.combineY),'i',remote,`M${x} ${y+64*scale}V${y+70}H${cf+expertLayout.halfWidth-40}V${ys+expertLayout.combineY-20}H${cf}V${ys+expertLayout.combineY}`);}

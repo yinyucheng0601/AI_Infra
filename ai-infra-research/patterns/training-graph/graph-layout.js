@@ -1,7 +1,7 @@
 // Expert sizes are fixed; only representation and placement change with count.
 function layoutExpertGrid(count,ep){
- const compact=count>=16,columns=Math.min(count,compact?8:4),rows=Math.ceil(count/columns),width=compact?160:280,stride=width+20,rowHeight=compact?100:320;
- const cards=Array.from({length:count},(_,id)=>{const owner=Math.floor(id/(count/ep));return {id,owner,x:(id%columns-(columns-1)/2)*stride+(owner-(ep-1)/2)*50,y:250+Math.floor(id/columns)*rowHeight+(count/ep>=columns?owner*70:0),width,height:compact?72:300};});
+ const compact=count>=16,columns=Math.min(count,compact?8:4),rows=Math.ceil(count/columns),width=compact?256:280,stride=width+20,rowHeight=compact?100:320;
+ const cards=Array.from({length:count},(_,id)=>{const owner=Math.floor(id/(count/ep));return {id,owner,x:(id%columns-(columns-1)/2)*stride+(count/ep>=columns?0:(owner-(ep-1)/2)*50),y:250+Math.floor(id/columns)*rowHeight+(count/ep>=columns?owner*70:0),width,height:compact?72:300};});
  const halfWidth=Math.max(600,...cards.map(c=>Math.abs(c.x)+c.width/2+130));
  const combineY=Math.max(...cards.map(c=>c.y+c.height))+80;return {compact,cards,halfWidth,combineY,height:combineY+80};
 }
