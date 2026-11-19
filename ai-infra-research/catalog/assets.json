@@ -1385,18 +1385,18 @@
     },
     {
       "id": "inference-layer-stack",
-      "title": "DeepSeek V4 Flash · 推理层栈",
+      "title": "Layer Atlas · Qwen / DeepSeek 推理层栈",
       "form": "交互 Pattern",
       "domains": [
         "Model Inference",
         "Observability"
       ],
-      "summary": "通过 43 层 2.5D 层栈观察 Prefill、Decode 与 Token 采样，联动当前层的 Attention、KV Cache 和 Token 位置。",
+      "summary": "切换 Qwen3-14B 与 DeepSeek V4，沿调用阶段与模型层观察推理，原位展开 Paged Attention，并联动 Token/Page 和 Rank 视图。",
       "designValue": "将推理阶段、逐层执行和缓存读写放在同一个可交互视图中。",
       "outline": [
-        "推理阶段与逐层播放",
-        "Attention 与 KV Cache 读写",
-        "Token 位置与采样联动"
+        "模型切换与调用阶段播放",
+        "Layer Front 与 Paged Attention 展开",
+        "Token/Page 与双 Rank 主辅切换"
       ],
       "type": "pattern",
       "media": [
@@ -1411,12 +1411,13 @@
           "url": null,
           "path": "layer_stack/inference-layer-stack.html",
           "revision": null,
-          "sha256": "164cddad1904c098b5247130ffd8bc37ca25acba80060220985c42c4877fe849"
+          "sha256": "fdc8c3d5c9aef813721fb6e627d275f71e03aae4953519cf6e69df0f065526b9"
         }
       ],
       "validation": [
         "2026-11-04：本地 Chrome 检查阶段切换、Token 联动、KV 读写箭头和层弹起时主线路径。",
-        "2026-11-10：更新 Info、深浅色、视窗控制、默认 L1 播放、残差路径与 Rank；脚本及依赖检查通过。浏览器最终视觉复核因连接超时未完成。"
+        "2026-11-10：更新 Info、深浅色、视窗控制、默认 L1 播放、残差路径与 Rank；脚本及依赖检查通过。浏览器最终视觉复核因连接超时未完成。",
+        "2026-11-19：Qwen TP2 调用摘要、PA 语义图、双 Rank 与用户授权 Token/Page mock；Node 逻辑检查通过，未完成最终浏览器视觉验收。"
       ],
       "related": [
         "pangu-layer-atlas-2"

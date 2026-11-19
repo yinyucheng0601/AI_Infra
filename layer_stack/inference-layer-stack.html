@@ -5,8 +5,8 @@
 <title>Layer Stack · 模型推理</title>
 
 
-<link rel="stylesheet" href="inference-controls/liquid-glass.css"><link rel="stylesheet" href="inference-layer-stack.css"></head><body><div class="top-actions" aria-label="页面工具"><button type="button" class="icon-button" data-liquid-glass="icon" id="token-mode" aria-label="显示或收起 Token 表" aria-expanded="true" aria-controls="token-workspace"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h3m4 0h3M7 14h3m4 0h3"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="theme-mode" aria-label="切换浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="help" aria-label="图例与说明" aria-expanded="false" aria-controls="info-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></button></div><aside id="info-panel" class="info-panel" role="dialog" aria-label="图例与说明" data-liquid-glass="panel" hidden><header><h2>图例与说明</h2><button id="info-close" class="icon-button" aria-label="关闭说明">×</button></header><h3>当前观察</h3><p>层栈看模型结构；Token 表检查位置；Rank 看内存预算与当前层缓存归属。</p><h3>颜色</h3><p>蓝色：当前执行位置与缓存切片。灰色：SWA 可读历史。浅灰：临时检查的位置。激活 Tensor 和缓存保留各自图元颜色。</p><h3>内存预算</h3><p>权重与运行缓冲 8.62 GiB，合并权重、执行上下文和运行时缓冲；官方案例未提供这些细项的完整独立数值。KV 池 63.44 GiB；剩余 7.04 GiB。</p><p>这是 TensorRT-LLM 的参考预算，不是当前 DeepSeek 模型的显存测量。分层切片不代表各层字节数；请求 KV 已用量尚未接入。</p><a href="https://nvidia.github.io/TensorRT-LLM/1.1.0rc1/reference/memory.html#faq" target="_blank" rel="noopener">预算来源 ↗</a><h3>架构与位置</h3><p>43 层与 SWA 128 位置窗口来自本地 Flash 配置。Prompt 0–131、输入 132／133 为当前请求示例；CSA 压缩条目明细尚未接入。</p><h3>操作</h3><p>拖拽平移，滚轮缩放。右下角控制当前可见画布；打开浮层不重置视野。</p><a href="inference-layer-stack-before-ablation.html" target="_blank">查看消融前版本 ↗</a></aside><div class="canvas-tools" aria-label="视窗控制" data-liquid-glass="control"><button id="viewport-out" class="icon-button" aria-label="缩小视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14"/></svg></button><output id="viewport-zoom" aria-live="polite">100%</output><button id="viewport-in" class="icon-button" aria-label="放大视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><button id="viewport-fit" class="icon-button" aria-label="返回整体"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button></div><main>
-<header class="compact-header"><h1>Layer Atlas <span>/ DeepSeek V4 Flash · 43 层</span></h1></header>
+<link rel="stylesheet" href="inference-controls/liquid-glass.css"><link rel="stylesheet" href="inference-layer-stack.css"></head><body><div class="top-actions" aria-label="页面工具"><button type="button" class="icon-button" data-liquid-glass="icon" id="token-mode" aria-label="显示或收起 Token 表" aria-expanded="true" aria-controls="token-workspace"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h3m4 0h3M7 14h3m4 0h3"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="theme-mode" aria-label="切换浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="help" aria-label="图例与说明" aria-expanded="false" aria-controls="info-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></button></div><aside id="info-panel" class="info-panel" role="dialog" aria-label="图例与说明" data-liquid-glass="panel" hidden><header><h2>图例与说明</h2><button id="info-close" class="icon-button" aria-label="关闭说明">×</button></header><h3>当前观察</h3><p>层栈看模型结构；Token 表检查位置；Rank 看内存预算与当前层缓存归属。</p><h3>颜色</h3><p>蓝色：当前执行位置与缓存切片。灰色：可读历史 KV。浅灰：临时检查的位置。激活 Tensor 和缓存保留各自图元颜色。</p><h3>内存预算</h3><p>权重与运行缓冲 8.62 GiB，合并权重、执行上下文和运行时缓冲；官方案例未提供这些细项的完整独立数值。KV 池 63.44 GiB；剩余 7.04 GiB。</p><p>这是 TensorRT-LLM 的参考预算，不是所选模型的显存测量。分层切片不代表各层字节数；请求 KV 已用量尚未接入。</p><a href="https://nvidia.github.io/TensorRT-LLM/1.1.0rc1/reference/memory.html#faq" target="_blank" rel="noopener">预算来源 ↗</a><h3>架构与位置</h3><p id="model-source">43 层与 SWA 128 位置窗口来自本地 Flash 配置。Prompt 0–131、输入 132／133 为当前请求示例；CSA 压缩条目明细尚未接入。</p><a href="https://huggingface.co/Qwen/Qwen3-14B/blob/main/config.json" target="_blank" rel="noopener">Qwen3-14B 官方配置 ↗</a><h3>操作</h3><p>拖拽平移，滚轮缩放。右下角控制当前可见画布；打开浮层不重置视野。</p><a href="inference-layer-stack-before-ablation.html" target="_blank">查看消融前版本 ↗</a></aside><div class="canvas-tools" aria-label="视窗控制" data-liquid-glass="control"><button id="viewport-out" class="icon-button" aria-label="缩小视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14"/></svg></button><output id="viewport-zoom" aria-live="polite">100%</output><button id="viewport-in" class="icon-button" aria-label="放大视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><button id="viewport-fit" class="icon-button" aria-label="返回整体"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button></div><main>
+<header class="compact-header"><h1>Layer Atlas <select id="model-select" aria-label="切换模型" data-tooltip="切换模型架构与 KV 缓存"><option value="deepseek">DeepSeek V4 Flash · 43 层</option><option value="qwen" selected>Qwen3-14B · 40 层</option></select></h1></header>
 <div class="view-dial" aria-label="模型视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Side" data-tooltip="点击轮切：2.5D → Front → Side">
 <svg viewBox="0 0 148 148" aria-hidden="true">
@@ -22,7 +22,7 @@
 <div class="workspace-split"><section class="atlas-pane"><div class="view"><svg id="scene" viewBox="-352 -210 2220 1260" role="group" aria-label="DeepSeek V4 模型层栈"><g id="guides" aria-hidden="true"></g><g id="planes"></g><g id="request-links"></g><g id="request-cache" aria-label="各层 KV 缓存"></g><g id="annotation"></g><g id="side-rms" aria-hidden="true" pointer-events="none"></g><g id="flow-ports"></g></svg></div>
 
 </section></div><section id="inference-front" hidden><nav class="architecture-nav" aria-label="层内图导航"><button id="architecture-model" data-tooltip="返回模型层栈，保留当前视野">Model</button><span>›</span><span id="architecture-layer"></span><button id="architecture-prev" class="icon-button" data-tooltip="上一层" aria-label="上一层"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><button id="architecture-next" class="icon-button" data-tooltip="下一层" aria-label="下一层"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><button id="architecture-close" class="icon-button" data-tooltip="关闭层内图" aria-label="关闭层内图"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></nav><svg id="front-graph" viewBox="0 0 800 700" width="100%" height="100%" role="group" aria-label="层内计算图"></svg></section>
-<aside id="kv-memory" aria-label="Rank 内存与 KV 存储"><div id="kv-memory-graphic"></div><output id="kv-memory-status" aria-live="polite"></output><button id="kv-inspect-clear" type="button" hidden data-tooltip="取消缓存检查，保留播放位置">取消检查</button></aside>
+<button id="rank-return" hidden data-tooltip="返回层栈，保留视野">返回层栈 ↗</button><aside id="kv-memory" aria-label="Rank 内存与 KV 存储"><div id="kv-memory-graphic"></div><output id="kv-memory-status" aria-live="polite"></output><button id="kv-inspect-clear" type="button" hidden data-tooltip="取消缓存检查，保留播放位置">取消检查</button></aside>
 <section id="token-workspace" aria-labelledby="token-title">
  <div class="token-heading"><h2 id="token-title">Token</h2>
   <p id="token-caption"></p>
@@ -33,6 +33,12 @@
  </div>
   <button id="token-close" class="icon-button" type="button" aria-label="收起 Token 表">×</button>
  </div>
+ <div id="paged-context" class="paged-context" hidden>
+  <span id="paged-location"></span>
+  <label id="paged-head-label">KV Head <select id="paged-head" aria-label="选择 KV Head" data-tooltip="选择 KV Head，定位其 Attention Task 与计算 Block"></select></label>
+  <span id="paged-task"></span>
+ </div>
+ <div id="profile-token-sequence" class="profile-token-sequence" hidden></div>
  <div id="token-grid" class="token-grid" role="group" aria-label="序列位置"></div>
 </section>
 <section class="request-progress" aria-label="完整请求进度">
@@ -53,17 +59,30 @@
 const get = id => document.getElementById(id);
 const NS = 'http://www.w3.org/2000/svg';
 // FLASH declares 43 backbone layers. Dispatchers bound layer_id before indexing the 44-entry tuple.
-const ratios = [0, 0, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4];
-const kinds = {0:'SWA',4:'CSA',128:'HCA'};
-const lastLayer = ratios.length-1;
+const deepseekRatios = [0, 0, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4, 128, 4];
+const modelSpecs={
+ deepseek:{name:'DeepSeek V4 Flash',ratios:deepseekRatios,ffn:'MoE',decoder:'V4 Decoder'},
+ qwen:{name:'Qwen3-14B',ratios:Array(40).fill(-1),ffn:'Dense SwiGLU',decoder:'Qwen3 Decoder'}
+};
+let modelId='deepseek',model=modelSpecs[modelId],ratios=model.ratios;
+const isQwen=()=>modelId==='qwen';
+const cacheStart=position=>isQwen()?0:Math.max(0,position-127);
+const cacheName=()=>isQwen()?'Paged KV':'SWA';
+const kinds = {'-1':'GQA',0:'SWA',4:'CSA',128:'HCA'};
+let lastLayer = ratios.length-1;
 const layers=[], groups=[], labels=[];
 let selected=0, phase='prefill';
 let inspectedToken=null;
 let inspectedRange=null;
 let cacheFocus=null;
+let pagedHead=0;
+let paExpanded=false,paReturnCamera=null;
+const paDetailActive=()=>isQwen()&&paExpanded;
+// Single-request projection of Compute Explorer's 16-request task model.
+const pagedContext=(position,head=0,batch=0)=>({page:Math.floor(position/128),offset:position%128,stack:Math.floor(position/512),task:batch*8+head,block:(batch*8+head)%24,qStart:head*5,qEnd:head*5+4});
 const positions={prefill:131,decode:132};
 const positionBounds={prefill:[0,131],decode:[132,133]};
-const requestSteps=[
+const demoRequestSteps=[
  {label:'分词',status:'Prompt → Tokenizer → 132 个输入 token',input:null},
  {label:'Prefill',status:'输入 0–131 · 各层建立 Prompt KV',input:131},
  {label:'采样 132',status:'首个 token 132 已采样 · 下一轮送回模型',input:131,output:132},
@@ -73,8 +92,13 @@ const requestSteps=[
  {label:'采样 EOS',status:'示例在位置 134 采样到 EOS',input:133,output:134},
  {label:'完成',status:'EOS 命中结束条件 · 响应完成',input:133}
 ];
-const isLayerStep=index=>[1,3,5].includes(index);
-const stageStride=lastLayer+1;
+// Extracted from inference-profile-data.json; these invocation metrics belong to torch capture only.
+const qwenInvocations=[{"id": "invocation-0", "stage": "prefill", "decodeIndex": null, "rank": 0, "startUs": 0.0, "durationUs": 327777.12, "blockNum": 20, "mixBlockNum": 40, "tokenPosition": null, "tokenId": null}, {"id": "invocation-1", "stage": "decode", "decodeIndex": 1, "rank": 0, "startUs": 333127.75, "durationUs": 330057.38, "blockNum": 20, "mixBlockNum": 40, "tokenPosition": null, "tokenId": null}, {"id": "invocation-2", "stage": "decode", "decodeIndex": 2, "rank": 0, "startUs": 669168.75, "durationUs": 364083.06, "blockNum": 20, "mixBlockNum": 40, "tokenPosition": null, "tokenId": null}, {"id": "invocation-3", "stage": "decode", "decodeIndex": 3, "rank": 0, "startUs": 1039091.5, "durationUs": 329108.9, "blockNum": 20, "mixBlockNum": 40, "tokenPosition": null, "tokenId": null}, {"id": "invocation-4", "stage": "decode", "decodeIndex": 4, "rank": 0, "startUs": 1373544.0, "durationUs": 330171.36, "blockNum": 20, "mixBlockNum": 40, "tokenPosition": null, "tokenId": null}];
+const qwenRequestSteps=qwenInvocations.map(x=>({label:x.stage==='prefill'?'Prefill':'Decode '+x.decodeIndex,phase:x.stage,input:null,layered:true,invocationId:x.id,status:'Rank 0 · 整网 '+(x.durationUs/1000).toFixed(2)+' ms · 层序播放',durationUs:x.durationUs}));
+qwenRequestSteps.push({label:'采集结束',phase:'decode',input:null,layered:false,status:'1 次 Prefill · 4 次 Decode · 采集结束'});
+let requestSteps=demoRequestSteps;
+const isLayerStep=index=>isQwen()?!!requestSteps[index]?.layered:[1,3,5].includes(index);
+let stageStride=lastLayer+1;
 const requestAxis=get('request-axis');
 requestAxis.max=requestSteps.length*stageStride-1;
 let requestIndex=0;
@@ -102,7 +126,7 @@ function selectRequest(index,layer=selected){
  inspectedToken=null;inspectedRange=null;
  requestIndex=index;
  const input=requestSteps[index].input;
- phase=input===null||input<=131?'prefill':'decode';
+ phase=isQwen()?requestSteps[index].phase:input===null||input<=131?'prefill':'decode';
  if(input!==null)positions[phase]=input;
  selected=layer;
  render();
@@ -128,7 +152,7 @@ function togglePlayback(){
  function advance(now){
   lastTick??=now;
   const layered=isLayerStep(requestIndex);
-  if(now-lastTick>=(layered?65:850)){
+  if(now-lastTick>=(layered?(selected===lastLayer?700:65):850)){
    lastTick=now;
    if(layered&&selected<lastLayer)choose(selected+1,false);
    else if(requestIndex<requestSteps.length-1){
@@ -142,8 +166,8 @@ function togglePlayback(){
  syncPlayback();
 }
 let projectionX=.72,projectionY=.46*projectionX;
-const planeWidth=362,planeHeight=462;
-const layerStepX=46,layerSpan=lastLayer*layerStepX;
+const planeWidth=410,planeHeight=510;
+const layerStepX=58;let layerSpan=lastLayer*layerStepX;
 let layerStepY=12;
 // Calibrate to the unlifted matrix geometry, not the SVG element or side panels.
 // Freeze this frame across hover, selection and inspector transitions.
@@ -188,8 +212,8 @@ function paintGeometry(){
  label.setAttribute('x',p.x-8);label.setAttribute('y',p.y-8);
  const numberSize=l===selected||preview?18:13;
  label.setAttribute('font-size',numberSize);
- g.querySelector('.layer-rms-value').setAttribute('font-size',26);
- g.querySelector('.layer-rms-label').setAttribute('font-size',12);
+ g.querySelector('.layer-rms-value').setAttribute('font-size',22);
+ g.querySelector('.layer-rms-label').setAttribute('font-size',10);
  const side=projectionX===.035,rms=sideRmsLabels[l];
  // Screen-space labels stay readable instead of inheriting the thin side projection.
  rms.setAttribute('transform',`translate(${p.x+planeWidth*projectionX/2} ${p.y-34}) rotate(-90)`);
@@ -236,26 +260,37 @@ function bindDockSurface(surface){
  surface.addEventListener('pointercancel',()=>previewLayer(null));
 }
 
+function buildLayerPlanes(){
 for(let l=0;l<ratios.length;l++){
- const g=el('g',{'class':'plane','data-layer':l,'data-tooltip':`L${l} · ${kinds[ratios[l]]} + MoE · 点击查看层内图`});g.append(el('rect',{x:0,y:0,width:planeWidth,height:planeHeight,fill:'var(--plane)',stroke:'var(--line)','class':'outline'}));
+ const g=el('g',{'class':'plane','data-layer':l,'data-tooltip':`L${l} · ${kinds[ratios[l]]} + MoE · 点击查看层内图`});g.append(el('rect',{x:0,y:0,width:planeWidth,height:planeHeight,fill:'var(--plane)',stroke:'var(--line)','class':'outline','data-node-id':'layer-frame'}));
  const rmsLabel=el('text',{'font-family':'monospace','font-size':30,fill:'var(--ink)','dominant-baseline':'middle','class':'side-rms-value'});sideRmsLabels.push(rmsLabel);sideRmsGroup.append(rmsLabel);
  const label=el('text',{fill:'#a0a0a0','font-size':13,'font-family':'monospace','text-anchor':'end','class':'external-layer-number'},String(l));label.dataset.layer=String(l);label.style.cursor='pointer';label.addEventListener('click',()=>choose(l));labels.push(label);
- const matrix=el('g',{'data-matrix':l,transform:'translate(0 60)'});
- g.append(el('text',{x:24,y:25,fill:'var(--muted)','font-size':12,'font-family':'monospace','pointer-events':'none','class':'layer-rms-label'},'Attention'),el('text',{x:24,y:42,fill:'var(--ink)','font-size':26,'font-family':'monospace','class':'layer-rms-value','pointer-events':'none'},'—'));
+ const matrix=el('g',{'data-matrix':l,transform:'translate(24 72)'});
+ g.append(el('text',{x:24,y:23,fill:'var(--muted)','font-size':10,'font-family':'monospace','pointer-events':'none','class':'layer-rms-label'},'Attention'),el('text',{x:24,y:53,fill:'var(--ink)','font-size':22,'font-family':'monospace','class':'layer-rms-value','pointer-events':'none'},'—'));
  g.append(matrix);g.addEventListener('click',()=>{choose(l);openArchitecture();});groups.push(g);layers.push(l);
 
 }
 // Fixed painter order preserves the layer sequence while the dock wave moves.
 for(let l=lastLayer;l>=0;l--)planes.append(groups[l]);
+}
+buildLayerPlanes();
 
 const viewPresets=[
- {name:'2.5D',px:Math.sqrt(3)/2,py:.5,stepY:46/Math.sqrt(3),angle:-35,cube:['M74 45 99 59 74 74 49 59Z','M49 59 74 74 74 103 49 88Z','M74 74 99 59 99 88 74 103Z']},
+ {name:'2.5D',px:Math.sqrt(3)/2,py:.5,stepY:layerStepX/Math.sqrt(3),angle:-35,cube:['M74 45 99 59 74 74 49 59Z','M49 59 74 74 74 103 49 88Z','M74 74 99 59 99 88 74 103Z']},
  {name:'Front',px:1,py:0,stepY:12,angle:0,cube:['M49 49H99V99H49Z','M49 49H99V99H49Z','M49 49H99V99H49Z']},
  {name:'Side',px:.035,py:0,stepY:0,angle:90,cube:['M49 49H99V99H49Z','M49 49H99V99H49Z','M49 49H99V99H49Z']}
 ];
 let viewIndex=0,architectureCamera=null;
+let cameraTransition=false,returnView=0;
+let returnProjection=null;
 document.getElementById('cycle-view').addEventListener('click',()=>applyView((viewIndex+1)%viewPresets.length));
 function applyView(index){
+ if(cameraTransition)return;
+ if(index===1&&viewIndex!==1){openArchitecture();return;}
+ if(viewIndex===1&&index!==1){closeArchitecture(index);return;}
+ setViewInstant(index);
+}
+function setViewInstant(index){
  if(index===1&&viewIndex!==1)architectureCamera=get('scene').getAttribute('viewBox');
  viewIndex=index;const v=viewPresets[viewIndex];
  document.body.classList.toggle('front-view',v.name==='Front');
@@ -278,7 +313,7 @@ const zoomScene=document.getElementById('scene');
 let sceneZoom=1;
 const frontGraph=get('front-graph');
 const frontWidth=880,frontHeight=780;
-let frontZoom=1;
+let frontZoom=1,frontBaseWidth=frontWidth,frontBaseHeight=frontHeight;
 let frontDrag=null;
 
 function setFrontZoom(scale,anchor){
@@ -288,13 +323,23 @@ function setFrontZoom(scale,anchor){
  const ratio=frontZoom/next;
  const x=center.x+(box.x-center.x)*ratio;
  const y=center.y+(box.y-center.y)*ratio;
- frontGraph.setAttribute('viewBox',`${x} ${y} ${frontWidth/next} ${frontHeight/next}`);
+ frontGraph.setAttribute('viewBox',`${x} ${y} ${frontBaseWidth/next} ${frontBaseHeight/next}`);
  frontZoom=next;
 }
 function fitFrontGraph(){
- frontZoom=1;
- frontGraph.setAttribute('viewBox',`-35 -25 ${frontWidth} ${frontHeight}`);
+ const rect=frontGraph.getBoundingClientRect();if(!rect.width||!rect.height)return;
+ const token=get('token-workspace');
+ const safe={left:innerWidth<=600?20:70,top:140,right:innerWidth<=600?30:innerWidth<=1000?210:330,bottom:(token.hidden?0:token.getBoundingClientRect().height)+(innerWidth<=600?150:100)};
+ const availableWidth=Math.max(100,rect.width-safe.left-safe.right),availableHeight=Math.max(100,rect.height-safe.top-safe.bottom);
+ const bounds={x:-10,y:-30,width:870,height:paDetailActive()?2170:750};
+ const scale=Math.min(availableWidth/bounds.width,availableHeight/bounds.height);
+ frontBaseWidth=rect.width/scale;frontBaseHeight=rect.height/scale;frontZoom=.75;
+ const cx=bounds.x+bounds.width/2;
+ const cy=bounds.y+bounds.height/2-(safe.top+availableHeight/2-rect.height/2)/(scale*frontZoom);
+ const width=frontBaseWidth/frontZoom,height=frontBaseHeight/frontZoom;
+ frontGraph.setAttribute('viewBox',`${cx-width/2} ${cy-height/2} ${width} ${height}`);
 }
+
 
 
 frontGraph.addEventListener('wheel',event=>{
@@ -349,7 +394,8 @@ function resetSceneView(){
  }
  const scale=Math.min(width/bounds.width,height/bounds.height);
  const vw=rect.width/scale,vh=rect.height/scale;
- const cx=bounds.x+bounds.width/2-(safe.left+width/2-rect.width/2)/scale;
+ // Floating right-hand controls must not shift the canvas subject left.
+ const cx=viewIndex===0?(project(0,0,0).x+project(lastLayer*layerStepX/projectionX,planeWidth,0).x)/2:bounds.x+bounds.width/2;
  const cy=bounds.y+bounds.height/2-(safe.top+height/2-rect.height/2)/scale;
  sceneZoom=1;zoomScene.setAttribute('viewBox',`${cx-vw/2} ${cy-vh/2} ${vw} ${vh}`);
 }
@@ -403,7 +449,9 @@ zoomScene.addEventListener('wheel',event=>{
 
 // Logical handoffs from PyPTO3 prefill_layer.py and decode_layer.py.
 // Icon paths from the formal diagram legend library, op-icons.js.
-const opIcons = {"linear": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2", "norm": "M4 6h16M7 12h10M9 18h6", "attention": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6", "compress": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4", "mix": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16", "topk": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6", "router": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"};
+// Vendored semantic graph from Compute Explorer; source IDs/edges retained.
+const paSemanticGraph={"id":"paged-attention","nodes":[{"id":"q-proj","type":"data","name":"Q Projection","description":"外部 Q 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码只按下标 [batch_idx, kv_head * GROUP * HEAD_DIM + q] 取 [1, GROUP * HEAD_DIM] 的行切片，列上界为 NUM_HEADS * HEAD_DIM，行数由运行时决定，故不声明 shape 与 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":215,"end":227}],"symbols":["q_proj"]},"category":""},{"id":"k-proj","type":"data","name":"K Projection","description":"外部 K 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码按下标 [batch_idx, cache_col + k] 取 [1, HEAD_DIM] 的行切片，列上界为 NUM_KV_HEADS * HEAD_DIM = KV_HIDDEN，行数由运行时决定，故不声明 shape 与 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":162,"end":173}],"symbols":["k_proj"]},"category":""},{"id":"v-proj","type":"data","name":"V Projection","description":"外部 V 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码按下标 [batch_idx, cache_col + v] 取 [1, HEAD_DIM] 的行切片，列上界为 KV_HIDDEN，行数由运行时决定，故不声明 shape 与 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":200,"end":207}],"symbols":["v_proj"]},"category":""},{"id":"q-prep","type":"composite","name":"Q Norm → RoPE","description":"Q 乘 inv_rms、按 head 归一化，再施加 RoPE，写入 q2d。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":215,"end":251}],"symbols":["q_raw","q_heads","q_rotated","q2d"]},"category":"normalization"},{"id":"k-prep","type":"composite","name":"K Norm → RoPE","description":"K 乘 inv_rms、按 head 归一化，再施加 RoPE。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":162,"end":198}],"symbols":["k_raw","k_normed","k_rotated"]},"category":"normalization"},{"id":"v-scale","type":"composite","name":"V Scaling","description":"V 按 inv_rms 缩放并转 BF16。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":200,"end":213}],"symbols":["v_row_bf16"]},"category":"elementwise"},{"id":"q","type":"data","name":"Q","description":"Q 在 q2d 中的张量视图（GM）：q2d = pl.reshape(q_tnd_flat, [query_rows, HEAD_DIM])（第 106 行），本 kernel 只写入 (batch, kv_head) 组对应的 GROUP 行（第 247–251 行）。归一化在 Q_HEAD_PAD = 16 行的填充 tile 上完成，只有前 GROUP 行是有效 Q。dtype 描述写入载荷（pl.cast → BF16），不声明 q2d 的存储类型。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":247,"end":251}],"symbols":["q_rotated","q2d"]},"category":""},{"id":"k","type":"data","name":"K","description":"当前 token 单个 KV head 的 K 载荷。归一化在 K_RED_ROWS = 8 行的填充 tile 上完成（行 1..7 为 0 填充，第 162–172 行），随后取 k_full = k_normed[0:1, :]，RoPE 后转 BF16 追加到 Key Cache（第 181–198 行）。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":181,"end":198}],"symbols":["k_rotated"]},"category":""},{"id":"v","type":"data","name":"V","description":"当前 token 单个 KV head 的 BF16 V 载荷：v_proj 的 [1, HEAD_DIM] 行切片乘 inv_rms 后转 BF16，再按 cache_row / cache_col 写入 Value Cache（第 200–213 行）。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":200,"end":213}],"symbols":["v_row_bf16"]},"category":""},{"id":"aux","type":"data","name":"Aux Inputs","description":"运行时索引与控制输入（外部 pl.Tensor，GM）。三者的元素类型与行数都未在源码中声明：seq_lens 决定有效长度与 active_batch；slot_mapping 给出当前 token 的写入槽位（第 146–155 行先钳制到非负再加层基址）；block_table 提供逻辑页到物理页映射，并 reshape 为 [active_batch, max_blocks_per_seq]。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":146,"end":155},{"start":261,"end":267}],"symbols":["seq_lens","block_table","slot_mapping"]},"category":""},{"id":"cache-append","type":"composite","name":"Cache Append","description":"当前 token 的 K/V 载荷按 cache_row 写入对应 Cache。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":194,"end":198},{"start":210,"end":213}],"symbols":["key_cache_bsnd","value_cache_bsnd"]},"category":"store"},{"id":"k-cache","type":"data","name":"K Cache","description":"分页 Key Cache 的二维访问视图（外部 pl.Tensor，位于 GM）。逻辑页经 block_table 映射到物理页；写入载荷为 BF16（第 198 行），但 Cache 元素类型未在签名或 Tile 标注中声明，故不声明 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":17,"end":25},{"start":101,"end":107},{"start":194,"end":198},{"start":261,"end":295}],"symbols":["key_cache_bsnd","block_table_2d","cache_base","col"],"primaryRange":2},"category":""},{"id":"v-cache","type":"data","name":"V Cache","description":"分页 Value Cache 的二维访问视图（外部 pl.Tensor，位于 GM）。与 K Cache 使用相同的逻辑页表和行列寻址；dtype 由第 386–429 行 v0..v3 的 pl.Tile[[BLOCK_SIZE, HEAD_DIM], pl.BF16, …] 标注与第 210–213 行的 BF16 写入推导，函数签名本身未声明。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":17,"end":25},{"start":101,"end":107},{"start":210,"end":213},{"start":364,"end":429}],"symbols":["value_cache_bsnd","block_table_2d","cache_base","col"],"primaryRange":2},"category":""},{"id":"qk","type":"composite","name":"QK Matmul","description":"Q 与映射后的 K Page 相乘；每页 FP32 结果写入当前 Stack 的 Scores 区间。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":269,"end":276},{"start":285,"end":305},{"start":306,"end":356}],"symbols":["q_tile","qk_k_page","qk_score_page","score_transfer"],"primaryRange":1},"category":"matmul"},{"id":"scores","type":"data","name":"Scores","description":"多个 Page 的 QK Scores 按列区间写入 score_transfer（GM），再按整个 Stack 加载到 AIV。score_transfer 的形状由写入地址推导，不代表运行场景的固定配置。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":278,"end":305},{"start":770,"end":776}],"symbols":["score_transfer","score_aiv"]},"category":""},{"id":"scale-mask","type":"composite","name":"Scaling + Mask","description":"缩放 Scores，再根据 seq_len 处理末 Stack 的无效列。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":777,"end":788}],"symbols":["score_scaled","score_masked","valid_cols"]},"category":"masking"},{"id":"softmax","type":"composite","name":"Online Softmax","description":"跨 Stack 更新 running max 和归一化和，输出 BF16 概率权重及 rescale 状态。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":745,"end":825},{"start":856,"end":861}],"symbols":["m_iter","l_iter","probability_bf16","m_after","l_after"]},"category":"normalization"},{"id":"probability","type":"data","name":"Probability P","description":"本 Stack 的 BF16 权重尚未除以全局 l_sum，供 PV 消费。概率写在 probability_transfer 的两个 Page 列区间内。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":802,"end":815}],"symbols":["probability_bf16","probability_transfer"]},"category":""},{"id":"pv","type":"composite","name":"PV Matmul","description":"P 与映射后的 V Page 相乘，Stack 内各页结果累加为 FP32 partial。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":364,"end":718}],"symbols":["probability0","v0","pv3","pv_transfer"]},"category":"matmul"},{"id":"context-acc","type":"composite","name":"Context Accumulate","description":"旧 Context 乘延迟 rescale，再加当前 Stack 的 PV partial。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":827,"end":861}],"symbols":["pv_aiv","o_iter","o_after","pending0_iter"]},"category":"accumulation"},{"id":"context","type":"state","name":"Context","description":"跨 Stack 累积的 o 与归一化和 l_sum，是最终输出归一化的状态，不是单轮 PV 数据。o 是 [AIV_ROW_TILE, HEAD_DIM] 的 FP32 累加器（valid 行 lane_rows，第 748–753 行，形状见 context-acc/old）；l_sum 由行归约产生，列布局未显式声明，两个状态形状不同，故本节点不声明 shape。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":745,"end":760},{"start":842,"end":861}],"symbols":["o","l_sum"],"primaryRange":1},"category":""},{"id":"output-norm","type":"composite","name":"Output Normalize","description":"所有 Stack 完成后，以最终 l_sum 归一化 o，转 BF16 并写回 out2d。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":864,"end":873}],"symbols":["o","l_sum","ctx","out2d"]},"category":"normalization"},{"id":"output","type":"data","name":"Attention Output","description":"最终 BF16 Attention 载荷按 Batch、KV head、GROUP 和 lane 对应行写回 out2d；out2d = pl.reshape(out, [query_rows, HEAD_DIM])（第 108 行），本次调用只写 lane_rows 行（第 869–873 行）。dtype 描述 ctx 载荷。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":864,"end":873}],"symbols":["ctx","out2d"]},"category":""}],"edges":[{"id":"q-proj>q-prep:Q Projection","s":"q-proj","t":"q-prep","type":"data","sourcePort":"default","targetPort":"Q","label":"Q Projection"},{"id":"q-prep>q:Q","s":"q-prep","t":"q","type":"data","sourcePort":"Q","targetPort":"default","label":"Q"},{"id":"k-proj>k-prep:K Projection","s":"k-proj","t":"k-prep","type":"data","sourcePort":"default","targetPort":"K","label":"K Projection"},{"id":"k-prep>k:K","s":"k-prep","t":"k","type":"data","sourcePort":"K","targetPort":"default","label":"K"},{"id":"v-proj>v-scale:V Projection","s":"v-proj","t":"v-scale","type":"data","sourcePort":"default","targetPort":"V","label":"V Projection"},{"id":"v-scale>v:V","s":"v-scale","t":"v","type":"data","sourcePort":"V","targetPort":"default","label":"V"},{"id":"k>cache-append:K","s":"k","t":"cache-append","type":"data","sourcePort":"default","targetPort":"K","label":"K"},{"id":"v>cache-append:V","s":"v","t":"cache-append","type":"data","sourcePort":"default","targetPort":"V","label":"V"},{"id":"aux>cache-append:slot_mapping","s":"aux","t":"cache-append","type":"control","sourcePort":"slot","targetPort":"slot","label":"slot_mapping"},{"id":"aux>qk:block_table","s":"aux","t":"qk","type":"control","sourcePort":"block","targetPort":"block","label":"block_table"},{"id":"aux>scale-mask:seq_lens","s":"aux","t":"scale-mask","type":"control","sourcePort":"seq","targetPort":"seq","label":"seq_lens"},{"id":"cache-append>k-cache:K","s":"cache-append","t":"k-cache","type":"data","sourcePort":"K","targetPort":"default","label":"K"},{"id":"cache-append>v-cache:V","s":"cache-append","t":"v-cache","type":"data","sourcePort":"V","targetPort":"default","label":"V"},{"id":"q>qk:Q","s":"q","t":"qk","type":"data","sourcePort":"default","targetPort":"Q","label":"Q"},{"id":"k-cache>qk:K · block_table","s":"k-cache","t":"qk","type":"data","sourcePort":"default","targetPort":"K","label":"K · block_table"},{"id":"qk>scores:Scores","s":"qk","t":"scores","type":"data","sourcePort":"Scores","targetPort":"default","label":"Scores"},{"id":"scores>scale-mask:Scores","s":"scores","t":"scale-mask","type":"data","sourcePort":"default","targetPort":"Scores","label":"Scores"},{"id":"scale-mask>softmax:scaled / masked Scores","s":"scale-mask","t":"softmax","type":"data","sourcePort":"Scores","targetPort":"Scores","label":"scaled / masked Scores"},{"id":"softmax>probability:P","s":"softmax","t":"probability","type":"data","sourcePort":"P","targetPort":"default","label":"P"},{"id":"probability>pv:P","s":"probability","t":"pv","type":"data","sourcePort":"default","targetPort":"P","label":"P"},{"id":"v-cache>pv:V · block_table","s":"v-cache","t":"pv","type":"data","sourcePort":"default","targetPort":"V","label":"V · block_table"},{"id":"pv>context-acc:PV partial","s":"pv","t":"context-acc","type":"data","sourcePort":"partial","targetPort":"partial","label":"PV partial"},{"id":"softmax>context-acc:rescale","s":"softmax","t":"context-acc","type":"state","sourcePort":"state","targetPort":"state","label":"rescale","route":"state"},{"id":"softmax>context:l_sum","s":"softmax","t":"context","type":"state","sourcePort":"state","targetPort":"default","label":"l_sum","route":"state"},{"id":"context-acc>context:Context","s":"context-acc","t":"context","type":"state","sourcePort":"Context","targetPort":"default","label":"Context"},{"id":"context>output-norm:Context","s":"context","t":"output-norm","type":"state","sourcePort":"default","targetPort":"Context","label":"Context"},{"id":"output-norm>output:BF16 Output","s":"output-norm","t":"output","type":"data","sourcePort":"Output","targetPort":"default","label":"BF16 Output"}]};
+const opIcons = {"matmul":"M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z", "softmax":"M4 6h16M7 10v10M12 9v11M17 12v8", "accumulation":"M4 18h16M5 17l4-2 4-8 5-2", "linear": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2", "norm": "M4 6h16M7 12h10M9 18h6", "attention": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6", "compress": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4", "mix": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16", "topk": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6", "router": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"};
 function appendCacheGlyph(parent,x,y,width,height,label){
  parent.append(el('rect',{x,y,width,height,rx:6,class:'cache-body'}));
  const rows=width<80?2:1;
@@ -418,10 +466,16 @@ function appendCacheGlyph(parent,x,y,width,height,label){
  parent.append(el('text',{x:x+width/2,y:y+height/2,'text-anchor':'middle',
   'dominant-baseline':'middle','font-size':width<80?14:16,class:'cache-label'},label));
 }
+function appendResidualGlyph(parent,x,y,width,height,label,hc=false){
+ const group=el('g',{'data-tooltip':label,tabindex:0});const cx=x+width/2,cy=y+height/2,r=height/2;
+ group.append(el('circle',{cx,cy,r,fill:'var(--bg)',stroke:'var(--muted)','stroke-width':1.5}));
+ group.append(el('path',{d:hc?opIcons.mix:`M4 12h16M12 4v16`,transform:`translate(${cx-10} ${cy-10}) scale(.8333)`,stroke:'var(--ink)','stroke-width':2,fill:'none'}));
+ parent.append(group);return group;
+}
 function appendGlyph(parent,x,y,width,height,label,role){
  if(role==='cache'){const glyph=el('g');appendCacheGlyph(glyph,x,y,width,height,label);parent.append(glyph);return glyph;}
- const tensor=role==='activation';
- const color='var(--activation)';
+ const tensor=['activation','pa-data','pa-state'].includes(role);
+ const color=role==='pa-data'?'#83B9EE':role==='pa-state'?'#FFC533':'var(--activation)';
  const glyph=el('g');
  glyph.append(el('rect',{x,y,width,height,style:tensor?'rx:7px':'rx:'+height/2+'px',
   fill:tensor?'var(--plane)':'var(--op)',stroke:tensor?color:'none'}));
@@ -446,7 +500,7 @@ function appendGlyph(parent,x,y,width,height,label,role){
 // Layer navigation does not create a second input/output inspector.
 new ResizeObserver(()=>{const panel=get('token-workspace');document.documentElement.style.setProperty('--token-clearance',(panel.hidden?0:panel.getBoundingClientRect().height)+'px');}).observe(get('token-workspace'));
 function renderArchitectureDetail(){
- get('architecture-layer').textContent='L'+selected+' · V4 Decoder · '+kinds[ratios[selected]];
+ get('architecture-layer').textContent='L'+selected+' · '+model.decoder+' · '+kinds[ratios[selected]];
  get('architecture-prev').disabled=selected===0;
  get('architecture-next').disabled=selected===lastLayer;
 
@@ -455,22 +509,27 @@ get('architecture-close').onclick=()=>get('architecture-model').click();
 get('architecture-prev').onclick=()=>choose(selected-1);
 get('architecture-next').onclick=()=>choose(selected+1);
 
-get('architecture-model').onclick=()=>{
- pausePlayback();document.body.classList.remove('request-inspecting');
- if(viewIndex===1){applyView(0);if(architectureCamera)get('scene').setAttribute('viewBox',architectureCamera);}else syncFrontVisibility();
- get('open-front').focus();
-};
+get('architecture-model').onclick=()=>closeArchitecture();
 
 get('inference-front').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();get('architecture-model').click();}});
 function renderFront(kind) {
  const svg=get('front-graph');
  svg.setAttribute('aria-label','L'+selected+' · '+phase+' · '+kind+' 层内图');
  svg.innerHTML='<defs><marker id="front-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L8 4L0 8" fill="#999"/></marker></defs>';
+ const frame=el('g',{'data-node-id':'layer-frame',class:'layer-architecture-frame','pointer-events':'none'});
+ frame.append(el('rect',{x:0,y:-20,width:850,height:paDetailActive()?2150:730,fill:'var(--plane)',stroke:'var(--line)','stroke-width':1.5}));svg.append(frame);
+ svg.append(el('text',{x:18,y:7,fill:'var(--muted)','font-size':13,'pointer-events':'none'},'L'+selected+' · '+model.decoder));
+ const close=el('g',{id:'layer-frame-close',role:'button',tabindex:0,'aria-label':'收回当前层，返回 2.5D','data-tooltip':'返回 2.5D 层栈',class:'layer-frame-close'});
+ close.append(el('rect',{x:804,y:-14,width:38,height:38,rx:19,fill:'transparent'}),el('path',{d:'M817 -1l12 12M829 -1l-12 12',fill:'none',stroke:'var(--ink)','stroke-width':1.5,'pointer-events':'none'}));
+ close.addEventListener('click',()=>closeArchitecture(0));close.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();closeArchitecture(0);}});svg.append(close);
  const edge=d=>svg.append(el('path',{d,fill:'none',stroke:'#999','marker-end':'url(#front-arrow)'}));
  const glyph=(id,x,y,w,h,label,role)=>{
-  const group=appendGlyph(svg,x,y,w,h,label,role);
+  let group;
+  if(role==='add'||role==='hcmerge')group=appendResidualGlyph(svg,x,y,w,h,label,role==='hcmerge');
+  else group=appendGlyph(svg,x,y,w,h,label,role);
+  group.dataset.nodeId=id;
   if(role==='cache'){
-   const branch=id==='raw'?'swa':'compressed';
+   const branch=id==='raw'||id==='value-cache'?'swa':'compressed';
    group.classList.add('cache-inspect-node');group.dataset.cacheBranch=branch;
    group.setAttribute('role','button');group.setAttribute('tabindex','0');
    group.setAttribute('aria-label','定位 Rank · L'+selected+' · '+label);
@@ -482,6 +541,111 @@ function renderFront(kind) {
   }
   return group;
  };
+ const moduleFrame=(x,y,width,height,label)=>{
+  const group=el('g',{class:'module-frame','pointer-events':'none'});
+  group.append(el('rect',{x,y,width,height,rx:12,fill:'var(--ink)','fill-opacity':.05,stroke:'none'}),el('text',{x:x+14,y:y-9,fill:'var(--muted)','font-size':13},label));svg.append(group);
+ };
+ if(isQwen()){
+  const expanded=paDetailActive(),extra=expanded?400:0;
+  if(expanded){
+   moduleFrame(35,91,780,1730,'Attention 子层');
+   moduleFrame(35,1830,780,220,'FFN 子层');
+   glyph('input',135,42,310,38,(phase==='prefill'?'Prompt · 132':'Decode · 1')+' × 5120','activation');
+   glyph('norm',135,104,310,38,'Input RMSNorm','norm');edge('M290 80V104');
+   const layouts={
+    'q-proj':[90,200],'v-proj':[320,200],'k-proj':[550,200],
+    'q-prep':[90,265],'v-scale':[320,265],'k-prep':[550,265],
+    q:[90,330],v:[320,330],k:[550,330],aux:[590,400],
+    'cache-append':[420,475],'v-cache':[90,545],'k-cache':[420,545],
+    qk:[300,640],scores:[300,710],'scale-mask':[300,790],softmax:[300,865],
+    probability:[300,940],pv:[300,1030],'context-acc':[300,1120],context:[560,1230],
+    'output-norm':[300,1330],output:[300,1405]
+   };
+   const width=190,height=36;
+   moduleFrame(60,181,720,205,'QKV Preparation');moduleFrame(60,450,720,780,'Paged Attention · '+(phase==='prefill'?'Prefill':'Decode'));moduleFrame(260,1260,520,200,'Output');
+   // All 27 relationships are reused from the source graph, including rescale/l_sum.
+   paSemanticGraph.edges.forEach((relation,index)=>{
+    const [sx,sy]=layouts[relation.s],[tx,ty]=layouts[relation.t];let d;
+    if(sx===tx&&ty>sy)d=`M${sx+width/2} ${sy+height}V${ty}`;
+    else if(ty>sy+height){const bus=sy+height+12+(index%3)*5;d=`M${sx+width/2} ${sy+height}V${bus}H${tx+width/2}V${ty}`;}
+    else {const bus= Math.max(sx,tx)+width+16;d=`M${sx+width} ${sy+height/2}H${bus}V${ty+height/2}H${tx+width}`;}
+    const path=el('path',{d,fill:'none',stroke:'var(--muted)','stroke-width':1.2,'marker-end':'url(#front-arrow)'});
+    if(relation.type!=='data')path.setAttribute('stroke-dasharray','4 3');
+    path.dataset.sourceEdge=relation.id;svg.append(path);
+   });
+   paSemanticGraph.nodes.forEach(node=>{
+    const [x,y]=layouts[node.id];
+    const role=['k-cache','v-cache'].includes(node.id)?'cache':node.type==='state'||node.id==='scores'?'pa-state':node.type==='data'?'pa-data':node.category==='matmul'?'matmul':node.id==='softmax'?'softmax':node.id==='context-acc'?'accumulation':node.id.includes('prep')?'norm':'linear';
+    const shared={q:'query','k-cache':'raw','v-cache':'value-cache'};
+    const item=glyph(shared[node.id]||'pa-'+node.id,x,y,width,height,node.name,role);
+    item.dataset.semanticNode=node.id;item.dataset.tooltip=node.description;item.setAttribute('tabindex','0');
+   });
+   edge('M290 142V165H185V200');edge('M290 165H415V200');edge('M415 165H645V200');
+   glyph('output',135,1550,310,38,'Output Projection','linear');edge('M395 1441V1495H290V1550');
+   glyph('add1',135,1730,310,38,'Attention · Residual Add','add');edge('M290 1588V1730');edge('M135 61H45V1749H271');
+   glyph('postnorm',135,1845,310,38,'Post Attention RMSNorm','norm');edge('M290 1768V1845');
+   glyph('mlp',135,1910,310,38,'Gate / Up → SiLU × → Down','linear');edge('M290 1883V1910');
+   glyph('add2',135,1990,310,38,'MLP · Residual Add','add');edge('M290 1948V1990');edge('M290 1800H65V2009H271');
+   glyph('hidden',135,2080,310,38,'Hidden Out · T × 5120','activation');edge('M290 2028V2080');
+   const collapse=el('g',{role:'button',tabindex:0,class:'pa-expand','data-tooltip':'收起 PA 计算图','aria-label':'收起 Paged Attention'});
+   collapse.append(el('circle',{cx:755,cy:425,r:16,fill:'var(--surface)'}),el('path',{d:'M749 425h12',stroke:'var(--ink)'}));
+   const closePA=()=>{pausePlayback();paExpanded=false;renderFront(kind);if(paReturnCamera)svg.setAttribute('viewBox',paReturnCamera);updateViewportReadout();};
+   collapse.addEventListener('click',closePA);collapse.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();closePA();}});svg.append(collapse);renderArchitectureDetail();return;
+  }
+
+  moduleFrame(35,91,780,312+extra,'Attention 子层');moduleFrame(35,410+extra,780,175,'FFN 子层');
+  const togglePA=()=>{
+   pausePlayback();const before=captureShared(svg);
+   if(!paExpanded)paReturnCamera=svg.getAttribute('viewBox');
+   paExpanded=!paExpanded;renderFront(kind);
+   if(paExpanded)fitFrontGraph();else if(paReturnCamera)svg.setAttribute('viewBox',paReturnCamera);
+   morphShared(before);updateViewportReadout();
+  };
+  const expandControl=(x,y)=>{
+   const control=el('g',{role:'button',tabindex:0,'aria-label':expanded?'收起 Paged Attention':'展开 Paged Attention','data-tooltip':expanded?'收起 PA 计算图':'展开 QK、Softmax、PV 计算链',class:'pa-expand'});
+   control.append(el('circle',{cx:x,cy:y,r:13,fill:'var(--surface)'}),el('path',{d:expanded?`M${x-5} ${y}h10`:`M${x-5} ${y}h10M${x} ${y-5}v10`,stroke:'var(--ink)','stroke-width':1.5,fill:'none','pointer-events':'none'}));
+   control.addEventListener('click',event=>{event.stopPropagation();togglePA();});control.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePA();}});svg.append(control);
+  };
+  const rows=[['input',(phase==='prefill'?'Prompt · T':'Decode · 1')+' × 5120','activation'],
+   ['norm','Input RMSNorm','norm'],['query','Q Projection → Q Norm → RoPE','linear'],
+   ['attention','Paged Attention · '+(phase==='prefill'?'Prefill':'Decode')+' · GQA','attention'],
+   ['output','Output Projection','linear'],['add1','Attention · Residual Add','add'],
+   ['postnorm','Post Attention RMSNorm','norm'],['mlp','Gate / Up → SiLU × → Down','linear'],
+   ['add2','MLP · Residual Add','add'],['hidden','Hidden Out · T × 5120','activation']];
+  rows.forEach(([id,label,role],i)=>{
+   if(i===3&&expanded)return;
+   const y=42+i*62+(i>3?extra:0);
+   if(i)edge('M290 '+(y-24)+'V'+y);
+   glyph(id,135,y,310,38,label,role);
+  });
+  expandControl(421,expanded?214:247);
+  if(expanded){
+   moduleFrame(110,227,355,414,'Paged Attention');
+   const ops=[['qk','QK Matmul','matmul'],['scale','Scaling / Causal Mask','norm'],['softmax','Online Softmax','norm'],['pv','PV Matmul','matmul'],['accumulate','Context Accumulate','add'],['normalize','Output Normalize','norm']];
+   ops.forEach(([id,label,role],i)=>{const y=242+i*66;if(i)edge(`M290 ${y-28}V${y}`);glyph('pa-'+id,135,y,310,38,label,role);});
+   edge('M290 204V242');edge('M290 610V690');
+   edge('M510 196H490V261H445');edge('M510 327H480V459H445');
+   glyph('value-cache',510,308,285,38,'V Cache','cache');
+   edge('M760 154V308');
+   glyph('cache-append',510,145,285,32,'Cache Append','linear');
+   // Metadata drives addressing; no physical page or per-head TP shape is invented.
+   const metadata=glyph('table',510,420,285,38,'Block table / slot mapping','activation');
+   metadata.dataset.tooltip='源码寻址接口；此TP2采集尚无页表与槽位快照';metadata.setAttribute('tabindex','0');
+   edge('M652 420V346');
+  }else{
+   edge('M510 196H480V247H445');
+   const table=glyph('table',510,280,285,38,'Block table / slot mapping','activation');
+   table.dataset.tooltip='源码寻址接口；运行页表尚未接入';table.setAttribute('tabindex','0');edge('M652 280V215');
+  }
+  edge(`M135 61H55V${371+extra}H271`);edge(`M290 ${390+extra}V${401+extra}H75V${557+extra}H271`);
+  edge('M445 123H478V116H510');glyph('kvproj',510,97,285,38,'K / V Projection · K Norm / RoPE','linear');
+  edge(expanded?'M652 135V145':'M652 135V177');
+  if(expanded)edge('M652 177V184');
+  glyph('raw',510,expanded?184:177,285,38,expanded?'K Cache':'Paged K / V cache','cache');
+  const mlp=svg.querySelector('[data-node-id="mlp"]');mlp.dataset.tooltip='Dense SwiGLU · intermediate 17408';mlp.setAttribute('tabindex','0');
+  renderArchitectureDetail();return;
+ }
+ moduleFrame(30,90,760,344,'Attention 子层 · HC');moduleFrame(30,438,760,175,'FFN 子层 · HC');
  // Grouped from Design/architecture/deepseek_v4_flash_csa/model_architecture.json.
  const nodes=[
   [(phase==='prefill'?'Prompt · 132':'Decode · 1')+' × 4 × 4096','activation'],
@@ -490,10 +654,10 @@ function renderFront(kind) {
   ['Query Projection / RoPE','linear'],
   [kind+' Attention · '+(phase==='prefill'?'Prefill':'Decode'),'attention'],
   ['Output Projection','linear'],
-  ['Attention · HC Post / 残差合并','mix'],
+  ['Attention · HC Post / 残差合并','hcmerge'],
   ['FFN · HC Pre / RMSNorm','mix'],
   [(selected<3?'Hash Router':'Router')+' / MoE','router'],
-  ['FFN · HC Post / 残差合并','mix'],
+  ['FFN · HC Post / 残差合并','hcmerge'],
   ['Hidden Out · T × 4 × 4096','activation']
  ];
  const ids=['input','pre','norm','query','attention','output','post','ffnpre','moe','ffnpost','hidden'];
@@ -505,11 +669,11 @@ function renderFront(kind) {
   path.append(el('title',{},label));svg.append(path);
   svg.append(el('text',{x,y,fill:'var(--muted)','font-size':11,transform:`rotate(-90 ${x} ${y})`},label));
  };
- residual('M135 61H50V409H135','HC 残差 · 4 streams',42,330);
- residual('M290 428V438H66V583H135','FFN 残差 · 4 streams',58,565);
+ residual('M135 61H50V409H271','HC 残差 · 4 streams',42,330);
+ residual('M290 428V438H66V583H271','FFN 残差 · 4 streams',58,565);
  const hcParams=(d)=>svg.append(el('path',{d,fill:'none',stroke:'var(--muted)','stroke-dasharray':'3 3','marker-end':'url(#front-arrow)'}));
- hcParams('M135 119H110V397H135');
- hcParams('M135 467H110V571H135');
+ hcParams('M135 119H110V409H271');
+ hcParams('M135 467H110V583H271');
  svg.append(el('text',{x:105,y:265,fill:'var(--muted)','font-size':10,transform:'rotate(-90 105 265)'},'post / comb'));
  nodes.forEach(([label,role],i)=>{
   const y=42+i*58;
@@ -537,7 +701,8 @@ function renderFront(kind) {
   edge('M510 347H473V308H445','indexer','attention','Top-K 压缩位置');
  }
  // Keep the expert branches grouped in this layer view.
- svg.append(el('text',{x:460,y:528,fill:'var(--muted)','font-size':15},'Top-6 路由专家 + 1 共享专家'));
+ const moe=svg.querySelector('[data-node-id="moe"]');
+ moe.dataset.tooltip='MoE · Top-6 路由专家 + 1 共享专家';moe.setAttribute('tabindex','0');
  renderArchitectureDetail();
 
 }
@@ -548,25 +713,34 @@ function choose(layer, manual=true) {
  requestGeometry();
 }
 function render() {
- const position=positions[phase], start=Math.max(0,position-127);
+ const position=positions[phase], start=cacheStart(position);
  const kind=kinds[ratios[selected]];
- if(kind==='SWA'&&cacheFocus==='compressed')cacheFocus=null;
+ if((kind==='SWA'||isQwen())&&cacheFocus==='compressed')cacheFocus=null;
  if(cacheFocus==='compressed'){const count=kind==='HCA'&&phase==='decode'?Math.floor((position+1)/128):0;inspectedRange=count?[0,count*128-1]:null;}
  for(const l of layers){
   const active=l===selected,g=groups[l];
   g.classList.toggle('chosen',active);
   g.querySelector('.outline').setAttribute('fill',active?'var(--selected-plane)':'var(--plane)');
   g.querySelector('.layer-rms-value').textContent=kinds[ratios[l]];
-  g.dataset.tooltip='L'+l+' · '+kinds[ratios[l]]+' + MoE · 点击查看层内图';
-  const inputLabel=phase==='prefill'?'Prompt · 132 tokens':'Decode · 1 token';
-  const nodes=[inputLabel,'Attention · '+kinds[ratios[l]],'MoE','Hidden Out'];
+  g.dataset.tooltip='L'+l+' · '+kinds[ratios[l]]+' + '+model.ffn+' · 点击查看层内图';
+  const inputLabel=phase==='prefill'?(isQwen()?'Prompt · T tokens':'Prompt · 132 tokens'):'Decode · 1 token';
   const face=el('g',{class:'face'});
-  nodes.forEach((name,i)=>{
-   const y=20+i*67;
-   if(i)face.append(el('path',{d:'M181 '+(y-23)+'v23',stroke:'#777'}));
-   const role=['activation','attention','router','activation'][i];
-  const glyph=appendGlyph(face,72,y,218,44,name,role);
-  glyph.addEventListener('click',event=>{event.stopPropagation();choose(l);openArchitecture();});
+  // The compact face retains both sublayers and residual topology.
+  for(const [y,h] of [[70,130],[210,130]])face.append(el('rect',{x:36,y,width:290,height:h,rx:10,fill:'var(--ink)','fill-opacity':.05,'pointer-events':'none'}));
+  const nodes=[
+   ['input',0,inputLabel,'activation'],['attention',85,'Attention · '+kinds[ratios[l]],'attention'],
+   [isQwen()?'add1':'post',145,isQwen()?'Residual Add':'HC Post / 残差合并',isQwen()?'add':'hcmerge'],
+   [isQwen()?'mlp':'moe',225,model.ffn,isQwen()?'linear':'router'],
+   [isQwen()?'add2':'ffnpost',285,isQwen()?'Residual Add':'HC Post / 残差合并',isQwen()?'add':'hcmerge'],
+   ['hidden',345,'Hidden Out','activation']
+  ];
+  const wire=d=>face.append(el('path',{d,fill:'none',stroke:'var(--muted)','stroke-width':1.3}));
+  wire('M72 22H48V167H159');wire('M181 189V201H54V307H159');
+  nodes.forEach(([id,y,name,role],i)=>{
+   if(i)wire('M181 '+(nodes[i-1][1]+44)+'V'+y);
+   const glyph=role==='add'||role==='hcmerge'?appendResidualGlyph(face,72,y,218,44,name,role==='hcmerge'):appendGlyph(face,72,y,218,44,name,role);
+   glyph.dataset.nodeId=id;
+   glyph.addEventListener('click',event=>{event.stopPropagation();choose(l);openArchitecture();});
   });
   g.querySelector('[data-matrix]').replaceChildren(face);
  }
@@ -594,21 +768,99 @@ function inspectCacheToken(index,range=null){
  render();
 }
 get('kv-inspect-clear').onclick=()=>{cacheFocus=null;inspectedToken=null;inspectedRange=null;render();};
+let rankPrimary=false,selectedRank=0;
+function setRankPrimary(value){
+ rankPrimary=value;document.body.classList.toggle('rank-primary',value);
+ get('rank-return').hidden=!value;renderKVMemory();
+}
+get('rank-return').onclick=()=>setRankPrimary(false);
+function renderProfileRanks(){
+ const target=get('kv-memory-graphic');target.replaceChildren();
+ const entry=document.createElement('button');entry.type='button';entry.className='rank-overview';
+ entry.setAttribute('data-tooltip',rankPrimary?'返回层栈，保留播放位置':'展开两个 Rank');
+ entry.setAttribute('aria-label',rankPrimary?'返回层栈':'展开 Rank 0 与 Rank 1');
+ // Shared source projection, with no capacity or byte proportions inferred.
+ const g=window.RankMemoryView.geometry;
+ const cube=(rank)=>{
+  // Logical bands reuse the original open-frame glyph, not byte proportions.
+  const light=document.documentElement.dataset.theme==='light';
+  const ink=light?'#333':'#ddd',neutral=light?'#b8bec4':'#555c63';
+  const base=6,kvBase=65,kvHeight=285,pitch=kvHeight/40,height=429;
+  let body=g.block(base,48,light?'#aaa':'#858585')+g.block(kvBase,kvHeight,neutral);
+  body+=g.block(kvBase+selected*pitch,Math.max(3,pitch*.65),'#3187EC');
+  const frame=`<path d="M${g.P(0,155,height)}L${g.P(0,0,height)}L${g.P(245,0,height)}L${g.P(245,155,height)}Z M${g.P(0,155,height)}L${g.P(0,155,0)}L${g.P(245,155,0)}L${g.P(245,0,0)}L${g.P(245,0,height)} M${g.P(245,155,height)}L${g.P(245,155,0)}" fill="none" stroke="${ink}" stroke-width="2.4"/>`;
+  const label=(z,text,size=17)=>{const p=g.P(239,140,z);return `<text transform="matrix(.8660254 -.5 0 1 ${p[0]} ${p[1]})" fill="${ink}" font-size="${size}">${text}</text>`;};
+  const wall=g.P(0,140,height);
+  return `<svg viewBox="335 220 505 610" aria-hidden="true">${body}${frame}<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-75})" fill="${ink}"><text font-size="25" font-weight="600">Rank ${rank} · 内存</text><text y="23" font-size="13">TP 2 · 结构分区</text></g>${label(30,'权重 / 运行缓冲',13)}${label(210,'KV 缓存',20)}${label(385,'可用容量待接入',13)}<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${selected} · Paged KV</text></svg>`;
+ };
+ if(!rankPrimary){entry.innerHTML=cube(selectedRank);entry.onclick=()=>setRankPrimary(true);target.append(entry);}
+ else {
+  const pair=document.createElement('div');pair.className='rank-pair';
+  for(let rank=0;rank<2;rank++){
+   const column=document.createElement('section');column.className='rank-column';
+   const heading=document.createElement('button');heading.className='rank-select';heading.textContent='Rank '+rank;
+   heading.setAttribute('aria-pressed',String(selectedRank===rank));heading.setAttribute('data-tooltip','检查 Rank '+rank);
+   heading.onclick=()=>{selectedRank=rank;renderKVMemory();};column.append(heading);
+   const drawing=document.createElement('div');drawing.className='rank-cube';drawing.innerHTML=cube(rank);column.append(drawing);
+   const layers=document.createElement('div');layers.className='rank-layers';
+   for(let layer=0;layer<40;layer++){
+    const button=document.createElement('button');button.textContent='L'+layer;button.className=layer===selected&&rank===selectedRank?'current':'';
+    button.setAttribute('aria-pressed',String(layer===selected&&rank===selectedRank));button.setAttribute('data-tooltip','Rank '+rank+' · 检查 L'+layer);
+    button.onclick=()=>{pausePlayback();selectedRank=rank;choose(layer);};layers.append(button);
+   }
+   column.append(layers);const note=document.createElement('p');note.textContent=rank===0?'L2：Prefill / Decode 独立采集':'细粒度采集未提供';column.append(note);pair.append(column);
+  }
+  target.append(pair);
+ }
+ get('kv-memory-status').textContent=rankPrimary?'TP 2 · 当前 L'+selected+' · 内存分配数据未接入':'Rank '+selectedRank+' · TP 2';
+ get('kv-inspect-clear').hidden=true;
+}
 function renderKVMemory(){
+ if(isQwen()){renderProfileRanks();return;}
  const position=positions[phase];
  get('kv-inspect-clear').hidden=inspectedToken===null&&cacheFocus===null;
  window.InferenceKVMemory.render(get('kv-memory-graphic'),{
-  layer:selected,ratios,phase,position,stage:requestIndex,layered:isLayerStep(requestIndex),
+  layer:selected,ratios,modelId,phase,position,stage:requestIndex,layered:isLayerStep(requestIndex),
   inspection:inspectedToken,range:inspectedRange,branch:cacheFocus,
   onToken:inspectCacheToken,onBranch:selectCacheBranch,onLayer:layer=>{inspectedToken=null;inspectedRange=null;choose(layer);if(cacheFocus)selectCacheBranch(cacheFocus);}
  });
- const start=Math.max(0,position-127),kind=kinds[ratios[selected]];
- let status=cacheFocus==='swa'?'L'+selected+' · SWA 读取 '+start+'–'+position+' · 写入 '+position:cacheFocus==='compressed'?'L'+selected+' · '+kind+' 压缩'+(inspectedRange?' · 来源 '+inspectedRange.join('–'):' · 条目明细未接入'):'';
+ const start=cacheStart(position),kind=kinds[ratios[selected]];
+ let status=cacheFocus==='swa'?'L'+selected+' · '+cacheName()+' 读取 '+start+'–'+position+' · 写入 '+position:cacheFocus==='compressed'?'L'+selected+' · '+kind+' 压缩'+(inspectedRange?' · 来源 '+inspectedRange.join('–'):' · 条目明细未接入'):'';
  if(inspectedToken!==null){
-  status=inspectedRange?'压缩记录 · 来源 '+inspectedRange.join('–'):
-   '位置 '+inspectedToken+(inspectedToken>=start?' · SWA 缓存':kind==='HCA'&&inspectedToken<Math.floor((position+1)/128)*128?' · HCA 压缩记录':' · SWA 窗口外');
+  status=isQwen()?'位置 '+inspectedToken+' · Page '+Math.floor(inspectedToken/128)+' · offset '+inspectedToken%128:inspectedRange?'压缩记录 · 来源 '+inspectedRange.join('–'):
+   '位置 '+inspectedToken+(inspectedToken>=start?' · '+cacheName()+' 缓存':kind==='HCA'&&inspectedToken<Math.floor((position+1)/128)*128?' · HCA 压缩记录':' · SWA 窗口外');
  }
  get('kv-memory-status').textContent=status;
+}
+const pagedHeadSelect=get('paged-head');
+for(let head=0;head<8;head++){
+ const option=document.createElement('option');option.value=head;option.textContent=head;pagedHeadSelect.append(option);
+}
+pagedHeadSelect.onchange=()=>{pagedHead=Number(pagedHeadSelect.value);render();};
+// Compute Explorer reference capacity: 3584 / 128 = 28 logical pages, not physical allocations.
+const pageGroups=Array.from({length:28},(_,page)=>{
+ const group=document.createElement('div');group.className='token-page';
+ const label=document.createElement('button');label.type='button';label.className='token-page-label';
+ label.dataset.tooltip='检查本逻辑页的 KV 位置，不改变当前推理步骤';
+ label.onclick=()=>{pausePlayback();inspectCacheToken(page*128);};
+ const cells=document.createElement('div');cells.className='token-page-cells';group.append(label,cells);
+ for(let offset=0;offset<128;offset++){
+  const slot=document.createElement('span');slot.className='token-empty-slot';slot.dataset.offset=offset;cells.append(slot);
+ }
+ return {group,label,cells};
+});
+let tokenGridModel=null;
+function arrangeTokenGrid(){
+ if(tokenGridModel===modelId)return;
+ tokenGridModel=modelId;const grid=get('token-grid');grid.replaceChildren();
+ grid.classList.toggle('is-paged',isQwen());
+ if(isQwen())pageGroups.forEach(({group,cells},page)=>{
+  delete cells.dataset.reference;cells.replaceChildren(...Array.from({length:128},(_,offset)=>{
+   const button=tokenCells[page*128+offset];if(button){button.textContent='';return button;}
+   const slot=document.createElement('span');slot.className='token-empty-slot';return slot;
+  }));grid.append(group);
+ });
+ else tokenCells.forEach((button,index)=>{button.textContent=index;grid.append(button);});
 }
 const tokenCells=Array.from({length:positionBounds.decode[1]+1},(_,index)=>{
  const button=document.createElement('button');
@@ -619,8 +871,59 @@ const tokenCells=Array.from({length:positionBounds.decode[1]+1},(_,index)=>{
  get('token-grid').append(button);
  return button;
 });
+// User-authorized mock fills missing token/page inputs only; profiler durations remain measured.
+const qwenMockKV=Object.freeze({promptLength:132,pageSize:128,pageCount:28,source:'user-authorized-mock'});
+let paCaseSelection=null;
+const profileTokens=[];
+for(let i=0;i<5;i++){
+ const button=document.createElement('button');button.type='button';
+ button.textContent=i===0?'Prompt 0–'+(qwenMockKV.promptLength-1):String(qwenMockKV.promptLength+i-1);
+ button.dataset.tooltip=i===0?'查看 Prompt 输入':'查看 Decode '+i+' · 输入位置 '+(qwenMockKV.promptLength+i-1);
+ button.onclick=()=>{pausePlayback();paCaseSelection=null;selectRequest(i,selected);};
+ get('profile-token-sequence').append(button);profileTokens.push(button);
+}
 function renderTokenView(position,start,kind){
+ get('profile-token-sequence').hidden=!isQwen();
+ if(isQwen()){
+  profileTokens.forEach((button,index)=>{button.setAttribute('aria-pressed',String(index===Math.min(requestIndex,4)));button.dataset.processed=String(index<=requestIndex);});
+  arrangeTokenGrid();
+  get('token-grid').hidden=false;get('paged-context').hidden=false;get('token-evidence').hidden=true;
+  const current=qwenMockKV.promptLength-1+Math.min(requestIndex,4);
+  const observed=paCaseSelection??current;
+  get('paged-location').textContent='L'+selected+' · '+(paCaseSelection===null?'输入 ':'检查 ')+observed+' · Page '+Math.floor(observed/128)+' · offset '+observed%128;
+  get('paged-head-label').hidden=true;get('paged-task').hidden=true;
+  pageGroups.forEach(({group,label,cells},page)=>{
+   group.hidden=false;group.dataset.used=String(page*128<=current);label.disabled=false;label.textContent='P'+page;
+   label.setAttribute('aria-pressed',String(Math.floor(observed/128)===page));label.dataset.tooltip='逻辑页 '+page+' · 位置 '+page*128+'–'+(page*128+127);
+   label.onclick=()=>{paCaseSelection=page*128;renderTokenView(position,start,kind);};
+   if(!cells.dataset.reference){
+    cells.replaceChildren();cells.dataset.reference='true';
+    for(let offset=0;offset<128;offset++){
+     const slot=document.createElement('button');slot.type='button';slot.className='token-empty-slot';
+     slot.dataset.tooltip='Page '+page+' · offset '+offset+' · 逻辑位置 '+(page*128+offset);
+     slot.setAttribute('aria-label',slot.dataset.tooltip);
+     slot.onclick=()=>{paCaseSelection=page*128+offset;renderTokenView(position,start,kind);};cells.append(slot);
+    }
+   }
+   Array.from(cells.children).forEach((slot,offset)=>{slot.setAttribute('aria-pressed',String(current===page*128+offset));slot.dataset.read=String(page*128+offset<=current);slot.dataset.inspect=String(paCaseSelection===page*128+offset);});
+  });
+  get('token-caption').hidden=false;get('token-caption').textContent=requestSteps[requestIndex].label+' · '+(requestSteps[requestIndex].durationUs?'整网 '+(requestSteps[requestIndex].durationUs/1000).toFixed(2)+' ms · ':'')+'输入 '+current;return;
+ }
  const idle=requestIndex===0;
+ arrangeTokenGrid();
+ get('paged-context').hidden=idle||!isQwen();
+ if(isQwen()&&!idle){
+  const observed=inspectedToken??(inspectedRange?inspectedRange[0]:position),p=pagedContext(observed,pagedHead);
+  get('paged-location').textContent='容量 28 页 · 已用 '+Math.ceil((position+1)/128)+' 页 · L'+selected+' · '+(inspectedToken!==null||inspectedRange?'检查':'当前')+' '+observed+' → Page '+p.page+' · offset '+p.offset+' → Stack '+p.stack;
+  get('paged-head-label').hidden=phase!=='decode';get('paged-task').hidden=phase!=='decode';
+  get('paged-task').textContent='请求 0 · Task '+p.task+' → 计算 Block '+String(p.block).padStart(2,'0')+' · Q Heads '+p.qStart+'–'+p.qEnd;
+  pagedHeadSelect.value=pagedHead;
+  pageGroups.forEach(({group,label},page)=>{
+   const count=Math.max(0,Math.min(128,position-page*128+1));group.hidden=false;group.dataset.used=String(count>0);label.disabled=count===0;
+   label.textContent='P'+page+' · '+(count?count+'/128':'未用');label.dataset.tooltip='逻辑 Page '+page+' · 位置 '+page*128+'–'+(page*128+127)+' · '+(count?'有效 '+count+' 个位置':'参考容量，未表示物理页分配');
+   label.setAttribute('aria-pressed',String(page===p.page));
+  });
+ }
  get('token-grid').hidden=idle;
  get('token-evidence').hidden=idle;
  get('token-caption').hidden=!idle;
@@ -628,23 +931,23 @@ function renderTokenView(position,start,kind){
  const prefill=phase==='prefill';
  const last=positionBounds[phase][1];
  get('token-caption').textContent='';
- get('token-swa-title').textContent='L'+selected+' · SWA '+(prefill?'因果窗口':'读取');
+ get('token-swa-title').textContent='L'+selected+' · '+cacheName()+' '+(prefill?'因果读取':'读取');
  get('token-swa').textContent=start+'–'+position;
  get('token-current-title').textContent=prefill?'查询':'写入';
  get('token-current').textContent=position;
  const compression=get('token-compression');
- compression.hidden=kind==='SWA';
- get('token-compression-title').textContent=kind+' 压缩';
- get('token-compression-value').textContent=kind==='HCA'&&!prefill
+ compression.hidden=kind==='SWA'||isQwen();
+ get('token-compression-title').textContent=isQwen()?'Paged KV':kind+' 压缩';
+ get('token-compression-value').textContent=isQwen()?'逻辑页 '+Math.floor(position/128)+' · offset '+(position%128)+' · '+Math.ceil((position+1)/128)+' 页':kind==='HCA'&&!prefill
   ? Math.floor((position+1)/128)+' 条 · 来源 0–'+(Math.floor((position+1)/128)*128-1)
   : '条目未接入';
  tokenCells.forEach((button,index)=>{
-  button.hidden=prefill&&index>last;
+  button.hidden=!isQwen()&&prefill&&index>last;
   button.disabled=index>position;
   button.dataset.inspect=String(cacheFocus==='swa'?index>=start&&index<=position:inspectedRange?index>=inspectedRange[0]&&index<=inspectedRange[1]:index===inspectedToken);
   button.dataset.read=String(index>=start&&index<=position);
   button.setAttribute('aria-pressed',String(index===position));
-  const status=index===position?'，当前位置':index>=start&&index<=position?'，SWA 可见':'，SWA 窗口外';
+  const status=index===position?'，当前位置':index>=start&&index<=position?'，'+cacheName()+' 可见':'，缓存范围外';
   button.setAttribute('aria-label',(index<positionBounds.decode[0]?'Prompt ':'Decode ')+index+status);
  });
 }
@@ -665,16 +968,86 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)pausePlayba
 function syncFrontVisibility(){
  const inline=document.body.classList.contains('request-inspecting');
  get('inference-front').hidden=viewIndex!==1&&!inline;
- get('open-front').textContent=inline?'关闭层内图':'查看层内图 ↗';
+ get('open-front').textContent=viewIndex===1?'返回层栈 ↙':'进入当前层 ↗';
  get('open-front').setAttribute('aria-expanded',String(!get('inference-front').hidden));
 }
-function openArchitecture(){
- pausePlayback();
- document.body.classList.add('request-inspecting');
- syncFrontVisibility();
- renderArchitectureDetail();
- fitFrontGraph();
- get('architecture-close').focus();
+// A layer and its four shared glyphs retain identity through the camera handoff.
+const motionDuration=()=>reducedMotion.matches?0:500;
+function lockCamera(locked){
+ cameraTransition=locked;document.body.classList.toggle('camera-transition',locked);
+ for(const id of ['cycle-view','model-select','play','restart','architecture-prev','architecture-next','architecture-close','architecture-model'])get(id).disabled=locked;
+ if(!locked)renderArchitectureDetail();
+}
+function tweenCamera(from,to,fromBox,toBox,reverse=false){
+ return new Promise(resolve=>{
+  const duration=motionDuration(),started=performance.now();
+  function frame(now){
+   const t=duration?Math.min(1,(now-started)/duration):1,e=1-Math.pow(1-t,4);
+   projectionX=from.px+(to.px-from.px)*e;projectionY=from.py+(to.py-from.py)*e;layerStepY=from.stepY+(to.stepY-from.stepY)*e;
+   layers.forEach(l=>{const a=from.positions[l],b=to.positions[l];displayedPositions[l]={x:a.x+(b.x-a.x)*e,y:a.y+(b.y-a.y)*e};
+    groups[l].style.opacity=String(l===selected?1:reverse?e:1-e);labels[l].style.opacity=String(reverse?e:1-e);});
+   zoomScene.setAttribute('viewBox',fromBox.map((v,i)=>v+(toBox[i]-v)*e).join(' '));
+   paintGeometry();get('request-links').style.opacity=String(reverse?e:1-e);
+   get('dial-marker').setAttribute('transform',`rotate(${(reverse?0:viewPresets[returnView].angle)+(reverse?viewPresets[returnView].angle:-viewPresets[returnView].angle)*e} 74 74)`);
+   if(t<1)requestAnimationFrame(frame);else resolve();
+  }requestAnimationFrame(frame);
+ });
+}
+function captureShared(root){
+ const result=new Map();for(const n of root.querySelectorAll('[data-node-id]')){
+  const box=n.getBBox(),matrix=n.getScreenCTM();if(matrix&&box.width&&box.height)result.set(n.dataset.nodeId,{box,matrix});
+ }return result;
+}
+async function morphShared(source,reverse=false){
+ const promises=[];
+ for(const node of frontGraph.children){
+  if(node.tagName.toLowerCase()==='defs')continue;
+  const match=source.get(node.dataset.nodeId);
+  if(match){
+   const box=node.getBBox(),matrix=node.getScreenCTM();if(!matrix||!box.width||!box.height)continue;
+   const delta=matrix.inverse().multiply(match.matrix).translate(match.box.x,match.box.y).scale(match.box.width/box.width,match.box.height/box.height).translate(-box.x,-box.y);
+   const from={transform:`matrix(${delta.a},${delta.b},${delta.c},${delta.d},${delta.e},${delta.f})`,opacity:1},to={transform:'matrix(1,0,0,1,0,0)',opacity:1};
+   node.style.transformOrigin='0 0';node.style.transformBox='view-box';
+   promises.push(node.animate(reverse?[to,from]:[from,to],{duration:reducedMotion.matches?0:400,easing:'cubic-bezier(0.22,1,0.36,1)',fill:'both'}).finished.catch(()=>{}));
+  }else promises.push(node.animate(reverse?[{opacity:1},{opacity:0}]:[{opacity:0},{opacity:1}],{duration:reducedMotion.matches?0:250,delay:reverse?0:150,fill:'both'}).finished.catch(()=>{}));
+ }
+ await Promise.all(promises);
+ for(const n of frontGraph.children)for(const animation of n.getAnimations())animation.cancel();
+}
+async function openArchitecture(){
+ if(cameraTransition||viewIndex===1)return;
+ pausePlayback();lockCamera(true);hovered=null;
+ if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;
+ returnView=viewIndex;architectureCamera=zoomScene.getAttribute('viewBox');
+ returnProjection={px:projectionX,py:projectionY,stepY:layerStepY,positions:layers.map(l=>({...displayedPositions[l]??position(l)}))};
+ const fromBox=architectureCamera.split(/\s+/).map(Number);
+ const p={x:170+selected*layerStepX,y:365-selected*12};
+ const rect=zoomScene.getBoundingClientRect(),tokenHeight=get('token-workspace').hidden?0:get('token-workspace').getBoundingClientRect().height;
+ const height=planeHeight+220,width=height*rect.width/Math.max(1,rect.height-tokenHeight-100);
+ const toBox=[p.x+planeWidth/2-width/2,p.y-90,width,height];
+ const to={px:1,py:0,stepY:12,positions:layers.map(l=>({x:170+l*layerStepX,y:365-l*12}))};
+ await tweenCamera(returnProjection,to,fromBox,toBox);
+ const source=captureShared(groups[selected]);
+ viewIndex=1;document.body.classList.add('front-view');syncFrontVisibility();renderArchitectureDetail();fitFrontGraph();
+ document.getElementById('view-name').textContent='Front';get('scene').dataset.view='front';
+ get('cycle-view').setAttribute('aria-label','当前视角 Front，点击切换 Side');
+ document.querySelectorAll('#dial-cube path').forEach((p,i)=>p.setAttribute('d',viewPresets[1].cube[i]));
+ await morphShared(source);lockCamera(false);get('layer-frame-close')?.focus();
+}
+async function closeArchitecture(nextView=returnView){
+ if(cameraTransition||viewIndex!==1)return;
+ pausePlayback();lockCamera(true);
+ document.body.classList.add('camera-return');
+ for(const l of layers)groups[l].style.opacity='0';
+ const source=captureShared(groups[selected]);await morphShared(source,true);
+ document.body.classList.remove('front-view','camera-return','request-inspecting');viewIndex=returnView;syncFrontVisibility();
+ const from={px:projectionX,py:projectionY,stepY:layerStepY,positions:layers.map(l=>({...displayedPositions[l]}))};
+ const fromBox=zoomScene.getAttribute('viewBox').split(/\s+/).map(Number);
+ await tweenCamera(from,returnProjection,fromBox,architectureCamera.split(/\s+/).map(Number),true);
+ for(const l of layers){groups[l].style.opacity='';labels[l].style.opacity='';}get('request-links').style.opacity='';
+ lockCamera(false);setViewInstant(returnView);zoomScene.setAttribute('viewBox',architectureCamera);
+ if(nextView!==returnView)setViewInstant(nextView);
+ get('open-front').focus();
 }
 get('open-front').onclick=()=>{
  if(!get('inference-front').hidden){get('architecture-model').click();return;}
@@ -683,15 +1056,20 @@ get('open-front').onclick=()=>{
 for(const label of labels)annotation.append(label);
 bindDockSurface(get('scene'));
 const sequenceLabels=['Prompt 0–131','132','133','EOS'];
-const stepButtons=requestSteps.map((step,index)=>{
+let stepButtons=[];
+function buildRequestButtons(){
+ get('request-steps').replaceChildren();
+ stepButtons=requestSteps.map((step,index)=>{
  const button=document.createElement('button');
  button.type='button';
  button.textContent=step.label;
  button.dataset.tooltip='定位到 '+step.label;
- button.onclick=()=>{pausePlayback();selectRequest(index,[2,4,6,7].includes(index)?lastLayer:0);};
+ button.onclick=()=>{pausePlayback();selectRequest(index,isLayerStep(index)?0:lastLayer);};
  get('request-steps').append(button);
  return button;
-});
+ });
+}
+buildRequestButtons();
 function renderRequest(){
  const step=requestSteps[requestIndex];
  const generated=generatedThrough();
@@ -705,7 +1083,7 @@ function renderRequest(){
   if(index===requestIndex)button.setAttribute('aria-current','step');
   else button.removeAttribute('aria-current');
  });
- const tokenStarted=step.input!==null;
+ const tokenStarted=isQwen()?true:step.input!==null;
  get('identity').hidden=!tokenStarted;
  get('open-front').disabled=!tokenStarted&&!document.body.classList.contains('request-inspecting')&&viewIndex!==1;
  get('scene').toggleAttribute('data-request-idle',!tokenStarted);
@@ -718,13 +1096,14 @@ function paintRequestLinks(){
  const spatial=get('scene').dataset.view==='2.5d';
  get('request-cache').style.display='none';
  if(!spatial)return;
- const lastLayerX=lastLayer*layerStepX/projectionX;
- const entry=project(0,0,-245);
- const exit=project(lastLayerX,planeWidth,-245);
+ // Use a stable port through the centre of every layer face, independent of pop.
+ const stablePort=(layer,localX)=>({x:170+layer*layerStepX+projectionX*localX,y:365-layer*layerStepY+projectionY*localX+245});
+ const entry=stablePort(0,planeWidth/2);
+ const exit=stablePort(lastLayer,planeWidth);
  const step=requestSteps[requestIndex];
- const output=generatedThrough()>131;
- const stroke=step.input===null?'#555':'#3187ec';
- const end=project(lastLayerX,0,-245);
+ const output=!isQwen()&&generatedThrough()>131;
+ const stroke=!isQwen()&&step.input===null?'#555':'#3187ec';
+ const end=stablePort(lastLayer,planeWidth/2);
  const route=(d,dashed=false)=>group.append(el('path',{d,fill:'none',stroke,
   'stroke-width':dashed?3.5:5,'stroke-linejoin':'round','stroke-dasharray':dashed?'8 9':'none'}));
  const label=(x,y,value)=>group.append(el('text',{x,y,fill:'var(--ink)','font-size':25},value));
@@ -734,10 +1113,19 @@ function paintRequestLinks(){
   label(x+14,y+29,title);
   group.append(el('text',{x:x+14,y:y+57,fill:'var(--muted)','font-size':20},detail));
  };
- endpoint(entry.x-295,entry.y-38,'Embedding',step.input===null?'Prompt → Tokenizer':
+ endpoint(entry.x-295,entry.y-38,'Embedding',isQwen()?(phase==='prefill'?'Prompt':'Decode 输入'):step.input===null?'Prompt → Tokenizer':
   step.input<=131?'Prompt 0–131':'输入 Token '+step.input,220);
  route(`M${exit.x} ${exit.y}h80`);
  endpoint(exit.x+80,exit.y-38,'Final Norm · LM Head','Logits → 采样',310);
+ if(isQwen()&&selected===lastLayer&&isLayerStep(requestIndex)&&isLayerStep(requestIndex+1)){
+  const bottom=modelBounds.bottom+128,completed=selected===lastLayer;
+  const feedback=el('g',{'data-feedback':'next-input','data-active':String(completed)});
+  feedback.append(el('path',{d:`M${exit.x+235} ${exit.y+38}V${bottom}H${entry.x-185}V${entry.y+38}`,fill:'none',stroke:'#3187ec','stroke-width':3.5,'stroke-dasharray':'8 9','stroke-linejoin':'round',class:completed?'feedback-running':''}));
+  feedback.append(el('path',{d:`M${entry.x-193} ${entry.y+52}L${entry.x-185} ${entry.y+38}L${entry.x-177} ${entry.y+52}`,fill:'none',stroke:'#3187ec','stroke-width':3.5}));
+  feedback.append(el('text',{x:(exit.x+235+entry.x-185)/2,y:bottom+33,fill:'var(--muted)','font-size':23,'text-anchor':'middle'},'本轮输出 → 下一轮输入'));
+  group.append(feedback);
+ }
+
  if(output){
   const generated=generatedThrough();
   const bottom=modelBounds.bottom+128;
@@ -818,7 +1206,7 @@ stripNativeTips(document.body);
 new MutationObserver(records=>{for(const record of records){if(record.type==='attributes')stripNativeTips(record.target);else for(const node of record.addedNodes)stripNativeTips(node);}}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title']});
 const tip=document.createElement('div');tip.id='ui-tooltip';tip.role='tooltip';tip.hidden=true;document.body.append(tip);
 function showTip(event){
- const control=event.target.closest?.('button,a,input,[role="button"],[data-tooltip]');if(!control)return;
+ const control=event.target.closest?.('button,a,input,select,[role="button"],[data-tooltip]');if(!control)return;
  if(control.hasAttribute('title')){control.dataset.tooltip=control.getAttribute('title');control.removeAttribute('title');}
  const svgTitle=control.querySelector('title');if(svgTitle){control.dataset.tooltip=svgTitle.textContent;svgTitle.remove();}
  const text=control.getAttribute('aria-label')||control.dataset.tooltip;if(!text)return;
@@ -830,7 +1218,27 @@ function showTip(event){
 document.addEventListener('pointerover',showTip);document.addEventListener('focusin',showTip);
 document.addEventListener('pointerout',()=>tip.hidden=true);document.addEventListener('focusout',()=>tip.hidden=true);document.addEventListener('click',()=>tip.hidden=true);
 
-selectRequest(1,1);
+get('model-select').onchange=()=>{
+ const resume=playback!==null;pausePlayback();
+ if(viewIndex===1){viewIndex=returnView;document.body.classList.remove('front-view','request-inspecting');syncFrontVisibility();}
+ modelId=get('model-select').value;model=modelSpecs[modelId];ratios=model.ratios;lastLayer=ratios.length-1;
+ setRankPrimary(false);selectedRank=0;requestSteps=isQwen()?qwenRequestSteps:demoRequestSteps;requestIndex=0;paExpanded=false;paReturnCamera=null;buildRequestButtons();
+ stageStride=ratios.length;requestAxis.max=requestSteps.length*stageStride-1;
+ if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;hovered=null;
+ for(const group of groups)group.remove();for(const label of labels)label.remove();sideRmsGroup.replaceChildren();
+ layers.length=groups.length=labels.length=sideRmsLabels.length=displayedPositions.length=0;
+ buildLayerPlanes();for(const label of labels)annotation.append(label);
+ layerSpan=lastLayer*layerStepX;modelBounds.right=170+layerSpan+planeWidth*projectionX;modelBounds.top=365-lastLayer*layerStepY;
+ modelCenter.x=(modelBounds.left+modelBounds.right)/2;modelCenter.y=(modelBounds.top+modelBounds.bottom)/2;
+ cacheFocus=null;inspectedToken=null;inspectedRange=null;
+ get('scene').setAttribute('aria-label',model.name+' 模型层栈');
+ get('model-source').textContent=isQwen()?'Qwen3-14B：40 层、hidden 5120、40 Q heads / 8 KV heads、head dim 128、Dense MLP 17408。无 SWA、压缩 KV 或 HC streams。Paged Attention 源码来自 Compute Explorer 的 paged-attention-pypto-source.js；当前播放接入TP2 torch的1次Prefill和4次Decode；独立L2采样不绑定这些调用。输入位置与实际KV布局尚未确认。':'43 层与 SWA 128 位置窗口来自本地 Flash 配置。';
+ selectRequest(requestIndex,Math.min(selected,lastLayer));setViewInstant(viewIndex);resetSceneView();
+ if(resume)togglePlayback();
+};
+get('model-select').value='qwen';
+get('model-select').onchange();
+selectRequest(isQwen()?0:1,1);
 applyView(0);
 updateViewportReadout();
 if(!document.hidden)togglePlayback();

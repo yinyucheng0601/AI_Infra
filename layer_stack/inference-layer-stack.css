@@ -38,3 +38,69 @@ main{height:100dvh}.compact-header{position:fixed;top:28px;left:32px;z-index:8;p
 .cache-inspect-node[aria-pressed=true] .cache-dot{fill:#fff;opacity:.22}
 .cache-inspect-node:focus-visible .cache-label{text-decoration:underline}
 .kv-storage-layer[data-branch-focus]:not([data-branch-focus=""]) polygon:not([fill="transparent"]){fill:#3187EC}
+
+#model-select {font:inherit;color:var(--muted);background:var(--plane);border:0;border-radius:8px;padding:8px 28px 8px 10px;cursor:pointer;max-width: min(340px,65vw);pointer-events:auto;}
+#model-select:focus-visible {text-decoration:underline;outline:none;}
+#model-select option {background:var(--plane);color:var(--ink);}
+
+/* Both views use the full viewport. Controls float above the camera. */
+#inference-front,.request-inspecting:not(.front-view) #inference-front {position:fixed;inset:0;width:100%;height:100dvh;display:block;background:transparent;z-index:12;}
+#inference-front #front-graph {position:absolute;inset:0;display:block;flex:none;width:100%;height:100%;min-height:0;padding:0;}
+#inference-front .architecture-nav {position:absolute;top:78px;left:32px;right:auto;max-width:calc(100vw - 250px);z-index:2;background:transparent;}
+.front-view .identity {visibility:hidden;}
+.camera-transition #scene,.camera-transition #front-graph,.camera-transition #request-axis,.camera-transition #token-workspace {pointer-events:none;}
+.camera-return .atlas-pane .view {visibility:visible;}
+.camera-transition #kv-memory,.camera-transition .view-dial {pointer-events:none;}
+@media(max-width:600px){#inference-front .architecture-nav {top:70px;left:12px;max-width:calc(100vw - 24px);gap:2px;}#architecture-layer{font-size:10px;}}
+
+.compact-header{z-index:20;}
+
+/* The layer boundary is a shared graph object, not a viewport panel. */
+#architecture-close{display:none;}
+.layer-architecture-frame rect{vector-effect:non-scaling-stroke;}
+.layer-frame-close{cursor:pointer;outline:none;}
+.layer-frame-close:hover rect,.layer-frame-close:focus-visible rect{fill:var(--surface);}
+
+/* Logical KV pages share the existing token cells; compute Blocks are a separate projection. */
+.paged-context{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 7px;font:11px ui-monospace,monospace;color:var(--muted)}
+.paged-context[hidden]{display:none}.paged-context label{display:flex;align-items:center;gap:5px}
+.paged-context select{font:inherit;color:var(--ink);background:var(--surface);border:0;border-radius:4px;padding:3px 6px}
+.paged-physical{opacity:.65}.token-grid.is-paged{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.token-page{flex:1 1 620px;min-width:0}.token-page:last-child{flex:0 1 150px}.token-page[hidden]{display:none}
+.token-page-label{display:block;background:none;border:0;padding:0 0 4px;color:var(--muted);font:10px ui-monospace,monospace;cursor:pointer}
+.token-page-label[aria-pressed=true]{color:var(--ink)}.token-page-cells{display:grid;grid-template-columns:repeat(auto-fill,22px);gap:2px}
+
+/* Each page exposes all 128 slots; empty capacity carries no allocation claim. */
+.token-grid.is-paged{display:grid;grid-template-columns:repeat(auto-fit,94px);gap:8px 12px}
+.token-page,.token-page:last-child{min-width:0;width:94px}
+.token-page-cells{grid-template-columns:repeat(16,4px);gap:2px}
+.token-grid.is-paged .token-cell,.token-empty-slot{display:block;width:4px;height:4px;min-width:0;aspect-ratio:1;border-radius:1px;font-size:0;padding:0}
+.token-empty-slot{background:var(--muted);opacity:.12}
+.token-grid.is-paged .token-cell:disabled{opacity:.12;background:var(--muted)}
+.token-page[data-used=false] .token-page-label{opacity:.45;cursor:default}
+.token-grid.is-paged .token-cell[data-inspect=true]{background:#aaa;text-decoration:none}
+.token-grid.is-paged .token-cell[aria-pressed=true]{background:var(--token-blue)}
+
+.feedback-running{animation:feedback-flow .7s linear infinite}
+@keyframes feedback-flow{to{stroke-dashoffset:-34}}
+@media(prefers-reduced-motion:reduce){.feedback-running{animation:none}}
+
+.profile-token-sequence{display:flex;gap:6px;align-items:center;padding:2px 0 5px}.profile-token-sequence[hidden]{display:none}
+.profile-token-sequence button{border:0;border-radius:4px;padding:6px 10px;background:var(--surface);color:var(--muted);font:11px ui-monospace,monospace;cursor:pointer}
+.profile-token-sequence button[data-processed=true]{color:var(--ink)}.profile-token-sequence button[aria-pressed=true]{background:#3187ec;color:white}
+
+/* Rank/Stack exchange preserves both SVG cameras and the running invocation. */
+.rank-overview{display:block;width:100%;padding:0;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.rank-primary #kv-memory{inset:145px 12vw calc(110px + var(--token-clearance,0px));width:auto;display:flex;flex-direction:column;justify-content:center}
+.rank-pair{display:flex;justify-content:center;gap:5vw;max-height:100%}.rank-column{width:min(36vw,430px);min-width:0}.rank-cube{height:clamp(140px,30vh,310px)}.rank-cube svg{height:100%;width:100%}
+.rank-select{border:0;background:transparent;color:var(--muted);font-size:23px;padding:8px 0;cursor:pointer}.rank-select[aria-pressed=true]{color:var(--ink)}
+.rank-layers{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}.rank-layers button{padding:7px 0;border:0;border-radius:3px;background:var(--surface);color:var(--muted);font:11px ui-monospace,monospace;cursor:pointer}.rank-layers button.current{background:#3187EC;color:white}.rank-column p{font-size:11px;color:var(--muted)}
+.rank-primary .atlas-pane .view{inset:auto 24px calc(90px + var(--token-clearance,0px)) auto;width:230px;height:180px;pointer-events:none;visibility:visible}.rank-primary #inference-front,.rank-primary .identity,.rank-primary .view-dial{visibility:hidden}
+#rank-return{position:fixed;right:24px;bottom:calc(85px + var(--token-clearance,0px));width:230px;height:185px;display:flex;align-items:flex-end;justify-content:center;z-index:20;border:0;background:transparent;color:var(--ink);padding:10px;cursor:pointer}#rank-return[hidden]{display:none}
+@media(prefers-reduced-motion:no-preference){#kv-memory{transition:inset .4s ease,width .4s ease}.atlas-pane .view{transition:width .4s ease,height .4s ease}}
+
+button.token-empty-slot{border:0;cursor:pointer;opacity:.32}button.token-empty-slot:hover,button.token-empty-slot:focus-visible{opacity:1;background:#3187EC;outline:none}
+
+button.token-empty-slot[data-read=true]{opacity:.75;background:var(--muted)}button.token-empty-slot[aria-pressed=true]{opacity:1;background:#3187EC}.token-page-label[aria-pressed=true]{background:var(--surface);color:var(--ink)}
+
+button.token-empty-slot[data-inspect=true]:not([aria-pressed=true]){opacity:1;background:#ccc}

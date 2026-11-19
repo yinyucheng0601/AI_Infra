@@ -12,7 +12,7 @@
   const {P,points,polygon,block}=global.RankMemoryView.geometry;
   const {layer,ratios,position,stage,phase,inspection,range}=state;
   const height=64*6.7,ratio=ratios[layer],start=Math.max(0,position-127);
-  const kind=ratio===0?'SWA':ratio===4?'CSA':'HCA';
+  const kind=state.modelId==='qwen'?'Paged KV':ratio===0?'SWA':ratio===4?'CSA':'HCA';
   const ready=stage>0;
   const compressedCount=ratio===128&&ready?Math.floor((position+1)/128):0;
   const fill='#3187EC';
@@ -42,7 +42,7 @@
   bandLabel(base+nonKVHeight*.5,'权重/运行缓冲 · 8.62 GiB',13);
   bandLabel(kvBase+kvHeight*.52,'KV 池 · 63.44 GiB',18);
   bandLabel((kvBase+kvHeight+height)/2,'剩余 · 7.04 GiB',13);
-  markup+=`<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${layer} · ${state.branch==='swa'?'SWA':state.branch==='compressed'?kind+' 压缩':kind}</text>`;
+  markup+=`<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${layer} · ${state.branch==='swa'?(state.modelId==='qwen'?'Paged KV':'SWA'):state.branch==='compressed'?kind+' 压缩':kind}</text>`;
   if(ratio===128&&compressedCount){
    markup+=`<g class="kv-storage-slot" role="button" tabindex="0" data-first="0" data-last="${compressedCount*128-1}" aria-label="HCA 压缩记录 · 来源 0–${compressedCount*128-1}"><title>在底部 Token 表查看 HCA 压缩来源 0–${compressedCount*128-1}</title><text x="575" y="803" text-anchor="middle" fill="${muted}" font-size="15">HCA · ${compressedCount} 条压缩记录 ↗</text></g>`;
   }

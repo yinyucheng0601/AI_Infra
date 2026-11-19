@@ -41,3 +41,31 @@
 ## 后续修正
 
 2026-11-10：层内图已移至左侧，删除所有打开层内图时隐藏 Rank 的规则，Rank 与 Token 表继续联动。此前“层内检查时 Rank 避让”的决定已被本条替代。
+
+
+## 2026-11-19 · 模型切换
+
+- 复用原层栈、播放轴、图元和 Rank 联动；模型选择在标题旁，切换重建层身份和播放步长，保持请求阶段并夹紧层号。
+- Qwen 来源：`PyPTO3-main/Design/PyPTO-Compute-Explorer-UI/js/paged-attention-pypto-source.js` 的嵌入源码明确声明 Qwen3-14B，40 Q heads / 8 KV heads / head dim 128，page 128、stack 4 pages。该算子属于 decode pipeline，不是 Qwen 的模型名称。
+- 官方 config：https://huggingface.co/Qwen/Qwen3-14B/blob/main/config.json 。40 layers、hidden 5120、intermediate 17408、无 sliding window。Qwen 层图为聚合架构，不是逐 tile 的算子 DAG；使用 RMSNorm、Q/K norm、RoPE、GQA、Dense SwiGLU 和两次残差。
+- Token 表展示全因果历史和逻辑页/offset；未提供 block table 时不生成物理页编号。Rank 继续使用明确标识的官方参考预算，不将其当作 Qwen 实测显存。请求 token 位置沿用原 demo 示例，不冒充源码 BATCH16/SEQ3584 实际运行。
+- 验证：JS 语法、Node DOM stub 运行检查（初始化、40 层切换、L39 选择与 cache 激活、逻辑页映射、恢复 43 层）通过。浏览器工具连接超时，尚未完成实际视觉验收。未 push。
+
+
+## 2026-11-19 · 层正视图与全屏画布
+
+- 点击层后暂停播放，插值层面投影、位置及相机 viewBox；相邻层退场。输入、Attention、FFN、输出通过共享 node ID 和屏幕矩阵进行 FLIP 衔接，随后展开细节。返回逆向收拢并恢复进入前相机。Reduced motion 直接完成状态转换。
+- 正视图 SVG 与容器铺满整个视口，导航、Rank、Token 表独立浮在画布上；Fit 的留白只作用于相机，不限制画布边界。此前缩进容器造成右侧分支裁切，已移除。拖动和缩放仍覆盖全屏。
+- Node DOM stub 回归通过：DeepSeek 进入/退出、相机精确恢复、Qwen L39、正视图中切模型安全退出。该检查不是浏览器视觉验收；最终布局待用户预览。
+
+- 正视图默认缩放 75%，完整图的水平中心与全屏 SVG 中心对齐。复用 `review-output/distributed-training-evolution/training-demo.html` Step 1 的无描边低对比模块底框与圆形加号残差图元。Qwen 使用两处 Residual Add；V4 的 HC Post 保留混合语义，不误标为普通 Add。
+
+### 2026-11-19 · Qwen Token → Page → Task 联动
+
+- 复用底部 Token 格子，按逻辑 Page 0（0–127）、Page 1（128–133）分组，标示有效容量；不增加第二份 Token 表。
+- 当前执行位置与临时检查位置分离；点击 Token/Page 不改变播放轴。当前层、页内 offset、Stack 跟随检查。
+- Decode 增加 KV Head 0–7 选择；以当前单请求为 batch 0，按 Compute Explorer 相同规则计算 Task=batch×8+head、计算 Block=Task%24、Q Heads=head×5…head×5+4。Prefill 隐藏 Decode 任务分配。
+- 来源：PyPTO-Compute-Explorer-UI/js/paged-attention-model.js、visualization2-anatomy.js。Page=128、Stack=4 Pages；未接入实际 block_table/slot_mapping，不显示物理页 ID；未跨页面同步 Explorer 的默认16请求案例。
+- 检查：Node 位置127/128边界、133 offset5、Head7/Task7/Block07/Q35–39、检查不改当前位置、切回DS清理Qwen元信息、原视角回归通过；本地浏览器实际点击Decode133、Head7、Token128，确认显示Page1 offset0且写入仍133，并检查全页布局。
+
+- Qwen Token 表改为4px方形槽位，页内16×8完整展示128槽；展开Compute Explorer参考容量28逻辑页/3584位置，未用页弱化标识，不宣称物理分配；当前执行和检查色保持分离。默认打开Qwen并自动播放。
