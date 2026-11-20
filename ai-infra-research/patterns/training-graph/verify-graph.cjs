@@ -5,7 +5,7 @@ vm.runInContext("let current=0;const parameterState={tp:4,sp:true,cache:'shard',
 let count=0;
 for(let stage=0;stage<9;stage++)for(const tp of [1,2,4])for(const sp of [false,true])for(const ffn of ['dense','moe'])for(const ep of [1,2,4])for(const experts of (stage>=7?[4,8,16,32,64]:[4])){
  const result=vm.runInContext(`current=${stage};Object.assign(parameterState,${JSON.stringify({tp,sp,ffn,ep,experts})});registry={};constOutput=trainingGraph();({markup:constOutput,model:graphModel,registry})`,ctx);
- assert.equal(result.model.snapshot.schema,'training-graph.v1');assert.equal(result.model.snapshot.nodes.length,Object.keys(result.registry).length);assert.equal(result.model.snapshot.config.worldSize,result.model.tp*result.model.ep);
+ assert.equal(result.model.snapshot.schema,'training-graph.v1');assert.equal(result.model.snapshot.nodes.length,Object.keys(result.registry).length);assert.equal(result.model.snapshot.config.worldSize,8);assert.equal(result.model.snapshot.config.dp*result.model.tp,8);assert.equal(result.model.snapshot.config.expertDP*result.model.ep,result.model.snapshot.config.dp);
  assert(!/NaN|undefined/.test(result.markup),`invalid SVG stage ${stage}`);
  for(const [id,node] of Object.entries(result.registry))assert(node.audited&&node.docs.length,`metadata ${id}`);
  for(const e of result.model.edges)assert(result.registry[e.from]&&result.registry[e.to],`edge ${e.id}`);
@@ -14,7 +14,7 @@ for(let stage=0;stage<9;stage++)for(const tp of [1,2,4])for(const sp of [false,t
   const cards=Array.from({length:experts},(_,e)=>result.model.positions[experts>=16?'moe-e'+e:'moe-e'+e+'-fc1']);assert(cards.every(Boolean),'missing expert');assert(result.model.focusBounds,'FFN focus required');
   assert.equal(result.model.stats.loads.length,experts);assert.equal(result.model.stats.loads.reduce((a,b)=>a+b,0),16);assert.equal(result.model.stats.totalParameters,264*experts);assert.equal(result.model.stats.perTokenParameters,512+8*experts);
   assert.deepEqual(Array.from(result.registry['moe-router-weight'].shape),[8,experts]);
-  const grouped=result.model.snapshot.groups.flatMap(g=>g.experts);assert.equal(new Set(grouped).size,experts);
+  const grouped=result.model.snapshot.groups.flatMap(g=>g.experts);assert.equal(new Set(grouped).size,stage===8?experts:0);
   assert(!result.registry['full-f-fc1'],'dense FFN leaked');
   for(let e=0;e<experts;e++)assert(result.registry[experts>=16?'moe-e'+e:'moe-e'+e+'-fc1']);
   assert(result.model.sp||tp===1||stage===7||ep===1,'SP requirement');

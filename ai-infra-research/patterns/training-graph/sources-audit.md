@@ -19,3 +19,7 @@
 ## 专家规模参数
 
 新增列定义 Wr[j,e]=2sin((e+1)(j+2)1.37)，j=0..2，e>=4，其他特征权重为0；原四列不变。该路由样本与符号训练图独立。每专家 H×F+F×H=256 参数，Router H×E=8E，Top-2 单 token 使用 2×256+8E。负载仅统计样本8行，分配总数16；EP 并未改变该统计口径。
+
+固定部署资源：8 个 Rank；PP=CP=1。稠密层 worldSize=TP×DP，EP 划分 DP 维，专家副本数 EDP=DP/EP（本页沿用同一个 TP 度数）。TP×EP×EDP=8 是该坐标分解，不把 EP 当成新增资源。依据：Megatron Core ModelParallelConfig `expert_model_parallel_size` 及 parallel_state 初始化分组。前四步未部署；TP 起显示全部 8 个 Rank。
+
+官方配置：[Megatron Core ModelParallelConfig](https://docs.nvidia.com/megatron-core/developer-guide/latest/apidocs/core/core.model_parallel_config.html)；分组实现：[parallel_state.py](https://github.com/NVIDIA/Megatron-LM/blob/main/megatron/core/parallel_state.py)。
