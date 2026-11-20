@@ -5,7 +5,7 @@
 <title>Layer Stack · 模型推理</title>
 
 
-<link rel="stylesheet" href="inference-controls/liquid-glass.css"><link rel="stylesheet" href="inference-layer-stack.css"></head><body><div class="top-actions" aria-label="页面工具"><button type="button" class="icon-button observation-toggle" data-liquid-glass="control" id="token-mode" aria-label="展开或收起底部 Token / Task 观察区" data-tooltip="展开或收起底部观察区：Token / Page、Task、Block" aria-expanded="true" aria-controls="token-workspace"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 13h18"/><path d="M7 16.5h3m4 0h3"/></svg><span>Token / Task</span><svg class="observation-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="theme-mode" aria-label="切换浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="help" aria-label="图例与说明" aria-expanded="false" aria-controls="info-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></button></div><aside id="info-panel" class="info-panel" role="dialog" aria-label="图例与说明" data-liquid-glass="panel" hidden><header><h2>图例与说明</h2><button id="info-close" class="icon-button" aria-label="关闭说明">×</button></header><h3>当前观察</h3><p>层栈看模型结构；Token 表检查位置；Rank 看内存预算与当前层缓存归属。</p><h3>颜色</h3><p>蓝色：当前执行位置与缓存切片。灰色：可读历史 KV。浅灰：临时检查的位置。激活 Tensor 和缓存保留各自图元颜色。</p><h3>内存预算</h3><p>权重与运行缓冲 8.62 GiB，合并权重、执行上下文和运行时缓冲；官方案例未提供这些细项的完整独立数值。KV 池 63.44 GiB；剩余 7.04 GiB。</p><p>这是 TensorRT-LLM 的参考预算，不是所选模型的显存测量。分层切片不代表各层字节数；请求 KV 已用量尚未接入。</p><a href="https://nvidia.github.io/TensorRT-LLM/1.1.0rc1/reference/memory.html#faq" target="_blank" rel="noopener">预算来源 ↗</a><h3>架构与位置</h3><p id="model-source">43 层与 SWA 128 位置窗口来自本地 Flash 配置。Prompt 0–131、输入 132／133 为当前请求示例；CSA 压缩条目明细尚未接入。</p><a href="https://huggingface.co/Qwen/Qwen3-14B/blob/main/config.json" target="_blank" rel="noopener">Qwen3-14B 官方配置 ↗</a><h3>操作</h3><p>拖拽平移，滚轮缩放。右下角控制当前可见画布；打开浮层不重置视野。</p><a href="inference-layer-stack-before-ablation.html" target="_blank">查看消融前版本 ↗</a></aside><div class="canvas-tools" aria-label="视窗控制" data-liquid-glass="control"><button id="viewport-out" class="icon-button" aria-label="缩小视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14"/></svg></button><output id="viewport-zoom" aria-live="polite">100%</output><button id="viewport-in" class="icon-button" aria-label="放大视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><button id="viewport-fit" class="icon-button" aria-label="返回整体"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button></div><main>
+<link rel="stylesheet" href="inference-controls/liquid-glass.css"><link rel="stylesheet" href="inference-layer-stack.css"></head><body><div class="top-actions" aria-label="页面工具"><button type="button" class="icon-button observation-toggle" data-liquid-glass="control" id="token-mode" aria-label="展开或收起底部 Token / Task 观察区" data-tooltip="展开或收起底部观察区：Token / Page、Task、Block" aria-expanded="true" aria-controls="token-workspace"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 13h18"/><path d="M7 16.5h3m4 0h3"/></svg><span>Token / Task</span><svg class="observation-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="theme-mode" aria-label="切换浅色模式" aria-pressed="false"><svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg><svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="help" aria-label="图例与说明" aria-expanded="false" aria-controls="info-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></button></div><aside id="info-panel" class="info-panel" role="dialog" aria-label="图例与说明" data-liquid-glass="panel" hidden><header><h2>图例与说明</h2><button id="info-close" class="icon-button" aria-label="关闭说明">×</button></header><h3>当前观察</h3><p>层栈看模型结构；Token 表检查位置；Rank 看内存预算与当前层缓存归属。</p><h3>颜色</h3><p>蓝色：当前执行位置与缓存切片。灰色：可读历史 KV。浅灰：临时检查的位置。激活 Tensor 和缓存保留各自图元颜色。</p><h3>内存预算</h3><p>权重与运行缓冲 8.62 GiB，合并权重、执行上下文和运行时缓冲；官方案例未提供这些细项的完整独立数值。KV 池 63.44 GiB；剩余 7.04 GiB。</p><p>这是 TensorRT-LLM 的参考预算，不是所选模型的显存测量。分层切片不代表各层字节数；请求 KV 已用量尚未接入。</p><a href="https://nvidia.github.io/TensorRT-LLM/1.1.0rc1/reference/memory.html#faq" target="_blank" rel="noopener">预算来源 ↗</a><h3>架构与位置</h3><p id="model-source">43 层与 SWA 128 位置窗口来自本地 Flash 配置。Prompt 0–131、输入 132／133 为当前请求示例；CSA 压缩条目明细尚未接入。</p><a href="https://huggingface.co/Qwen/Qwen3-14B/blob/main/config.json" target="_blank" rel="noopener">Qwen3-14B 官方配置 ↗</a><h3>操作</h3><p>拖拽平移，滚轮缩放。右下角控制当前可见画布；打开浮层不重置视野。</p><a href="inference-layer-stack-before-ablation.html" target="_blank">查看消融前版本 ↗</a></aside><div class="canvas-tools" aria-label="视窗控制" data-liquid-glass="control"><button id="viewport-out" class="icon-button" aria-label="缩小视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14"/></svg></button><output id="viewport-zoom" aria-live="polite">100%</output><button id="viewport-in" class="icon-button" aria-label="放大视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><button id="viewport-fit" class="icon-button" aria-label="返回整体"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button></div><main>
 <header class="compact-header"><h1>Layer Atlas <select id="model-select" aria-label="切换模型" data-tooltip="切换模型架构与 KV 缓存"><option value="deepseek">DeepSeek V4 Flash · 43 层</option><option value="qwen" selected>Qwen3-14B · 40 层</option></select></h1></header>
 <div class="view-dial" aria-label="模型视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Side" data-tooltip="点击轮切：2.5D → Front → Side">
@@ -890,6 +890,263 @@ zoomScene.addEventListener('wheel',event=>{
 // Icon paths from the formal diagram legend library, op-icons.js.
 // Vendored semantic graph from Compute Explorer; source IDs/edges retained.
 const paSemanticGraph=window.PTO_PYPA_SEMANTIC_GRAPH;
+/* Tensor role glyph: dataTiles copied from AI Infra training report P02.
+ * Source: reports/llm-compute/training-parallel-communication-v1.html
+ * Formal library variant: system-value / data-1 (数据角色).
+ * Uses the host role palette; texture does not encode element count. */
+(function(root){
+'use strict';
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function dataTiles(x,y,w,h,color){
+ const pad=4,gap=1.2,rows=h>40?4:2,cell=(h-2*pad-(rows-1)*gap)/rows;
+ const cols=Math.max(1,Math.round((w-2*pad+gap)/(cell+gap)));
+ const cw=(w-2*pad-(cols-1)*gap)/cols;let tiles='';
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)tiles+=`<rect class="data-tile" x="${x+pad+c*(cw+gap)}" y="${y+pad+r*(cell+gap)}" width="${cw}" height="${cell}" fill="${color}"/>`;
+ return `<g pointer-events="none">${tiles}</g>`;
+}
+function render({id,label,metadata='',color,width=280}){
+ const w=width,h=metadata?64:35;
+ // Four rows of square cells; the texture remains independent of tensor shape.
+ const fit=(value,size)=>Math.min(size,(w-24)/Math.max(1,[...String(value)].reduce((n,c)=>n+(c.charCodeAt(0)>255?1:.56),0)));
+ const text=(value,y,size)=>`<text x="${w/2}" y="${y}" text-anchor="middle" fill="${color}" style="font-size:${fit(value,size)}px;paint-order:stroke;stroke:#131313;stroke-width:2px;stroke-linejoin:round">${esc(value)}</text>`;
+ return `<svg class="ai-role-tensor" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc([label,metadata].filter(Boolean).join(' · '))}"><g data-object="${esc(id)}"><rect class="ai-role-outline" x=".6" y=".6" width="${w-1.2}" height="${h-1.2}" rx="6" fill="#131313" stroke="${color}" stroke-width="1.2"/>${dataTiles(0,0,w,h,color)}${text(label,metadata?29:23,15)}${metadata?text(metadata,46,12):''}</g></svg>`;
+}
+root.PtoTensorRoleGlyph=Object.freeze({render});
+})(window);
+
+/* Reusable SVG grammar. No DOM or report runtime dependency. */
+(function(root){
+'use strict';
+const tokens=Object.freeze({font:14,gap:24,dataWidth:160,dataHeight:64,opWidth:260,opHeight:48,cell:24,role:{activation:'#B1EF6B',weight:'#BCA0F3',aggregate:'#F2C45F',gradient:'#79D4F2',optimizer:'#B0B0B0'},parallel:{DP:'#8CE580',TP:'#B58AF7',SP:'#80B7F7',CP:'#80E5D3',PP:'#E580CF',EP:'#F7B080'}});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const text=(x,y,s,size=14,color='#E8E8E8',anchor='start')=>`<text x="${x}" y="${y}" font-size="${size}" fill="${color}" text-anchor="${anchor}" dominant-baseline="middle">${esc(s)}</text>`;
+const rect=(x,y,w,h,rx=4,stroke='#888',fill='#202020',extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" stroke="${stroke}" fill="${fill}" ${extra}/>`;
+function rankBoard(x,y,w,h,fill='#393939'){
+const compact=h<64,inset=compact?9:16,r=compact?3:5;
+let body=`<rect class="rank-outline outline" x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${fill}"/>`;
+for(const px of [x+inset,x+w-inset])for(const py of [y+inset,y+h-inset])body+=`<circle class="rank-pin" cx="${px}" cy="${py}" r="${r}" fill="#2b2b2b"/>`;
+return body;
+}
+function data(o,x,y,opts={}){
+ const expanded=opts.expanded,shape=o.shape||[2,4],rows=shape.length===1?1:shape[0],cols=shape.length===1?shape[0]:shape[1],w=expanded?cols*tokens.cell:tokens.dataWidth,h=expanded?rows*tokens.cell:tokens.dataHeight,color=tokens.role[o.role]||'#B0B0B0';
+ let body=expanded?'':rect(x,y,w,h,6,'none','#2d2d2d');
+ if(expanded){for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){body+=rect(x+c*24+2,y+r*24+2,20,20,1,'none',color,'fill-opacity=".18" data-element="true"');if(o.values)body+=text(x+c*24+12,y+r*24+12,o.values[r*cols+c],11,color,'middle')}body+=text(x,y-14,`${o.label} · [${shape}]`,14)}
+ else {
+  for(let i=0;i<4;i++)body+=rect(x+8,y+8+i*12,10,10,0,'none',color,`fill-opacity="${[1,.8,.6,.4][i]}"`);
+  body+=text(x+27,y+22,o.label,16,'#fff')+text(x+27,y+46,`${shape.join(' × ')}  ${o.dtype||'FP16'}`,12,'#ccc');
+ }
+ if(opts.parallel&&opts.parallel!=='none'){let pc=tokens.parallel[opts.parallel];body+=`<path data-decoration="distribution" d="M${x},${y+h+8}v6h${w}v-6" stroke="${pc}" fill="none"/>`+text(x+w/2,y+h+30,`${opts.parallel} · ${opts.placement||'分片'}`,12,pc,'middle')}
+ return `<g data-object="${esc(o.id)}" data-kind="${o.kind||'value'}" data-role="${esc(o.role||'activation')}" data-representation="${expanded?'expanded':'collapsed'}">${body}</g>`;
+}
+// Memory grid is a surface texture, not an element or capacity scale.
+function memory(id,label,detail,x,y,w=300,h=106,physical=false){
+ let b=rect(x,y,w,h,12,'none',physical?'#087CFA':'#2d2d2d');
+ const cols=17,rows=5,gap=3,pad=9,cw=(w-pad*2-gap*(cols-1))/cols,ch=(h-pad*2-gap*(rows-1))/rows;
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)b+=rect(x+pad+c*(cw+gap),y+pad+r*(ch+gap),cw,ch,1.5,physical?'#B3D7FF':'#aaa','#000','fill-opacity=".10" style="stroke-width:.65;stroke-opacity:.30"');
+ b+=text(x+24,y+h*.36,label,Math.min(32,w*.09),'#fff')+text(x+24,y+h*.74,detail,Math.min(18,w*.047),'#eee');
+ return `<g data-object="${esc(id)}" data-kind="${physical?'storage':'memref'}">${b}</g>`;
+}
+function node(kind,id,label,x,y){let w=180,h=64,b='';
+ if(kind==='op'||kind==='communication'){w=tokens.opWidth;h=tokens.opHeight;b=rect(x,y,w,h,24,'#858585','#505050',kind==='communication'?'stroke-dasharray="5 4"':'')+`<g font-weight="650">${text(x+w/2,y+24,label,18,'#fff','middle')}</g>`}
+ else if(kind==='add'||kind==='multiply'){w=h=48;const cx=x+24,cy=y+24;b=`<circle cx="${cx}" cy="${cy}" r="24" stroke="#ddd" fill="#111" style="stroke-width:1.5"/><path d="${kind==='add'?`M${cx-8} ${cy}H${cx+8} M${cx} ${cy-8}V${cy+8}`:`M${cx-6} ${cy-6}L${cx+6} ${cy+6} M${cx-6} ${cy+6}L${cx+6} ${cy-6}`}" stroke="#eee" fill="none" style="stroke-width:2" stroke-linecap="round"/>`}
+ else if(kind==='memref'||kind==='storage'){return memory(id,label,kind==='memref'?'MemRef':'内存分配',x,y,w,h,kind==='storage')}
+ else if(kind==='instruction'||kind==='task'){
+ w=260;h=60;const green='#9EF04B';
+ b=rect(x,y,w,h,0,'none',green)+rect(x+10,y+12,36,36,3,'none','#080b05');
+ const icon=kind==='instruction'?'M9 9 L16 17 L9 25 M20 25 H29':'M9 10 H27 M9 18 H20 M9 26 H16 M23 22 L28 26 L23 30';
+ b+=`<path data-icon="${kind}" transform="translate(${x+10} ${y+12})" d="${icon}" fill="none" stroke="${green}" style="stroke-width:2.6"/>`;
+ b+=`<g font-weight="650">${text(x+62,y+30,label,20,'#080b05')}</g>`;
+ }
+ else if(kind==='rank'){b=rankBoard(x,y,w,h)+text(x+24,y+27,label,14)}
+ else if(kind==='pass'){h=32;b=rect(x,y,w,h,0,'#aaa')+text(x+w/2,y+16,label,14,'#eee','middle')}
+ else {const purple=['kernel','task','function','loop'].includes(kind),color=purple?'#9B91FF':'#999';b=rect(x,y,w,h,kind==='task'?8:2,color,'#202020',kind==='loop'?'stroke-dasharray="5 4"':'')+text(x+12,y+17,kind.toUpperCase(),10,color)+text(x+12,y+43,label);if(['kernel','function','rank','storage'].includes(kind))b+=`<path d="M${x},${y+28}h${w}" stroke="${color}"/>`;if(kind==='loop')b+=`<path d="M${x},${y}v${h}" stroke="${color}" stroke-width="3"/>`}
+ return `<g data-object="${esc(id)}" data-kind="${kind}">${b}</g>`;
+}
+function edge(x1,y1,x2,y2,kind='data',label=''){let binding=kind==='binding',mapping=kind==='mapping',dash=kind==='call'?'8 5':mapping?'2 5':'';return `<path data-relation="${kind}" d="M${x1} ${y1} H${(x1+x2)/2} V${y2} H${x2}" fill="none" stroke="#aaa" ${dash?`stroke-dasharray="${dash}"`:''} marker-end="url(#${binding?'bind':mapping?'map':'arrow'})"/>`+(label?text((x1+x2)/2,(y1+y2)/2-12,label,12,'#aaa','middle'):'')}
+function wrap(body,w=900,h=340){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="对象与关系示例"><style>text{font-family:Inter,'PingFang SC',system-ui,sans-serif}path,rect,circle{stroke-width:1.5}</style><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" stroke="#aaa" fill="none"/></marker><marker id="bind" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3" stroke="#aaa" fill="#202020"/></marker><marker id="map" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8"><path d="M1 5L5 1L9 5L5 9Z" stroke="#aaa" fill="#202020"/></marker></defs>${body}</svg>`}
+function render(id,o={}){let b='',ex=!!o.expanded;const v=(id,label,role,shape,values)=>({id,label,role,shape,values});
+ if(id==='pattern-compute'){
+ // Expanded dimensions: X 2x4, W 4x3, Y 2x3. Fixed cell pitch throughout.
+ b=edge(ex?136:200,190,350,190)+edge(480,ex?126:94,480,166,'data','参数输入')+edge(610,190,680,190)+data(v('X','X','activation',[2,4]),40,166,{expanded:ex})+data(v('W','W','weight',[4,3]),ex?444:400,30,{expanded:ex})+node('op','matmul','MatMul',350,166)+data(v('Y','Y','activation',[2,3]),680,166,{expanded:ex})+text(40,290,'X [2,4] × W [4,3] → Y [2,3]；示例尺寸，格子不编码数值。',14);
+ }else if(id==='pattern-distribution'){
+ const mode=o.mode||'shard',lab={shard:'分片',replica:'复制',partial:'部分结果'}[mode];
+ b=text(40,26,mode==='shard'?'按列切分 W：局部 [4,2]，全局 [4,4]':mode==='replica'?'每个 Rank 保存完整 W [4,4] 的副本':'沿 K 维切分 MatMul：Y = Y₀ + Y₁，各部分结果均为 [2,4]',16);
+ for(let i=0;i<2;i++){let x=40+i*440;b+=rankBoard(x,55,390,235)+text(x+24,82,'Rank '+i,14)+data(v(mode==='replica'?'W':mode==='partial'?'Y'+i:'W'+i,mode==='replica'?'W · 副本 '+i:mode==='partial'?'Y'+i+' · 待求和':'W'+i+' · 列 '+(i===0?'[0,2)':'[2,4)'),mode==='partial'?'activation':'weight',mode==='shard'?[4,2]:mode==='partial'?[2,4]:[4,4]),x+45,110,{expanded:ex,parallel:'TP',placement:lab})}b+=text(40,320,mode==='partial'?'部分结果不是输出的互斥分片；求和归约后得到完整输出。':'角色色位于数据内部；TP 标记位于对象外侧。Rank 表示进程身份。',13);
+ }else if(id==='pattern-storage'){
+ b=data(v('V','V','activation',[4,4]),40,70,{expanded:ex})+data({...v('view','V 的视图','activation',[2,4]),kind:'view'},40,225,{expanded:ex})+node('memref','M0','M0 · offset 0 B',345,70)+node('memref','M1','M1 · offset 16 B',345,225)+node('storage','B0','B0 · 32 B',660,135)+edge(ex?136:200,102,345,102,'binding')+edge(ex?136:200,257,345,257,'binding')+edge(525,102,660,167,'binding')+edge(525,257,660,183,'binding')+text(660,240,'FP16 · 连续行布局',13)+text(660,265,'视图引用 [16,32) B',13)+text(40,335,'同一底层分配 B0；视图改变索引范围，不创建新的数据副本。示例偏移以字节计。',13);
+ return wrap(b,900,375);
+ }else if(id==='system-value') b=data(v(o.vector?'vector-0':'value-0',o.vector?'v':'X',o.role||'activation',o.vector?[6]:[2,4],o.vector?[1,2,3,4,5,6]:undefined),80,65,{...o,expanded:ex});
+ else if(id.startsWith('relation-')) b=edge(60,100,330,100,id.slice(9))+text(195,155,{data:'生产者 → 消费者',call:'调用方 → 被调用函数',binding:'值 / 视图 — 存储引用',mapping:'跨阶段对应（需要证据）'}[id.slice(9)],13,'#aaa','middle');
+ else b=node(id.replace('system-',''),id,'示例 '+id.replace('system-',''),85,75);
+ return wrap(b,id.startsWith('pattern-')?900:420,id.startsWith('pattern-')?350:280);
+}
+const api={tokens,rankBoard,data,memory,node,edge,wrap,render};if(typeof module!=='undefined')module.exports=api;root.VisualSystem=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+window.PtoOpIcons = [
+  {
+    "id": "add",
+    "name": "Residual Add",
+    "description": "残差相加",
+    "path": "M22 12a10 10 0 1 1-20 0a10 10 0 1 1 20 0 M7 12h10 M12 7v10"
+  },
+  {
+    "id": "matmul",
+    "name": "MatMul",
+    "description": "矩阵乘法",
+    "path": "M3 4h4M3 4v16h4M21 4h-4M21 4v16h-4M8 7h3v3H8zM14 7h3v3h-3zM8 14h3v3H8zM14 14h3v3h-3z"
+  },
+  {
+    "id": "linear",
+    "name": "Linear Projection",
+    "description": "线性投影",
+    "path": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2"
+  },
+  {
+    "id": "norm",
+    "name": "RMSNorm",
+    "description": "归一化",
+    "path": "M4 6h16M7 12h10M9 18h6"
+  },
+  {
+    "id": "embedding",
+    "name": "Embedding",
+    "description": "嵌入查表",
+    "path": "M4 4h9v16H4zM4 9h9M4 15h9M16 12h5M19 10l2 2-2 2"
+  },
+  {
+    "id": "attention",
+    "name": "Attention",
+    "description": "注意力计算",
+    "path": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6"
+  },
+  {
+    "id": "rope",
+    "name": "RoPE",
+    "description": "旋转位置编码",
+    "path": "M5 8a8 8 0 0 1 14 0M19 4v4h-4M19 16a8 8 0 0 1-14 0M5 20v-4h4"
+  },
+  {
+    "id": "compress",
+    "name": "Compress",
+    "description": "压缩聚合",
+    "path": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
+  },
+  {
+    "id": "expand",
+    "name": "Expand",
+    "description": "展开广播",
+    "path": "M10 10L4 4M14 10l6-6M10 14l-6 6M14 14l6 6M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4"
+  },
+  {
+    "id": "mix",
+    "name": "HC Mix",
+    "description": "流间混合",
+    "path": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16"
+  },
+  {
+    "id": "gate",
+    "name": "Gate / Multiply",
+    "description": "门控乘法",
+    "path": "M3 7h6M3 17h6M9 5v14h4a7 7 0 0 0 0-14H9M20 12h3"
+  },
+  {
+    "id": "activation",
+    "name": "SiLU",
+    "description": "激活函数",
+    "path": "M4 19h16M5 19V4M5 16c8 4 7-8 14-12"
+  },
+  {
+    "id": "softmax",
+    "name": "Softmax",
+    "description": "归一化概率",
+    "path": "M5 20v-5M12 20V5M19 20v-9M3 3h18"
+  },
+  {
+    "id": "topk",
+    "name": "Top-K",
+    "description": "候选选择",
+    "path": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6"
+  },
+  {
+    "id": "router",
+    "name": "Router / MoE",
+    "description": "专家路由",
+    "path": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"
+  },
+  {
+    "id": "concat",
+    "name": "Concat",
+    "description": "拼接",
+    "path": "M3 5h6v5H3zM15 5h6v5h-6zM6 10v4h12v-4M12 14v6M8 20h8"
+  },
+  {
+    "id": "split",
+    "name": "Split",
+    "description": "分支拆分",
+    "path": "M12 3v7M5 20v-5l7-5 7 5v5M3 18l2 2 2-2M17 18l2 2 2-2"
+  },
+  {
+    "id": "reshape",
+    "name": "Reshape",
+    "description": "形状变换",
+    "path": "M4 4h10v7H4zM10 15h10v5H10zM18 5h3v7M3 14v6h4"
+  },
+  {
+    "id": "transpose",
+    "name": "Transpose",
+    "description": "维度交换",
+    "path": "M4 7h15M16 4l3 3-3 3M7 20V5M4 8l3-3 3 3"
+  },
+  {
+    "id": "reduce",
+    "name": "Reduce / Pool",
+    "description": "规约汇聚",
+    "path": "M4 4l8 8 8-8M4 10l8 8 8-8M12 18v3"
+  },
+  {
+    "id": "cache",
+    "name": "KV Read / Write",
+    "description": "状态读写",
+    "path": "M5 4h14v16H5zM5 8h14M9 12h6M9 16h6"
+  },
+  {
+    "id": "conv",
+    "name": "Conv / Patch",
+    "description": "卷积与分块",
+    "path": "M4 4h16v16H4zM4 10h16M10 4v16M14 14h6M14 14v6"
+  },
+  {
+    "id": "exchange",
+    "name": "All-to-All",
+    "description": "通信交换",
+    "path": "M3 8h17M16 4l4 4-4 4M21 16H4M8 12l-4 4 4 4"
+  },
+  {
+    "id": "sample",
+    "name": "Sampling",
+    "description": "采样选择",
+    "path": "M5 5h2M11 5h2M17 5h2M5 11h2M17 11h2M5 17h2M11 17h2M17 17h2M10 10l6 3-3 1-1 3z"
+  }
+];
+
+window.PtoOpIconFor = function(label){
+ const rules=[['add',/residual.*(add|merge)|add shared/i],['embedding',/embedding|lookup|engram|hash/i],['attention',/attention|sdpa/i],['topk',/top.?k|candidate|filter|sort/i],['router',/router|routed|expert|moe/i],['compress',/compress/i],['expand',/expand/i],['mix',/hc pre|mix|sinkhorn/i],['norm',/norm/i],['rope',/rope/i],['concat',/concat|merge/i],['softmax',/softmax/i],['gate',/gate|weight/i],['activation',/silu|swiglu|gelu|relu|softplus|clamp/i],['reduce',/reduce|mean|pool|sum/i],['conv',/patch|conv/i],['reshape',/unfold|pad|resize/i],['sample',/sample|sampling|draft input/i],['cache',/kv|cache|mask/i],['linear',/projection|linear|head|aligner/i]];
+ const id=rules.find(([,r])=>r.test(label))?.[0]||'linear';return window.PtoOpIcons.find(i=>i.id===id);
+};
+
+window.VisualSystem=globalThis.VisualSystem;
+  function operationGlyph(id,label,x,y,w,h,slot,options={}) {
+    const shortLabel=label.replace('Context Accumulate','Accumulate');
+    const key=options.iconKey||(/QK|PV/.test(label)?'matmul':/Softmax/.test(label)?'softmax':'reduce');
+    const icon=window.PtoOpIcons.find(entry=>entry.id===key);
+    const node=window.VisualSystem.node('op',id,shortLabel,0,0)
+      .replace('width="260"','width="'+w+'"').replace('height="48"','height="34"')
+      .replace('rx="24"','rx="17"').replace('x="130"','x="'+(w/2+8)+'"').replace('y="24"','y="17"').replace('font-size="18"','style="font-size:12px"');
+    const badge=icon?`<g class="ai-operation-category" ><circle cx="16" cy="17" r="9" fill="#222"/><path transform="translate(10 11) scale(.5)" d="${icon.path}" fill="none" stroke="#eee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>`:'';
+    return `<g class="ai-operation-glyph" data-op-category="${key}" pointer-events="none" transform="translate(${x} ${y})">${node}${badge}<circle cx="8" cy="48" r="3" fill="var(--slot-color)"/><text class="ai-operation-slot" x="${w/2}" y="48" text-anchor="middle">${options.metadata||`Slot ${slot}`}</text></g>`;
+  }
+
 const opIcons = {"matmul":"M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z", "softmax":"M4 6h16M7 10v10M12 9v11M17 12v8", "accumulation":"M4 18h16M5 17l4-2 4-8 5-2", "linear": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2", "norm": "M4 6h16M7 12h10M9 18h6", "attention": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6", "compress": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4", "mix": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16", "topk": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6", "router": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"};
 function appendCacheGlyph(parent,x,y,width,height,label){
  parent.append(el('rect',{x,y,width,height,rx:6,class:'cache-body'}));
@@ -914,8 +1171,17 @@ function appendResidualGlyph(parent,x,y,width,height,label,hc=false){
 function appendGlyph(parent,x,y,width,height,label,role){
  if(role==='cache'){const glyph=el('g');appendCacheGlyph(glyph,x,y,width,height,label);parent.append(glyph);return glyph;}
  const tensor=['activation','pa-data','pa-state'].includes(role);
- const color=role==='pa-data'?'#83B9EE':role==='pa-state'?'#FFC533':'var(--activation)';
+ const color=role==='pa-state'?'#FFB91B':'#8BD7FC';
  const glyph=el('g');
+ if(!tensor){
+  glyph.innerHTML=operationGlyph('op-'+role,label,x,y,width,34,'',{iconKey:role==='accumulation'?'reduce':role==='mix'?'mix':role==='router'?'router':role});
+  parent.append(glyph);return glyph;
+ }
+ if(tensor){
+  glyph.style.setProperty('--data-role',color);
+  const host=el('svg',{x,y,width,height:35,viewBox:`0 0 ${width} 35`,overflow:'visible'});
+  host.innerHTML=window.PtoTensorRoleGlyph.render({id:'tensor-'+role,label,color,width});glyph.append(host);parent.append(glyph);return glyph;
+ }
  glyph.append(el('rect',{x,y,width,height,style:tensor?'rx:7px':'rx:'+height/2+'px',
   fill:tensor?'var(--plane)':'var(--op)',stroke:tensor?color:'none'}));
  if(tensor){
@@ -983,7 +1249,7 @@ function renderFront(kind) {
  };
  const moduleFrame=(x,y,width,height,label)=>{
   const group=el('g',{class:'module-frame','pointer-events':'none'});
-  group.append(el('rect',{x,y,width,height,rx:12,fill:'var(--ink)','fill-opacity':.05,stroke:'none'}),el('text',{x:x+14,y:y-9,fill:'var(--muted)','font-size':13},label));svg.append(group);
+  group.append(el('rect',{x,y,width,height,rx:12,class:'decoder-sublayer-fill',fill:'var(--ink)','fill-opacity':.05,stroke:'none'}),el('text',{x:x+14,y:y-9,fill:'var(--muted)','font-size':13},label));svg.append(group);
  };
  if(isQwen()){
   const expanded=paDetailActive(),extra=expanded?400:0;
@@ -1167,7 +1433,7 @@ function render() {
   const inputLabel=phase==='prefill'?(isQwen()?'Prompt · T tokens':'Prompt · 132 tokens'):'Decode · 1 token';
   const face=el('g',{class:'face'});
   // The compact face retains both sublayers and residual topology.
-  for(const [y,h] of [[70,130],[210,130]])face.append(el('rect',{x:36,y,width:290,height:h,rx:10,fill:'var(--ink)','fill-opacity':.05,'pointer-events':'none'}));
+  for(const [y,h] of [[70,130],[210,130]])face.append(el('rect',{x:36,y,width:290,height:h,rx:10,class:'decoder-sublayer-fill',fill:'var(--ink)','fill-opacity':.05,'pointer-events':'none'}));
   const nodes=[
    ['input',0,inputLabel,'activation'],['attention',85,'Attention · '+kinds[ratios[l]],'attention'],
    [isQwen()?'add1':'post',145,isQwen()?'Residual Add':'HC Post / 残差合并',isQwen()?'add':'hcmerge'],
@@ -1251,14 +1517,14 @@ function renderProfileRanks(){
  const cube=(rank)=>{
   // Logical bands reuse the original open-frame glyph, not byte proportions.
   const light=document.documentElement.dataset.theme==='light';
-  const ink=light?'#333':'#ddd',neutral=light?'#b8bec4':'#555c63';
+  const ink=light?'#333':'#ddd',neutral=light?'#d4d9de':'#555c63';
   const base=6,kvBase=65,kvHeight=285,pitch=kvHeight/40,height=429;
-  let body=g.block(base,48,light?'#aaa':'#858585')+g.block(kvBase,kvHeight,neutral);
+  let body=g.block(base,48,light?'#cbd0d5':'#858585')+g.block(kvBase,kvHeight,neutral);
   body+=g.block(kvBase+selected*pitch,Math.max(3,pitch*.65),'#3187EC');
-  const frame=`<path d="M${g.P(0,155,height)}L${g.P(0,0,height)}L${g.P(245,0,height)}L${g.P(245,155,height)}Z M${g.P(0,155,height)}L${g.P(0,155,0)}L${g.P(245,155,0)}L${g.P(245,0,0)}L${g.P(245,0,height)} M${g.P(245,155,height)}L${g.P(245,155,0)}" fill="none" stroke="${ink}" stroke-width="2.4"/>`;
+  const frame=`<path class="rank-cube-frame" d="M${g.P(0,155,height)}L${g.P(0,0,height)}L${g.P(245,0,height)}L${g.P(245,155,height)}Z M${g.P(0,155,height)}L${g.P(0,155,0)}L${g.P(245,155,0)}L${g.P(245,0,0)}L${g.P(245,0,height)} M${g.P(245,155,height)}L${g.P(245,155,0)}" fill="none" stroke="${ink}" stroke-width="2.4"/>`;
   const label=(z,text,size=17)=>{const p=g.P(239,140,z);return `<text transform="matrix(.8660254 -.5 0 1 ${p[0]} ${p[1]})" fill="${ink}" font-size="${size}">${text}</text>`;};
   const wall=g.P(0,140,height);
-  return `<svg viewBox="335 220 505 610" aria-hidden="true">${body}${frame}<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-75})" fill="${ink}"><text font-size="25" font-weight="600">Rank ${rank} · 内存</text><text y="23" font-size="13">TP 2 · 结构分区</text></g>${label(30,'权重 / 运行缓冲',13)}${label(210,'KV 缓存',20)}${label(385,'可用容量待接入',13)}<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${selected} · Paged KV</text></svg>`;
+  return `<svg viewBox="335 220 505 610" aria-hidden="true"><g data-rank-body-scale="0.8" transform="translate(575 510) scale(.8) translate(-575 -510)">${g.polygon([[0,0,height],[245,0,height],[245,155,height],[245,155,0],[0,155,0],[0,0,0]],light?'rgb(0 0 0 / 5%)':'transparent')}${body}${frame}<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-75})" fill="${ink}"><text font-size="25" font-weight="600">Rank ${rank} · 内存</text><text y="23" font-size="13">TP 2 · 结构分区</text></g>${label(30,'权重 / 运行缓冲',13)}${label(210,'KV 缓存',20)}${label(385,'可用容量待接入',13)}<text x="575" y="779" text-anchor="middle" fill="${ink}" font-size="16">L${selected} · Paged KV</text></g></svg>`.replace(/font-size="([\d.]+)"/g,(_,size)=>`font-size="${Number(size)/.8}"`);
  };
  if(!rankPrimary){entry.innerHTML=cube(selectedRank);entry.querySelector('svg').style.viewTransitionName='rank-swap-cube';entry.onclick=()=>setRankPrimary(true);target.append(entry);}
  else {
@@ -1494,7 +1760,7 @@ function renderExecutionWorkspace(){
   parent.replaceChildren();
   PATaskLayout.sequenceSegments(length,width,maxStacks,c.pageTokens*c.pagesPerStack,1.5).forEach(part=>{
    parent.append(el('rect',{x:x+part.x,y,width:part.width,height,fill:'var(--surface)'}));
-   if(part.fillWidth>0)parent.append(el('rect',{x:x+part.x,y,width:part.fillWidth,height,fill:'#666'}));
+   if(part.fillWidth>0)parent.append(el('rect',{x:x+part.x,y,width:part.fillWidth,height,fill:'var(--observation-data)'}));
   });
  };
  v.rowNodes.forEach((r,batch)=>{
@@ -1511,7 +1777,7 @@ function renderExecutionWorkspace(){
    // Every slot is a complete square; occupancy never clips a periodic texture.
    for(let offset=0;offset<128;offset++){
     const current=page*128+offset===t.length-1;
-    cell.append(el('rect',{x:x+(offset%16)*unit,y:r.y-pageHeight/2+Math.floor(offset/16)*unit,width:cellSize,height:cellSize,rx:.3,fill:current?'var(--ink)':offset<count?'#666':'var(--surface)'}));
+    cell.append(el('rect',{x:x+(offset%16)*unit,y:r.y-pageHeight/2+Math.floor(offset/16)*unit,width:cellSize,height:cellSize,rx:.3,fill:current?'var(--ink)':offset<count?'var(--observation-data)':'var(--surface)'}));
    }
    cell.dataset.tooltip=`Batch ${batch} · Page ${page} · ${page*128}–${page*128+127} · ${count}/128`;
    const select=()=>{mappingTask=batch*c.kvHeadsPerRank;paCaseSelection=page*128;renderTokenView(positions[phase],cacheStart(positions[phase]),kinds[ratios[selected]]);};

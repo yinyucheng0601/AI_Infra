@@ -172,3 +172,36 @@ button.token-empty-slot[data-inspect=true]:not([aria-pressed=true]){opacity:1;ba
 #token-mode[aria-expanded=true]{background:var(--surface)}
 @media(max-width:600px){.top-actions #token-mode{height:40px;padding:0 10px;gap:5px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){#token-mode .observation-chevron{transition:none}}
+
+:root[data-theme=light] .rank-cube-frame,:root[data-theme=light] .view-dial .cube-face{stroke:#fff}
+
+:root{--observation-data:#666}
+:root[data-theme=light]{--observation-data:#b8bcc0}
+:root[data-theme=light] .plane .outline{stroke:#fff;filter:drop-shadow(0 2px 3px rgb(0 0 0 / 10%))}
+:root[data-theme=light] .ai-task-identity rect{fill:#f3f3f3}
+:root[data-theme=light] .ai-task-identity path{stroke:#777}
+:root[data-theme=light] .mapping-task[data-related=true] .mapping-task-fill,:root[data-theme=light] .mapping-block[aria-pressed=true] .mapping-block-fill{fill:#d3d6d9}
+
+#theme-mode .theme-sun{display:none}:root[data-theme=light] #theme-mode .theme-moon{display:none}:root[data-theme=light] #theme-mode .theme-sun{display:block}
+
+.ai-role-tensor .data-tile{opacity:.23}
+
+:root[data-theme=light] .decoder-sublayer-fill{fill:#fff;fill-opacity:.4}
+/* Reference explorer-controls.css: filled data-role variant, including its label treatment. */
+.ai-role-tensor .ai-role-outline{fill:color-mix(in srgb,var(--data-role) 78%,#242424);fill-opacity:1}
+.ai-role-tensor .data-tile{fill:var(--data-role);opacity:1}
+.ai-role-tensor text{fill:#080b0b;stroke:none!important;paint-order:normal!important;font-weight:600}
+
+/* Tensor palette follows the supplied filled swatches, without a dark mixed base. */
+.ai-role-tensor .ai-role-outline{fill:color-mix(in srgb,var(--data-role) 65%,white);stroke:var(--data-role)}
+.ai-role-tensor .data-tile{fill:var(--data-role);opacity:1}
+:root[data-theme=light] .plane .outline,:root[data-theme=light] .layer-architecture-frame>rect{stroke:#fff;filter:drop-shadow(0 5px 12px rgb(0 0 0 / 16%))}
+
+/* Reference operationGlyph owns capsule geometry, category badge and 12px label. */
+.ai-operation-glyph .ai-operation-slot,.ai-operation-glyph>circle{display:none}
+.ai-operation-glyph [data-kind=op]>rect{stroke:none;fill:var(--op)}
+.ai-operation-glyph [data-kind=op] text{fill:var(--ink);font-family:Inter,ui-sans-serif,sans-serif;font-weight:500}
+.ai-operation-category circle{fill:#222}
+
+/* Compact Task crops only its identity badge, never the full-card background. */
+.ai-task-identity [data-kind=task]>rect:first-child{fill:none}

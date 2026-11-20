@@ -18,11 +18,11 @@
   const fill='#3187EC';
   const light=document.documentElement.dataset.theme==='light',ink=light?'#333':'#ddd',muted=light?'#666':'#aaa';
   const unit=height/budget.total,base=6,gap=8,nonKVHeight=budget.nonKV*unit,kvBase=base+nonKVHeight+gap,kvHeight=budget.kv*unit,pitch=kvHeight/ratios.length;
-  let markup=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],(light?'#eee':'#000'))
+  let markup=polygon([[0,0,height],[245,0,height],[245,155,height],[245,155,0],[0,155,0],[0,0,0]],light?'rgb(0 0 0 / 5%)':'transparent')+polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],(light?'#eee':'#000'))
    +polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],(light?'#e5e5e5':'#030303'))
    +polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],(light?'#e5e5e5':'#030303'));
-  markup+=`<g data-budget="non-kv"><title>权重与运行缓冲 8.62 GiB：权重、执行上下文与运行时缓冲合计；官方日志参考值</title>${block(base,nonKVHeight,light?'#ababab':'#858585')}</g>`;
-  markup+=block(kvBase,kvHeight,light?'#c6cbd0':'#555c63');
+  markup+=`<g data-budget="non-kv"><title>权重与运行缓冲 8.62 GiB：权重、执行上下文与运行时缓冲合计；官方日志参考值</title>${block(base,nonKVHeight,light?'#cbd0d5':'#858585')}</g>`;
+  markup+=block(kvBase,kvHeight,light?'#d4d9de':'#555c63');
   // Keep all layer hit regions; draw only the selected physical-looking slice.
   ratios.forEach((_,index)=>{
    const selected=index===layer&&ready;
@@ -30,7 +30,7 @@
    markup+=`<g data-branch-focus="${selected?state.branch||'': ''}" class="kv-storage-layer" role="button" tabindex="0" data-layer="${index}" aria-label="查看 L${index} KV" aria-pressed="${index===layer}">${selected?block(z,Math.max(2,pitch*.65),fill):''}${polygon([[239,6,z],[239,149,z],[239,149,z+pitch],[239,6,z+pitch]],'transparent')}</g>`;
   });
   // Free space is the open headroom inside the wireframe, never a dark solid lid.
-  markup+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="${light?'#777':'#eee'}" stroke-width="2.4"/>`;
+  markup+=`<path class="rank-cube-frame" d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="${light?'#777':'#eee'}" stroke-width="2.4"/>`;
   const wall=P(0,140,height);
   markup+=`<g transform="matrix(0.8660254 -.5 0 1 ${wall[0]} ${wall[1]-75})" fill="${ink}"><text font-size="25" font-weight="600">Rank 内存</text><text y="23" font-size="13" fill="${muted}">79.10 GiB · 参考预算</text></g>`;
   const anchor=P(6,149,kvBase+layer*pitch+pitch/2);
@@ -51,7 +51,9 @@
    markup+=`<g fill="none" stroke-width="2">${phase==='decode'?'<path stroke="#aaa" d="M790 500v-45l-5 7m5-7 5 7"/>':''}<path stroke="#3187EC" d="M813 455v45l-5-7m5 7 5-7"/></g>${phase==='decode'?'<text x="780" y="524" fill="${muted}" font-size="13">读</text>':''}<text x="806" y="524" fill="#3187EC" font-size="13">写</text>`;
   }
 
-  target.innerHTML=`<svg viewBox="335 220 505 610" role="group" aria-label="Rank 参考内存预算与 L${layer} KV 缓存槽">${markup}</svg>`;
+  // Scale geometry around the cube centre; compensate font sizes to preserve screen text size.
+  const scaledMarkup=markup.replace(/font-size="([\d.]+)"/g,(_,size)=>`font-size="${Number(size)/.8}"`);
+  target.innerHTML=`<svg viewBox="335 220 505 610" role="group" aria-label="Rank 参考内存预算与 L${layer} KV 缓存槽"><g data-rank-body-scale="0.8" transform="translate(575 510) scale(.8) translate(-575 -510)">${scaledMarkup}</g></svg>`;
   const activate=(node,callback)=>{
    node.addEventListener('click',callback);
    node.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();callback();}});
