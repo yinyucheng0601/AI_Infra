@@ -51,8 +51,8 @@ function trainingGraph(){
  const ranks=Array.from({length:tp},(_,i)=>owner*tp+i),remote=owner!==0;
  if(expertLayout.compact){
  const id='moe-e'+e,iconHeight=card.width*91/71;
- const body=`专家 E${e}：当前 8 token 样本分到 ${stats.loads[e]} 次调用。每位专家全局 W1[8,16]、W2[16,8]，256 个参数；${deployed?'Rank {'+ranks+'}。':''}点击查看内部计算。`;
- nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,expertGlyph(e,x,y,card.width), '专家 E'+e,body)+text(x,y+iconHeight+20,`${stats.loads[e]} tokens${active?' · α '+a.toFixed(2):''}`,'small','middle')+'</g>';
+ const body=`专家 E${e}：当前 8 token 样本分到 ${stats.loads[e]} 次调用。每位专家全局 W1[8,16]、W2[16,8]，256 个参数；${deployed?'Rank {'+ranks+'}。':''}${active?'当前 t'+t+' 入选，α='+a.toFixed(3)+'。':''}点击查看内部计算。`;
+ nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,expertGlyph(e,x,y,card.width), '专家 E'+e,body)+text(x,y+iconHeight+20,`n=${stats.loads[e]}`,'small','middle')+'</g>';
  remember(id,'专家 E'+e,body,['moe','linear'],{expert:e});positions[id]={x:x-card.width/2,y,width:card.width,height:iconHeight};
  if(active){links+=edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}H${cf-expertLayout.halfWidth+40}V${y-12}H${x}V${y}`);links+=edge('moe-return-'+e,port(id,x,y+iconHeight),port('moe-combine',cf,ys+expertLayout.combineY),'i',remote,`M${x} ${y+iconHeight}V${y+iconHeight+5}H${x+card.width/2+10}V${y+iconHeight+35}H${cf+expertLayout.halfWidth-40}V${ys+expertLayout.combineY-20}H${cf}V${ys+expertLayout.combineY}`);}
 
