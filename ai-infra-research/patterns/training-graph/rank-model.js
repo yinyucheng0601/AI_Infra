@@ -19,3 +19,6 @@ function trainingRankState(stage,parameters){
  });
  return {config,title:titles[stage],ranks,groups:plan.groups.filter(g=>['tp','ep'].includes(g.axis)),pendingExperts:stage===7?Array.from({length:experts},(_,i)=>i):[],source:'local-rank-pattern',logicalBands:true};
 }
+
+// Visual layout units, independent of capacity or bytes. Never normalize to the frame.
+function rankBandLayout(bands){const heights={weights:100,activation:64,gradient:64,communication:36};let z=16;return bands.map(b=>{const h=heights[b.id]||48,record={...b,z,h};z+=h+10;return record;});}

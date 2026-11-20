@@ -4,10 +4,9 @@ let rankPrimary=false,rankFocus=0,rankBandFocus=null,rankSnapshot=null,rankSigna
 const rankCamera={z:1,x:0,y:0};let rankPan=null,rankMoved=false,rankSwapBusy=false;
 function rankCube(rank){
  const {P,polygon,block}=window.RankMemoryView.geometry,height=64*6.7;
- let out=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],'#181818')+polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],'#202020')+polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],'#202020');
- const h=(height-32-(rank.bands.length-1)*14)/rank.bands.length;
- rank.bands.forEach((b,i)=>{const z=16+i*(h+14),a=P(239,142,z+h/2),focused=rank.id===rankFocus&&b.id===rankBandFocus;
- out+=`<g data-rank-band="${b.id}" data-tip="${esc(b.name+' · 点击查看对象与分片')}">${block(z,h,focused?'#eeeeee':b.color)}<text transform="matrix(.8660254 -.5 0 1 ${a[0]} ${a[1]})" fill="${focused?'#111':'#111'}" font-size="17">${esc(b.name)}</text></g>`;});
+ let out=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],'#181818')+polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],'#151515')+polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],'#151515');
+ rankBandLayout(rank.bands).forEach(b=>{const {z,h}=b,a=P(239,142,z+h/2),focused=rank.id===rankFocus&&b.id===rankBandFocus;
+ out+=`<g data-rank-band="${b.id}" data-layout-z="${z}" data-layout-height="${h}" data-tip="${esc(b.name+' · 点击查看对象与分片')}">${block(z,h,focused?'#eeeeee':b.color)}<text transform="matrix(.8660254 -.5 0 1 ${a[0]} ${a[1]})" fill="${focused?'#111':'#111'}" font-size="17">${esc(b.name)}</text></g>`;});
  out+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="#bbb" stroke-width="2"/>`;
  const wall=P(0,140,height);out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text><text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${current===8?' · 专家组 '+rank.group:''}</text></g>`;
  return out;
@@ -18,9 +17,9 @@ function renderRankView(){
  rankSnapshot=trainingRankState(current,parameterState);if(rankFocus>=rankSnapshot.ranks.length)rankFocus=0;
  const state=rankSnapshot,rank=state.ranks[rankFocus];if(rankBandFocus&&!rank.bands.some(b=>b.id===rankBandFocus))rankBandFocus=rankInspectorOpen?'weights':null;document.querySelector('#graph-return').dataset.label='Rank '+rankFocus+' · 计算图 ↗';
  document.querySelector('#rank-preview').innerHTML=`<svg viewBox="345 222 460 553" aria-hidden="true">${rankCube(rank)}</svg>`;
- document.querySelector('#rank-preview-caption').textContent=`Rank ${rank.id} · ${state.title}`;
+ document.querySelector('#rank-preview-caption').textContent=`Rank ${rank.id} · ${state.title}\n容量未配置`;
  const cfg=state.config,w=Math.max(600,cfg.tp*330),coords=new Map(state.ranks.map(r=>[r.id,{x:(w-cfg.tp*330)/2+r.lane*330,y:75+r.group*390}]));
- let body=`<defs><marker id="rank-route-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="${C.i}"/></marker></defs>`;
+ let body=text(w/2,17,'当前 Block 对象分层 · 容量未配置','small','middle')+`<defs><marker id="rank-route-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="${C.i}"/></marker></defs>`;
  for(let group=0;group<cfg.ep;group++){
  const members=state.ranks.filter(r=>r.group===group),y=75+group*390;
  body+=`<rect x="0" y="${y-35}" width="${w}" height="375" rx="14" fill="#fff" fill-opacity=".035"/>`+text(16,y-12,current===8?`专家组 ${group} · E${members[0].experts[0]}–E${members[0].experts.at(-1)} · 组内 ${cfg.tp} 份 TP 分片`:`${cfg.tp>1?'TP 组':'当前 Block'} · Rank {${members.map(r=>r.id)}}`,'text');

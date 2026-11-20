@@ -59,3 +59,5 @@ body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:60
 .rank-primary #graph-return:after{content:attr(data-label)}
 
 .hit.selected [data-kind=expert]>rect:first-child{fill:#777}.hit.selected [data-kind=expert] text{fill:#fff}.hit:hover [data-kind=expert]>rect:first-child{fill:#707070}
+
+#rank-preview-caption{white-space:pre-line}
