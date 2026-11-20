@@ -1,41 +1,43 @@
 // Axis geometry from the local Rank renderer; bands encode logical objects, never GB.
-let rankInspectorOpen=false;
+let rankInspectorOpen=false,graphImpactMarkup='';
 let rankPrimary=false,rankFocus=0,rankBandFocus=null,rankSnapshot=null,rankSignature='',graphReturnCamera=null;
 const rankCamera={z:1,x:0,y:0};let rankPan=null,rankMoved=false,rankSwapBusy=false;
-function rankCube(rank){
+function rankCube(rank,mini=false){
  const {P,polygon,block}=window.RankMemoryView.geometry,height=64*6.7;
  let out=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],'#181818')+polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],'#151515')+polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],'#151515');
  rankBandLayout(rank.bands).forEach(b=>{const {z,h}=b,a=P(239,142,z+h/2),focused=rank.id===rankFocus&&b.id===rankBandFocus;
- out+=`<g data-rank-band="${b.id}" data-layout-z="${z}" data-layout-height="${h}" data-tip="${esc(b.name+' · 点击查看对象与分片')}">${block(z,h,focused?'#eeeeee':b.color)}<text transform="matrix(.8660254 -.5 0 1 ${a[0]} ${a[1]})" fill="${focused?'#111':'#111'}" font-size="17">${esc(b.name)}</text></g>`;});
+ out+=`<g data-rank-band="${b.id}" data-layout-z="${z}" data-layout-height="${h}" data-tip="${esc(b.name+' · 点击查看对象与分片')}">${block(z,h,focused?'#eeeeee':b.color)}<text transform="matrix(.8660254 -.5 0 1 ${a[0]} ${a[1]})" fill="${focused?'#111':'#111'}" font-size="17">${esc(({weights:'权重 W',activation:current===0?'输入 H₀':current>=6?'缓存 X/A':'激活',gradient:current>=3?'dX / dW':'dX',communication:current===8?'EP':'AG / RS'})[b.id]||b.name)}</text></g>`;});
  out+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="#bbb" stroke-width="2"/>`;
- const wall=P(0,140,height);out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text><text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${current===8?' · 专家组 '+rank.group:''}</text></g>`;
+ const wall=P(0,140,height);out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text>${rankSnapshot.config.tp>1?`<text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${mini&&current===8?' · 专家组 '+rank.group:''}</text>`:''}</g>`;
  return out;
 }
-function fitRanks(){const svg=document.querySelector('#rank-canvas');if(!svg||!rankSnapshot)return;const {tp,ep}=rankSnapshot.config,w=Math.max(600,tp*330),h=ep*390+170+(current===7?90:0),sw=innerWidth,sh=innerHeight,scale=Math.min(Math.max(300,sw-(sw>1000?600:60))/w,Math.max(200,sh-270)/h);svg.setAttribute('viewBox',`${(w-sw/scale)/2} ${(h-sh/scale)/2} ${sw/scale} ${sh/scale}`);}
+function fitRanks(){const svg=document.querySelector('#rank-canvas');if(!svg||!rankSnapshot)return;const {tp,ep}=rankSnapshot.config,w=Math.max(600,tp*330),h=ep*390+170+(current===7?90:0),sw=innerWidth,sh=innerHeight,left=sw>1000?310:24,right=sw>1000?440:24,available=Math.max(280,sw-left-right),scale=Math.min(available/w,Math.max(200,sh-270)/h),cx=left+available/2;svg.setAttribute('viewBox',`${w/2-cx/scale} ${(h-sh/scale)/2} ${sw/scale} ${sh/scale}`);}
+function fitGraphThumbnail(){if(!rankPrimary||!fullGraphBounds)return;cancelAnimationFrame(cameraFrame);view={z:1,x:0,y:0};apply();const b=fullGraphBounds;document.querySelector('#stage>svg').setAttribute('viewBox',`${b.x-24} ${b.y-24} ${b.width+48} ${b.height+48}`);}
+
 function applyRankCamera(){document.querySelector('#rank-world').setAttribute('transform',`translate(${rankCamera.x} ${rankCamera.y}) scale(${rankCamera.z})`);}
 function renderRankView(){
  rankSnapshot=trainingRankState(current,parameterState);if(rankFocus>=rankSnapshot.ranks.length)rankFocus=0;
  const state=rankSnapshot,rank=state.ranks[rankFocus];if(rankBandFocus&&!rank.bands.some(b=>b.id===rankBandFocus))rankBandFocus=rankInspectorOpen?'weights':null;document.querySelector('#graph-return').dataset.label='Rank '+rankFocus+' · 计算图 ↗';
- document.querySelector('#rank-preview').innerHTML=`<svg viewBox="345 222 460 553" aria-hidden="true">${rankCube(rank)}</svg>`;
- document.querySelector('#rank-preview-caption').textContent=`Rank ${rank.id} · ${state.title}\n容量未配置`;
- const cfg=state.config,w=Math.max(600,cfg.tp*330),coords=new Map(state.ranks.map(r=>[r.id,{x:(w-cfg.tp*330)/2+r.lane*330,y:75+r.group*390}]));
- let body=text(w/2,17,'当前 Block 对象分层 · 容量未配置','small','middle')+`<defs><marker id="rank-route-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="${C.i}"/></marker></defs>`;
+ document.querySelector('#rank-preview').innerHTML=`<svg viewBox="345 222 460 553" aria-hidden="true">${rankCube(rank,true)}</svg>`;
+ document.querySelector('#rank-preview-caption').textContent=`${state.title} · 容量未配置`;
+ const cfg=state.config,w=Math.max(600,cfg.tp*330),coords=new Map(state.ranks.map(r=>[r.id,{x:(w-cfg.tp*330)/2+r.lane*330+15,y:75+r.group*390}]));
+ let body=`<defs><marker id="rank-route-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="${C.i}"/></marker></defs>`;
  for(let group=0;group<cfg.ep;group++){
  const members=state.ranks.filter(r=>r.group===group),y=75+group*390;
- body+=`<rect x="0" y="${y-35}" width="${w}" height="375" rx="14" fill="#fff" fill-opacity=".035"/>`+text(16,y-12,current===8?`专家组 ${group} · E${members[0].experts[0]}–E${members[0].experts.at(-1)} · 组内 ${cfg.tp} 份 TP 分片`:`${cfg.tp>1?'TP 组':'当前 Block'} · Rank {${members.map(r=>r.id)}}`,'text');
- if(current>=4&&cfg.tp>1){body+=`<path d="M75 ${y+320}H${w-75}" stroke="#aaa" fill="none"/>`+text(w/2,y+345,cfg.sp?'AG / RS · token 行收集与归约分发':'AllReduce(sum) · TP 部分贡献求和','small','middle');}
+ if(cfg.worldSize>1)body+=`<rect x="0" y="${y-35}" width="${w}" height="375" rx="14" fill="#fff" fill-opacity=".035"/>`+text(16,y-12,current===8?`专家组 ${group} · E${members[0].experts[0]}–E${members[0].experts.at(-1)} · 组内 ${cfg.tp} 份 TP 分片`:`TP 组 {${members.map(r=>r.id)}}`,'text');
+ if(current>=4&&cfg.tp>1)body+=`<path d="M75 ${y+320}H${w-75}" stroke="#555" fill="none"/>`;
  }
- for(const r of state.ranks){const p=coords.get(r.id);body+=`<g data-rank-id="${r.id}" class="rank-item" role="button" tabindex="0" aria-label="Rank ${r.id}，TP ${r.lane}，${state.title}" aria-pressed="${r.id===rankFocus}"><svg x="${p.x}" y="${p.y}" width="300" height="290" viewBox="345 222 460 553">${rankCube(r)}</svg>${r.id===rankFocus?`<rect x="${p.x+106}" y="${p.y+287}" width="88" height="26" rx="13" fill="#eee"/>`:''}${text(p.x+150,p.y+305,'Rank '+r.id,'small','middle',r.id===rankFocus?'#111':'#bbb')}</g>`;}
- if(current===7){const y=75+cfg.ep*390;body+=text(w/2,y,`待分配专家池 · ${cfg.experts} experts · Top-2`,'text','middle')+text(w/2,y+28,'本步只展开 MoE 结构，下一步再指定专家归属','small','middle');}
- if(current===8){const lane=rankFocus%cfg.tp,source=coords.get(lane),route=moeRoute(parameterState.token,cfg.experts);route.chosen.forEach((e,i)=>{const owner=Math.floor(e/(cfg.experts/cfg.ep)),target=coords.get(owner*cfg.tp+lane);if(owner===0){body+=text(20,75+cfg.ep*390+i*24,`t${parameterState.token}：R${lane} · 本组 E${e} · 无 EP 搬运`,'small');return;}const x=source.x+275;body+=`<path data-rank-route="${e}" d="M${x} ${source.y+145}H${x+40+i*20}V${target.y+145}H${target.x+275}" fill="none" stroke="${C.i}" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#rank-route-arrow)"/><path data-rank-return="${e}" d="M${target.x+275} ${target.y+170}H${x+55+i*20}V${source.y+170}H${source.x+275}" fill="none" stroke="${C.i}" stroke-width="1.5" stroke-dasharray="3 5" marker-end="url(#rank-route-arrow)"/>`+text(20,75+cfg.ep*390+i*24,`t${parameterState.token}：R${lane} ⇄ R${owner*cfg.tp+lane} · E${e} · α ${route.alpha[i].toFixed(2)}`,'small');});}
+ for(const r of state.ranks){const p=coords.get(r.id);body+=`<g data-rank-id="${r.id}" class="rank-item" role="button" tabindex="0" aria-label="Rank ${r.id}，TP ${r.lane}，${state.title}" aria-pressed="${r.id===rankFocus}"><svg x="${p.x}" y="${p.y}" width="300" height="290" viewBox="345 222 460 553">${rankCube(r)}</svg></g>`;}
+ if(current===7){const y=75+cfg.ep*390;body+=text(w/2,y,`待分配专家池 · ${cfg.experts} experts · Top-2`,'text','middle');}
+ if(current===8){const lane=rankFocus%cfg.tp,source=coords.get(lane),route=moeRoute(parameterState.token,cfg.experts);route.chosen.forEach((e,i)=>{const owner=Math.floor(e/(cfg.experts/cfg.ep)),target=coords.get(owner*cfg.tp+lane);if(owner===0){return;}const x=source.x+275;body+=`<path data-rank-route="${e}" d="M${x} ${source.y+145}H${x+40+i*20}V${target.y+145}H${target.x+275}" fill="none" stroke="${C.i}" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#rank-route-arrow)"/><path data-rank-return="${e}" d="M${target.x+275} ${target.y+170}H${x+55+i*20}V${source.y+170}H${source.x+275}" fill="none" stroke="${C.i}" stroke-width="1.5" stroke-dasharray="3 5" marker-end="url(#rank-route-arrow)"/>`;});}
  updateGraphSvg(document.querySelector('#rank-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+body+'</svg>');applyRankCamera();
- const signature=[current,cfg.tp,cfg.ep,cfg.sp,cfg.experts,cfg.recollect].join(':');if(signature!==rankSignature){rankCamera.x=rankCamera.y=0;rankCamera.z=1;applyRankCamera();fitRanks();rankSignature=signature;}if(rankInspectorOpen&&rankPrimary){writeTrainingRankPanel();markRankGraphOwnership();}
+ const signature=[current,cfg.tp,cfg.ep,cfg.sp,cfg.experts,cfg.recollect].join(':');if(signature!==rankSignature){rankCamera.x=rankCamera.y=0;rankCamera.z=1;applyRankCamera();fitRanks();rankSignature=signature;}if(rankInspectorOpen&&rankPrimary){writeTrainingRankPanel();markRankGraphOwnership();}if(rankPrimary)fitGraphThumbnail();updateRankImpact();
 }
 function toggleRankPrimary(value=!rankPrimary){
  if(rankSwapBusy||value===rankPrimary)return;rankSwapBusy=true;
  const graph=document.querySelector('#stage'),surface=document.querySelector('#rank-surface'),a=graph.getBoundingClientRect(),b=surface.getBoundingClientRect();
- if(value)graphReturnCamera={stage:current,signature:rankSignature,view:{...view},box:document.querySelector('#stage>svg').getAttribute('viewBox'),autoLayout};
- rankPrimary=value;document.querySelector('#rank-open').setAttribute('aria-expanded',String(value));document.body.classList.toggle('rank-primary',value);document.querySelector('#rank-open').hidden=value;document.querySelector('#rank-canvas').toggleAttribute('hidden',!value);document.querySelector('#rank-return').hidden=!value;document.querySelector('#graph-return').hidden=!value;fitRanks();
+ if(value){cancelAnimationFrame(cameraFrame);}if(value)graphReturnCamera={stage:current,signature:rankSignature,view:{...view},box:document.querySelector('#stage>svg').getAttribute('viewBox'),autoLayout};
+ rankPrimary=value;document.querySelector('#rank-open').setAttribute('aria-expanded',String(value));document.body.classList.toggle('rank-primary',value);document.querySelector('#rank-open').hidden=value;document.querySelector('#rank-canvas').toggleAttribute('hidden',!value);document.querySelector('#rank-return').hidden=!value;document.querySelector('#graph-return').hidden=!value;fitRanks();if(value)fitGraphThumbnail();updateRankImpact();
  if(!value){if(rankInspectorOpen){rankInspectorOpen=false;document.querySelector('#panel').hidden=true;}if(graphReturnCamera?.stage===current&&graphReturnCamera.signature===rankSignature){view={...graphReturnCamera.view};autoLayout=graphReturnCamera.autoLayout;document.querySelector('#stage>svg').setAttribute('viewBox',graphReturnCamera.box);apply();}else{autoLayout=true;view={z:1,x:0,y:0};apply();fitStage(false);}}
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const animations=reduced?[]:[[graph,a],[surface,b]].map(([el,old])=>{const n=el.getBoundingClientRect();return el.animate([{transformOrigin:'0 0',transform:`translate(${old.left-n.left}px,${old.top-n.top}px) scale(${old.width/n.width},${old.height/n.height})`},{transformOrigin:'0 0',transform:'none'}],{duration:400,easing:'cubic-bezier(.22,1,.36,1)'}).finished.catch(()=>{});});Promise.all(animations).finally(()=>rankSwapBusy=false);
@@ -60,3 +62,20 @@ function rankTool(id){if(id==='fit'){rankCamera.z=1;rankCamera.x=rankCamera.y=0;
 document.addEventListener('click',e=>{if(e.target.id==='close')rankInspectorOpen=false;});document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(rankInspectorOpen)rankInspectorOpen=false;else if(rankPrimary)toggleRankPrimary(false);}});
 
 function markRankGraphOwnership(){const rank=rankSnapshot.ranks[rankFocus],ids=new Set(rank.objects.map(o=>o.id));document.querySelectorAll('#world [data-node]').forEach(el=>{const n=registry[el.dataset.node],expert=el.dataset.node.match(/^moe-e(\d+)/);const related=rankBandFocus==='weights'?(ids.has(n?.objectId)||ids.has(el.dataset.node)||expert&&rank.experts.includes(+expert[1])):rankBandFocus==='gradient'?n?.role==='g':rankBandFocus==='activation'?n?.role==='i':!!el.querySelector('[data-kind=communication]');el.classList.toggle('rank-owned',!!related);el.classList.toggle('rank-context',!related);});}
+
+function updateRankImpact(){
+ const root=document.querySelector('#impact');if(!rankPrimary){if(graphImpactMarkup)root.innerHTML=graphImpactMarkup;return;}if(!rankSnapshot)return;
+ const {config:c}=rankSnapshot,r=rankSnapshot.ranks[rankFocus],range=r.tokenRows[0]+'–'+r.tokenRows.at(-1);
+ const copy=[
+ ['单 Rank 保存当前 Block','完整线性权重与输入 H₀ 位于 Rank 0；本步尚未引入参数分片。','权重 W · 输入 H₀'],
+ ['前向读取权重与激活','每个算子从本 Rank 读取权重和输入，生成激活；供反向使用的输入需要保留。','读取 W、X → 产生激活'],
+ ['输入梯度传回前层','Rank 0 使用输出梯度与权重转置计算 dX，再沿前向依赖的反方向传播。','dX = dY · Wᵀ'],
+ ['参数梯度使用保存的输入','本 Rank 读取前向输入与输出梯度形成 dW；dX 继续传向前层，dW 供参数更新。','dW = Xᵀ · dY'],
+ ['TP 组内切分权重',`Rank ${r.id} 持有第 ${r.lane+1}/${c.tp} 份 TP 权重；组内 Rank {${r.tpGroup}} 合并部分输出。`,`Wqkv [8,${24/c.tp}]\nWproj [${8/c.tp},8]`],
+ [c.sp?'SP 按 token 行分片':'边界激活保持完整',c.sp?`Rank ${r.id} 的子层边界持有 token 行 ${range}。AG 收集完整输入，RS 归约并重新分发行。`:'当前配置不切分子层边界 token 行；各 Rank 保留完整边界激活。',c.sp?`本地 [${c.seq},8] ⇄ 完整 [8,8]`:'边界激活 [8,8]'],
+ ['反向前取回缓存输入',c.recollect?`Rank ${r.id} 仅保存 token 行 ${range} 的 Xᵣ/Aᵣ；WGRAD 前在 TP 组内 AG 重新收集。`:'本 Rank 保留完整 X/A，WGRAD 直接读取，无需再次收集。',c.recollect?'缓存分片 → AG → WGRAD':'完整缓存 → WGRAD'],
+ ['专家池等待部署',`${c.experts} 位专家已定义；此步骤仅展开 MoE 结构，尚未指定专家的 Rank 归属。现有 TP/SP 配置保持不变。`,`待分配 E00–E${c.experts-1}`],
+ [`Rank ${r.id} 的专家分片`,`专家组 ${r.group} 承载 E${r.experts[0]}–E${r.experts.at(-1)}；Rank ${r.id} 持有其中第 ${r.lane+1}/${c.tp} 份 TP 权重。`,current===8?moeRoute(parameterState.token,c.experts).chosen.map(e=>{const owner=Math.floor(e/(c.experts/c.ep)),target=owner*c.tp+r.lane;return `t${parameterState.token} → E${e} / R${target}（${owner?'跨组':'本组'}）`;}).join('\n'):'']
+ ][current];
+ root.innerHTML=`<div class="step-number">${String(current+1).padStart(2,'0')}</div><b>${esc(copy[0])}</b><span>${esc(copy[1])}</span><pre class="stage-formula">${esc(copy[2])}</pre><small>当前 Block · 容量未配置${current>=4?' · TP '+c.tp:''}${current===8?' · EP '+c.ep:''}</small>`;
+}
