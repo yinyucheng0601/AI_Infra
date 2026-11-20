@@ -115,3 +115,60 @@ button.token-empty-slot[data-inspect=true]:not([aria-pressed=true]){opacity:1;ba
 @media(prefers-reduced-motion:reduce){::view-transition-group(*){animation-duration:0s!important}}
 
 ::view-transition-group(rank-swap-secondary){animation-duration:350ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+
+
+/* The same Task objects occupy generation and assignment layouts. */
+.observation-modes{display:flex;gap:4px;flex-shrink:0}.observation-modes button,.mapping-bar button{border:0;background:var(--surface);color:var(--muted);cursor:pointer;font:11px ui-monospace,monospace;padding:6px 10px;border-radius:18px}
+.observation-modes button[aria-pressed=true]{background:var(--ink);color:var(--plane)}
+#token-workspace,#token-workspace.mapping-expanded{height:var(--observation-height,clamp(240px,32dvh,380px));max-height:calc(100dvh - 166px);box-sizing:border-box;overflow:auto}
+.page-task-handoff{position:fixed;inset:0;z-index:80;pointer-events:none;overflow:hidden}
+.page-task-handoff .token-page{display:block!important}
+.mapping-bar{display:flex;align-items:center;gap:14px;min-height:30px;font:11px ui-monospace,monospace;color:var(--muted)}.mapping-inspect{margin-left:auto}.mapping-bar button{flex-shrink:0}
+.task-assignment-map{display:block;width:100%;height:calc(var(--observation-height,clamp(240px,32dvh,380px)) - 92px);min-height:320px;touch-action:pan-y}
+.mapping-label{fill:var(--ink);font:14px ui-monospace,monospace}.mapping-small{fill:var(--muted);font:11px ui-monospace,monospace;dominant-baseline:central;pointer-events:none}
+.mapping-block-fill{fill:var(--surface);opacity:.5}.mapping-block[aria-pressed=true] .mapping-block-fill{fill:var(--ink);opacity:.12}
+.mapping-task-fill{fill:var(--surface)}.mapping-task[data-related=true] .mapping-task-fill{fill:#555}.mapping-task[aria-pressed=true] .mapping-task-fill{fill:var(--ink)}.mapping-task[aria-pressed=true] .mapping-small{fill:var(--plane)}
+.mapping-task,.mapping-block{cursor:pointer;outline:none}.mapping-task:focus-visible .mapping-small,.mapping-block:focus-visible .mapping-small{text-decoration:underline}.mapping-bar button:focus-visible,.observation-modes button:focus-visible{outline:none;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:900px){.mapping-bar{flex-wrap:wrap;gap:6px}.mapping-inspect{margin-left:0}}
+
+/* Expand/collapse the bottom observation stage as one continuous surface. */
+::view-transition-group(observation-panel),::view-transition-group(observation-content){animation-duration:380ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+::view-transition-old(observation-panel),::view-transition-new(observation-panel){height:100%;width:100%;object-fit:fill;animation-duration:380ms;mix-blend-mode:normal}
+::view-transition-old(observation-content),::view-transition-new(observation-content){height:100%;width:100%;object-fit:contain;animation-duration:300ms;mix-blend-mode:normal}
+@media(prefers-reduced-motion:reduce){::view-transition-group(observation-panel),::view-transition-group(observation-content){animation-duration:0s!important}}
+
+.page-task-handoff .token-empty-slot{display:block;width:4px;height:4px;min-width:0;aspect-ratio:1;border-radius:1px;font-size:0;padding:0}
+
+#observation-resize{position:sticky;top:-6px;z-index:2;display:flex;justify-content:center;align-items:center;height:14px;margin:-6px -10px 3px;background:var(--panel);cursor:ns-resize;touch-action:none;user-select:none;outline:none}
+#observation-resize span{display:block;width:42px;height:3px;border-radius:3px;background:var(--muted);opacity:.5;transition:opacity 150ms}
+#observation-resize:hover span,#observation-resize:focus-visible span{opacity:1;background:var(--ink)}
+
+/* One measured content region: no blank summary row and no centered SVG letterbox. */
+#token-workspace.mapping-expanded{display:flex;flex-direction:column;overflow:hidden}
+#token-workspace.mapping-expanded>.token-heading{flex:none;margin-bottom:2px}
+#token-workspace.mapping-expanded>#observation-resize{flex:none}
+#block-workspace{position:relative;flex:1;min-height:0;overflow:auto}
+#block-workspace .mapping-bar{position:absolute;top:0;right:4px;z-index:1;min-height:24px;background:var(--panel)}
+.task-assignment-map{height:100%;min-height:240px;width:100%}
+.mapping-task[data-related=true] .mapping-task-fill,.mapping-block[aria-pressed=true] .mapping-block-fill{fill:var(--ink);opacity:1}
+.mapping-task[data-related=true] .mapping-small,.mapping-block[aria-pressed=true] .mapping-small{fill:var(--plane)}
+
+/* Occupancy is neutral. White is reserved for the inspected object/current position. */
+.task-assignment-map{min-height:540px}
+.mapping-task[data-related=true] .mapping-task-fill{fill:#454545;opacity:1}
+.mapping-task[data-related=true] .mapping-small{fill:var(--muted)}
+.mapping-task[aria-pressed=true] .mapping-task-fill{fill:var(--ink)}
+.mapping-task[aria-pressed=true] .mapping-small{fill:var(--plane)}
+.mapping-block[aria-pressed=true] .mapping-block-fill{fill:#454545;opacity:1}
+.mapping-block[aria-pressed=true] .mapping-small{fill:var(--ink)}
+
+.observation-modes{align-items:center;height:32px}
+.observation-modes button{display:inline-flex;align-items:center;justify-content:center;height:32px;min-height:32px;padding:0 12px;font-size:12px;line-height:1;border-radius:999px;white-space:nowrap}
+
+.top-actions #token-mode{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:auto;height:44px;padding:0 14px;border-radius:999px;font-size:12px;line-height:1;white-space:nowrap}
+#token-mode>svg:first-child{width:20px;height:20px}
+#token-mode .observation-chevron{width:14px;height:14px;transition:transform 180ms ease}
+#token-mode[aria-expanded=true] .observation-chevron{transform:rotate(180deg)}
+#token-mode[aria-expanded=true]{background:var(--surface)}
+@media(max-width:600px){.top-actions #token-mode{height:40px;padding:0 10px;gap:5px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){#token-mode .observation-chevron{transition:none}}

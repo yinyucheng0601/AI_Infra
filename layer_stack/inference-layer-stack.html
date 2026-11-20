@@ -5,7 +5,7 @@
 <title>Layer Stack · 模型推理</title>
 
 
-<link rel="stylesheet" href="inference-controls/liquid-glass.css"><link rel="stylesheet" href="inference-layer-stack.css"></head><body><div class="top-actions" aria-label="页面工具"><button type="button" class="icon-button" data-liquid-glass="icon" id="token-mode" aria-label="显示或收起 Token 表" aria-expanded="true" aria-controls="token-workspace"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h3m4 0h3M7 14h3m4 0h3"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="theme-mode" aria-label="切换浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="help" aria-label="图例与说明" aria-expanded="false" aria-controls="info-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></button></div><aside id="info-panel" class="info-panel" role="dialog" aria-label="图例与说明" data-liquid-glass="panel" hidden><header><h2>图例与说明</h2><button id="info-close" class="icon-button" aria-label="关闭说明">×</button></header><h3>当前观察</h3><p>层栈看模型结构；Token 表检查位置；Rank 看内存预算与当前层缓存归属。</p><h3>颜色</h3><p>蓝色：当前执行位置与缓存切片。灰色：可读历史 KV。浅灰：临时检查的位置。激活 Tensor 和缓存保留各自图元颜色。</p><h3>内存预算</h3><p>权重与运行缓冲 8.62 GiB，合并权重、执行上下文和运行时缓冲；官方案例未提供这些细项的完整独立数值。KV 池 63.44 GiB；剩余 7.04 GiB。</p><p>这是 TensorRT-LLM 的参考预算，不是所选模型的显存测量。分层切片不代表各层字节数；请求 KV 已用量尚未接入。</p><a href="https://nvidia.github.io/TensorRT-LLM/1.1.0rc1/reference/memory.html#faq" target="_blank" rel="noopener">预算来源 ↗</a><h3>架构与位置</h3><p id="model-source">43 层与 SWA 128 位置窗口来自本地 Flash 配置。Prompt 0–131、输入 132／133 为当前请求示例；CSA 压缩条目明细尚未接入。</p><a href="https://huggingface.co/Qwen/Qwen3-14B/blob/main/config.json" target="_blank" rel="noopener">Qwen3-14B 官方配置 ↗</a><h3>操作</h3><p>拖拽平移，滚轮缩放。右下角控制当前可见画布；打开浮层不重置视野。</p><a href="inference-layer-stack-before-ablation.html" target="_blank">查看消融前版本 ↗</a></aside><div class="canvas-tools" aria-label="视窗控制" data-liquid-glass="control"><button id="viewport-out" class="icon-button" aria-label="缩小视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14"/></svg></button><output id="viewport-zoom" aria-live="polite">100%</output><button id="viewport-in" class="icon-button" aria-label="放大视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><button id="viewport-fit" class="icon-button" aria-label="返回整体"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button></div><main>
+<link rel="stylesheet" href="inference-controls/liquid-glass.css"><link rel="stylesheet" href="inference-layer-stack.css"></head><body><div class="top-actions" aria-label="页面工具"><button type="button" class="icon-button observation-toggle" data-liquid-glass="control" id="token-mode" aria-label="展开或收起底部 Token / Task 观察区" data-tooltip="展开或收起底部观察区：Token / Page、Task、Block" aria-expanded="true" aria-controls="token-workspace"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 13h18"/><path d="M7 16.5h3m4 0h3"/></svg><span>Token / Task</span><svg class="observation-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="theme-mode" aria-label="切换浅色模式" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg></button><button type="button" class="icon-button" data-liquid-glass="icon" id="help" aria-label="图例与说明" aria-expanded="false" aria-controls="info-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".7" fill="currentColor" stroke="none"/></svg></button></div><aside id="info-panel" class="info-panel" role="dialog" aria-label="图例与说明" data-liquid-glass="panel" hidden><header><h2>图例与说明</h2><button id="info-close" class="icon-button" aria-label="关闭说明">×</button></header><h3>当前观察</h3><p>层栈看模型结构；Token 表检查位置；Rank 看内存预算与当前层缓存归属。</p><h3>颜色</h3><p>蓝色：当前执行位置与缓存切片。灰色：可读历史 KV。浅灰：临时检查的位置。激活 Tensor 和缓存保留各自图元颜色。</p><h3>内存预算</h3><p>权重与运行缓冲 8.62 GiB，合并权重、执行上下文和运行时缓冲；官方案例未提供这些细项的完整独立数值。KV 池 63.44 GiB；剩余 7.04 GiB。</p><p>这是 TensorRT-LLM 的参考预算，不是所选模型的显存测量。分层切片不代表各层字节数；请求 KV 已用量尚未接入。</p><a href="https://nvidia.github.io/TensorRT-LLM/1.1.0rc1/reference/memory.html#faq" target="_blank" rel="noopener">预算来源 ↗</a><h3>架构与位置</h3><p id="model-source">43 层与 SWA 128 位置窗口来自本地 Flash 配置。Prompt 0–131、输入 132／133 为当前请求示例；CSA 压缩条目明细尚未接入。</p><a href="https://huggingface.co/Qwen/Qwen3-14B/blob/main/config.json" target="_blank" rel="noopener">Qwen3-14B 官方配置 ↗</a><h3>操作</h3><p>拖拽平移，滚轮缩放。右下角控制当前可见画布；打开浮层不重置视野。</p><a href="inference-layer-stack-before-ablation.html" target="_blank">查看消融前版本 ↗</a></aside><div class="canvas-tools" aria-label="视窗控制" data-liquid-glass="control"><button id="viewport-out" class="icon-button" aria-label="缩小视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14"/></svg></button><output id="viewport-zoom" aria-live="polite">100%</output><button id="viewport-in" class="icon-button" aria-label="放大视图"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14M12 5v14"/></svg></button><button id="viewport-fit" class="icon-button" aria-label="返回整体"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button></div><main>
 <header class="compact-header"><h1>Layer Atlas <select id="model-select" aria-label="切换模型" data-tooltip="切换模型架构与 KV 缓存"><option value="deepseek">DeepSeek V4 Flash · 43 层</option><option value="qwen" selected>Qwen3-14B · 40 层</option></select></h1></header>
 <div class="view-dial" aria-label="模型视角">
 <button type="button" id="cycle-view" aria-label="当前视角 2.5D，点击切换 Side" data-tooltip="点击轮切：2.5D → Front → Side">
@@ -24,7 +24,8 @@
 </section></div><section id="inference-front" hidden><nav class="architecture-nav" aria-label="层内图导航"><button id="architecture-model" data-tooltip="返回模型层栈，保留当前视野">Model</button><span>›</span><span id="architecture-layer"></span><button id="architecture-prev" class="icon-button" data-tooltip="上一层" aria-label="上一层"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><button id="architecture-next" class="icon-button" data-tooltip="下一层" aria-label="下一层"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button><button id="architecture-close" class="icon-button" data-tooltip="关闭层内图" aria-label="关闭层内图"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></nav><svg id="front-graph" viewBox="0 0 800 700" width="100%" height="100%" role="group" aria-label="层内计算图"></svg></section>
 <button id="rank-return" hidden data-tooltip="返回层栈，保留视野">返回层栈 ↗</button><aside id="kv-memory" aria-label="Rank 内存与 KV 存储"><div id="kv-memory-graphic"></div><output id="kv-memory-status" aria-live="polite"></output><button id="kv-inspect-clear" type="button" hidden data-tooltip="取消缓存检查，保留播放位置">取消检查</button></aside>
 <section id="token-workspace" aria-labelledby="token-title">
- <div class="token-heading"><h2 id="token-title">Token</h2>
+ <div id="observation-resize" role="separator" aria-label="调整观察面板高度" aria-orientation="horizontal" tabindex="0" data-tooltip="上下拖动调整高度；方向键微调；双击恢复默认高度"><span></span></div>
+ <div class="token-heading"><h2 id="token-title">Token</h2><nav id="observation-modes" class="observation-modes" aria-label="底部观察维度"><button type="button" data-observe="tokens" aria-pressed="true" data-tooltip="观察缓存位置与逻辑页">Token / Page</button><button type="button" data-observe="tasks" aria-pressed="false" data-tooltip="Batch 与 KV Head 如何生成 Task">Task Generation</button><button type="button" data-observe="blocks" aria-pressed="false" data-tooltip="观察执行 Block 与 Task 分工">Block Assignment</button></nav>
   <p id="token-caption"></p>
  <div id="token-evidence" class="token-evidence" aria-live="polite">
   <div><h3 id="token-swa-title"></h3><p id="token-swa"></p></div>
@@ -39,6 +40,7 @@
   <span id="paged-task"></span>
  </div>
  <div id="profile-token-sequence" class="profile-token-sequence" hidden></div>
+ <div id="block-workspace" hidden></div>
  <div id="token-grid" class="token-grid" role="group" aria-label="序列位置"></div>
 </section>
 <section class="request-progress" aria-label="完整请求进度">
@@ -54,6 +56,440 @@
 
 <script src="rank-memory-view.js"></script>
 <script src="inference-kv-memory.js"></script>
+<script>
+/* Full PA semantic schema vendored from Compute Explorer; source metadata retained. */
+/* Source-grounded semantic model. Display strings are derived by the presentation
+ * adapter; graph identity, ports and evidence are independent of geometry. */
+(function (root) {
+  'use strict';
+  const FILE = 'paged_attention_pypto.py';
+  const parseRanges = (ranges) => ranges.split('、').map((part) => {
+    const [start, end = start] = part.split('–').map(Number);
+    return { start, end };
+  });
+  const source = (ranges, symbols = []) => ({ file: FILE, ranges: parseRanges(ranges), symbols });
+  /* 源码第 17–50 行声明的编译期常量。Tensor / Tile 的 shape 用这些常量名表达，
+     这里给出静态求值结果与声明行号：下游 Tensor Shape 视图可直接解析，
+     测试会重新从内嵌源码求值并逐条互校，避免常量与源码漂移。 */
+  const CONSTANTS = {
+    BATCH: { value: 16, line: 17 }, NUM_HEADS: { value: 40, line: 18 }, NUM_KV_HEADS: { value: 8, line: 19 },
+    GROUP: { value: 5, line: 20 }, HEAD_DIM: { value: 128, line: 21 }, BLOCK_SIZE: { value: 128, line: 22 },
+    STACK_PAGES: { value: 4, line: 23 }, STACK_TOKENS: { value: 512, line: 24 }, KV_HIDDEN: { value: 1024, line: 25 },
+    SEQ_LEN: { value: 3584, line: 26 }, MAX_BLOCKS: { value: 28, line: 27 }, NUM_BLOCKS: { value: 448, line: 28 },
+    NUM_TASKS: { value: 128, line: 29 }, ATTN_SPMD_BLOCKS: { value: 24, line: 30 }, PRE_LAUNCH: { value: 2, line: 31 },
+    TRANSFER_SLOTS: { value: 3, line: 32 }, FFTS_WORKSPACE_ELEMENTS: { value: 256, line: 33 },
+    QK_READY_EVENT: { value: 0, line: 34 }, SOFTMAX_READY_EVENT: { value: 1, line: 35 }, PV_READY_EVENT: { value: 2, line: 36 },
+    ROW_TILE: { value: 16, line: 37 }, AIV_ROW_TILE: { value: 8, line: 38 }, AIV_LANE0_ROWS: { value: 2, line: 39 },
+    TRANSFER_ROWS: { value: 1152, line: 40 }, SCALE: { value: 1 / Math.sqrt(128), line: 41 }, KCACHE_ROWS: { value: 57344, line: 42 },
+    HALF_DIM: { value: 64, line: 43 }, HIDDEN: { value: 5120, line: 44 }, ROPE_CORES: { value: 32, line: 48 },
+    ROPE_ITEMS_PER_CORE: { value: 4, line: 49 }, K_RED_ROWS: { value: 8, line: 50 },
+  };
+  /* 由 constants.py 提供、本文件无法静态求值的常量：只记录来源表达式，不断言数值。
+     Q_HEAD_PAD 另由第 63 行 assert 约束为 16。 */
+  const EXTERNAL_CONSTANTS = {
+    Q_HEAD_PAD: { expression: 'M.q_head_pad', line: 45, assert: 'assert Q_HEAD_PAD == 16', assertLine: 63 },
+    HEAD_DIM_INV: { expression: 'M.head_dim_inv', line: 46 },
+    EPS: { expression: 'M.eps', line: 47 },
+  };
+  /* 依赖运行时输入的维度名：只可能出现这些符号，不允许写成典型场景的固定数值。 */
+  const RUNTIME_DIMS = ['cache_token_rows', 'query_rows', 'active_batch', 'max_blocks_per_seq', 'lane_rows'];
+  const RESOLVED_NOTE = '由本算子已声明的输入、计算和视图映射推导；不代表运行采集结果。';
+  const evidence = (type, payload, notes = {}, resolved = []) => {
+    if (type === 'data') resolved = [...new Set([...resolved, ...['role', 'granularity', 'entity', 'relations', 'addressing'].filter((key) => key in payload)])];
+    const fact = Object.keys(payload).filter((key) => !resolved.includes(key));
+    return [
+      ...(fact.length ? [{ kind: 'fact', origin: 'source', fields: fact.map((key) => `${type}.${key}`), ...(notes.fact ? { note: notes.fact } : {}) }] : []),
+      ...(resolved.length ? [{ kind: 'resolved', origin: 'source', fields: resolved.map((key) => `${type}.${key}`), note: notes.resolved || RESOLVED_NOTE }] : []),
+    ];
+  };
+  const ordinaryPorts = (entity) => ({ inputs: { default: {} }, outputs: { default: entity ? { entity } : {} } });
+  function node(id, type, name, ranges, symbols, description, payload, resolved = [], notes = {}) {
+    return { id, type, name, description, source: source(ranges, symbols),
+      provenance: evidence(type, payload, notes, resolved), ports: ordinaryPorts(payload.entity), [type]: payload };
+  }
+  const D = (id, name, ranges, symbols, description, data, resolved, notes) => node(id, 'data', name, ranges, symbols, description, data, resolved, notes);
+  /* 操作节点可以再挂一条「形状依据」（例如 Matmul 的转置操作数）：它只复述源码里
+     已经存在的调用与作用对象，不引入新的计算语义，也不参与节点 / 边的判定。 */
+  const O = (id, name, ranges, api, description, category, symbols = [], extra = {}, resolved = [], notes = {}) => node(id, 'operation', name, ranges, symbols, description,
+    { semantics: description, category, api, ...extra }, resolved, notes);
+  const S = (id, name, ranges, symbols, description, state, resolved, notes) => node(id, 'state', name, ranges, symbols, description, state, resolved, notes);
+  const E = (s, t, label, type = 'data', extra = {}) => ({ id: `${s}>${t}:${label}`, s, t, type,
+    sourcePort: 'default', targetPort: 'default', label, ...extra });
+  function frame(id, nodes, edges, inputs, outputs) {
+    const ports = { inputs: {}, outputs: {} }, portMappings = { inputs: {}, outputs: {} };
+    for (const side of ['inputs', 'outputs']) {
+      for (const [name, binding] of Object.entries(side === 'inputs' ? inputs : outputs)) {
+        const spec = typeof binding === 'string' ? { node: binding, relation: 'view' } : binding;
+        const { entity, ...mapping } = spec;
+        ports[side][name] = entity ? { entity } : {};
+        portMappings[side][name] = { port: 'default', ...mapping };
+      }
+    }
+    return { graph: { schemaVersion: 2, id, nodes, edges, groups: [] }, ports, portMappings };
+  }
+  function C(id, name, ranges, symbols, description, category, api, child) {
+    const composite = { semantics: description, category, api, subgraph: child.graph, portMappings: child.portMappings };
+    return { ...node(id, 'composite', name, ranges, symbols, description, composite), ports: child.ports };
+  }
+  const view = (node, entity) => ({ node, entity, relation: 'view' });
+  const slice = (node, entity, description) => ({ node, entity, relation: 'slice', description });
+  const control = (node, entity, description) => ({ node, entity, relation: 'control', description });
+  const aggregate = (node, entity, description) => ({ node, entity, relation: 'aggregate', description });
+  /* 分页 Cache 的寻址表达式：读路径取页表 + 页内偏移，写路径取层基址 + slot。
+     物理页号由运行时 block_table 决定。 */
+  const cacheAccess = {
+    logicalPage: 'stack * STACK_PAGES + page_in_stack',
+    physicalPage: 'block_table_2d[batch, logical_page]',
+    row: 'cache_base + physical_page * BLOCK_SIZE + token_offset',
+    column: 'kv_head * HEAD_DIM + dim',
+    writeRow: 'cache_row = layer_cache_base_token_rows + write_slot',
+    writeColumn: 'cache_col : cache_col + HEAD_DIM = kv_head * HEAD_DIM',
+  };
+  const cachePayload = (key) => ({ role: 'cache', granularity: 'tensor', entity: `cache.${key}`,
+    symbol: key === 'key' ? 'key_cache_bsnd' : 'value_cache_bsnd',
+    shape: { allocated: ['cache_token_rows', 'KV_HIDDEN'] },
+    storage: { space: 'GM' },
+    addressing: { ...cacheAccess } });
+  const keyCache = (id, name = 'K Cache') => D(id, name, '17–25、101–107、194–198、261–295',
+    ['key_cache_bsnd', 'block_table_2d', 'cache_base', 'col'],
+    '分页 Key Cache 的二维访问视图（外部 pl.Tensor，位于 GM）。逻辑页经 block_table 映射到物理页；写入载荷为 BF16（第 198 行），但 Cache 元素类型未在签名或 Tile 标注中声明，故不声明 dtype。',
+    cachePayload('key'), ['storage'],
+    { fact: 'symbol 与 shape 取自第 101–102 行的 pl.reshape(key_cache, [cache_token_rows, KV_HIDDEN])：KV_HIDDEN = 1024 是源码常量，cache_token_rows 由运行时传入的 Cache 尺寸决定，不能写成固定行数。',
+      resolved: 'storage：外部 pl.Tensor 位于 GM（第 253–255 行以 GM writes 描述外部张量写入）；addressing 取自第 194–198、261–295 行的页表与行列寻址；role / granularity / entity 为语义归类。' });
+  const valueCache = (id, name = 'V Cache') => D(id, name, '17–25、101–107、210–213、364–429',
+    ['value_cache_bsnd', 'block_table_2d', 'cache_base', 'col'],
+    '分页 Value Cache 的二维访问视图（外部 pl.Tensor，位于 GM）。与 K Cache 使用相同的逻辑页表和行列寻址；dtype 由第 386–429 行 v0..v3 的 pl.Tile[[BLOCK_SIZE, HEAD_DIM], pl.BF16, …] 标注与第 210–213 行的 BF16 写入推导，函数签名本身未声明。',
+    { ...cachePayload('value'), dtype: 'BF16' }, ['storage', 'dtype'],
+    { fact: 'symbol 与 shape 取自第 103 行的 pl.reshape(value_cache, [cache_token_rows, KV_HIDDEN])；cache_token_rows 由运行时传入的 Cache 尺寸决定。',
+      resolved: 'dtype：第 391–429 行的 v0..v3 以 pl.BF16 Tile 直接从 value_cache_bsnd 载入，第 210–213 行也写入 BF16 载荷；storage：外部 pl.Tensor 位于 GM；addressing / role / granularity / entity 为语义归类。' });
+  const normFrame = (isQ) => frame(isQ ? 'q-rmsnorm' : 'k-rmsnorm', [
+    O('sum', 'Row Sum', isQ ? '229–229' : '175–175', ['pl.row_sum', 'pl.mul'], '按行求平方和。', 'reduction', [isQ ? 'q_ss' : 'k_ss']),
+    O('inv', 'Inverse RMS', isQ ? '230–230' : '176–176', ['pl.recip', 'pl.sqrt', 'pl.add', 'pl.mul'], '由平方和、HEAD_DIM_INV 和 EPS 求逆 RMS。', 'normalization', [isQ ? 'q_inv' : 'k_inv']),
+    O('weight', 'Norm Weight', isQ ? '231–234' : '177–180', ['pl.row_expand_mul', 'pl.col_expand_mul'], '应用 head 权重与逆 RMS。', 'normalization', [isQ ? 'q_heads' : 'k_normed']),
+  ], [E('sum', 'inv', 'sum'), E('inv', 'weight', 'inv_rms')],
+  { default: view('sum', isQ ? 'projection.q' : 'projection.k') }, { default: view('weight', isQ ? 'normalized.q' : 'normalized.k') });
+
+  const subgraphs = {
+    'q-prep': frame('q-preparation', [
+      C('norm', 'Q RMSNorm', '215–234', ['q_raw', 'q_heads'], '按 head 对 Q 应用 inv_rms、RMSNorm 与 q_norm_w。', 'normalization', ['pl.row_sum', 'pl.recip', 'pl.row_expand_mul'], normFrame(true)),
+      O('rope', 'Q RoPE', '235–246', ['pl.concat', 'pl.col_expand_mul', 'pl.sub', 'pl.add'], 'cos/sin 旋转 Q 的半维。', 'position', ['q_rotated']),
+      O('write', '写入 Q', '247–251', ['pl.cast'], 'BF16 Q 写入 q2d；不写 KV Cache。', 'store', ['q2d', 'q_rotated']),
+    ], [E('norm', 'rope', 'normalized Q'), E('rope', 'write', 'rotated Q')],
+    { Q: view('norm', 'projection.q') }, { Q: view('write', 'attention.q') }),
+    'k-prep': frame('k-preparation', [
+      C('norm', 'K RMSNorm', '162–180', ['k_raw', 'k_normed'], '按 head 对 K 应用 inv_rms、RMSNorm 与 k_norm_w。', 'normalization', ['pl.row_sum', 'pl.recip', 'pl.row_expand_mul'], normFrame(false)),
+      O('rope', 'K RoPE', '181–193', ['pl.concat', 'pl.col_expand_mul', 'pl.sub', 'pl.add'], 'cos/sin 旋转 K 的半维。', 'position', ['k_rotated']),
+      O('cast', 'BF16 K', '194–198', ['pl.cast'], 'K 转 BF16 后写入 Key Cache。', 'cast', ['k_rotated']),
+    ], [E('norm', 'rope', 'normalized K'), E('rope', 'cast', 'rotated K')],
+    { K: view('norm', 'projection.k') }, { K: view('cast', 'attention.k') }),
+    'v-scale': frame('v-scaling', [
+      O('scale', 'V × inv_rms', '200–207', ['pl.mul'], 'V 投影与 inv_rms 相乘。', 'elementwise', ['v_proj', 'inv_rms']),
+      O('cast', 'BF16 V', '200–213', ['pl.cast'], '缩放后的 V 转 BF16。', 'cast', ['v_row_bf16']),
+    ], [E('scale', 'cast', 'scaled V')], { V: view('scale', 'projection.v') }, { V: view('cast', 'attention.v') }),
+    'cache-append': frame('cache-append', [
+      D('slot', '写入位置', '146–155、194–194', ['slot_mapping', 'write_slot', 'cache_row'], 'slot_mapping 先钳制到非负值，再加当前层基址，决定当前 token 的 Cache 行。',
+        { role: 'metadata', granularity: 'scalar', symbol: 'write_slot', entity: 'metadata.slot', dtype: 'INDEX',
+          addressing: { source: 'slot_mapping[batch_idx]',
+            clamped: 'write_slot = pl.max(pl.cast(pl.tensor.read(slot_mapping, [batch_idx]), pl.INDEX), 0)',
+            cacheRow: 'cache_row = layer_cache_base_token_rows + write_slot' } },
+        [], { fact: 'symbol 与 dtype 取自第 152–155 行 write_slot 的 pl.cast(…, pl.INDEX) 定义。',
+          resolved: 'addressing 取自第 146–155 行与第 194 行的 slot_mapping → write_slot → cache_row 计算；role / granularity / entity 为语义归类。' }),
+      O('write-k', '追加 K', '194–198', [], 'K 载荷写入 Key Cache；这是索引赋值。', 'store', ['key_cache_bsnd', 'k_rotated']),
+      O('write-v', '追加 V', '210–213', [], 'V 载荷写入 Value Cache；这是索引赋值。', 'store', ['value_cache_bsnd', 'v_row_bf16']),
+      keyCache('key', 'Key Cache'), valueCache('value', 'Value Cache'),
+    ], [E('slot', 'write-k', 'slot', 'control'), E('slot', 'write-v', 'slot', 'control'), E('write-k', 'key', 'K'), E('write-v', 'value', 'V')],
+    { K: view('write-k', 'attention.k'), V: view('write-v', 'attention.v'), slot: view('slot', 'metadata.slot') },
+    { K: view('key', 'cache.key'), V: view('value', 'cache.value') }),
+    qk: frame('qk', [
+      D('q-tile', 'Q Tile', '269–276', ['q_tile', 'q2d'], '从 q2d 按 [qp_row, 0] 加载 ROW_TILE 行到 Mat；valid_shape 只保留当前 KV head 的 GROUP 行（第 269–276 行），其余行属于相邻 KV head 的 Q。外部 Tensor 的 dtype 未由此 load 显式声明。',
+        { role: 'input-view', granularity: 'tile', entity: 'attention.q', symbol: 'q_tile',
+          shape: { allocated: ['ROW_TILE', 'HEAD_DIM'], valid: ['GROUP', 'HEAD_DIM'] },
+          storage: { space: 'Mat' },
+          relations: [{ kind: 'slice', entity: 'attention.q', description: 'q_tile 是 q2d 张量（[query_rows, HEAD_DIM]，第 106 行）从行 qp_row = batch * NUM_HEADS + kv_head * GROUP 起的 ROW_TILE 行切片，其中 GROUP 行为当前 KV head 的有效 Q。' }],
+          addressing: { rowBase: 'qp_row = batch * NUM_HEADS + kv_head * GROUP' } },
+        [], { fact: 'shape / symbol 取自第 270–276 行 pl.load 的 [ROW_TILE, HEAD_DIM] 与 valid_shape=[GROUP, HEAD_DIM]；ROW_TILE = 16 = Q_HEAD_PAD，GROUP = 5；storage 取自 target_memory=pl.MemorySpace.Mat。' }),
+      D('k-page', 'K Page', '261–267、282–295', ['qk_k_page', 'qk_ph', 'block_table_2d'], '通过逻辑页表读物理页号，再将一个 KV head 的 K Page 加载为 Mat Tile。Page 不是 SPMD Block；load 未声明 valid_shape，整页有效。',
+        { role: 'cache-view', granularity: 'page', entity: 'cache.key.page', symbol: 'qk_k_page',
+          shape: { allocated: ['BLOCK_SIZE', 'HEAD_DIM'] },
+          storage: { space: 'Mat' },
+          relations: [{ kind: 'slice', entity: 'cache.key', description: 'qk_k_page 是 Key Cache 中物理页 qk_ph 的 [BLOCK_SIZE, HEAD_DIM] 页切片，列 col = kv_head * HEAD_DIM。' }],
+          addressing: { ...cacheAccess } },
+        [], { fact: 'shape / symbol 取自第 290–295 行 pl.load 的 [BLOCK_SIZE, HEAD_DIM] 与 target_memory=pl.MemorySpace.Mat；页号 qk_ph 取自第 286–289 行的 block_table_2d 读取。' }),
+      O('matmul', 'QK Matmul', '296–300', ['pl.matmul', 'pl.tile.transpose_view'], 'Q Tile 与 K Page 转置相乘，显式输出 FP32。', 'matmul', ['qk_score_page'],
+        { transposedInput: { node: 'k-page', api: 'pl.tile.transpose_view', line: 298,
+          note: '第 298 行把 K Page 经 pl.tile.transpose_view 作为 matmul 的第二个操作数，收缩维因此是 K Page 的 HEAD_DIM。' } },
+        ['transposedInput'],
+        { resolved: 'transposedInput：第 296–299 行的 pl.matmul(q_tile, pl.tile.transpose_view(qk_k_page), out_dtype=pl.FP32) 已包含这两次调用，这里只把「右操作数是 K Page 的转置视图」记下来，供 Shape 关系展示使用。' }),
+      D('score', 'FP32 Scores', '296–305', ['qk_score_page', 'score_transfer'], '每 Page 的 FP32 Scores 写入 score_transfer 的当前 Stack 列区间；它是父图 Stack Scores 的切片，不是整个 Stack。',
+        { role: 'intermediate', granularity: 'page', entity: 'attention.scores', symbol: 'qk_score_page', dtype: 'FP32',
+          shape: { allocated: ['ROW_TILE', 'BLOCK_SIZE'] },
+          relations: [{ kind: 'slice', entity: 'attention.scores', description: 'pl.store(..., [produce_row, qk_page_offset * BLOCK_SIZE], score_transfer) 将每页写入当前 Stack。' }] },
+        ['shape'],
+        { fact: 'dtype 取自第 296–300 行 pl.matmul(..., out_dtype=pl.FP32)。',
+          resolved: 'shape：qk_score_page = q_tile(ROW_TILE × HEAD_DIM) × transpose_view(k_page)(HEAD_DIM × BLOCK_SIZE) → [ROW_TILE, BLOCK_SIZE]；源码未在 matmul 处声明 valid，故不声明 valid；granularity / role / entity 为语义归类。' }),
+    ], [E('q-tile', 'matmul', 'Q'), E('k-page', 'matmul', 'Kᵀ'), E('matmul', 'score', 'Scores')],
+    { Q: view('q-tile', 'attention.q'), K: slice('k-page', 'cache.key', '从 K Cache 取当前逻辑页对应的 KV head 切片。'), block: control('k-page', 'metadata.block-table', '页表提供物理页号，不是 K 载荷。') },
+    { Scores: aggregate('score', 'attention.scores', '每页 FP32 Scores 按 page offset 写入同一个 Stack 的 score_transfer。') }),
+    'scale-mask': frame('scaling-mask', [
+      O('scale', 'Scaling', '777–777', ['pl.tile.muls'], 'Scores 乘 SCALE = 1/√HEAD_DIM。', 'elementwise', ['score_scaled', 'SCALE']),
+      O('mask', 'Valid Columns Mask', '778–788', ['pl.set_validshape', 'pl.fillpad'], '根据 seq_len 处理当前 Stack 的有效列和填充值。', 'masking', ['score_masked', 'valid_cols']),
+    ], [E('scale', 'mask', 'scaled Scores')],
+    { Scores: view('scale', 'attention.scores'), seq: control('mask', 'metadata.seq-lens', 'seq_len 决定当前 Stack 的有效列数。') }, { Scores: view('mask', 'attention.masked-scores') }),
+    softmax: frame('online-softmax', [
+      D('scores', 'Masked Scores', '770–788', ['score_masked'], '当前 Stack 的 score_aiv 经过 SCALE 与有效列处理后的视图；valid 列数由 seq_len 决定（第 778–788 行）。',
+        { role: 'intermediate', granularity: 'stack', entity: 'attention.masked-scores', symbol: 'score_masked',
+          shape: { allocated: ['AIV_ROW_TILE', 'STACK_TOKENS'], valid: ['lane_rows', 'STACK_TOKENS'] },
+          storage: { space: 'Vec' } },
+        [], { fact: 'shape 取自第 770–776 行 pl.load 的 [AIV_ROW_TILE, STACK_TOKENS] 与 valid_shape=[lane_rows, STACK_TOKENS]，以及第 782–788 行的 pl.set_validshape；storage 取自 target_memory=pl.MemorySpace.Vec。' }),
+      S('previous', 'Previous · m_old / l_old', '745–760', ['m_iter', 'l_iter'], '上轮 Stack 的 running max 和归一化和。m_old 对应 m_iter，l_old 对应 l_iter；首轮读取源码初始化值，不表示采集到的运行数值。',
+        { entity: 'softmax.state', granularity: 'stack', dtype: 'FP32', initial: 'm = -3.0e38; l_sum = 0', update: '读取上轮 m_after / l_after', feedback: 'updated → previous，下一轮 Stack' }),
+      O('local-max', 'Row Maximum', '789–789', ['pl.row_max'], '计算当前 Stack 的局部最大值。', 'reduction', ['local_m']),
+      O('next-max', 'Update Maximum', '790–790', ['pl.maximum'], 'next_m = max(local_m, m_iter)。', 'reduction', ['next_m']),
+      O('rescale', 'Rescale', '791–791', ['pl.exp', 'pl.sub'], 'rescale = exp(m_iter − next_m)。', 'elementwise', ['rescale']),
+      O('exp', 'Exponential', '792–792', ['pl.exp', 'pl.row_expand_sub'], '计算未除以全局 l_sum 的概率权重。', 'elementwise', ['probability_aiv']),
+      D('probability', 'Probability P', '802–815', ['probability_bf16', 'probability_transfer'], '当前 Stack 的 BF16 概率权重写入 probability_transfer，供 PV 消费；probability_bf16 由算内 probability_aiv 转换而来，其所在存储空间未显式声明，故不声明 storage。',
+        { role: 'intermediate', granularity: 'stack', entity: 'attention.probability', symbol: 'probability_bf16', dtype: 'BF16' },
+        [], { fact: 'dtype 取自第 802–806 行 pl.cast(..., target_type=pl.BF16, mode="rint")；symbol 取自第 802、807–816 行的 set_validshape 与 pl.store。' }),
+      O('sum', 'Normalization Sum', '793–801', ['pl.row_sum', 'pl.add', 'pl.mul'], 'next_l = rescale × l_iter + row_sum(probability_reduce)。', 'reduction', ['next_l']),
+      S('updated', 'Updated · m_new / l_new', '791–801、823–825、856–861', ['m_after', 'l_after', 'rescale_after'], 'm_new = max(m_old, row_max(Scores))；l_new = exp(m_old − m_new) × l_old + sum(exp(Scores − m_new))。更新后反馈到下一 Stack；rescale 进入延迟 FIFO。',
+        { entity: 'softmax.state', granularity: 'stack', dtype: 'FP32', initial: 'm = -3.0e38; l_sum = 0; pending rescale = 1', update: 'm_after=next_m; l_after=next_l; rescale_after=rescale', feedback: 'updated → previous；rescale → Pending Rescale FIFO' }),
+    ], [E('scores', 'local-max', 'Scores'), E('scores', 'exp', 'Scores'), E('local-max', 'next-max', 'local_m'),
+      E('previous', 'next-max', 'm_iter', 'state'), E('previous', 'rescale', 'm_iter', 'state'), E('next-max', 'rescale', 'next_m'), E('next-max', 'exp', 'next_m'),
+      E('exp', 'probability', 'P'), E('exp', 'sum', 'ΣP'), E('rescale', 'sum', 'rescale'), E('previous', 'sum', 'l_iter', 'state'),
+      E('next-max', 'updated', 'next_m', 'state'), E('sum', 'updated', 'next_l', 'state'), E('updated', 'previous', 'next stack', 'feedback', { route: 'feedback' })],
+    { Scores: view('scores', 'attention.masked-scores') }, { P: view('probability', 'attention.probability'), state: view('updated', 'softmax.state') }),
+    pv: frame('pv', [
+      D('probability', 'Probability P', '435–446', ['probability0', 'probability_transfer'], '从 probability_transfer 加载当前 Page 的 BF16 概率 Tile 到 Mat：allocated [ROW_TILE, BLOCK_SIZE]、valid [GROUP, BLOCK_SIZE]。',
+        { role: 'input-view', granularity: 'page', entity: 'attention.probability', symbol: 'probability0', dtype: 'BF16',
+          shape: { allocated: ['ROW_TILE', 'BLOCK_SIZE'], valid: ['GROUP', 'BLOCK_SIZE'] },
+          storage: { space: 'Mat' },
+          relations: [{ kind: 'slice', entity: 'attention.probability', description: 'probability0..3 是本 Stack 概率列区间（第 k 个 Page 对应列 k * BLOCK_SIZE）的 [ROW_TILE, BLOCK_SIZE] 切片，valid 行数为 GROUP。' }] },
+        [], { fact: 'shape / dtype / symbol 取自第 435–446 行 pl.Tile[[ROW_TILE, BLOCK_SIZE], pl.BF16, …] 与 pl.load(..., valid_shape=[GROUP, BLOCK_SIZE], target_memory=pl.MemorySpace.Mat)；probability1..3 同型（第 452–502 行）。' }),
+      D('v-page', 'V Page', '364–407', ['v0', 'pv_ph0', 'block_table_2d'], '通过 block_table 读物理页号，加载一个 KV head 的 V Page 到 Mat；v0 显式声明 BF16。load 未声明 valid_shape，整页有效。',
+        { role: 'cache-view', granularity: 'page', entity: 'cache.value.page', symbol: 'v0', dtype: 'BF16',
+          shape: { allocated: ['BLOCK_SIZE', 'HEAD_DIM'] },
+          storage: { space: 'Mat' },
+          relations: [{ kind: 'slice', entity: 'cache.value', description: 'v0..v3 是 Value Cache 中物理页 pv_ph0..3 的 [BLOCK_SIZE, HEAD_DIM] 页切片，列 col = kv_head * HEAD_DIM。' }],
+          addressing: { ...cacheAccess } },
+        [], { fact: 'shape / dtype / symbol 取自第 386–429 行 pl.Tile[[BLOCK_SIZE, HEAD_DIM], pl.BF16, …] 与 pl.load(..., target_memory=pl.MemorySpace.Mat)；页号取自第 370–385 行的 block_table_2d 读取。' }),
+      O('matmul', 'PV Matmul', '447–718', ['pl.matmul', 'pl.matmul_acc'], 'P 与 V Page 相乘；同一 Stack 的 Page 结果在 FP32 accumulator 中累加。', 'matmul', ['pv0', 'pv3']),
+      D('partial', 'PV Partial', '447–451、503–718', ['pv3', 'pv_transfer'], '当前 Stack 的 FP32 Context partial 写入 pv_transfer；这是单轮数据结果，不是跨 Stack 状态。',
+        { role: 'intermediate', granularity: 'stack', entity: 'context.partial', symbol: 'pv_transfer', dtype: 'FP32',
+          shape: { allocated: ['ROW_TILE', 'HEAD_DIM'] },
+          storage: { space: 'GM' } },
+        ['shape', 'storage'],
+        { fact: 'dtype 取自第 447–451 行 pl.matmul(..., out_dtype=pl.FP32)；symbol 取自第 503 行 pl.store(pv3, ..., pv_transfer)。',
+          resolved: 'shape：pv3 = probability(ROW_TILE × BLOCK_SIZE) × v(BLOCK_SIZE × HEAD_DIM) → [ROW_TILE, HEAD_DIM]；storage：pv_transfer 是外部 pl.Tensor，位于 GM；granularity / role / entity 为语义归类。' }),
+    ], [E('probability', 'matmul', 'P'), E('v-page', 'matmul', 'V'), E('matmul', 'partial', 'partial')],
+    { P: slice('probability', 'attention.probability', '从当前 Stack 的 probability_transfer 取一个 Page 的概率列。'), V: slice('v-page', 'cache.value', '从 V Cache 取当前物理页的 KV head 切片。') }, { partial: view('partial', 'context.partial') }),
+    'context-acc': frame('context-accumulate', [
+      D('partial', 'PV Partial', '835–841', ['pv_aiv', 'pv_transfer'], '从当前 Stack 的 PV 传输区加载局部 partial 到 Vec；load 未显式声明外部 buffer dtype。',
+        { role: 'input-view', granularity: 'stack', entity: 'context.partial', symbol: 'pv_aiv', dtype: 'FP32',
+          shape: { allocated: ['AIV_ROW_TILE', 'HEAD_DIM'], valid: ['lane_rows', 'HEAD_DIM'] },
+          storage: { space: 'Vec' } },
+        ['dtype'],
+        { fact: 'shape / symbol 取自第 835–841 行 pl.load 的 [AIV_ROW_TILE, HEAD_DIM]、valid_shape=[lane_rows, HEAD_DIM]；storage 取自 target_memory=pl.MemorySpace.Vec。',
+          resolved: 'dtype：第 835–841 行的 load 未声明类型，由第 447–451、503 行的 FP32 生产端与第 748–753 行的 FP32 累加器推导；granularity / role / entity 为语义归类。' }),
+      S('pending', 'Delayed Rescale · pending0', '754–760、848–861', ['pending0_iter', 'pending1_iter', 'rescale_after'], 'rescale_after 先进入 pending1，下一次移到 pending0，再由 Context 消费；延迟使缩放因子与所累加的 PV partial 对齐。源码只给出静态传递关系，不提供运行值。',
+        { entity: 'context.pending-rescale', granularity: 'stack', initial: 'pending0 = 1; pending1 = 1', update: 'pending0_after=pending1_iter; pending1_after=rescale_after', feedback: 'pl.range init_values 与 pl.yield_ 传递到下一 tick' }),
+      S('old', 'Previous · o_old', '748–760、842–861', ['o_iter', 'o_after'], '跨 Stack 保存的 Context accumulator。o_old 对应 o_iter；首轮初始化为 0，之后读取上轮 o_after。',
+        { entity: 'context.o', granularity: 'stack', dtype: 'FP32',
+          shape: { allocated: ['AIV_ROW_TILE', 'HEAD_DIM'], valid: ['lane_rows', 'HEAD_DIM'] },
+          initial: 'o = 0', update: 'o_after = o_iter × pending0_iter + pv_aiv', feedback: 'add → old，下一轮 Stack' },
+        [], { fact: 'shape 与 dtype 取自第 748–753 行的 pl.tile.full([AIV_ROW_TILE, HEAD_DIM], dtype=pl.FP32) 与 pl.set_validshape(o_init, lane_rows, HEAD_DIM)；initial / update / feedback 取自第 748–760、842–861 行的 pl.range / pl.yield_ 传递。' }),
+      O('rescale', 'Rescale Context', '842–843', ['pl.row_expand_mul'], '旧 Context 乘 pending0。', 'elementwise', ['o_iter', 'pending0_iter']),
+      O('add', 'Accumulate', '842–844', ['pl.add'], '把当前 Stack 的 PV partial 加到重缩放后的 Context。', 'accumulation', ['o_after']),
+      S('updated', 'Updated · o_new', '842–844、856–861', ['o_after'], 'o_new = o_old × pending0 + PV partial；经 pl.yield_ 传给下一 Stack 的 o_old。',
+        { entity: 'context.o', granularity: 'stack', dtype: 'FP32', initial: 'o = 0', update: 'o_after = o_iter × pending0_iter + pv_aiv', feedback: 'updated → previous，下一轮 Stack' }),
+    ], [E('pending', 'rescale', 'pending0', 'state'), E('old', 'rescale', 'o', 'state'), E('rescale', 'add', 'rescaled o'), E('partial', 'add', 'PV partial'), E('add', 'updated', 'o_after', 'state'), E('updated', 'old', 'next stack o', 'feedback', { route: 'feedback' })],
+    { partial: view('partial', 'context.partial'), state: aggregate('pending', 'softmax.state', 'rescale_after 经双槽 FIFO 延迟为 pending0_iter/pending1_iter。') }, { Context: view('updated', 'context.o') }),
+    'output-norm': frame('output-normalization', [
+      O('normalize', 'Final Normalize', '864–865', ['pl.recip', 'pl.row_expand_mul'], 'Context o 除以最终 l_sum。', 'normalization', ['o', 'l_sum']),
+      O('cast', 'Cast BF16', '864–868', ['pl.cast'], '归一化 Context 转 BF16。', 'cast', ['ctx']),
+      O('store', 'Store Output', '869–873', ['pl.store'], '按当前 Batch/KV 组及 AIV lane 写回 Attention Output。', 'store', ['ctx', 'out2d']),
+    ], [E('normalize', 'cast', 'Context'), E('cast', 'store', 'BF16')],
+    { Context: control('normalize', 'context.normalization-state', '输出归一化同时读取最终 o 与 l_sum。') }, { Output: view('store', 'attention.output') }),
+  };
+
+  // The layout reads these phase memberships; node identity and dependencies stay in the graph.
+  subgraphs.softmax.graph.stateEvolution = {
+    previous: ['previous', 'scores'], current: ['local-max', 'next-max', 'rescale', 'exp', 'sum', 'probability'], updated: ['updated'] };
+  subgraphs['context-acc'].graph.stateEvolution = {
+    previous: ['old', 'pending', 'partial'], current: ['rescale', 'add'], updated: ['updated'] };
+
+  const nodes = [
+    D('q-proj', 'Q Projection', '68–94、215–227', ['q_proj'], '外部 Q 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码只按下标 [batch_idx, kv_head * GROUP * HEAD_DIM + q] 取 [1, GROUP * HEAD_DIM] 的行切片，列上界为 NUM_HEADS * HEAD_DIM，行数由运行时决定，故不声明 shape 与 dtype。',
+      { role: 'input', granularity: 'tensor', entity: 'projection.q', symbol: 'q_proj',
+        storage: { space: 'GM' },
+        addressing: { row: 'batch_idx : batch_idx + 1', column: 'kv_head * GROUP * HEAD_DIM : (kv_head + 1) * GROUP * HEAD_DIM', columnUpperBound: 'NUM_HEADS * HEAD_DIM = HIDDEN' } },
+      ['storage'],
+      { fact: 'symbol 取自第 78 行函数签名；dtype 与完整 shape 源码未声明，两个字段缺省。',
+        resolved: 'storage：外部 pl.Tensor 位于 GM（第 253–255 行以 GM writes 描述外部张量写入）；addressing 取自第 219–222 行的行 / 列切片；role / granularity / entity 为语义归类。' }),
+    D('k-proj', 'K Projection', '68–94、162–173', ['k_proj'], '外部 K 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码按下标 [batch_idx, cache_col + k] 取 [1, HEAD_DIM] 的行切片，列上界为 NUM_KV_HEADS * HEAD_DIM = KV_HIDDEN，行数由运行时决定，故不声明 shape 与 dtype。',
+      { role: 'input', granularity: 'tensor', entity: 'projection.k', symbol: 'k_proj',
+        storage: { space: 'GM' },
+        addressing: { row: 'batch_idx : batch_idx + 1', column: 'cache_col : cache_col + HEAD_DIM = kv_head * HEAD_DIM : … + HEAD_DIM', columnUpperBound: 'KV_HIDDEN = NUM_KV_HEADS * HEAD_DIM' } },
+      ['storage'],
+      { fact: 'symbol 取自第 79 行函数签名；dtype 与完整 shape 源码未声明，两个字段缺省。',
+        resolved: 'storage：外部 pl.Tensor 位于 GM；addressing 取自第 165–168 行的行 / 列切片（cache_col = kv_head * HEAD_DIM，第 161 行）；role / granularity / entity 为语义归类。' }),
+    D('v-proj', 'V Projection', '68–94、200–207', ['v_proj'], '外部 V 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码按下标 [batch_idx, cache_col + v] 取 [1, HEAD_DIM] 的行切片，列上界为 KV_HIDDEN，行数由运行时决定，故不声明 shape 与 dtype。',
+      { role: 'input', granularity: 'tensor', entity: 'projection.v', symbol: 'v_proj',
+        storage: { space: 'GM' },
+        addressing: { row: 'batch_idx : batch_idx + 1', column: 'cache_col : cache_col + HEAD_DIM = kv_head * HEAD_DIM : … + HEAD_DIM', columnUpperBound: 'KV_HIDDEN = NUM_KV_HEADS * HEAD_DIM' } },
+      ['storage'],
+      { fact: 'symbol 取自第 80 行函数签名；dtype 与完整 shape 源码未声明，两个字段缺省。',
+        resolved: 'storage：外部 pl.Tensor 位于 GM；addressing 取自第 202–205 行的行 / 列切片；role / granularity / entity 为语义归类。' }),
+    C('q-prep', 'Q Norm → RoPE', '215–251', ['q_raw', 'q_heads', 'q_rotated', 'q2d'], 'Q 乘 inv_rms、按 head 归一化，再施加 RoPE，写入 q2d。', 'normalization', ['pl.row_sum', 'pl.recip', 'pl.concat'], subgraphs['q-prep']),
+    C('k-prep', 'K Norm → RoPE', '162–198', ['k_raw', 'k_normed', 'k_rotated'], 'K 乘 inv_rms、按 head 归一化，再施加 RoPE。', 'normalization', ['pl.row_sum', 'pl.recip', 'pl.concat'], subgraphs['k-prep']),
+    C('v-scale', 'V Scaling', '200–213', ['v_row_bf16'], 'V 按 inv_rms 缩放并转 BF16。', 'elementwise', ['pl.mul', 'pl.cast'], subgraphs['v-scale']),
+    D('q', 'Q', '247–251', ['q_rotated', 'q2d'], 'Q 在 q2d 中的张量视图（GM）：q2d = pl.reshape(q_tnd_flat, [query_rows, HEAD_DIM])（第 106 行），本 kernel 只写入 (batch, kv_head) 组对应的 GROUP 行（第 247–251 行）。归一化在 Q_HEAD_PAD = 16 行的填充 tile 上完成，只有前 GROUP 行是有效 Q。dtype 描述写入载荷（pl.cast → BF16），不声明 q2d 的存储类型。',
+      { role: 'intermediate', granularity: 'tensor', entity: 'attention.q', symbol: 'q2d', dtype: 'BF16',
+        shape: { allocated: ['query_rows', 'HEAD_DIM'], valid: ['GROUP', 'HEAD_DIM'] },
+        storage: { space: 'GM' },
+        addressing: { rowBase: 'q_row = batch_idx * NUM_HEADS + kv_head * GROUP', rowExtent: 'q_rotated[0:GROUP, :]' } },
+      ['shape', 'storage'],
+      { fact: 'dtype 取自第 248–251 行 pl.cast(..., target_type=pl.BF16)；symbol（q2d）与 source.symbols 取自第 247–251 行。',
+        resolved: 'shape.allocated 取自第 106 行的 pl.reshape(q_tnd_flat, [query_rows, HEAD_DIM])，query_rows = pl.tensor.dim(q_tnd_flat, 0) 是运行时量；shape.valid 取自第 248–251 行的写入切片 q2d[q_row : q_row + GROUP, :]；storage：外部张量位于 GM；granularity：本节点描述整个 q2d 张量，Tile 形状见 qk/q-tile。' }),
+    D('k', 'K', '181–198', ['k_rotated'], '当前 token 单个 KV head 的 K 载荷。归一化在 K_RED_ROWS = 8 行的填充 tile 上完成（行 1..7 为 0 填充，第 162–172 行），随后取 k_full = k_normed[0:1, :]，RoPE 后转 BF16 追加到 Key Cache（第 181–198 行）。',
+      { role: 'intermediate', granularity: 'token', entity: 'attention.k', symbol: 'k_rotated', dtype: 'BF16',
+        shape: { allocated: [1, 'HEAD_DIM'] },
+        addressing: { reductionTile: 'k_raw = pl.reshape(pl.concat(k_proj[batch_idx : batch_idx + 1, cache_col : cache_col + HEAD_DIM], k_red_pad), [K_RED_ROWS, HEAD_DIM])，行 1..7 为 0 填充', payload: 'k_full = k_normed[0:1, :]' } },
+      ['shape'],
+      { fact: 'dtype 取自第 198 行 pl.cast(k_rotated, target_type=pl.BF16)；symbol 取自第 181–193 行的 k_full / k_rotated。',
+        resolved: 'shape：K 载荷是 1 行 × HEAD_DIM 的行切片（第 181、193 行），不是整个 [K_RED_ROWS, HEAD_DIM] 归约 tile；addressing 取自第 162–172、181 行；granularity / role / entity 为语义归类。' }),
+    D('v', 'V', '200–213', ['v_row_bf16'], '当前 token 单个 KV head 的 BF16 V 载荷：v_proj 的 [1, HEAD_DIM] 行切片乘 inv_rms 后转 BF16，再按 cache_row / cache_col 写入 Value Cache（第 200–213 行）。',
+      { role: 'intermediate', granularity: 'token', entity: 'attention.v', symbol: 'v_row_bf16', dtype: 'BF16',
+        shape: { allocated: [1, 'HEAD_DIM'] },
+        addressing: { payload: 'pl.cast(pl.mul(v_proj[batch_idx : batch_idx + 1, cache_col : cache_col + HEAD_DIM], inv_rms), target_type=pl.BF16)', writeRow: 'cache_row = layer_cache_base_token_rows + write_slot' } },
+      ['shape'],
+      { fact: 'dtype 与 symbol 取自第 200–213 行的 pl.cast(..., target_type=pl.BF16) 与 v_row_bf16 写入。',
+        resolved: 'shape：载荷是 v_proj 的单行切片（第 202–205 行）→ [1, HEAD_DIM]；addressing 取自第 200–213 行；granularity / role / entity 为语义归类。' }),
+    D('aux', 'Aux Inputs', '68–94、146–155、261–267', ['seq_lens', 'block_table', 'slot_mapping'], '运行时索引与控制输入（外部 pl.Tensor，GM）。三者的元素类型与行数都未在源码中声明：seq_lens 决定有效长度与 active_batch；slot_mapping 给出当前 token 的写入槽位（第 146–155 行先钳制到非负再加层基址）；block_table 提供逻辑页到物理页映射，并 reshape 为 [active_batch, max_blocks_per_seq]。',
+      { role: 'metadata', granularity: 'bundle', entity: 'metadata.bundle', symbol: 'seq_lens, block_table, slot_mapping',
+        storage: { space: 'GM' },
+        addressing: { activeBatch: 'active_batch = pl.tensor.dim(seq_lens, 0)', blockTable: 'block_table_2d = pl.reshape(block_table, [active_batch, max_blocks_per_seq])，max_blocks_per_seq = pl.tensor.dim(block_table, 0) // active_batch', slotMapping: 'write_slot = pl.max(pl.cast(pl.tensor.read(slot_mapping, [batch_idx]), pl.INDEX), 0)', seqLength: 'seq_len = pl.read(seq_lens, [batch])' } },
+      ['storage'],
+      { fact: 'symbols 取自第 73、72、75 行函数签名；三个张量的 dtype 与 shape 源码未声明，两个字段缺省。',
+        resolved: 'storage：外部 pl.Tensor 位于 GM；addressing 取自第 98、104–105、146–155、264 行的读取与 reshape 表达式；role / granularity / entity 为语义归类。' }),
+    C('cache-append', 'Cache Append', '194–198、210–213', ['key_cache_bsnd', 'value_cache_bsnd'], '当前 token 的 K/V 载荷按 cache_row 写入对应 Cache。', 'store', [], subgraphs['cache-append']),
+    keyCache('k-cache'), valueCache('v-cache'),
+    C('qk', 'QK Matmul', '269–276、285–305、306–356', ['q_tile', 'qk_k_page', 'qk_score_page', 'score_transfer'], 'Q 与映射后的 K Page 相乘；每页 FP32 结果写入当前 Stack 的 Scores 区间。', 'matmul', ['pl.load', 'pl.matmul'], subgraphs.qk),
+    D('scores', 'Scores', '278–305、770–776', ['score_transfer', 'score_aiv'], '多个 Page 的 QK Scores 按列区间写入 score_transfer（GM），再按整个 Stack 加载到 AIV。score_transfer 的形状由写入地址推导，不代表运行场景的固定配置。',
+      { role: 'intermediate', granularity: 'stack', entity: 'attention.scores', symbol: 'score_transfer', dtype: 'FP32',
+        shape: { allocated: ['TRANSFER_ROWS', 'STACK_TOKENS'] },
+        storage: { space: 'GM' },
+        relations: [{ kind: 'aggregate', entity: 'attention.scores', description: 'qk/score 每页结果按 qk_page_offset * BLOCK_SIZE 写入本 Stack。' }] },
+      ['shape', 'storage'],
+      { fact: 'dtype 取自第 296–300 行 pl.matmul(..., out_dtype=pl.FP32)；symbol 取自第 304、771 行。',
+        resolved: 'shape：签名未声明 score_transfer 的形状，由第 268、283 行的写入行址 transfer_base + (stack % TRANSFER_SLOTS) * ROW_TILE 与第 303 行的列址 qk_page_offset * BLOCK_SIZE 推导 → [TRANSFER_ROWS, STACK_TOKENS]，其中 TRANSFER_ROWS = ATTN_SPMD_BLOCKS * TRANSFER_SLOTS * ROW_TILE = 1152、STACK_TOKENS = 512；storage：外部 pl.Tensor 位于 GM；granularity / role / entity 为语义归类。' }),
+    C('scale-mask', 'Scaling + Mask', '777–788', ['score_scaled', 'score_masked', 'valid_cols'], '缩放 Scores，再根据 seq_len 处理末 Stack 的无效列。', 'masking', ['pl.tile.muls', 'pl.set_validshape', 'pl.fillpad'], subgraphs['scale-mask']),
+    C('softmax', 'Online Softmax', '745–825、856–861', ['m_iter', 'l_iter', 'probability_bf16', 'm_after', 'l_after'], '跨 Stack 更新 running max 和归一化和，输出 BF16 概率权重及 rescale 状态。', 'normalization', ['pl.row_max', 'pl.exp', 'pl.row_sum'], subgraphs.softmax),
+    D('probability', 'Probability P', '802–815', ['probability_bf16', 'probability_transfer'], '本 Stack 的 BF16 权重尚未除以全局 l_sum，供 PV 消费。概率写在 probability_transfer 的两个 Page 列区间内。',
+      { role: 'intermediate', granularity: 'stack', entity: 'attention.probability', symbol: 'probability_bf16', dtype: 'BF16',
+        shape: { allocated: ['TRANSFER_ROWS', 'STACK_TOKENS'] },
+        storage: { space: 'GM' } },
+      ['shape', 'storage'],
+      { fact: 'dtype 取自第 802–806 行 pl.cast(..., target_type=pl.BF16, mode="rint")；symbol 取自第 802、814 行。',
+        resolved: 'shape：由第 283、364–367 行的写入行址与第 812–816 行 pl.store(..., [produce_row + lane_row, 0], probability_transfer) 推导 → [TRANSFER_ROWS, STACK_TOKENS]；storage：probability_transfer 是外部 pl.Tensor，位于 GM；granularity / role / entity 为语义归类。' }),
+    C('pv', 'PV Matmul', '364–718', ['probability0', 'v0', 'pv3', 'pv_transfer'], 'P 与映射后的 V Page 相乘，Stack 内各页结果累加为 FP32 partial。', 'matmul', ['pl.load', 'pl.matmul', 'pl.matmul_acc'], subgraphs.pv),
+    C('context-acc', 'Context Accumulate', '827–861', ['pv_aiv', 'o_iter', 'o_after', 'pending0_iter'], '旧 Context 乘延迟 rescale，再加当前 Stack 的 PV partial。', 'accumulation', ['pl.row_expand_mul', 'pl.add'], subgraphs['context-acc']),
+    S('context', 'Context', '745–760、842–861', ['o', 'l_sum'], '跨 Stack 累积的 o 与归一化和 l_sum，是最终输出归一化的状态，不是单轮 PV 数据。o 是 [AIV_ROW_TILE, HEAD_DIM] 的 FP32 累加器（valid 行 lane_rows，第 748–753 行，形状见 context-acc/old）；l_sum 由行归约产生，列布局未显式声明，两个状态形状不同，故本节点不声明 shape。',
+      { entity: 'context.normalization-state', granularity: 'stack', dtype: 'FP32', initial: 'o = 0; l_sum = 0', update: 'o = o_after; l_sum = l_after', feedback: 'pl.range init_values / pl.yield_ 跨 tick 传递' }),
+    C('output-norm', 'Output Normalize', '864–873', ['o', 'l_sum', 'ctx', 'out2d'], '所有 Stack 完成后，以最终 l_sum 归一化 o，转 BF16 并写回 out2d。', 'normalization', ['pl.recip', 'pl.row_expand_mul', 'pl.cast', 'pl.store'], subgraphs['output-norm']),
+    D('output', 'Attention Output', '864–873', ['ctx', 'out2d'], '最终 BF16 Attention 载荷按 Batch、KV head、GROUP 和 lane 对应行写回 out2d；out2d = pl.reshape(out, [query_rows, HEAD_DIM])（第 108 行），本次调用只写 lane_rows 行（第 869–873 行）。dtype 描述 ctx 载荷。',
+      { role: 'output', granularity: 'tensor', entity: 'attention.output', symbol: 'out2d', dtype: 'BF16',
+        shape: { allocated: ['query_rows', 'HEAD_DIM'], valid: ['lane_rows', 'HEAD_DIM'] },
+        storage: { space: 'GM' },
+        addressing: { rowBase: 'batch * NUM_HEADS + kv_head * GROUP + lane_row' } },
+      ['shape', 'storage'],
+      { fact: 'dtype 取自第 864–868 行 pl.cast(..., target_type=pl.BF16)；symbol（out2d）与 source.symbols 取自第 869–873 行。',
+        resolved: 'shape.allocated 取自第 108 行的 pl.reshape(out, [query_rows, HEAD_DIM])；shape.valid 继承第 748–753 行 o 的 pl.set_validshape(o_init, lane_rows, HEAD_DIM)；storage：外部张量位于 GM；granularity / role / entity 为语义归类。' }),
+  ];
+  const aux = nodes.find((node) => node.id === 'aux');
+  aux.ports.outputs = { slot: { entity: 'metadata.slot' }, block: { entity: 'metadata.block-table' }, seq: { entity: 'metadata.seq-lens' } };
+  const ports = {
+    'q-proj>q-prep': { targetPort: 'Q' }, 'q-prep>q': { sourcePort: 'Q' }, 'k-proj>k-prep': { targetPort: 'K' }, 'k-prep>k': { sourcePort: 'K' },
+    'v-proj>v-scale': { targetPort: 'V' }, 'v-scale>v': { sourcePort: 'V' }, 'k>cache-append': { targetPort: 'K' }, 'v>cache-append': { targetPort: 'V' },
+    'aux>cache-append': { sourcePort: 'slot', targetPort: 'slot' }, 'cache-append>k-cache': { sourcePort: 'K' }, 'cache-append>v-cache': { sourcePort: 'V' },
+    'aux>qk': { sourcePort: 'block', targetPort: 'block' }, 'q>qk': { targetPort: 'Q' }, 'k-cache>qk': { targetPort: 'K' },
+    'qk>scores': { sourcePort: 'Scores' }, 'scores>scale-mask': { targetPort: 'Scores' }, 'aux>scale-mask': { sourcePort: 'seq', targetPort: 'seq' },
+    'scale-mask>softmax': { sourcePort: 'Scores', targetPort: 'Scores' }, 'softmax>probability': { sourcePort: 'P' },
+    'softmax>context-acc': { sourcePort: 'state', targetPort: 'state' }, 'softmax>context': { sourcePort: 'state' },
+    'probability>pv': { targetPort: 'P' }, 'v-cache>pv': { targetPort: 'V' }, 'pv>context-acc': { sourcePort: 'partial', targetPort: 'partial' },
+    'context-acc>context': { sourcePort: 'Context' }, 'context>output-norm': { targetPort: 'Context' }, 'output-norm>output': { sourcePort: 'Output' },
+  };
+  const edge = (s, t, label, type = 'data', extra = {}) => E(s, t, label, type, { ...ports[`${s}>${t}`], ...extra });
+  const edges = [
+    edge('q-proj', 'q-prep', 'Q Projection'), edge('q-prep', 'q', 'Q'), edge('k-proj', 'k-prep', 'K Projection'), edge('k-prep', 'k', 'K'), edge('v-proj', 'v-scale', 'V Projection'), edge('v-scale', 'v', 'V'),
+    edge('k', 'cache-append', 'K'), edge('v', 'cache-append', 'V'), edge('aux', 'cache-append', 'slot_mapping', 'control'), edge('aux', 'qk', 'block_table', 'control'), edge('aux', 'scale-mask', 'seq_lens', 'control'),
+    edge('cache-append', 'k-cache', 'K'), edge('cache-append', 'v-cache', 'V'), edge('q', 'qk', 'Q'), edge('k-cache', 'qk', 'K · block_table'), edge('qk', 'scores', 'Scores'), edge('scores', 'scale-mask', 'Scores'),
+    edge('scale-mask', 'softmax', 'scaled / masked Scores'), edge('softmax', 'probability', 'P'), edge('probability', 'pv', 'P'), edge('v-cache', 'pv', 'V · block_table'), edge('pv', 'context-acc', 'PV partial'),
+    edge('softmax', 'context-acc', 'rescale', 'state', { route: 'state' }), edge('softmax', 'context', 'l_sum', 'state', { route: 'state' }),
+    edge('context-acc', 'context', 'Context', 'state'), edge('context', 'output-norm', 'Context', 'state'), edge('output-norm', 'output', 'BF16 Output'),
+  ];
+  // Boundary contracts inherit only known properties of the same semantic entity.
+  // Slice / aggregate mappings then validate the refinement inside each Composite.
+  edges.forEach((edge) => {
+    const from = nodes.find((node) => node.id === edge.s), to = nodes.find((node) => node.id === edge.t);
+    for (const [boundary, peer, side, port] of [[from, to, 'outputs', edge.sourcePort], [to, from, 'inputs', edge.targetPort]]) {
+      if (boundary.type !== 'composite' || !peer.data) continue;
+      const contract = boundary.ports[side][port];
+      if (contract.entity !== peer.data.entity) continue;
+      for (const key of ['dtype', 'granularity']) if (peer.data[key]) contract[key] = peer.data[key];
+    }
+  });
+  for (const [id, primaryRange] of [['qk', 1], ['k-cache', 2], ['v-cache', 2], ['context', 1]]) {
+    nodes.find((node) => node.id === id).source.primaryRange = primaryRange;
+  }
+  const region = (id, name, members) => ({ id, type: 'region', name, description: name, members, source: source('68–874'), provenance: [{ kind: 'resolved', origin: 'source', fields: ['members'], note: '按算子语义组织的现有区域分组；不是硬件执行分区。' }] });
+  const model = { schemaVersion: 2, id: 'paged-attention', sourceFiles: { [FILE]: { lineCount: (root.PTO_PAGED_ATTENTION_PYPTO_SOURCE || '').trimEnd().split('\n').length } },
+    constants: CONSTANTS, externalConstants: EXTERNAL_CONSTANTS, runtimeDims: RUNTIME_DIMS, nodes, edges, groups: [
+    region('qkv-preparation', 'QKV Preparation', ['q-proj', 'k-proj', 'v-proj', 'q-prep', 'k-prep', 'v-scale', 'q', 'k', 'v']),
+    region('paged-attention', 'Paged Attention', ['cache-append', 'k-cache', 'v-cache', 'qk', 'scores', 'scale-mask', 'softmax', 'probability', 'pv', 'context-acc']),
+    region('output-region', 'Output', ['context', 'output-norm', 'output']),
+  ] };
+  // 源码中 Phase 0、Softmax 与输出归一化位于 split_aiv；QK / PV 位于 split_aic。
+  // 只给计算节点标执行单元，DATA / STATE 的存储位置仍由 storage 单独描述。
+  const executionUnits = {
+    'q-prep': 'AIV', 'k-prep': 'AIV', 'v-scale': 'AIV', 'cache-append': 'AIV',
+    qk: 'AIC', 'scale-mask': 'AIV', softmax: 'AIV', pv: 'AIC',
+    'context-acc': 'AIV', 'output-norm': 'AIV',
+  };
+  const annotateExecution = (graph, unit) => {
+    for (const item of graph.nodes) {
+      const current = graph === model ? executionUnits[item.id] : unit;
+      if (current && (item.type === 'operation' || item.type === 'composite')) {
+        item[item.type].executionUnit = current;
+        item.provenance.push({ kind: 'resolved', origin: 'source', fields: [`${item.type}.executionUnit`],
+          note: '依据源码中的 split_aic / split_aiv 执行分支归属。' });
+      }
+      if (item.type === 'composite') annotateExecution(item.composite.subgraph, current);
+    }
+  };
+  annotateExecution(model);
+  // Execution constraints are orthogonal to the mathematical graph and Journey edges.
+  // QK's load/wait boundary precedes Scaling + Mask, even though Softmax is the consumer stage.
+  const endpoint = (node, anchor, coreType, pipe, ranges, extra = {}) =>
+    ({ node, anchor, coreType, pipe, source: source(ranges), ...extra });
+  model.synchronizations = [
+    { id: 'qk-ready', eventId: 0, name: 'QK_READY', tensor: 'scores', buffer: 'score_transfer', dtype: 'FP32',
+      producer: endpoint('qk', 'qk/score', 'AIC', 'FIX', '357–362', { fftsMode: 2 }),
+      consumer: endpoint('softmax', 'scale-mask/scale', 'AIV', 'MTE2', '765–769', { boundary: 'scale-mask' }),
+      explanation: 'QK 将当前 Stack 各 Page 的 FP32 Scores 写入 GM score_transfer 后 set。Softmax 的 AIV 在加载 Scores 前 wait，随后才进行 Scaling、Mask 和 Online Softmax，避免读取尚未就绪的数据。' },
+    { id: 'softmax-ready', eventId: 1, name: 'SOFTMAX_READY', tensor: 'probability', buffer: 'probability_transfer', dtype: 'BF16',
+      producer: endpoint('softmax', 'softmax/probability', 'AIV', 'MTE3', '817–822', { fftsMode: 2 }),
+      consumer: endpoint('pv', 'pv/probability', 'AIC', 'MTE2', '430–434、522–526、576–580、662–666', { waitPageCounts: [4, 1, 2, 3] }),
+      explanation: 'Softmax 将当前 Stack 的 BF16 概率权重写入 GM probability_transfer 后 set。PV 的 AIC 在加载概率 Tile 前 wait。四处 wait 属于 Stack 有效页数的不同条件分支，不是同一 Stack 连续等待四次；权重尚未除以最终 l_sum。' },
+    { id: 'pv-ready', eventId: 2, name: 'PV_READY', tensor: 'pv/partial', buffer: 'pv_transfer', dtype: 'FP32',
+      producer: endpoint('pv', 'pv/partial', 'AIC', 'FIX', '719–724', { fftsMode: 2 }),
+      consumer: endpoint('context-acc', 'context-acc/partial', 'AIV', 'MTE2', '830–834'),
+      explanation: 'PV 将当前 Stack 的 FP32 partial 写入 GM pv_transfer 后 set。Context Accumulate 的 AIV 在加载 partial 前 wait，再将它加入经过延迟 rescale 的旧 Context，避免读取未完成的 PV 结果。' },
+  ];
+  root.PTO_PYPA_SEMANTIC_GRAPH = model;
+  root.PTO_PYPA_SEMANTIC_SUBGRAPHS = Object.fromEntries(Object.entries(subgraphs).map(([id, bundle]) => [id, bundle.graph]));
+})(typeof window === 'undefined' ? globalThis : window);
+
+</script>
 <script>
 'use strict';
 const get = id => document.getElementById(id);
@@ -77,6 +513,8 @@ let inspectedRange=null;
 let cacheFocus=null;
 let pagedHead=0;
 let paExpanded=false,paReturnCamera=null;
+let observationMode="tokens",executionSelection={block:null,task:null},taskReturnCamera=null;
+let mappingTask=null,mappingView=null,mappingProgress=0,mappingMotion=0,observationTransition=null;
 const paDetailActive=()=>isQwen()&&paExpanded;
 // Single-request projection of Compute Explorer's 16-request task model.
 const pagedContext=(position,head=0,batch=0)=>({page:Math.floor(position/128),offset:position%128,stack:Math.floor(position/512),task:batch*8+head,block:(batch*8+head)%24,qStart:head*5,qEnd:head*5+4});
@@ -124,6 +562,7 @@ function generatedThrough(){
 }
 function selectRequest(index,layer=selected){
  inspectedToken=null;inspectedRange=null;
+ resetExecutionTask();
  requestIndex=index;
  const input=requestSteps[index].input;
  phase=isQwen()?requestSteps[index].phase:input===null||input<=131?'prefill':'decode';
@@ -331,7 +770,7 @@ function fitFrontGraph(){
  const token=get('token-workspace');
  const safe={left:innerWidth<=600?20:70,top:140,right:innerWidth<=600?30:innerWidth<=1000?210:330,bottom:(token.hidden?0:token.getBoundingClientRect().height)+(innerWidth<=600?150:100)};
  const availableWidth=Math.max(100,rect.width-safe.left-safe.right),availableHeight=Math.max(100,rect.height-safe.top-safe.bottom);
- const bounds={x:-10,y:-30,width:870,height:paDetailActive()?2170:750};
+ const bounds={x:-10,y:-30,width:isQwen()&&paExpanded&&executionSelection.task!==null?taskGraphLayout().width+20:870,height:isQwen()&&paExpanded&&executionSelection.task!==null?taskGraphLayout().height+40:paDetailActive()?2170:750};
  const scale=Math.min(availableWidth/bounds.width,availableHeight/bounds.height);
  frontBaseWidth=rect.width/scale;frontBaseHeight=rect.height/scale;frontZoom=.75;
  const cx=bounds.x+bounds.width/2;
@@ -450,7 +889,7 @@ zoomScene.addEventListener('wheel',event=>{
 // Logical handoffs from PyPTO3 prefill_layer.py and decode_layer.py.
 // Icon paths from the formal diagram legend library, op-icons.js.
 // Vendored semantic graph from Compute Explorer; source IDs/edges retained.
-const paSemanticGraph={"id":"paged-attention","nodes":[{"id":"q-proj","type":"data","name":"Q Projection","description":"外部 Q 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码只按下标 [batch_idx, kv_head * GROUP * HEAD_DIM + q] 取 [1, GROUP * HEAD_DIM] 的行切片，列上界为 NUM_HEADS * HEAD_DIM，行数由运行时决定，故不声明 shape 与 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":215,"end":227}],"symbols":["q_proj"]},"category":""},{"id":"k-proj","type":"data","name":"K Projection","description":"外部 K 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码按下标 [batch_idx, cache_col + k] 取 [1, HEAD_DIM] 的行切片，列上界为 NUM_KV_HEADS * HEAD_DIM = KV_HIDDEN，行数由运行时决定，故不声明 shape 与 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":162,"end":173}],"symbols":["k_proj"]},"category":""},{"id":"v-proj","type":"data","name":"V Projection","description":"外部 V 投影张量（GM）。签名只声明 pl.Tensor，未声明 dtype 与完整 shape；源码按下标 [batch_idx, cache_col + v] 取 [1, HEAD_DIM] 的行切片，列上界为 KV_HIDDEN，行数由运行时决定，故不声明 shape 与 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":200,"end":207}],"symbols":["v_proj"]},"category":""},{"id":"q-prep","type":"composite","name":"Q Norm → RoPE","description":"Q 乘 inv_rms、按 head 归一化，再施加 RoPE，写入 q2d。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":215,"end":251}],"symbols":["q_raw","q_heads","q_rotated","q2d"]},"category":"normalization"},{"id":"k-prep","type":"composite","name":"K Norm → RoPE","description":"K 乘 inv_rms、按 head 归一化，再施加 RoPE。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":162,"end":198}],"symbols":["k_raw","k_normed","k_rotated"]},"category":"normalization"},{"id":"v-scale","type":"composite","name":"V Scaling","description":"V 按 inv_rms 缩放并转 BF16。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":200,"end":213}],"symbols":["v_row_bf16"]},"category":"elementwise"},{"id":"q","type":"data","name":"Q","description":"Q 在 q2d 中的张量视图（GM）：q2d = pl.reshape(q_tnd_flat, [query_rows, HEAD_DIM])（第 106 行），本 kernel 只写入 (batch, kv_head) 组对应的 GROUP 行（第 247–251 行）。归一化在 Q_HEAD_PAD = 16 行的填充 tile 上完成，只有前 GROUP 行是有效 Q。dtype 描述写入载荷（pl.cast → BF16），不声明 q2d 的存储类型。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":247,"end":251}],"symbols":["q_rotated","q2d"]},"category":""},{"id":"k","type":"data","name":"K","description":"当前 token 单个 KV head 的 K 载荷。归一化在 K_RED_ROWS = 8 行的填充 tile 上完成（行 1..7 为 0 填充，第 162–172 行），随后取 k_full = k_normed[0:1, :]，RoPE 后转 BF16 追加到 Key Cache（第 181–198 行）。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":181,"end":198}],"symbols":["k_rotated"]},"category":""},{"id":"v","type":"data","name":"V","description":"当前 token 单个 KV head 的 BF16 V 载荷：v_proj 的 [1, HEAD_DIM] 行切片乘 inv_rms 后转 BF16，再按 cache_row / cache_col 写入 Value Cache（第 200–213 行）。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":200,"end":213}],"symbols":["v_row_bf16"]},"category":""},{"id":"aux","type":"data","name":"Aux Inputs","description":"运行时索引与控制输入（外部 pl.Tensor，GM）。三者的元素类型与行数都未在源码中声明：seq_lens 决定有效长度与 active_batch；slot_mapping 给出当前 token 的写入槽位（第 146–155 行先钳制到非负再加层基址）；block_table 提供逻辑页到物理页映射，并 reshape 为 [active_batch, max_blocks_per_seq]。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":68,"end":94},{"start":146,"end":155},{"start":261,"end":267}],"symbols":["seq_lens","block_table","slot_mapping"]},"category":""},{"id":"cache-append","type":"composite","name":"Cache Append","description":"当前 token 的 K/V 载荷按 cache_row 写入对应 Cache。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":194,"end":198},{"start":210,"end":213}],"symbols":["key_cache_bsnd","value_cache_bsnd"]},"category":"store"},{"id":"k-cache","type":"data","name":"K Cache","description":"分页 Key Cache 的二维访问视图（外部 pl.Tensor，位于 GM）。逻辑页经 block_table 映射到物理页；写入载荷为 BF16（第 198 行），但 Cache 元素类型未在签名或 Tile 标注中声明，故不声明 dtype。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":17,"end":25},{"start":101,"end":107},{"start":194,"end":198},{"start":261,"end":295}],"symbols":["key_cache_bsnd","block_table_2d","cache_base","col"],"primaryRange":2},"category":""},{"id":"v-cache","type":"data","name":"V Cache","description":"分页 Value Cache 的二维访问视图（外部 pl.Tensor，位于 GM）。与 K Cache 使用相同的逻辑页表和行列寻址；dtype 由第 386–429 行 v0..v3 的 pl.Tile[[BLOCK_SIZE, HEAD_DIM], pl.BF16, …] 标注与第 210–213 行的 BF16 写入推导，函数签名本身未声明。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":17,"end":25},{"start":101,"end":107},{"start":210,"end":213},{"start":364,"end":429}],"symbols":["value_cache_bsnd","block_table_2d","cache_base","col"],"primaryRange":2},"category":""},{"id":"qk","type":"composite","name":"QK Matmul","description":"Q 与映射后的 K Page 相乘；每页 FP32 结果写入当前 Stack 的 Scores 区间。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":269,"end":276},{"start":285,"end":305},{"start":306,"end":356}],"symbols":["q_tile","qk_k_page","qk_score_page","score_transfer"],"primaryRange":1},"category":"matmul"},{"id":"scores","type":"data","name":"Scores","description":"多个 Page 的 QK Scores 按列区间写入 score_transfer（GM），再按整个 Stack 加载到 AIV。score_transfer 的形状由写入地址推导，不代表运行场景的固定配置。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":278,"end":305},{"start":770,"end":776}],"symbols":["score_transfer","score_aiv"]},"category":""},{"id":"scale-mask","type":"composite","name":"Scaling + Mask","description":"缩放 Scores，再根据 seq_len 处理末 Stack 的无效列。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":777,"end":788}],"symbols":["score_scaled","score_masked","valid_cols"]},"category":"masking"},{"id":"softmax","type":"composite","name":"Online Softmax","description":"跨 Stack 更新 running max 和归一化和，输出 BF16 概率权重及 rescale 状态。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":745,"end":825},{"start":856,"end":861}],"symbols":["m_iter","l_iter","probability_bf16","m_after","l_after"]},"category":"normalization"},{"id":"probability","type":"data","name":"Probability P","description":"本 Stack 的 BF16 权重尚未除以全局 l_sum，供 PV 消费。概率写在 probability_transfer 的两个 Page 列区间内。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":802,"end":815}],"symbols":["probability_bf16","probability_transfer"]},"category":""},{"id":"pv","type":"composite","name":"PV Matmul","description":"P 与映射后的 V Page 相乘，Stack 内各页结果累加为 FP32 partial。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":364,"end":718}],"symbols":["probability0","v0","pv3","pv_transfer"]},"category":"matmul"},{"id":"context-acc","type":"composite","name":"Context Accumulate","description":"旧 Context 乘延迟 rescale，再加当前 Stack 的 PV partial。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":827,"end":861}],"symbols":["pv_aiv","o_iter","o_after","pending0_iter"]},"category":"accumulation"},{"id":"context","type":"state","name":"Context","description":"跨 Stack 累积的 o 与归一化和 l_sum，是最终输出归一化的状态，不是单轮 PV 数据。o 是 [AIV_ROW_TILE, HEAD_DIM] 的 FP32 累加器（valid 行 lane_rows，第 748–753 行，形状见 context-acc/old）；l_sum 由行归约产生，列布局未显式声明，两个状态形状不同，故本节点不声明 shape。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":745,"end":760},{"start":842,"end":861}],"symbols":["o","l_sum"],"primaryRange":1},"category":""},{"id":"output-norm","type":"composite","name":"Output Normalize","description":"所有 Stack 完成后，以最终 l_sum 归一化 o，转 BF16 并写回 out2d。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":864,"end":873}],"symbols":["o","l_sum","ctx","out2d"]},"category":"normalization"},{"id":"output","type":"data","name":"Attention Output","description":"最终 BF16 Attention 载荷按 Batch、KV head、GROUP 和 lane 对应行写回 out2d；out2d = pl.reshape(out, [query_rows, HEAD_DIM])（第 108 行），本次调用只写 lane_rows 行（第 869–873 行）。dtype 描述 ctx 载荷。","source":{"file":"paged_attention_pypto.py","ranges":[{"start":864,"end":873}],"symbols":["ctx","out2d"]},"category":""}],"edges":[{"id":"q-proj>q-prep:Q Projection","s":"q-proj","t":"q-prep","type":"data","sourcePort":"default","targetPort":"Q","label":"Q Projection"},{"id":"q-prep>q:Q","s":"q-prep","t":"q","type":"data","sourcePort":"Q","targetPort":"default","label":"Q"},{"id":"k-proj>k-prep:K Projection","s":"k-proj","t":"k-prep","type":"data","sourcePort":"default","targetPort":"K","label":"K Projection"},{"id":"k-prep>k:K","s":"k-prep","t":"k","type":"data","sourcePort":"K","targetPort":"default","label":"K"},{"id":"v-proj>v-scale:V Projection","s":"v-proj","t":"v-scale","type":"data","sourcePort":"default","targetPort":"V","label":"V Projection"},{"id":"v-scale>v:V","s":"v-scale","t":"v","type":"data","sourcePort":"V","targetPort":"default","label":"V"},{"id":"k>cache-append:K","s":"k","t":"cache-append","type":"data","sourcePort":"default","targetPort":"K","label":"K"},{"id":"v>cache-append:V","s":"v","t":"cache-append","type":"data","sourcePort":"default","targetPort":"V","label":"V"},{"id":"aux>cache-append:slot_mapping","s":"aux","t":"cache-append","type":"control","sourcePort":"slot","targetPort":"slot","label":"slot_mapping"},{"id":"aux>qk:block_table","s":"aux","t":"qk","type":"control","sourcePort":"block","targetPort":"block","label":"block_table"},{"id":"aux>scale-mask:seq_lens","s":"aux","t":"scale-mask","type":"control","sourcePort":"seq","targetPort":"seq","label":"seq_lens"},{"id":"cache-append>k-cache:K","s":"cache-append","t":"k-cache","type":"data","sourcePort":"K","targetPort":"default","label":"K"},{"id":"cache-append>v-cache:V","s":"cache-append","t":"v-cache","type":"data","sourcePort":"V","targetPort":"default","label":"V"},{"id":"q>qk:Q","s":"q","t":"qk","type":"data","sourcePort":"default","targetPort":"Q","label":"Q"},{"id":"k-cache>qk:K · block_table","s":"k-cache","t":"qk","type":"data","sourcePort":"default","targetPort":"K","label":"K · block_table"},{"id":"qk>scores:Scores","s":"qk","t":"scores","type":"data","sourcePort":"Scores","targetPort":"default","label":"Scores"},{"id":"scores>scale-mask:Scores","s":"scores","t":"scale-mask","type":"data","sourcePort":"default","targetPort":"Scores","label":"Scores"},{"id":"scale-mask>softmax:scaled / masked Scores","s":"scale-mask","t":"softmax","type":"data","sourcePort":"Scores","targetPort":"Scores","label":"scaled / masked Scores"},{"id":"softmax>probability:P","s":"softmax","t":"probability","type":"data","sourcePort":"P","targetPort":"default","label":"P"},{"id":"probability>pv:P","s":"probability","t":"pv","type":"data","sourcePort":"default","targetPort":"P","label":"P"},{"id":"v-cache>pv:V · block_table","s":"v-cache","t":"pv","type":"data","sourcePort":"default","targetPort":"V","label":"V · block_table"},{"id":"pv>context-acc:PV partial","s":"pv","t":"context-acc","type":"data","sourcePort":"partial","targetPort":"partial","label":"PV partial"},{"id":"softmax>context-acc:rescale","s":"softmax","t":"context-acc","type":"state","sourcePort":"state","targetPort":"state","label":"rescale","route":"state"},{"id":"softmax>context:l_sum","s":"softmax","t":"context","type":"state","sourcePort":"state","targetPort":"default","label":"l_sum","route":"state"},{"id":"context-acc>context:Context","s":"context-acc","t":"context","type":"state","sourcePort":"Context","targetPort":"default","label":"Context"},{"id":"context>output-norm:Context","s":"context","t":"output-norm","type":"state","sourcePort":"default","targetPort":"Context","label":"Context"},{"id":"output-norm>output:BF16 Output","s":"output-norm","t":"output","type":"data","sourcePort":"Output","targetPort":"default","label":"BF16 Output"}]};
+const paSemanticGraph=window.PTO_PYPA_SEMANTIC_GRAPH;
 const opIcons = {"matmul":"M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z", "softmax":"M4 6h16M7 10v10M12 9v11M17 12v8", "accumulation":"M4 18h16M5 17l4-2 4-8 5-2", "linear": "M4 6v12M20 4v16M7 8l10-2M7 12h10M7 16l10 2", "norm": "M4 6h16M7 12h10M9 18h6", "attention": "M4 5h5v5H4zM15 5h5v5h-5zM9 16h6v5H9zM6 10l6 6M18 10l-6 6", "compress": "M4 4l7 7M4 20l7-7M20 4l-7 7M20 20l-7-7M4 8V4h4M16 4h4v4M4 16v4h4M16 20h4v-4", "mix": "M4 6h3l10 12h3M4 18h3L17 6h3M4 12h16", "topk": "M4 5h16M4 10h12M4 15h8M15 17l3 3 4-6", "router": "M4 12h7M11 12l5-7h4M11 12h9M11 12l5 7h4"};
 function appendCacheGlyph(parent,x,y,width,height,label){
  parent.append(el('rect',{x,y,width,height,rx:6,class:'cache-body'}));
@@ -498,7 +937,7 @@ function appendGlyph(parent,x,y,width,height,label,role){
 }
 
 // Layer navigation does not create a second input/output inspector.
-new ResizeObserver(()=>{const panel=get('token-workspace');document.documentElement.style.setProperty('--token-clearance',(panel.hidden?0:panel.getBoundingClientRect().height)+'px');}).observe(get('token-workspace'));
+new ResizeObserver(()=>{const panel=get('token-workspace');document.documentElement.style.setProperty('--token-clearance',(panel.hidden?0:panel.getBoundingClientRect().height)+'px');if(!panel.hidden&&isQwen())renderExecutionWorkspace();}).observe(get('token-workspace'));
 function renderArchitectureDetail(){
  get('architecture-layer').textContent='L'+selected+' · '+model.decoder+' · '+kinds[ratios[selected]];
  get('architecture-prev').disabled=selected===0;
@@ -513,6 +952,7 @@ get('architecture-model').onclick=()=>closeArchitecture();
 
 get('inference-front').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();get('architecture-model').click();}});
 function renderFront(kind) {
+ if(isQwen()&&paExpanded&&executionSelection.task!==null){renderTaskGraph();return;}
  const svg=get('front-graph');
  svg.setAttribute('aria-label','L'+selected+' · '+phase+' · '+kind+' 层内图');
  svg.innerHTML='<defs><marker id="front-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L8 4L0 8" fill="#999"/></marker></defs>';
@@ -708,6 +1148,7 @@ function renderFront(kind) {
 }
 function choose(layer, manual=true) {
  if(manual)pausePlayback();
+ if(layer!==selected)resetExecutionTask();
  selected=Math.max(0,Math.min(lastLayer,layer));
  render();
  requestGeometry();
@@ -897,6 +1338,433 @@ const tokenCells=Array.from({length:positionBounds.decode[1]+1},(_,index)=>{
  get('token-grid').append(button);
  return button;
 });
+
+/* EXECUTION_MODEL_START
+ * Configured mock adapter, not a binding to the TP2 measured kernel BlockNum.
+ * Rank-local four KV heads and sixteen batches are explicit scenario inputs.
+ */
+const PAExecution={
+ config:{blocks:24,kvHeadsPerRank:4,batches:16,pageTokens:128,pagesPerStack:4,preLaunch:2,provenance:'user-authorized-mock'},
+ lengths:[132,512,2048,128,1536,3584,3072,256,769,1024,2049,640,2560,129,1792,3328],
+ partition(length,c=this.config){
+  const pages=Array.from({length:Math.ceil(length/c.pageTokens)},(_,id)=>({id,start:id*c.pageTokens,end:Math.min(length,(id+1)*c.pageTokens)-1,validTokens:Math.min(c.pageTokens,length-id*c.pageTokens)}));
+  const stacks=Array.from({length:Math.ceil(pages.length/c.pagesPerStack)},(_,id)=>({id,pages:pages.slice(id*c.pagesPerStack,(id+1)*c.pagesPerStack)}));
+  return {pages,stacks};
+ },
+ build(context){
+  const c=this.config,prefix=`${context.model}/call${context.call}/rank${context.rank}/L${context.layer}/pa`;
+  const tasks=Array.from({length:c.batches*c.kvHeadsPerRank},(_,id)=>{
+   const batch=Math.floor(id/c.kvHeadsPerRank),head=id%c.kvHeadsPerRank,length=batch===0?context.length:this.lengths[batch];
+   const tile=this.partition(length,c),P=tile.pages.length,S=tile.stacks.length;
+   return {id,uid:`${prefix}/task${id}`,block:id%c.blocks,batch,localHead:head,head:context.rank*c.kvHeadsPerRank+head,length,...tile,
+    provenance:c.provenance,source:'paged_attention_pypto.py / task-page-stack loops',
+    counts:{qk:{count:P,unit:'AIC / Task',formula:'ceil(seqLen / pageTokens)'},pv:{count:P,matmul:S,matmulAcc:P-S,unit:'Page 贡献 / AIC / Task',formula:'matmul = stackCount; matmulAcc = pageCount - stackCount'},softmax:{count:S,unit:'每 AIV Lane / Task',formula:'ceil(pageCount / pagesPerStack)'},accumulate:{count:S,unit:'每 AIV Lane / Task',formula:'stackCount'},normalize:{count:1,unit:'每 AIV Lane / Task',formula:'once after loop'},fifo:{count:S+c.preLaunch,unit:'每 AIV Lane / Task',formula:'stackCount + preLaunch'}}};
+  });
+  return {context,provenance:c.provenance,tasks,blocks:Array.from({length:c.blocks},(_,id)=>({id,uid:`${prefix}/block${id}`,tasks:tasks.filter(t=>t.block===id)})),tasksForPage:(batch,page)=>tasks.filter(t=>t.batch===batch&&t.pages.some(p=>p.id===page))};
+ }
+};
+/* EXECUTION_MODEL_END */
+function executionContext(){return PAExecution.build({model:modelId,call:requestIndex,rank:selectedRank,layer:selected,length:qwenMockKV.promptLength+Math.min(requestIndex,4)});}
+function observationButton(text,tip,action,pressed=false){
+ const b=document.createElement('button');b.type='button';b.textContent=text;b.dataset.tooltip=tip;b.setAttribute('aria-pressed',String(pressed));b.onclick=action;return b;
+}
+/* TASK_LAYOUT_START: reused from Compute Explorer visualization2-assignment-morph.js. */
+const PATaskLayout=(()=>{const clamp=value=>Math.max(0,Math.min(1,value));
+  function partitionWidth(width, count, gap = 1.5) {
+    const cellWidth = (width - gap * (count - 1)) / count;
+    return Array.from({ length: count }, (_, index) => ({ x: index * (cellWidth + gap), width: cellWidth }));
+  }
+  function sequenceSegments(seqLen, width, count, segmentTokens = 512, gap = 1.5) {
+    return partitionWidth(width, count, gap).map((segment, index) => {
+      const fraction = clamp((seqLen - index * segmentTokens) / segmentTokens);
+      return { ...segment, fraction, fillWidth: segment.width * fraction };
+    });
+  }
+  function createLayout({ batch, kvHeads, blocks, width = 1250, height = 600 }) {
+    const top = 44, bottom = height - 8;
+    const columnPitch = (width - 220) / kvHeads, frameWidth = columnPitch - 10;
+    const columns = Array.from({ length: kvHeads }, (_, kv) => ({ kv, x: 190 + kv * columnPitch, width: frameWidth }));
+    const assignments = Array.from({ length: blocks }, () => []);
+    for (let id = 0; id < batch * kvHeads; id++) assignments[id % blocks].push(id);
+    // Whole KV cycles produce one Block per KV column in each Batch-residue group.
+    // For other configurations, each Block gets a full-width band, while Task X
+    // still stays in its KV column and modulo ownership remains exact.
+    const aligned = blocks % kvHeads === 0;
+    const groupCount = aligned ? blocks / kvHeads : blocks;
+    const capacities = Array.from({ length: groupCount }, (_, index) => aligned
+      ? Math.max(1, Math.ceil((batch - index) / groupCount))
+      : Math.max(1, ...columns.map(({ kv }) => assignments[index].filter(id => id % kvHeads === kv).length)));
+    const groupGap = 6, header = 20, padding = 5;
+    const taskHeight = 26, pitch = taskHeight + 4;
+    let y = top;
+    const groups = capacities.map((capacity, index) => {
+      const group = { index, y, height: header + capacity * pitch + padding, capacity,
+        label: aligned ? `B%${groupCount}=${index}` : `Task%${blocks}=${index}` };
+      y += group.height + groupGap;
+      return group;
+    });
+    const sources = [], targets = [];
+    for (let id = 0; id < batch * kvHeads; id++) {
+      const batchId = Math.floor(id / kvHeads), kv = id % kvHeads, block = id % blocks;
+      const group = groups[aligned ? Math.floor(block / kvHeads) : block];
+      const index = aligned ? Math.floor(batchId / groupCount) : assignments[block].filter(task => task % kvHeads === kv).indexOf(id);
+      const geometry = { x: columns[kv].x + 7, w: frameWidth - 14, h: taskHeight };
+      sources.push({ ...geometry, y: top + 8 + batchId * pitch });
+      targets.push({ ...geometry, y: group.y + header + index * pitch });
+    }
+    const blockRects = assignments.map((tasks, block) => {
+      const group = groups[aligned ? Math.floor(block / kvHeads) : block];
+      return { x: aligned ? columns[block % kvHeads].x : columns[0].x, y: group.y,
+        w: aligned ? frameWidth : columns.at(-1).x + frameWidth - columns[0].x, h: group.height };
+    });
+    return { width, height:Math.max(height,y+8), columns, groups, sources, targets, assignments, blockRects, aligned };
+  }
+
+return {createLayout,sequenceSegments};})();
+/* TASK_LAYOUT_END */
+
+// Vendored SVG from diagram-legend-library VisualSystem.node(task); same crop as reference taskGlyph.
+const canonicalTaskIdentity="<g data-object=\"task-identity\" data-kind=\"task\"><rect x=\"0\" y=\"0\" width=\"260\" height=\"60\" rx=\"0\" stroke=\"none\" fill=\"var(--muted)\" /><rect x=\"10\" y=\"12\" width=\"36\" height=\"36\" rx=\"3\" stroke=\"none\" fill=\"#080b05\" /><path data-icon=\"task\" transform=\"translate(10 12)\" d=\"M9 10 H27 M9 18 H20 M9 26 H16 M23 22 L28 26 L23 30\" fill=\"none\" stroke=\"var(--muted)\" style=\"stroke-width:2.6\"/><g font-weight=\"650\"><text x=\"62\" y=\"30\" font-size=\"20\" fill=\"#080b05\" text-anchor=\"start\" dominant-baseline=\"middle\"></text></g></g>";
+function renderExecutionWorkspace(){
+ const available=isQwen(),mapping=available;
+ get('observation-modes').hidden=!available;get('token-title').hidden=available;
+ get('block-workspace').hidden=!available||!mapping;
+ get('token-workspace').classList.toggle('mapping-expanded',available&&mapping);
+ get('observation-modes').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.observe===observationMode)));
+ if(!available||!mapping)return;
+ const data=executionContext(),host=get('block-workspace'),c=PAExecution.config;
+ const stage=get('token-workspace'),stageBox=stage.getBoundingClientRect();
+ // Readability floor: 16 columns of 4px squares plus 1px gutters per Page.
+ const pageOverview=observationMode==='tokens';
+ const stageWidth=Math.max(pageOverview?2674:680,Math.round(stageBox.width-20));
+ const pagePitch=(stageWidth-210)/28,slotUnit=(pagePitch-2)/16;
+ const stageHeight=Math.max(540,Math.round(stageBox.height-58),pageOverview?Math.ceil(54+16*(slotUnit*8+4)+8):0);
+ const key=[modelId,selectedRank,c.batches,c.kvHeadsPerRank,c.blocks,stageWidth,stageHeight].join('/');
+ if(!mappingView||mappingView.key!==key){
+  host.replaceChildren();
+  const bar=document.createElement('div');bar.className='mapping-bar';
+
+  const inspect=document.createElement('span');inspect.className='mapping-inspect';bar.append(inspect);
+  const enter=observationButton('展开 Task ↗','进入所选Task的内部计算图',()=>{if(mappingTask!==null)enterExecutionTask(mappingTask);});bar.append(enter);
+  const fold=observationButton('收回','返回紧凑Token/Page观察区',()=>setObservationMode('tokens'));bar.append(fold);host.append(bar);
+  const layout=PATaskLayout.createLayout({batch:c.batches,kvHeads:c.kvHeadsPerRank,blocks:c.blocks,width:stageWidth,height:stageHeight});
+  const svg=el('svg',{viewBox:`0 0 ${layout.width} ${layout.height}`,preserveAspectRatio:'xMinYMin meet',class:'task-assignment-map',role:'group','aria-label':'Task生成与Block分配关系'});svg.style.width=stageWidth+'px';svg.style.height=stageHeight+'px';host.append(svg);
+  const columns=el('g'),generation=el('g'),blocks=el('g'),tasks=el('g');svg.append(columns,generation,blocks,tasks);
+  const pagesHeader=el('g');for(let page=0;page<28;page++)pagesHeader.append(el('text',{x:190+page*(layout.width-210)/28,y:24,class:'mapping-small'},'P'+page));svg.append(pagesHeader);
+
+  layout.columns.forEach((col,local)=>{
+   columns.append(el('text',{x:col.x+col.width/2,y:21,'text-anchor':'middle',class:'mapping-label'},'KV'+(selectedRank*c.kvHeadsPerRank+local)),el('text',{x:col.x+col.width/2,y:39,'text-anchor':'middle',class:'mapping-small'},`Q${(selectedRank*c.kvHeadsPerRank+local)*5}–${(selectedRank*c.kvHeadsPerRank+local)*5+4}`));
+  });
+  const rowNodes=Array.from({length:c.batches},(_,batch)=>{
+   const y=layout.sources[batch*c.kvHeadsPerRank].y+layout.sources[0].h/2;
+   const row=el('g');row.append(el('text',{x:8,y,class:'mapping-small'},'B'+batch));
+   const length=el('text',{x:89,y,'text-anchor':'end',class:'mapping-small'});row.append(length);
+   const strip=el('g');row.append(strip);generation.append(row);return {row,length,strip,y};
+  });
+  layout.groups.forEach(group=>blocks.append(el('text',{x:176,y:group.y+group.height/2,'text-anchor':'end',class:'mapping-small'},group.label)));
+  const blockNodes=data.blocks.map(block=>{
+   const r=layout.blockRects[block.id],g=el('g',{'data-block':block.id,role:'button',tabindex:0,'aria-label':'Block '+block.id,class:'mapping-block'});
+   g.append(el('rect',{...{x:r.x,y:r.y,width:r.w,height:r.h},rx:4,class:'mapping-block-fill'}),el('text',{x:r.x+7,y:r.y+16,class:'mapping-small'},`Block ${block.id} · ${block.tasks.length} Tasks`));
+   const select=()=>{pausePlayback();executionSelection.block=block.id;mappingTask=null;renderExecutionWorkspace();};
+   g.onclick=select;g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
+   g.dataset.tooltip=`Block ${block.id} · Tasks ${block.tasks.map(t=>t.id).join(', ')}`;blocks.append(g);return g;
+  });
+  const taskNodes=data.tasks.map(task=>{
+   const r=layout.sources[task.id],g=el('g',{'data-task':task.id,role:'button',tabindex:0,class:'mapping-task'});
+   const fill=el('rect',{width:r.w,height:r.h,rx:3,class:'mapping-task-fill'});g.append(fill);
+   const identity=el('svg',{x:4,y:(r.h-18)/2,width:18,height:18,viewBox:'10 12 36 36',preserveAspectRatio:'xMidYMid meet',overflow:'hidden',class:'ai-task-identity','pointer-events':'none'});identity.innerHTML=canonicalTaskIdentity;g.append(identity);
+   const q=el('g');for(let h=0;h<5;h++)q.append(el('circle',{cx:27+h*5,cy:r.h/2,r:1.4,fill:'var(--muted)'}));g.append(q);
+   const strip=el('g');g.append(strip);
+   g.append(el('text',{x:r.w-7,y:r.h/2,'text-anchor':'end','dominant-baseline':'central',class:'mapping-small'},task.id));
+   const select=()=>{executionSelection.block=task.block;enterExecutionTask(task.id);};
+   g.onclick=select;g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select();}});
+   tasks.append(g);return {g,q,strip};
+  });
+  mappingView={key,layout,svg,columns,generation,blocks,tasks,rowNodes,blockNodes,taskNodes,pagesHeader,bar,inspect,enter};
+ }
+ const v=mappingView,active=mappingTask===null?null:data.tasks[mappingTask];
+ const contentHeight=observationMode==='blocks'?v.layout.height:Math.max(stageHeight,v.layout.sources.at(-1).y+38);
+ v.svg.setAttribute('viewBox',`0 0 ${v.layout.width} ${contentHeight}`);v.svg.style.height=contentHeight+'px';
+ v.inspect.textContent=active?`T${active.id} · Batch ${active.batch} · KV${active.head} · ${active.length} tokens · ${active.pages.length} Pages / ${active.stacks.length} Stacks`:executionSelection.block===null?'':`Block ${executionSelection.block} · Tasks ${data.blocks[executionSelection.block].tasks.map(t=>t.id).join(', ')}`;
+ v.enter.hidden=active===null||observationMode==='tokens';
+ v.bar.hidden=observationMode==='tokens'||(active===null&&executionSelection.block===null);
+ v.columns.style.opacity=observationMode==='tokens'?'0':'1';v.pagesHeader.style.opacity=observationMode==='tokens'?'1':'0';
+ const maxStacks=Math.max(...data.tasks.map(t=>t.stacks.length));
+ const sequence=(parent,length,x,y,width,height)=>{
+  parent.replaceChildren();
+  PATaskLayout.sequenceSegments(length,width,maxStacks,c.pageTokens*c.pagesPerStack,1.5).forEach(part=>{
+   parent.append(el('rect',{x:x+part.x,y,width:part.width,height,fill:'var(--surface)'}));
+   if(part.fillWidth>0)parent.append(el('rect',{x:x+part.x,y,width:part.fillWidth,height,fill:'#666'}));
+  });
+ };
+ v.rowNodes.forEach((r,batch)=>{
+  const t=data.tasks[batch*c.kvHeadsPerRank];r.length.textContent=t.length;r.row.dataset.related=String(active?.batch===batch);
+  const width=(v.layout.width-210)/28,gap=2,unit=(width-gap)/16;
+  const cellSize=unit*.8,pageHeight=unit*8,rowPitch=pageHeight+4;
+  r.row.setAttribute('transform',observationMode==='tokens'?`translate(0 ${54+pageHeight/2+batch*rowPitch-r.y})`:'translate(0 0)');
+  if(observationMode!=='tokens'){r.pageKey=null;sequence(r.strip,t.length,100,r.y-3,72,6);return;}
+  const pageKey=t.length+'/'+width;if(r.pageKey===pageKey)return;r.pageKey=pageKey;
+  r.strip.replaceChildren();
+  for(let page=0;page<28;page++){
+   const count=Math.max(0,Math.min(128,t.length-page*128)),x=190+page*width;
+   const cell=el('g',{'data-batch':batch,'data-page':page,role:'button',tabindex:0});
+   // Every slot is a complete square; occupancy never clips a periodic texture.
+   for(let offset=0;offset<128;offset++){
+    const current=page*128+offset===t.length-1;
+    cell.append(el('rect',{x:x+(offset%16)*unit,y:r.y-pageHeight/2+Math.floor(offset/16)*unit,width:cellSize,height:cellSize,rx:.3,fill:current?'var(--ink)':offset<count?'#666':'var(--surface)'}));
+   }
+   cell.dataset.tooltip=`Batch ${batch} · Page ${page} · ${page*128}–${page*128+127} · ${count}/128`;
+   const select=()=>{mappingTask=batch*c.kvHeadsPerRank;paCaseSelection=page*128;renderTokenView(positions[phase],cacheStart(positions[phase]),kinds[ratios[selected]]);};
+   cell.onclick=select;cell.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();select();}});r.strip.append(cell);
+  }
+ });
+ const inspectedBatch=active?.batch??0,page=paCaseSelection===null?null:Math.floor(paCaseSelection/c.pageTokens);
+ v.taskNodes.forEach(({g,strip},id)=>{
+  const t=data.tasks[id],r=v.layout.sources[id];sequence(strip,t.length,24,r.h/2-3,r.w-55,6);
+  g.setAttribute('aria-pressed',String(mappingTask===id));
+  g.dataset.related=String((executionSelection.block!==null&&t.block===executionSelection.block)||(page!==null&&t.batch===inspectedBatch&&t.pages.some(p=>p.id===page)));
+  g.dataset.tooltip=`Task ${id} · Batch ${t.batch} · KV Head ${t.head} · Block ${t.block} · ${t.length} tokens / ${t.pages.length} Pages / ${t.stacks.length} Stacks`;
+  g.setAttribute('aria-label',g.dataset.tooltip);
+ });
+ v.blockNodes.forEach((g,id)=>g.setAttribute('aria-pressed',String(executionSelection.block===id)));
+ animateTaskAssignment(observationMode==='blocks'?1:0);
+}
+function drawTaskAssignment(progress){
+ if(!mappingView)return;
+ const v=mappingView,l=v.layout;
+ v.generation.style.opacity=String(1-progress);v.blocks.style.opacity=String(progress);v.tasks.style.opacity=observationMode==='tokens'?'0':'1';v.tasks.style.pointerEvents=observationMode==='tokens'?'none':'auto';
+ v.blocks.style.pointerEvents=progress>.95?'auto':'none';
+ v.blockNodes.forEach(g=>g.setAttribute('tabindex',progress>.95?'0':'-1'));
+ v.taskNodes.forEach(({g,q,strip},id)=>{
+  const a=l.sources[id],b=l.targets[id];g.setAttribute('transform',`translate(${a.x} ${a.y+(b.y-a.y)*progress})`);
+  q.style.opacity=String(1-progress);strip.style.opacity="1";
+ });mappingProgress=progress;
+}
+function animateTaskAssignment(target){
+ cancelAnimationFrame(mappingMotion);
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||Math.abs(mappingProgress-target)<.001){drawTaskAssignment(target);return;}
+ const start=mappingProgress,time=performance.now();
+ const frame=now=>{const p=Math.min(1,(now-time)/420),ease=1-Math.pow(1-p,3);drawTaskAssignment(start+(target-start)*ease);if(p<1)mappingMotion=requestAnimationFrame(frame);};
+ mappingMotion=requestAnimationFrame(frame);
+}
+// Page identity is carried from the token grid into every KV-head Task of the same Batch.
+let pageTaskHandoff=null;
+function cancelPageTaskHandoff(){
+ if(!pageTaskHandoff)return;
+ pageTaskHandoff.animations.forEach(a=>a.cancel());pageTaskHandoff.overlay.remove();pageTaskHandoff=null;
+}
+function setObservationMode(mode){
+ if(mode===observationMode)return;
+ cancelPageTaskHandoff();pausePlayback();
+ const from=observationMode,crossing=(mode==='tokens')!==(from==='tokens');
+ const origins=[];
+ if(crossing&&mappingView){
+  const data=executionContext(),c=PAExecution.config;
+  data.tasks.filter(t=>t.localHead===0).forEach(t=>{
+   const row=mappingView.rowNodes[t.batch];
+   for(let page=0;page<t.pages.length;page++){
+    const pageRect=from==='tokens'?row.strip.children[page]?.getBoundingClientRect():null;
+    data.tasks.filter(other=>other.batch===t.batch).forEach(target=>{
+     const strip=mappingView.taskNodes[target.id].strip.getBoundingClientRect();
+     const capacity=Math.ceil(Math.max(...data.tasks.map(x=>x.length))/512)*512;
+     const taskRect={left:strip.left+strip.width*page*128/capacity,top:strip.top,width:strip.width*Math.min(128,t.length-page*128)/capacity,height:strip.height};
+     origins.push({batch:t.batch,page,task:target.id,pageRect,taskRect});
+    });
+   }
+  });
+ }
+ observationMode=mode;renderTokenView(positions[phase],cacheStart(positions[phase]),kinds[ratios[selected]]);
+ if(!crossing||!origins.length||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const overlay=document.createElement('div');overlay.className='page-task-handoff';document.body.append(overlay);
+ const animations=[];
+ origins.forEach(item=>{
+  const pageRect=item.pageRect??mappingView.rowNodes[item.batch].strip.children[item.page]?.getBoundingClientRect();
+  const strip=mappingView.taskNodes[item.task].strip.getBoundingClientRect();
+  const context=executionContext(),target=context.tasks[item.task];
+  const capacity=Math.ceil(Math.max(...context.tasks.map(t=>t.length))/512)*512;
+  const taskRect=mode==='tokens'?item.taskRect:{left:strip.left+strip.width*item.page*128/capacity,top:strip.top,width:strip.width*Math.min(128,target.length-item.page*128)/capacity,height:strip.height};
+  if(!pageRect?.width)return;
+  const a=from==='tokens'?pageRect:taskRect,b=from==='tokens'?taskRect:pageRect;
+  const glyph=document.createElement('div');Object.assign(glyph.style,{position:'absolute',left:a.left+'px',top:a.top+'px',width:a.width+'px',height:a.height+'px',background:'var(--muted)',borderRadius:'1px',transformOrigin:'0 0'});overlay.append(glyph);
+  animations.push(glyph.animate([{transform:'none',opacity:1},{transform:`translate(${b.left-a.left}px,${b.top-a.top}px) scale(${Math.max(.001,b.width/a.width)},${Math.max(.001,b.height/a.height)})`,opacity:.6}],{duration:560,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'}));
+ });
+ animations.push(mappingView.svg.animate([{opacity:0},{opacity:0,offset:.35},{opacity:1}],{duration:560,fill:'both'}));
+ const handoff={overlay,animations};pageTaskHandoff=handoff;
+ Promise.all(animations.map(a=>a.finished.catch(()=>{}))).then(()=>{if(pageTaskHandoff===handoff)cancelPageTaskHandoff();});
+}
+
+function resetExecutionTask(){
+ if(executionSelection.task!==null&&taskReturnCamera)get("front-graph").setAttribute("viewBox",taskReturnCamera);
+ executionSelection.task=null;taskReturnCamera=null;mappingTask=null;
+}
+async function enterExecutionTask(id){
+ pausePlayback();
+ if(!document.body.classList.contains('front-view'))await openArchitecture();
+ if(executionSelection.task===null){
+  if(!paExpanded){paExpanded=true;renderFront(kinds[ratios[selected]]);fitFrontGraph();}
+  taskReturnCamera=get('front-graph').getAttribute('viewBox');
+ }
+ paCaseSelection=null;mappingTask=id;executionSelection.task=id;
+ const before=captureShared(get('front-graph'));renderFront(kinds[ratios[selected]]);fitFrontGraph();morphShared(before);renderExecutionWorkspace();updateViewportReadout();
+}
+function leaveExecutionTask(){
+ const before=captureShared(get('front-graph'));executionSelection.task=null;
+ renderFront(kinds[ratios[selected]]);if(taskReturnCamera)get('front-graph').setAttribute('viewBox',taskReturnCamera);else fitFrontGraph();
+ taskReturnCamera=null;morphShared(before);renderExecutionWorkspace();updateViewportReadout();
+}
+/* TASK_SOURCE_MODEL_START: verbatim createModel / semanticModel from visualization2-graph-intra.js. */
+const PATaskSource=(()=>{const global=window;
+function createModel({anatomy,source,preLaunch}){
+ const lines=source.split('\n'),line=s=>lines.findIndex(l=>l.includes(s))+1;
+ const tasks=anatomy.tasks.map(t=>{
+  const P=t.pages.length,S=t.stacks.length,T=S+preLaunch;
+  const n=(id,title,role,count,unit,formula,needle,detail)=>({id,title,role,count,unit,formula,line:line(needle),detail});
+  const nodes=[
+   n('q','Q Tile','tensor',1,'AIC / Task','1','q_tile = pl.load',`BF16 · Mat · ${t.q.shape.join('×')} / valid ${t.q.validShape.join('×')}`),
+   n('k','K Cache Pages','tensor',P,'AIC / Task','ceil(seq_len / BLOCK_SIZE)','qk_k_page = pl.load',`BF16 · GM → Mat · Page ${anatomy.pageTokens}×${anatomy.headDim} · physical ID unknown`),
+   n('qk','QK Matmul','operation',P,'AIC / Task','page_count','qk_score_page = pl.matmul','每个有效逻辑 Page 一次 Matmul；尾页仍加载完整 Page。'),
+   n('scores','Scores','tensor',P,'AIC stores / Task','page_count','score_transfer,',`score_transfer · FP32 · GM · slot tile ${anatomy.rowTile}×${anatomy.stackTokens}`),
+   n('softmax','Online Softmax','operation',S,'每 AIV Lane / Task','stack_count; tick < stack_count','score_scaled = pl.tile.muls','Scale → valid_cols Mask → online max/sum → BF16 Probability。两条 Lane 分别处理 2 / 3 Q Heads。'),
+   n('probability','Probability','tensor',S,'每 AIV Lane stores / Task','stack_count','probability_valid = pl.set_validshape',`probability_transfer · BF16 · GM · slot ${anatomy.rowTile}×${anatomy.stackTokens}`),
+   n('v','V Cache Pages','tensor',P,'AIC / Task','page_count','value_cache_bsnd,',`BF16 · GM → Mat · ${anatomy.pageTokens}×${anatomy.headDim} / Page`),
+   n('pv','PV Matmul','operation',P,'AIC / Task','Σ pages per Stack = page_count','pv0 = pl.matmul','每 Stack 首 Page 为 Matmul，其余 Page 为 Matmul Accumulate。'),
+   n('partial','Partial Context','tensor',S,'AIC stores / Task','stack_count','pl.store(pv3,',`pv_transfer · FP32 · GM · ${anatomy.rowTile}×${anatomy.headDim}`),
+   n('accumulate','Context Accumulate','operation',S,'每 AIV Lane / Task','stack_count; tick >= PRE_LAUNCH','pl.add(pl.row_expand_mul(o_iter','o_next = o_previous × delayed_rescale + partial_context。'),
+   n('normalize','Output Normalize','operation',1,'每 AIV Lane / Task','1, after loop','ctx = pl.cast','完成所有 Stack 后 o / l_sum，再 Cast BF16。'),
+   n('output','BF16 Output','tensor',1,'每 AIV Lane store / Task','1','                ctx,',`out2d · GM · valid ${t.output.shape.join('×')} · 两条 Lane 分别写 2 / 3 行`),
+   n('m','m · Max','state',S,'每 AIV Lane / Task','next_m = max(local_m, m_iter)','next_m = pl.maximum','FP32 · Vec · per Lane 8×1 / valid 2或3×1；m[-1] = −3e38；m[s] 参与下一 Stack 的 online max。'),
+   n('l','l_sum','state',S,'每 AIV Lane / Task','l[s] = exp(m[s−1]−m[s]) × l[s−1] + sum(p[s])','next_l = pl.add','FP32 · Vec · per Lane 8×1 / valid 2或3×1；l[-1] = 0；最终 l_sum 用于 Output Normalize。'),
+   n('rescale','Rescale FIFO','state',T,'每 AIV Lane / Task','FIFO shift = stack_count + PRE_LAUNCH; rescale_after produced = stack_count','pending0_after = pl.tile.move','初始化 (1,1)。有效生产分支产生 rescale_after ×stack_count；pending0/pending1 每 Tick 移位；消费分支读取延迟两拍的 pending0。'),
+   n('o','o · Context','state',S,'每 AIV Lane / Task','o[s] = o[s−1] × rescale[s] + pv[s]','o_after = pl.yield_','FP32 · Vec · per Lane 8×128 / valid 2或3×128；o[-1] = 0；跨 Stack 累积 FP32 Context，最终归一化。')];
+  const task={...t,nodes,pageCount:P,stackCount:S,tickCount:T,preLaunch,stateSteps:t.stacks.map((stack,index)=>({index,previous:index?`S${index-1}`:'初始状态',next:`S${index}`,produceTick:index,consumeTick:index+preLaunch,pages:stack.pages}))};
+  task.graph=semanticModel(task);return task;
+ });return {tasks,source,anatomy};
+}
+
+// Adapt Task facts to the same semantic schema used by the outer graph. All
+// composite subgraphs, their ports and source evidence come from the source model.
+const aliases={k:'k-cache',v:'v-cache',accumulate:'context-acc',normalize:'output-norm'};
+const semanticId=id=>aliases[id]||id;
+const localId=id=>Object.keys(aliases).find(k=>aliases[k]===id)||id;
+function semanticModel(task){
+ const base=global.PTO_PYPA_SEMANTIC_GRAPH,copy=v=>JSON.parse(JSON.stringify(v));
+ const ids=['q','k-cache','qk','scores','scale-mask','softmax','probability','v-cache','pv','context-acc','output-norm','output'];
+ const nodes=ids.map(id=>copy(base.nodes.find(n=>n.id===id)));
+ // PV's output tile is also a first-class root tensor; its subgraph retains the
+ // Mat-memory partial. No physical page IDs or addresses are synthesized.
+ const partial=copy(base.nodes.find(n=>n.id==='pv').composite.subgraph.nodes.find(n=>n.id==='partial'));
+ partial.id='partial';partial.name='Partial Context · pv_transfer';
+ partial.data={role:'intermediate',granularity:'stack',entity:'context.partial',symbol:'pv_transfer',dtype:'FP32',shape:{allocated:['TRANSFER_ROWS','HEAD_DIM']},storage:{space:'GM'}};
+ partial.provenance=[{kind:'resolved',origin:'source',fields:Object.keys(partial.data).map(k=>'data.'+k),note:'FP32 producer and transfer-row addressing in paged_attention_pypto.py.'}];
+ nodes.splice(nodes.findIndex(n=>n.id==='context-acc'),0,partial);
+ for(const id of ['m','l','rescale','o']){
+  const fact=task.nodes.find(n=>n.id===id);
+  const state={dtype:'FP32',granularity:'stack',initial:id==='m'?'−3e38':id==='rescale'?'pending0 = 1; pending1 = 1':'0',update:fact.formula,feedback:fact.detail};
+  nodes.push({id,type:'state',name:fact.title,description:fact.detail,source:{file:'paged_attention_pypto.py',ranges:[{start:fact.line,end:fact.line}],symbols:[id==='l'?'l_sum':id]},ports:{inputs:{default:{}},outputs:{default:{}}},state,provenance:[{kind:'resolved',origin:'source',fields:Object.keys(state).map(k=>'state.'+k),note:'Loop-carried state from pl.range init_values and pl.yield_.'}]});
+ }
+ const byId=new Map(nodes.map(n=>[n.id,n]));
+ // Extra semantic state ports resolve through the ordinary composite mechanism.
+ const bind=(id,side,name,node,port='default')=>{const n=byId.get(id);n.ports[side][name]={};n.composite.portMappings[side][name]={node,port,relation:'control'};};
+ bind('softmax','inputs','previous','previous');
+ bind('output-norm','inputs','final','normalize');
+ const edges=copy(base.edges.filter(e=>ids.includes(e.s)&&ids.includes(e.t)&&!['context-acc','output-norm'].includes(e.t)&&!['softmax>context-acc'].includes(e.s+'>'+e.t)));
+ const edge=(s,t,label,type='data',sourcePort='default',targetPort='default',id)=>edges.push({id:id||`${type}:${s}:${t}`,s,t,label,type,sourcePort,targetPort});
+ edge('pv','partial','pv_transfer','data','partial');edge('partial','context-acc','Partial Context','data','default','partial');
+ edge('softmax','m','next_m','state','state');edge('m','softmax','previous Stack · m','feedback','default','previous');
+ edge('softmax','l','next_l','state','state');edge('l','softmax','previous Stack · l_sum','feedback','default','previous');
+ edge('softmax','rescale','rescale_after','state','state');edge('rescale','rescale','FIFO shift / Tick','feedback');
+ edge('rescale','context-acc','pending0 · delayed rescale','state','default','state');
+ edge('context-acc','o','o_next','state','Context');edge('o','context-acc','previous Stack · o','feedback','default','state');
+ edge('l','output-norm','final l_sum','data','default','final');edge('o','output-norm','final o','data','default','final');
+ const region=(id,name,members)=>({id,type:'region',name,description:name,members,source:{file:'paged_attention_pypto.py',ranges:[{start:759,end:873}],symbols:[]},provenance:[{kind:'resolved',origin:'source',fields:['members'],note:'Task-local semantic regions; not runtime timing.'}]});
+ const graph={schemaVersion:2,id:`attention-task-${task.id}`,sourceFiles:base.sourceFiles,constants:base.constants,runtimeDims:base.runtimeDims,nodes,edges,
+  groups:[region('task-inputs','Task Inputs',['q','k-cache','v-cache']),region('task-compute',`${task.stackCount} Stacks · ${task.pageCount} Pages total`,['qk','scores','scale-mask','softmax','probability','pv','partial','context-acc','m','l','rescale','o']),region('task-output','Task Output',['output-norm','output'])],
+  synchronizations:copy(base.synchronizations)};
+ // The root Q is the current Task tile, not the full Q projection tensor.
+ const q=byId.get('q');q.name='Q Tile';q.data.shape={allocated:task.q.shape,valid:task.q.validShape};
+ return graph;
+}
+return {createModel};})();
+const paTaskPythonSource="# Copyright (c) PyPTO Contributors.\n# This program is free software, you can redistribute it and/or modify it under the terms and conditions of\n# CANN Open Software License Agreement Version 2.0 (the \"License\").\n# Please refer to the License for details. You may not use this file except in compliance with the License.\n# THIS SOFTWARE IS PROVIDED ON AN \"AS IS\" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,\n# INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.\n# See LICENSE in the root of the software repository for the full text of the License.\n# -----------------------------------------------------------------------------------------------------------\n\"\"\"Qwen3-14B PyPTO Q/K norm, RoPE, cache append, and paged-attention pipeline.\"\"\"\n\nimport math\n\nimport pypto.language as pl\n\nfrom constants import QWEN3_14B as M\n\nBATCH = 16\nNUM_HEADS = 40\nNUM_KV_HEADS = 8\nGROUP = NUM_HEADS // NUM_KV_HEADS  # 5 query heads per KV head\nHEAD_DIM = 128\nBLOCK_SIZE = 128  # paged KV page size\nSTACK_PAGES = 4  # physical pages combined into one attention compute tile\nSTACK_TOKENS = STACK_PAGES * BLOCK_SIZE  # 512-token QK/softmax/PV granularity\nKV_HIDDEN = NUM_KV_HEADS * HEAD_DIM  # 1024 (BSND row width)\nSEQ_LEN = 3584  # 7 * 512 — page & stack clean\nMAX_BLOCKS = SEQ_LEN // BLOCK_SIZE  # 28\nNUM_BLOCKS = BATCH * MAX_BLOCKS  # 448\nNUM_TASKS = BATCH * NUM_KV_HEADS  # 128\nATTN_SPMD_BLOCKS = 24\nPRE_LAUNCH = 2\nTRANSFER_SLOTS = PRE_LAUNCH + 1\nFFTS_WORKSPACE_ELEMENTS = 256\nQK_READY_EVENT = 0\nSOFTMAX_READY_EVENT = 1\nPV_READY_EVENT = 2\nROW_TILE = 16\nAIV_ROW_TILE = 8\nAIV_LANE0_ROWS = 2\nTRANSFER_ROWS = ATTN_SPMD_BLOCKS * TRANSFER_SLOTS * ROW_TILE\nSCALE = 1.0 / math.sqrt(HEAD_DIM)\nKCACHE_ROWS = NUM_BLOCKS * BLOCK_SIZE\nHALF_DIM = HEAD_DIM // 2\nHIDDEN = NUM_HEADS * HEAD_DIM\nQ_HEAD_PAD = M.q_head_pad\nHEAD_DIM_INV = M.head_dim_inv\nEPS = M.eps\nROPE_CORES = 32\nROPE_ITEMS_PER_CORE = (NUM_KV_HEADS * BATCH + ROPE_CORES - 1) // ROPE_CORES\nK_RED_ROWS = 8\n\nassert NUM_HEADS % NUM_KV_HEADS == 0\nassert BLOCK_SIZE == HEAD_DIM\nassert STACK_TOKENS == 512\nassert SEQ_LEN % BLOCK_SIZE == 0\nassert (BATCH, NUM_HEADS, NUM_KV_HEADS, HEAD_DIM) == (\n    M.batch_pad,\n    M.num_heads,\n    M.num_kv_heads,\n    M.head_dim,\n)\nassert GROUP == M.q_per_kv == M.q_head_batch\nassert Q_HEAD_PAD == 16 and K_RED_ROWS == 8\nassert ROPE_ITEMS_PER_CORE == 4\n\n\n@pl.jit.inline(auto_scope=False)\ndef paged_attention_pypto_swpipe(  # noqa: PLR0913 -- fused Phase-0/attention API\n    q_tnd_flat: pl.Tensor,\n    key_cache: pl.Tensor,\n    value_cache: pl.Tensor,\n    block_table: pl.Tensor,\n    seq_lens: pl.Tensor,\n    inv_rms_states: pl.Tensor,\n    slot_mapping: pl.Tensor,\n    rope_cos: pl.Tensor,\n    rope_sin: pl.Tensor,\n    q_proj: pl.Tensor,\n    k_proj: pl.Tensor,\n    v_proj: pl.Tensor,\n    q_norm_w: pl.Tensor,\n    k_norm_w: pl.Tensor,\n    layer_cache_base_token_rows: pl.Scalar[pl.INDEX],\n    out: pl.Tensor,\n    score_transfer: pl.Tensor,\n    probability_transfer: pl.Tensor,\n    pv_transfer: pl.Tensor,\n    ffts_workspace: pl.Tensor,\n    q_proj_tid: pl.Scalar[pl.TASK_ID],\n    k_proj_tid: pl.Scalar[pl.TASK_ID],\n    v_proj_tid: pl.Scalar[pl.TASK_ID],\n    rms_tid: pl.Scalar[pl.TASK_ID],\n    attn_out_seed_tid: pl.Scalar[pl.TASK_ID],\n    mlp_out_seed_tid: pl.Scalar[pl.TASK_ID],\n    scratch_ready_tid: pl.Scalar[pl.TASK_ID],\n) -> pl.Scalar[pl.TASK_ID]:\n    \"\"\"Run fused Q/K norm, RoPE, cache append, and dynamic paged attention.\"\"\"\n    active_batch = pl.tensor.dim(seq_lens, 0)\n    num_tasks = active_batch * NUM_KV_HEADS\n    query_rows = pl.tensor.dim(q_tnd_flat, 0)\n    cache_token_rows = (pl.tensor.dim(key_cache, 0) * pl.tensor.dim(key_cache, 1)) // KV_HIDDEN\n    key_cache_bsnd = pl.reshape(key_cache, [cache_token_rows, KV_HIDDEN])\n    value_cache_bsnd = pl.reshape(value_cache, [cache_token_rows, KV_HIDDEN])\n    max_blocks_per_seq = pl.tensor.dim(block_table, 0) // active_batch\n    block_table_2d = pl.reshape(block_table, [active_batch, max_blocks_per_seq])\n    q2d = pl.reshape(q_tnd_flat, [query_rows, HEAD_DIM])\n    cache_base = layer_cache_base_token_rows\n    out2d = pl.reshape(out, [query_rows, HEAD_DIM])\n    with pl.spmd(\n        ATTN_SPMD_BLOCKS,\n        name_hint=\"attn_swpipe_spmd\",\n        sync_start=True,\n        allow_early_resolve=True,\n        deps=[\n            q_proj_tid,\n            k_proj_tid,\n            v_proj_tid,\n            rms_tid,\n            attn_out_seed_tid,\n            mlp_out_seed_tid,\n            scratch_ready_tid,\n        ],\n    ) as attn_tid:\n        core = pl.tile.get_block_idx()\n        pl.system.set_ffts(ffts_workspace)\n\n        # Run Phase 0 on the first 32 physical AIV lanes, then publish Q/K/V.\n        for aiv_id in pl.split_aiv(2, mode=pl.SplitMode.NONE):\n            rope_core = core * 2 + aiv_id\n            if rope_core < ROPE_CORES:\n                q_red_pad = pl.full(\n                    [1, (Q_HEAD_PAD - GROUP) * HEAD_DIM],\n                    dtype=pl.FP32,\n                    value=0.0,\n                )\n                k_red_pad = pl.full(\n                    [1, (K_RED_ROWS - 1) * HEAD_DIM],\n                    dtype=pl.FP32,\n                    value=0.0,\n                )\n                for it in pl.pipeline(ROPE_ITEMS_PER_CORE, stage=2):\n                    g_idx = rope_core + it * ROPE_CORES\n                    if g_idx < NUM_KV_HEADS * active_batch:\n                        kv_head = g_idx // active_batch\n                        batch_idx = g_idx - kv_head * active_batch\n                        position = pl.read(seq_lens, [batch_idx]) - 1\n                        inv_rms = pl.read(inv_rms_states, [batch_idx, 0])\n                        # Serving uses -1 during its one-page profile warmup.\n                        # Clamp the slot before adding the per-layer cache base;\n                        # clamping only the final tensor-view offset would make\n                        # layer N write the last row of layer N-1 instead.\n                        write_slot = pl.max(\n                            pl.cast(pl.tensor.read(slot_mapping, [batch_idx]), pl.INDEX),\n                            0,\n                        )\n                        cos_lo = rope_cos[position : position + 1, 0:HALF_DIM]\n                        cos_hi = rope_cos[position : position + 1, HALF_DIM:HEAD_DIM]\n                        sin_lo = rope_sin[position : position + 1, 0:HALF_DIM]\n                        sin_hi = rope_sin[position : position + 1, HALF_DIM:HEAD_DIM]\n\n                        cache_col = kv_head * HEAD_DIM\n                        k_raw = pl.mul(\n                            pl.reshape(\n                                pl.concat(\n                                    k_proj[\n                                        batch_idx : batch_idx + 1,\n                                        cache_col : cache_col + HEAD_DIM,\n                                    ],\n                                    k_red_pad,\n                                ),\n                                [K_RED_ROWS, HEAD_DIM],\n                            ),\n                            inv_rms,\n                        )\n                        k_ss = pl.row_sum(pl.mul(k_raw, k_raw))\n                        k_inv = pl.recip(pl.sqrt(pl.add(pl.mul(k_ss, HEAD_DIM_INV), EPS)))\n                        k_normed = pl.row_expand_mul(\n                            pl.col_expand_mul(k_raw, k_norm_w),\n                            k_inv,\n                        )\n                        k_full = k_normed[0:1, :]\n                        k_lo = k_full[:, 0:HALF_DIM]\n                        k_hi = k_full[:, HALF_DIM:HEAD_DIM]\n                        k_rotated = pl.concat(\n                            pl.sub(\n                                pl.col_expand_mul(k_lo, cos_lo),\n                                pl.col_expand_mul(k_hi, sin_lo),\n                            ),\n                            pl.add(\n                                pl.col_expand_mul(k_hi, cos_hi),\n                                pl.col_expand_mul(k_lo, sin_hi),\n                            ),\n                        )\n                        cache_row = layer_cache_base_token_rows + write_slot\n                        key_cache_bsnd[\n                            cache_row : cache_row + 1,\n                            cache_col : cache_col + HEAD_DIM,\n                        ] = pl.cast(k_rotated, target_type=pl.BF16)\n\n                        v_row_bf16 = pl.cast(\n                            pl.mul(\n                                v_proj[\n                                    batch_idx : batch_idx + 1,\n                                    cache_col : cache_col + HEAD_DIM,\n                                ],\n                                inv_rms,\n                            ),\n                            target_type=pl.BF16,\n                        )\n                        value_cache_bsnd[\n                            cache_row : cache_row + 1,\n                            cache_col : cache_col + HEAD_DIM,\n                        ] = v_row_bf16\n\n                        q_head_base = kv_head * GROUP\n                        q_raw = pl.mul(\n                            pl.reshape(\n                                pl.concat(\n                                    q_proj[\n                                        batch_idx : batch_idx + 1,\n                                        q_head_base * HEAD_DIM : (q_head_base + GROUP) * HEAD_DIM,\n                                    ],\n                                    q_red_pad,\n                                ),\n                                [Q_HEAD_PAD, HEAD_DIM],\n                            ),\n                            inv_rms,\n                        )\n                        q_ss = pl.row_sum(pl.mul(q_raw, q_raw))\n                        q_inv = pl.recip(pl.sqrt(pl.add(pl.mul(q_ss, HEAD_DIM_INV), EPS)))\n                        q_heads = pl.row_expand_mul(\n                            pl.col_expand_mul(q_raw, q_norm_w),\n                            q_inv,\n                        )\n                        q_lo = q_heads[:, 0:HALF_DIM]\n                        q_hi = q_heads[:, HALF_DIM:HEAD_DIM]\n                        q_rotated = pl.concat(\n                            pl.sub(\n                                pl.col_expand_mul(q_lo, cos_lo),\n                                pl.col_expand_mul(q_hi, sin_lo),\n                            ),\n                            pl.add(\n                                pl.col_expand_mul(q_hi, cos_hi),\n                                pl.col_expand_mul(q_lo, sin_hi),\n                            ),\n                        )\n                        q_row = batch_idx * NUM_HEADS + q_head_base\n                        q2d[q_row : q_row + GROUP, :] = pl.cast(\n                            q_rotated[0:GROUP, :],\n                            target_type=pl.BF16,\n                        )\n\n        # SYNCALL is arrival-only. Publish the Phase-0 GM writes before the\n        # barrier, then invalidate each consumer's GM cache before PA reads\n        # Q/K/V.\n        pl.system.cacheinvalid()\n        pl.system.fence()\n        pl.system.syncall(core_type=pl.KernelType.MIX)\n        pl.system.cacheinvalid()\n\n        for task in pl.range(core, num_tasks, ATTN_SPMD_BLOCKS):\n            batch = task // NUM_KV_HEADS\n            kv_head = task % NUM_KV_HEADS\n            seq_len = pl.read(seq_lens, [batch])\n            page_count = (seq_len + BLOCK_SIZE - 1) // BLOCK_SIZE\n            stack_count = (seq_len + STACK_TOKENS - 1) // STACK_TOKENS\n            col = kv_head * HEAD_DIM\n            transfer_base = core * TRANSFER_SLOTS * ROW_TILE\n            qp_row = batch * NUM_HEADS + kv_head * GROUP\n            q_tile = pl.load(\n                q2d,\n                [qp_row, 0],\n                [ROW_TILE, HEAD_DIM],\n                valid_shape=[GROUP, HEAD_DIM],\n                target_memory=pl.MemorySpace.Mat,\n            )\n\n            # Keep 128-token cache pages inside each 512-token softmax/update stack.\n            for tick in pl.range(stack_count + PRE_LAUNCH):\n                if tick < stack_count:\n                    produce_stack = tick\n                    produce_page = produce_stack * STACK_PAGES\n                    produce_row = transfer_base + (produce_stack % TRANSFER_SLOTS) * ROW_TILE\n                    if produce_page + STACK_PAGES <= page_count:\n                        for qk_page_offset in pl.pipeline(STACK_PAGES, stage=2):\n                            qk_ph = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, produce_page + qk_page_offset]),\n                                pl.INDEX,\n                            )\n                            qk_k_page = pl.load(\n                                key_cache_bsnd,\n                                [cache_base + qk_ph * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            qk_score_page = pl.matmul(\n                                q_tile,\n                                pl.tile.transpose_view(qk_k_page),\n                                out_dtype=pl.FP32,\n                            )\n                            pl.store(\n                                qk_score_page,\n                                [produce_row, qk_page_offset * BLOCK_SIZE],\n                                score_transfer,\n                            )\n                    else:\n                        qk_tail_ph0 = pl.cast(\n                            pl.tensor.read(block_table_2d, [batch, produce_page]),\n                            pl.INDEX,\n                        )\n                        k_tail0 = pl.load(\n                            key_cache_bsnd,\n                            [cache_base + qk_tail_ph0 * BLOCK_SIZE, col],\n                            [BLOCK_SIZE, HEAD_DIM],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        qk_tail0 = pl.matmul(\n                            q_tile,\n                            pl.tile.transpose_view(k_tail0),\n                            out_dtype=pl.FP32,\n                        )\n                        pl.store(qk_tail0, [produce_row, 0], score_transfer)\n                        if produce_page + 1 < page_count:\n                            qk_tail_ph1 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, produce_page + 1]),\n                                pl.INDEX,\n                            )\n                            k_tail1 = pl.load(\n                                key_cache_bsnd,\n                                [cache_base + qk_tail_ph1 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            qk_tail1 = pl.matmul(\n                                q_tile,\n                                pl.tile.transpose_view(k_tail1),\n                                out_dtype=pl.FP32,\n                            )\n                            pl.store(qk_tail1, [produce_row, BLOCK_SIZE], score_transfer)\n                        if produce_page + 2 < page_count:\n                            qk_tail_ph2 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, produce_page + 2]),\n                                pl.INDEX,\n                            )\n                            k_tail2 = pl.load(\n                                key_cache_bsnd,\n                                [cache_base + qk_tail_ph2 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            qk_tail2 = pl.matmul(\n                                q_tile,\n                                pl.tile.transpose_view(k_tail2),\n                                out_dtype=pl.FP32,\n                            )\n                            pl.store(qk_tail2, [produce_row, 2 * BLOCK_SIZE], score_transfer)\n                    pl.system.sync_set(\n                        QK_READY_EVENT,\n                        pipe=pl.PipeType.FIX,\n                        ffts_mode=2,\n                        core_type=pl.KernelType.AIC,\n                    )\n\n                if tick >= PRE_LAUNCH:\n                    consume_stack = tick - PRE_LAUNCH\n                    consume_page = consume_stack * STACK_PAGES\n                    consume_row = transfer_base + (consume_stack % TRANSFER_SLOTS) * ROW_TILE\n                    # Prefetch the complete valid V stack, then ping-pong P into one Acc tile.\n                    if consume_page + STACK_PAGES <= page_count:\n                        pv_ph0 = pl.cast(\n                            pl.tensor.read(block_table_2d, [batch, consume_page]),\n                            pl.INDEX,\n                        )\n                        pv_ph1 = pl.cast(\n                            pl.tensor.read(block_table_2d, [batch, consume_page + 1]),\n                            pl.INDEX,\n                        )\n                        pv_ph2 = pl.cast(\n                            pl.tensor.read(block_table_2d, [batch, consume_page + 2]),\n                            pl.INDEX,\n                        )\n                        pv_ph3 = pl.cast(\n                            pl.tensor.read(block_table_2d, [batch, consume_page + 3]),\n                            pl.INDEX,\n                        )\n                        v0: pl.Tile[\n                            [BLOCK_SIZE, HEAD_DIM],\n                            pl.BF16,\n                            pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[0],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            value_cache_bsnd,\n                            [cache_base + pv_ph0 * BLOCK_SIZE, col],\n                            [BLOCK_SIZE, HEAD_DIM],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        v1: pl.Tile[\n                            [BLOCK_SIZE, HEAD_DIM],\n                            pl.BF16,\n                            pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[1],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            value_cache_bsnd,\n                            [cache_base + pv_ph1 * BLOCK_SIZE, col],\n                            [BLOCK_SIZE, HEAD_DIM],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        v2: pl.Tile[\n                            [BLOCK_SIZE, HEAD_DIM],\n                            pl.BF16,\n                            pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[2],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            value_cache_bsnd,\n                            [cache_base + pv_ph2 * BLOCK_SIZE, col],\n                            [BLOCK_SIZE, HEAD_DIM],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        v3: pl.Tile[\n                            [BLOCK_SIZE, HEAD_DIM],\n                            pl.BF16,\n                            pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[3],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            value_cache_bsnd,\n                            [cache_base + pv_ph3 * BLOCK_SIZE, col],\n                            [BLOCK_SIZE, HEAD_DIM],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        pl.system.sync_wait(\n                            SOFTMAX_READY_EVENT,\n                            pipe=pl.PipeType.MTE2,\n                            core_type=pl.KernelType.AIC,\n                        )\n                        probability0: pl.Tile[\n                            [ROW_TILE, BLOCK_SIZE],\n                            pl.BF16,\n                            pl.MemRef(\"pv_p_l1\", slots=2)[0],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            probability_transfer,\n                            [consume_row, 0],\n                            [ROW_TILE, BLOCK_SIZE],\n                            valid_shape=[GROUP, BLOCK_SIZE],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        pv0 = pl.matmul(\n                            pl.tile.move(probability0, target_memory=pl.MemorySpace.Left),\n                            pl.tile.move(v0, target_memory=pl.MemorySpace.Right),\n                            out_dtype=pl.FP32,\n                        )\n                        probability1: pl.Tile[\n                            [ROW_TILE, BLOCK_SIZE],\n                            pl.BF16,\n                            pl.MemRef(\"pv_p_l1\", slots=2)[1],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            probability_transfer,\n                            [consume_row, BLOCK_SIZE],\n                            [ROW_TILE, BLOCK_SIZE],\n                            valid_shape=[GROUP, BLOCK_SIZE],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        pv1 = pl.matmul_acc(\n                            pv0,\n                            pl.tile.move(probability1, target_memory=pl.MemorySpace.Left),\n                            pl.tile.move(v1, target_memory=pl.MemorySpace.Right),\n                        )\n                        probability2: pl.Tile[\n                            [ROW_TILE, BLOCK_SIZE],\n                            pl.BF16,\n                            pl.MemRef(\"pv_p_l1\", slots=2)[0],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            probability_transfer,\n                            [consume_row, 2 * BLOCK_SIZE],\n                            [ROW_TILE, BLOCK_SIZE],\n                            valid_shape=[GROUP, BLOCK_SIZE],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        pv2 = pl.matmul_acc(\n                            pv1,\n                            pl.tile.move(probability2, target_memory=pl.MemorySpace.Left),\n                            pl.tile.move(v2, target_memory=pl.MemorySpace.Right),\n                        )\n                        probability3: pl.Tile[\n                            [ROW_TILE, BLOCK_SIZE],\n                            pl.BF16,\n                            pl.MemRef(\"pv_p_l1\", slots=2)[1],\n                            pl.Mem.Mat,\n                        ] = pl.load(\n                            probability_transfer,\n                            [consume_row, 3 * BLOCK_SIZE],\n                            [ROW_TILE, BLOCK_SIZE],\n                            valid_shape=[GROUP, BLOCK_SIZE],\n                            target_memory=pl.MemorySpace.Mat,\n                        )\n                        pv3 = pl.matmul_acc(\n                            pv2,\n                            pl.tile.move(probability3, target_memory=pl.MemorySpace.Left),\n                            pl.tile.move(v3, target_memory=pl.MemorySpace.Right),\n                        )\n                        pl.store(pv3, [consume_row, 0], pv_transfer)\n                    else:\n                        tail_pages = page_count - consume_page\n                        if tail_pages == 1:\n                            pv1_ph0 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, consume_page]),\n                                pl.INDEX,\n                            )\n                            v1_0: pl.Tile[\n                                [BLOCK_SIZE, HEAD_DIM],\n                                pl.BF16,\n                                pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                value_cache_bsnd,\n                                [cache_base + pv1_ph0 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pl.system.sync_wait(\n                                SOFTMAX_READY_EVENT,\n                                pipe=pl.PipeType.MTE2,\n                                core_type=pl.KernelType.AIC,\n                            )\n                            probability1_0: pl.Tile[\n                                [ROW_TILE, BLOCK_SIZE],\n                                pl.BF16,\n                                pl.MemRef(\"pv_p_l1\", slots=2)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                probability_transfer,\n                                [consume_row, 0],\n                                [ROW_TILE, BLOCK_SIZE],\n                                valid_shape=[GROUP, BLOCK_SIZE],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pv_tail1 = pl.matmul(\n                                pl.tile.move(probability1_0, target_memory=pl.MemorySpace.Left),\n                                pl.tile.move(v1_0, target_memory=pl.MemorySpace.Right),\n                                out_dtype=pl.FP32,\n                            )\n                            pl.store(pv_tail1, [consume_row, 0], pv_transfer)\n                        if tail_pages == 2:\n                            pv2_ph0 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, consume_page]),\n                                pl.INDEX,\n                            )\n                            pv2_ph1 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, consume_page + 1]),\n                                pl.INDEX,\n                            )\n                            v2_0: pl.Tile[\n                                [BLOCK_SIZE, HEAD_DIM],\n                                pl.BF16,\n                                pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                value_cache_bsnd,\n                                [cache_base + pv2_ph0 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            v2_1: pl.Tile[\n                                [BLOCK_SIZE, HEAD_DIM],\n                                pl.BF16,\n                                pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[1],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                value_cache_bsnd,\n                                [cache_base + pv2_ph1 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pl.system.sync_wait(\n                                SOFTMAX_READY_EVENT,\n                                pipe=pl.PipeType.MTE2,\n                                core_type=pl.KernelType.AIC,\n                            )\n                            probability2_0: pl.Tile[\n                                [ROW_TILE, BLOCK_SIZE],\n                                pl.BF16,\n                                pl.MemRef(\"pv_p_l1\", slots=2)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                probability_transfer,\n                                [consume_row, 0],\n                                [ROW_TILE, BLOCK_SIZE],\n                                valid_shape=[GROUP, BLOCK_SIZE],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pv_tail2_0 = pl.matmul(\n                                pl.tile.move(probability2_0, target_memory=pl.MemorySpace.Left),\n                                pl.tile.move(v2_0, target_memory=pl.MemorySpace.Right),\n                                out_dtype=pl.FP32,\n                            )\n                            probability2_1: pl.Tile[\n                                [ROW_TILE, BLOCK_SIZE],\n                                pl.BF16,\n                                pl.MemRef(\"pv_p_l1\", slots=2)[1],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                probability_transfer,\n                                [consume_row, BLOCK_SIZE],\n                                [ROW_TILE, BLOCK_SIZE],\n                                valid_shape=[GROUP, BLOCK_SIZE],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pv_tail2_1 = pl.matmul_acc(\n                                pv_tail2_0,\n                                pl.tile.move(probability2_1, target_memory=pl.MemorySpace.Left),\n                                pl.tile.move(v2_1, target_memory=pl.MemorySpace.Right),\n                            )\n                            pl.store(pv_tail2_1, [consume_row, 0], pv_transfer)\n                        if tail_pages == 3:\n                            pv3_ph0 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, consume_page]),\n                                pl.INDEX,\n                            )\n                            pv3_ph1 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, consume_page + 1]),\n                                pl.INDEX,\n                            )\n                            pv3_ph2 = pl.cast(\n                                pl.tensor.read(block_table_2d, [batch, consume_page + 2]),\n                                pl.INDEX,\n                            )\n                            v3_0: pl.Tile[\n                                [BLOCK_SIZE, HEAD_DIM],\n                                pl.BF16,\n                                pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                value_cache_bsnd,\n                                [cache_base + pv3_ph0 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            v3_1: pl.Tile[\n                                [BLOCK_SIZE, HEAD_DIM],\n                                pl.BF16,\n                                pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[1],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                value_cache_bsnd,\n                                [cache_base + pv3_ph1 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            v3_2: pl.Tile[\n                                [BLOCK_SIZE, HEAD_DIM],\n                                pl.BF16,\n                                pl.MemRef(\"pv_v_l1\", slots=STACK_PAGES)[2],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                value_cache_bsnd,\n                                [cache_base + pv3_ph2 * BLOCK_SIZE, col],\n                                [BLOCK_SIZE, HEAD_DIM],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pl.system.sync_wait(\n                                SOFTMAX_READY_EVENT,\n                                pipe=pl.PipeType.MTE2,\n                                core_type=pl.KernelType.AIC,\n                            )\n                            probability3_0: pl.Tile[\n                                [ROW_TILE, BLOCK_SIZE],\n                                pl.BF16,\n                                pl.MemRef(\"pv_p_l1\", slots=2)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                probability_transfer,\n                                [consume_row, 0],\n                                [ROW_TILE, BLOCK_SIZE],\n                                valid_shape=[GROUP, BLOCK_SIZE],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pv_tail3_0 = pl.matmul(\n                                pl.tile.move(probability3_0, target_memory=pl.MemorySpace.Left),\n                                pl.tile.move(v3_0, target_memory=pl.MemorySpace.Right),\n                                out_dtype=pl.FP32,\n                            )\n                            probability3_1: pl.Tile[\n                                [ROW_TILE, BLOCK_SIZE],\n                                pl.BF16,\n                                pl.MemRef(\"pv_p_l1\", slots=2)[1],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                probability_transfer,\n                                [consume_row, BLOCK_SIZE],\n                                [ROW_TILE, BLOCK_SIZE],\n                                valid_shape=[GROUP, BLOCK_SIZE],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pv_tail3_1 = pl.matmul_acc(\n                                pv_tail3_0,\n                                pl.tile.move(probability3_1, target_memory=pl.MemorySpace.Left),\n                                pl.tile.move(v3_1, target_memory=pl.MemorySpace.Right),\n                            )\n                            probability3_2: pl.Tile[\n                                [ROW_TILE, BLOCK_SIZE],\n                                pl.BF16,\n                                pl.MemRef(\"pv_p_l1\", slots=2)[0],\n                                pl.Mem.Mat,\n                            ] = pl.load(\n                                probability_transfer,\n                                [consume_row, 2 * BLOCK_SIZE],\n                                [ROW_TILE, BLOCK_SIZE],\n                                valid_shape=[GROUP, BLOCK_SIZE],\n                                target_memory=pl.MemorySpace.Mat,\n                            )\n                            pv_tail3_2 = pl.matmul_acc(\n                                pv_tail3_1,\n                                pl.tile.move(probability3_2, target_memory=pl.MemorySpace.Left),\n                                pl.tile.move(v3_2, target_memory=pl.MemorySpace.Right),\n                            )\n                            pl.store(pv_tail3_2, [consume_row, 0], pv_transfer)\n                    pl.system.sync_set(\n                        PV_READY_EVENT,\n                        pipe=pl.PipeType.FIX,\n                        ffts_mode=2,\n                        core_type=pl.KernelType.AIC,\n                    )\n\n            for aiv_id in pl.split_aiv(2, mode=pl.SplitMode.NONE):\n                pl.system.set_ffts(ffts_workspace)\n                lane_row = aiv_id * AIV_LANE0_ROWS\n                lane_rows = AIV_LANE0_ROWS + aiv_id\n                tmp = pl.create_tile(\n                    [AIV_ROW_TILE, STACK_TOKENS],\n                    dtype=pl.FP32,\n                    target_memory=pl.MemorySpace.Vec,\n                )\n                zero_scores = pl.tile.full(\n                    [AIV_ROW_TILE, STACK_TOKENS],\n                    dtype=pl.FP32,\n                    value=0.0,\n                )\n                zero_scores_valid = pl.set_validshape(\n                    zero_scores,\n                    lane_rows,\n                    STACK_TOKENS,\n                )\n                zrow = pl.tile.muls(pl.row_max(zero_scores_valid, tmp), 0.0)\n                m = pl.tile.adds(zrow, -3.0e38)\n                l_sum = zrow\n                o_init = pl.tile.full(\n                    [AIV_ROW_TILE, HEAD_DIM],\n                    dtype=pl.FP32,\n                    value=0.0,\n                )\n                o = pl.set_validshape(o_init, lane_rows, HEAD_DIM)\n                # Rescale FIFO states: (1, 1) -> (1, r0) -> (r0, r1).\n                rescale_pending0 = pl.tile.adds(zrow, 1.0)\n                rescale_pending1 = pl.tile.adds(zrow, 1.0)\n\n                for tick, (m_iter, l_iter, o_iter, pending0_iter, pending1_iter) in pl.range(\n                    stack_count + PRE_LAUNCH,\n                    init_values=(m, l_sum, o, rescale_pending0, rescale_pending1),\n                ):\n                    if tick < stack_count:\n                        produce_stack = tick\n                        produce_row = transfer_base + (produce_stack % TRANSFER_SLOTS) * ROW_TILE\n                        pl.system.sync_wait(\n                            QK_READY_EVENT,\n                            pipe=pl.PipeType.MTE2,\n                            core_type=pl.KernelType.AIV,\n                        )\n                        score_aiv = pl.load(\n                            score_transfer,\n                            [produce_row + lane_row, 0],\n                            [AIV_ROW_TILE, STACK_TOKENS],\n                            valid_shape=[lane_rows, STACK_TOKENS],\n                            target_memory=pl.MemorySpace.Vec,\n                        )\n                        score_scaled = pl.tile.muls(score_aiv, SCALE)\n                        valid_cols = pl.min(\n                            STACK_TOKENS,\n                            seq_len - produce_stack * STACK_TOKENS,\n                        )\n                        score_valid = pl.set_validshape(score_scaled, lane_rows, valid_cols)\n                        score_filled = pl.fillpad(score_valid, pad_value=pl.PadValue.min)\n                        score_masked = pl.set_validshape(\n                            score_filled,\n                            lane_rows,\n                            STACK_TOKENS,\n                        )\n                        local_m = pl.row_max(score_masked, tmp)\n                        next_m = pl.maximum(local_m, m_iter)\n                        rescale = pl.exp(pl.sub(m_iter, next_m))\n                        probability_aiv = pl.exp(pl.row_expand_sub(score_masked, next_m))\n                        probability_reduce = pl.tile.move(\n                            probability_aiv,\n                            target_memory=pl.MemorySpace.Vec,\n                            slayout=pl.TileLayout.none_box,\n                        )\n                        next_l = pl.add(\n                            pl.mul(rescale, l_iter),\n                            pl.row_sum(probability_reduce, tmp),\n                        )\n                        probability_bf16 = pl.cast(\n                            probability_aiv,\n                            target_type=pl.BF16,\n                            mode=\"rint\",\n                        )\n                        probability_valid = pl.set_validshape(\n                            probability_bf16,\n                            lane_rows,\n                            STACK_TOKENS,\n                        )\n                        pl.store(\n                            probability_valid,\n                            [produce_row + lane_row, 0],\n                            probability_transfer,\n                        )\n                        pl.system.sync_set(\n                            SOFTMAX_READY_EVENT,\n                            pipe=pl.PipeType.MTE3,\n                            ffts_mode=2,\n                            core_type=pl.KernelType.AIV,\n                        )\n                        m_after, l_after, rescale_after = pl.yield_(next_m, next_l, rescale)\n                    else:\n                        m_after, l_after, rescale_after = pl.yield_(m_iter, l_iter, pending1_iter)\n\n                    if tick >= PRE_LAUNCH:\n                        consume_stack = tick - PRE_LAUNCH\n                        consume_row = transfer_base + (consume_stack % TRANSFER_SLOTS) * ROW_TILE\n                        pl.system.sync_wait(\n                            PV_READY_EVENT,\n                            pipe=pl.PipeType.MTE2,\n                            core_type=pl.KernelType.AIV,\n                        )\n                        pv_aiv = pl.load(\n                            pv_transfer,\n                            [consume_row + lane_row, 0],\n                            [AIV_ROW_TILE, HEAD_DIM],\n                            valid_shape=[lane_rows, HEAD_DIM],\n                            target_memory=pl.MemorySpace.Vec,\n                        )\n                        o_after = pl.yield_(\n                            pl.add(pl.row_expand_mul(o_iter, pending0_iter), pv_aiv),\n                        )\n                    else:\n                        o_after = pl.yield_(o_iter)\n\n                    pending0_after = pl.tile.move(\n                        pending1_iter,\n                        target_memory=pl.MemorySpace.Vec,\n                    )\n                    pending1_after = pl.tile.move(\n                        rescale_after,\n                        target_memory=pl.MemorySpace.Vec,\n                    )\n                    m, l_sum, o, rescale_pending0, rescale_pending1 = pl.yield_(\n                        m_after,\n                        l_after,\n                        o_after,\n                        pending0_after,\n                        pending1_after,\n                    )\n\n                ctx = pl.cast(\n                    pl.row_expand_mul(o, pl.recip(l_sum)),\n                    target_type=pl.BF16,\n                    mode=\"rint\",\n                )\n                pl.store(\n                    ctx,\n                    [batch * NUM_HEADS + kv_head * GROUP + lane_row, 0],\n                    out2d,\n                )\n    return attn_tid\n";
+function sourceTaskModel(task){
+ const config=PAExecution.config;
+ const item={...task,seqLen:task.length,kvHead:task.head,pageTokens:config.pageTokens,pagesPerStack:config.pagesPerStack,
+  pages:task.pages.map(p=>({...p,index:p.id,tokens:p.validTokens})),
+  stacks:task.stacks.map(s=>({index:s.id,pages:s.pages.map(p=>p.id)})),
+  q:{shape:[16,128],validShape:[5,128]},output:{shape:[5,128]}};
+ return PATaskSource.createModel({anatomy:{tasks:[item],pageTokens:128,headDim:128,rowTile:16,stackTokens:512},source:paTaskPythonSource,preLaunch:config.preLaunch}).tasks[0];
+}
+/* TASK_SOURCE_MODEL_END */
+// Source: Compute Explorer paged-attention-execution.js deckOffset.
+const taskDeckOffset=count=>({right:7*Math.max(0,count-1),bottom:5*Math.max(0,count-1)});
+function taskOpCounts(task){return {qk:task.counts.qk,pv:task.counts.pv,'scale-mask':task.counts.softmax,softmax:task.counts.softmax,'context-acc':task.counts.accumulate,'output-norm':task.counts.normalize};}
+function taskGraphLayout(){
+ const task=executionContext().tasks[executionSelection.task],counts=taskOpCounts(task);
+ const positions={q:[780,100],'k-cache':[180,100],'v-cache':[480,100]};let y=250;
+ for(const id of ['qk','scores','scale-mask','softmax','probability','pv','partial','context-acc','o','output-norm','output']){
+  positions[id]=[480,y];
+  if(id==='probability'){positions.l=[740,y];positions.rescale=[940,y];positions.m=[1140,y];}
+  y+=90+(counts[id]?taskDeckOffset(counts[id].count).bottom:0);
+ }return {positions,height:y+60,width:1360,counts};
+}
+function renderTaskGraph(){
+ const task=executionContext().tasks[executionSelection.task];if(!task)return;
+ const layout=taskGraphLayout(),sourceTask=sourceTaskModel(task),graph=sourceTask.graph;
+ const svg=get('front-graph');svg.replaceChildren();svg.setAttribute('aria-label',`L${selected} · Block ${task.block} · Task ${task.id} 计算图`);
+ const defs=el('defs');defs.innerHTML='<marker id="task-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8" fill="#999"/></marker>';svg.append(defs);
+ svg.append(el('rect',{x:0,y:-20,width:layout.width,height:layout.height,fill:'var(--plane)',stroke:'var(--line)','stroke-width':1.5}));
+ svg.append(el('text',{x:22,y:15,fill:'var(--ink)','font-size':14},`Rank ${selectedRank} / L${selected} / Block ${task.block} / Task ${task.id}`));
+ const back=el('g',{role:'button',tabindex:0,'data-tooltip':'返回 PA，恢复原视角','aria-label':'返回 PA',class:'pa-expand'});
+ back.append(el('rect',{x:layout.width-117,y:-10,width:98,height:38,rx:19,fill:'var(--surface)'}),el('text',{x:layout.width-68,y:14,'text-anchor':'middle',fill:'var(--ink)','font-size':14},'← PA'));
+ back.onclick=leaveExecutionTask;back.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();leaveExecutionTask();}});svg.append(back);
+ svg.append(el('text',{x:22,y:53,fill:'var(--muted)','font-size':13},`Batch ${task.batch} · KV Head ${task.head} · ${task.length} tokens · ${task.pages.length} Pages / ${task.stacks.length} Stacks`));
+ const positions=layout.positions,ids=new Set(Object.keys(positions));
+ const depth=task.stacks.length;
+ for(let i=depth-1;i>=0;i--)svg.append(el('rect',{x:420+i*10,y:225+i*8,width:850,height:positions.o[1]-155,rx:10,fill:'none',stroke:'var(--line)','stroke-width':.6,'pointer-events':'none'}));
+ svg.append(el('text',{x:435,y:214,fill:'var(--muted)','font-size':12},`${task.stacks.length} Stacks · ${task.pages.length} Pages`));
+ // Preserve reference offsets and painter order; every rear instance is darker than the front capsule.
+ Object.entries(layout.counts).forEach(([id,entry])=>{
+  const [x,y]=positions[id];
+  for(let instance=entry.count;instance>=2;instance--){
+   const offset=taskDeckOffset(instance),tone=Math.max(26,68-instance*6);
+   svg.append(el('rect',{x:x+offset.right,y:y+offset.bottom,width:190,height:38,rx:19,fill:document.documentElement.dataset.theme==='light'?`rgb(${255-tone} ${255-tone} ${255-tone})`:`rgb(${tone} ${tone} ${tone})`,'data-op-instance':instance,'data-instance-op':id,'pointer-events':'none'}));
+  }
+ });
+ // Reuse every Task edge from the source semanticModel, including loop-carried feedback.
+ graph.edges.forEach((relation,index)=>{
+  const [x,y]=positions[relation.s],[a,b]=positions[relation.t],w=190,h=38;
+  let d;
+  if(relation.s===relation.t)d=`M${x+w} ${y+12}H${x+w+18}V${y-25}H${x+95}V${y}`;
+  else if(b>y+h&&x===a)d=`M${x+95} ${y+h}V${b}`;
+  else if(relation.type==='feedback'||b<=y){const bus=Math.max(x,a)+w+22+(index%3)*9;d=`M${x+w} ${y+19}H${bus}V${b+19}H${a+w}`;}
+  else {const bus=y+h+18+(index%3)*7;d=`M${x+95} ${y+h}V${bus}H${a+95}V${b}`;}
+  const path=el('path',{d,fill:'none',stroke:'var(--muted)','stroke-width':relation.type==='data'?1.6:1.1,'stroke-dasharray':relation.type==='data'?'':'4 3','marker-end':'url(#task-arrow)','data-task-edge':relation.id});
+  path.dataset.tooltip=relation.label;path.setAttribute('tabindex','0');svg.append(path);
+ });
+ graph.groups.filter(g=>g.id!=='task-compute').forEach(g=>{
+  const output=g.id==='task-output',y=output?positions['output-norm'][1]-27:75;
+  svg.append(el('rect',{x:output?440:145,y,width:output?300:860,height:output?positions.output[1]-y+70:100,rx:10,fill:'none',stroke:'var(--line)','stroke-width':.6,'pointer-events':'none'}),el('text',{x:output?450:155,y:y-8,fill:'var(--muted)','font-size':12},g.name));
+ });
+ graph.synchronizations.forEach((sync,index)=>{
+  const text=el('text',{x:22,y:200+index*22,fill:'var(--muted)','font-size':10,tabindex:0},sync.name+' · '+sync.producer.coreType+' '+sync.producer.pipe+' → '+sync.consumer.coreType+' '+sync.consumer.pipe);text.dataset.tooltip=sync.explanation;svg.append(text);
+ });
+ Object.entries(positions).forEach(([id,[x,y]])=>{const node=graph.nodes.find(n=>n.id===id);if(!node)return;
+  const role=id.includes('cache')?'cache':node.type==='state'||id==='scores'||id==='partial'?'pa-state':node.type==='data'?'pa-data':id==='qk'||id==='pv'?'matmul':id==='softmax'?'softmax':id==='context-acc'?'accumulation':'norm';
+  const group=appendGlyph(svg,x,y,190,38,id==='q'?'Q Tile':node.name,role);group.querySelector('text')?.setAttribute('font-size',node.name.length>22?'11':'14');group.dataset.semanticNode=id;group.dataset.nodeId=({q:'query','k-cache':'raw','v-cache':'value-cache'})[id]||'pa-'+id;group.dataset.tooltip=node.description;group.setAttribute('tabindex','0');
+  const meta=node.data||node.state,shape=meta?.shape?.allocated;
+  const detail=[shape?'['+shape.join(' × ')+']':'',meta?.dtype||'',meta?.storage?.space||''].filter(Boolean).join(' · ');
+  if(detail)svg.append(el('text',{x:x+95,y:y+55,'text-anchor':'middle',fill:'var(--muted)','font-size':9},detail));
+  const counter=layout.counts[id];
+  if(counter){
+   const badge=el('g',{'data-execution-count':counter.count,'data-count-node':id,tabindex:0,role:'img','aria-label':`${node.name} ×${counter.count} · ${counter.unit}`});
+   badge.dataset.tooltip=`${node.name} ×${counter.count} · ${counter.unit} · ${counter.formula}`+(id==='pv'?` · Matmul ×${counter.matmul} / Matmul Accumulate ×${counter.matmulAcc}`:'');
+   badge.append(el('rect',{x:x+151,y:y-2,width:35,height:20,rx:7,fill:'var(--surface)'}),el('text',{x:x+168.5,y:y+8,'text-anchor':'middle','dominant-baseline':'central',fill:'var(--ink)','font-size':12},'×'+counter.count));svg.append(badge);
+   svg.append(el('text',{x:x+95,y:y+53,'text-anchor':'middle',fill:'var(--muted)','font-size':10},id==='qk'||id==='pv'?'AIC / Task':'每 AIV Lane / Task'));
+  }
+ });renderArchitectureDetail();get('architecture-layer').textContent=`L${selected} · PA · Block ${task.block} · Task ${task.id}`;
+}
+get('observation-modes').querySelectorAll('button').forEach(button=>button.onclick=()=>setObservationMode(button.dataset.observe));
+
 // User-authorized mock fills missing token/page inputs only; profiler durations remain measured.
 const qwenMockKV=Object.freeze({promptLength:132,pageSize:128,pageCount:28,source:'user-authorized-mock'});
 let paCaseSelection=null;
@@ -909,14 +1777,19 @@ for(let i=0;i<5;i++){
  get('profile-token-sequence').append(button);profileTokens.push(button);
 }
 function renderTokenView(position,start,kind){
+ renderExecutionWorkspace();
+ if(isQwen()){['profile-token-sequence','token-grid','paged-context','token-evidence','token-caption'].forEach(id=>get(id).hidden=true);return;}
  get('profile-token-sequence').hidden=!isQwen();
  if(isQwen()){
   profileTokens.forEach((button,index)=>{button.setAttribute('aria-pressed',String(index===Math.min(requestIndex,4)));button.dataset.processed=String(index<=requestIndex);});
   arrangeTokenGrid();
   get('token-grid').hidden=false;get('paged-context').hidden=false;get('token-evidence').hidden=true;
-  const current=qwenMockKV.promptLength-1+Math.min(requestIndex,4);
+  const focusedId=mappingTask??executionSelection.task;
+  const focusedTask=focusedId===null?null:executionContext().tasks[focusedId];
+  const current=focusedTask?focusedTask.length-1:qwenMockKV.promptLength-1+Math.min(requestIndex,4);
+  get('profile-token-sequence').hidden=!!focusedTask&&focusedTask.batch!==0;
   const observed=paCaseSelection??current;
-  get('paged-location').textContent='L'+selected+' · '+(paCaseSelection===null?'输入 ':'检查 ')+observed+' · Page '+Math.floor(observed/128)+' · offset '+observed%128;
+  get('paged-location').textContent='L'+selected+' · Batch '+(focusedTask?.batch??0)+' · '+(paCaseSelection===null?'输入 ':'检查 ')+observed+' · Page '+Math.floor(observed/128)+' · offset '+observed%128;
   get('paged-head-label').hidden=true;get('paged-task').hidden=true;
   pageGroups.forEach(({group,label,cells},page)=>{
    group.hidden=false;group.dataset.used=String(page*128<=current);label.disabled=false;label.textContent='P'+page;
@@ -933,7 +1806,7 @@ function renderTokenView(position,start,kind){
    }
    Array.from(cells.children).forEach((slot,offset)=>{slot.setAttribute('aria-pressed',String(current===page*128+offset));slot.dataset.read=String(page*128+offset<=current);slot.dataset.inspect=String(paCaseSelection===page*128+offset);});
   });
-  get('token-caption').hidden=false;get('token-caption').textContent=requestSteps[requestIndex].label+' · '+(requestSteps[requestIndex].durationUs?'整网 '+(requestSteps[requestIndex].durationUs/1000).toFixed(2)+' ms · ':'')+'输入 '+current;return;
+  get('token-caption').hidden=false;get('token-caption').textContent=requestSteps[requestIndex].label+' · '+(focusedTask?'Task '+focusedTask.id+' · ':requestSteps[requestIndex].durationUs?'整网 '+(requestSteps[requestIndex].durationUs/1000).toFixed(2)+' ms · ':'')+'输入 '+current;return;
  }
  const idle=requestIndex===0;
  arrangeTokenGrid();
@@ -981,9 +1854,35 @@ get('token-mode').onclick=()=>{
  const open=get('token-workspace').hidden;
  get('token-workspace').hidden=!open;
  get('token-mode').setAttribute('aria-expanded',String(open));
- if(open)render();
+ if(open){render();if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)get('token-workspace').animate([{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:220,easing:'cubic-bezier(.22,1,.36,1)'});}
 };
 get('token-close').onclick=()=>{get('token-mode').click();get('token-mode').focus();};
+// A single shared height survives observation-mode changes without touching the canvas camera.
+const observationResize=get('observation-resize');
+function resizeObservationPanel(height){
+ const panel=get('token-workspace'),bottom=innerHeight-panel.getBoundingClientRect().bottom;
+ const maximum=Math.max(140,innerHeight-bottom-100),value=Math.round(Math.max(140,Math.min(maximum,height)));
+ panel.style.setProperty('--observation-height',value+'px');
+ observationResize.setAttribute('aria-valuemin','140');observationResize.setAttribute('aria-valuemax',String(Math.round(maximum)));observationResize.setAttribute('aria-valuenow',String(value));
+ if(isQwen())renderExecutionWorkspace();
+}
+observationResize.addEventListener('pointerdown',event=>{
+ if(event.button!==0)return;
+ event.preventDefault();cancelPageTaskHandoff();
+ const startY=event.clientY,height=get('token-workspace').getBoundingClientRect().height;
+ observationResize.setPointerCapture(event.pointerId);
+ const move=e=>resizeObservationPanel(height+startY-e.clientY);
+ const finish=()=>{observationResize.removeEventListener('pointermove',move);observationResize.removeEventListener('pointerup',finish);observationResize.removeEventListener('pointercancel',finish);};
+ observationResize.addEventListener('pointermove',move);observationResize.addEventListener('pointerup',finish);observationResize.addEventListener('pointercancel',finish);
+});
+observationResize.addEventListener('keydown',event=>{
+ if(!['ArrowUp','ArrowDown','Home'].includes(event.key))return;
+ event.preventDefault();
+ if(event.key==='Home'){get('token-workspace').style.removeProperty('--observation-height');observationResize.removeAttribute('aria-valuenow');return;}
+ resizeObservationPanel(get('token-workspace').getBoundingClientRect().height+(event.key==='ArrowUp'?1:-1)*(event.shiftKey?40:16));
+});
+observationResize.addEventListener('dblclick',()=>{get('token-workspace').style.removeProperty('--observation-height');observationResize.removeAttribute('aria-valuenow');});
+
 get('play').onclick=togglePlayback;
 get('restart').onclick=()=>{
  pausePlayback();
@@ -1061,6 +1960,7 @@ async function openArchitecture(){
  await morphShared(source);lockCamera(false);get('layer-frame-close')?.focus();
 }
 async function closeArchitecture(nextView=returnView){
+ resetExecutionTask();
  if(cameraTransition||viewIndex!==1)return;
  pausePlayback();lockCamera(true);
  document.body.classList.add('camera-return');
@@ -1248,7 +2148,7 @@ get('model-select').onchange=()=>{
  const resume=playback!==null;pausePlayback();
  if(viewIndex===1){viewIndex=returnView;document.body.classList.remove('front-view','request-inspecting');syncFrontVisibility();}
  modelId=get('model-select').value;model=modelSpecs[modelId];ratios=model.ratios;lastLayer=ratios.length-1;
- setRankPrimary(false,false);selectedRank=0;requestSteps=isQwen()?qwenRequestSteps:demoRequestSteps;requestIndex=0;paExpanded=false;paReturnCamera=null;buildRequestButtons();
+ setRankPrimary(false,false);selectedRank=0;requestSteps=isQwen()?qwenRequestSteps:demoRequestSteps;requestIndex=0;paExpanded=false;paReturnCamera=null;observationMode="tokens";executionSelection={block:null,task:null};mappingTask=null;mappingView=null;mappingProgress=0;cancelAnimationFrame(mappingMotion);taskReturnCamera=null;paCaseSelection=null;buildRequestButtons();
  stageStride=ratios.length;requestAxis.max=requestSteps.length*stageStride-1;
  if(animationFrame)cancelAnimationFrame(animationFrame);animationFrame=0;lastFrameTime=0;hovered=null;
  for(const group of groups)group.remove();for(const label of labels)label.remove();sideRmsGroup.replaceChildren();
