@@ -205,3 +205,8 @@ button.token-empty-slot[data-inspect=true]:not([aria-pressed=true]){opacity:1;ba
 
 /* Compact Task crops only its identity badge, never the full-card background. */
 .ai-task-identity [data-kind=task]>rect:first-child{fill:none}
+
+#token-workspace,#block-workspace{overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
+#token-workspace::-webkit-scrollbar,#block-workspace::-webkit-scrollbar{display:none;width:0;height:0}
+#block-workspace{overflow-y:auto}
+.task-assignment-map{max-width:100%}

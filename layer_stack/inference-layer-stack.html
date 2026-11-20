@@ -1700,9 +1700,9 @@ function renderExecutionWorkspace(){
  if(!available||!mapping)return;
  const data=executionContext(),host=get('block-workspace'),c=PAExecution.config;
  const stage=get('token-workspace'),stageBox=stage.getBoundingClientRect();
- // Readability floor: 16 columns of 4px squares plus 1px gutters per Page.
+ // Fit the full Page / Task axis to the available panel width; scroll vertically only.
  const pageOverview=observationMode==='tokens';
- const stageWidth=Math.max(pageOverview?2674:680,Math.round(stageBox.width-20));
+ const stageWidth=Math.max(320,Math.round(stageBox.width-20));
  const pagePitch=(stageWidth-210)/28,slotUnit=(pagePitch-2)/16;
  const stageHeight=Math.max(540,Math.round(stageBox.height-58),pageOverview?Math.ceil(54+16*(slotUnit*8+4)+8):0);
  const key=[modelId,selectedRank,c.batches,c.kvHeadsPerRank,c.blocks,stageWidth,stageHeight].join('/');
