@@ -44,3 +44,16 @@ header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.
 #expert-count-input:focus-visible{outline:none}#expert-count-input:focus-visible::-webkit-slider-runnable-track{background:#bbb}
 
 body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:600px){body[data-step="7"] #token-controls{bottom:180px}}
+
+/* The Rank Pattern shares the main viewport; the inactive view becomes a thumbnail. */
+#rank-surface{position:fixed;right:30px;bottom:115px;width:180px;height:245px;z-index:5}#rank-open{display:block;padding:0;width:100%;height:100%;border-radius:0;background:none;color:#bbb}#rank-open:hover,#rank-open:focus-visible{background:none;color:#fff}#rank-preview{display:block;height:215px}#rank-preview svg{width:100%;height:100%}#rank-preview-caption{font:11px/1.5 ui-monospace,monospace}#rank-canvas{width:100%;height:100%;touch-action:none;cursor:grab}#rank-canvas:active{cursor:grabbing}#rank-return{position:absolute;right:34px;top:105px;font-size:12px;background:#272727}#graph-return{display:none}.rank-primary #rank-surface{inset:0;width:100vw;height:100svh;z-index:1}.rank-primary #stage{inset:auto 30px 125px auto;width:260px;height:210px;z-index:6;background:#171717;border-radius:12px;pointer-events:none}.rank-primary #graph-return{display:block;position:fixed;right:30px;bottom:125px;width:260px;height:210px;z-index:7;background:transparent;padding:0}.rank-primary #graph-return:hover{background:#ffffff08}.rank-primary #graph-return:after{content:'计算图 ↗';position:absolute;bottom:5px;left:10px;color:#bbb;font-size:11px}.rank-item{cursor:pointer}.rank-item:focus{outline:none}.rank-item:focus text{text-decoration:underline}@media(max-width:600px){#rank-surface{right:14px;bottom:115px;width:105px;height:145px}#rank-preview{height:120px}#rank-preview-caption{font-size:8px}.rank-primary #stage,.rank-primary #graph-return{right:14px;bottom:115px;width:155px;height:130px}#rank-return{right:14px;top:92px}}
+
+.rank-primary #stage .hit.rank-context{opacity:.2}.rank-primary #stage .hit.rank-owned{opacity:1}
+
+#rank-return{top:150px}
+
+@media(min-width:1001px){body:has(#panel:not([hidden])):not(.rank-primary) #rank-surface{right:390px}}
+
+@media(max-width:600px){#rank-surface{bottom:290px}.rank-primary #stage,.rank-primary #graph-return{bottom:290px}}
+
+.rank-primary #graph-return:after{content:attr(data-label)}

@@ -1,5 +1,5 @@
 // Keyed SVG reconciliation. Unchanged nodes and their descendants retain DOM identity.
-function graphElementKey(el){return el.nodeType===1?(el.getAttribute('data-node')||el.getAttribute('data-edge')||el.id||null):null;}
+function graphElementKey(el){return el.nodeType===1?(el.getAttribute('data-node')||el.getAttribute('data-edge')||(el.hasAttribute('data-rank-id')?'rank:'+el.getAttribute('data-rank-id'):null)||(el.hasAttribute('data-rank-band')?'rank-band:'+el.getAttribute('data-rank-band'):null)||el.id||null):null;}
 function patchGraphElement(target,source,stats){
  if(target.isEqualNode(source)){stats.unchanged++;return;}
  if(target.nodeType!==1||source.nodeType!==1){if(target.nodeValue!==source.nodeValue){target.nodeValue=source.nodeValue;stats.updated++;}return;}

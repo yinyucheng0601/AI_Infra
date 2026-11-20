@@ -127,11 +127,24 @@ header small{letter-spacing:0;font-size:12px}header h1{margin:0;font-size:25px}.
 #expert-count-input:focus-visible{outline:none}#expert-count-input:focus-visible::-webkit-slider-runnable-track{background:#bbb}
 
 body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:600px){body[data-step="7"] #token-controls{bottom:180px}}
+
+/* The Rank Pattern shares the main viewport; the inactive view becomes a thumbnail. */
+#rank-surface{position:fixed;right:30px;bottom:115px;width:180px;height:245px;z-index:5}#rank-open{display:block;padding:0;width:100%;height:100%;border-radius:0;background:none;color:#bbb}#rank-open:hover,#rank-open:focus-visible{background:none;color:#fff}#rank-preview{display:block;height:215px}#rank-preview svg{width:100%;height:100%}#rank-preview-caption{font:11px/1.5 ui-monospace,monospace}#rank-canvas{width:100%;height:100%;touch-action:none;cursor:grab}#rank-canvas:active{cursor:grabbing}#rank-return{position:absolute;right:34px;top:105px;font-size:12px;background:#272727}#graph-return{display:none}.rank-primary #rank-surface{inset:0;width:100vw;height:100svh;z-index:1}.rank-primary #stage{inset:auto 30px 125px auto;width:260px;height:210px;z-index:6;background:#171717;border-radius:12px;pointer-events:none}.rank-primary #graph-return{display:block;position:fixed;right:30px;bottom:125px;width:260px;height:210px;z-index:7;background:transparent;padding:0}.rank-primary #graph-return:hover{background:#ffffff08}.rank-primary #graph-return:after{content:'计算图 ↗';position:absolute;bottom:5px;left:10px;color:#bbb;font-size:11px}.rank-item{cursor:pointer}.rank-item:focus{outline:none}.rank-item:focus text{text-decoration:underline}@media(max-width:600px){#rank-surface{right:14px;bottom:115px;width:105px;height:145px}#rank-preview{height:120px}#rank-preview-caption{font-size:8px}.rank-primary #stage,.rank-primary #graph-return{right:14px;bottom:115px;width:155px;height:130px}#rank-return{right:14px;top:92px}}
+
+.rank-primary #stage .hit.rank-context{opacity:.2}.rank-primary #stage .hit.rank-owned{opacity:1}
+
+#rank-return{top:150px}
+
+@media(min-width:1001px){body:has(#panel:not([hidden])):not(.rank-primary) #rank-surface{right:390px}}
+
+@media(max-width:600px){#rank-surface{bottom:290px}.rank-primary #stage,.rank-primary #graph-return{bottom:290px}}
+
+.rank-primary #graph-return:after{content:attr(data-label)}
 </style></head><body>
 <header><div><h1>分布式训练</h1><small>模型 → 计算 → 通信</small></div><div id="config"></div></header>
 <div class="context-row"><div id="rankbar"></div><button id="info-icon" type="button" aria-label="图例与官方依据" aria-expanded="false" aria-controls="info-panel" data-tip="图例与官方依据"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></button></div>
 <div id="impact" aria-live="polite"></div><main id="stage"><svg viewBox="0 0 1810 1830" aria-label="Transformer 训练推导图"><g id="world"></g></svg></main>
-<div class="explanation-row"><div id="extension" hidden></div></div>
+<button id="graph-return" hidden data-tip="返回计算图，保留参数与播放位置" aria-label="将计算图切换为主体"></button><section id="rank-surface" aria-label="Rank 视图"><button id="rank-open" aria-expanded="false" aria-controls="rank-canvas" data-tip="展开 Rank 视图" aria-label="展开 Rank 视图"><span id="rank-preview"></span><span id="rank-preview-caption"></span></button><svg id="rank-canvas" hidden aria-label="训练 Rank 与分片归属" viewBox="0 0 1200 800"><g id="rank-world"></g></svg><button id="rank-return" hidden data-tip="返回计算图，保留视野">返回计算图 ↗</button></section><div class="explanation-row"><div id="extension" hidden></div></div>
 <footer><div class="evolution-bottom"><button id="play" aria-label="播放推导过程" aria-pressed="false" data-tip="播放七个推导阶段"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-symbol" d="M8 5L19 12L8 19Z"/></svg></button><div class="layer-scroll"><nav id="layer-list" class="layer-list" aria-label="推导进度，点击或拖动选择阶段"></nav><div id="stage-labels" aria-label="推导阶段"></div><section id="expert-count-control" hidden aria-label="专家总数"><label for="expert-count-input">专家数 <output id="expert-count-value">4</output></label><input id="expert-count-input" type="range" min="0" max="4" step="1" value="0" aria-label="专家总数，保持每位专家大小与 Top-2 不变" data-tip="调节专家数，保持每位专家大小和 Top-2 不变"><span id="expert-count-labels"></span></section><div id="token-controls" aria-label="跟踪来源组 0 的 token" hidden></div><section id="secondary-control" hidden aria-label="当前步骤的参数"><div class="secondary-heading"><span id="secondary-title"></span><output id="secondary-value"></output></div><input id="secondary-input" type="range" min="0" max="2" step="1" value="2"><div id="secondary-labels"></div><small id="secondary-hint"></small></section></div></div><div id="tools" data-liquid-glass="control"><button id="minus" data-tip="缩小画布">−</button><button id="fit" data-tip="自动适配当前阶段">适应</button><button id="plus" data-tip="放大画布">＋</button></div></footer>
 <aside id="info-panel" data-liquid-glass="panel" hidden aria-label="图例与官方依据"><button id="info-close" aria-label="关闭图例与依据" data-tip="关闭">×</button><h2>图例与官方依据</h2><div id="info-content"></div></aside><aside id="panel" data-liquid-glass="panel" hidden><button id="close" data-tip="关闭详情">×</button><h2 id="ptitle"></h2><div id="pbody"></div></aside><div id="tip" hidden></div>
 <script>
@@ -500,7 +513,7 @@ function layoutTrainingRows(rows,{opWidth=256,startY=82,gap=25,expertLayout=layo
  return cursorY;
 }
 </script><script>// Keyed SVG reconciliation. Unchanged nodes and their descendants retain DOM identity.
-function graphElementKey(el){return el.nodeType===1?(el.getAttribute('data-node')||el.getAttribute('data-edge')||el.id||null):null;}
+function graphElementKey(el){return el.nodeType===1?(el.getAttribute('data-node')||el.getAttribute('data-edge')||(el.hasAttribute('data-rank-id')?'rank:'+el.getAttribute('data-rank-id'):null)||(el.hasAttribute('data-rank-band')?'rank-band:'+el.getAttribute('data-rank-band'):null)||el.id||null):null;}
 function patchGraphElement(target,source,stats){
  if(target.isEqualNode(source)){stats.unchanged++;return;}
  if(target.nodeType!==1||source.nodeType!==1){if(target.nodeValue!==source.nodeValue){target.nodeValue=source.nodeValue;stats.updated++;}return;}
@@ -714,6 +727,260 @@ document.querySelector('#secondary-input').addEventListener('pointerdown',()=>pa
 document.querySelector('#token-controls').addEventListener('click',e=>{const b=e.target.closest('[data-token]');if(!b)return;pausePlayback();parameterState.token=+b.dataset.token;scheduleRender();});
 
 document.querySelector('#expert-count-input').addEventListener('input',e=>{pausePlayback();parameterState.experts=expertCounts[+e.target.value];selected='';panelOpen=false;document.querySelector('#panel').hidden=true;parameterChanged=true;scheduleRender();});
+</script><script>// Pure planner extracted verbatim from local model-parallel-rank-deck. See provenance.json.
+(function(global){'use strict';
+const AXES=['tp','pp','ep','edp'];
+  const DEFAULT_TOPOLOGY={
+    worldSize:128,
+    dimensions:{tp:2,pp:4,cp:1,ep:8,edp:2},
+    rankOrder:['tp','pp','cp','ep','edp'],
+    sourceLevel:'demo'
+  };
+  const TP_SHARDED=new Set([
+    'embedding','q_a_proj','kv_a_proj','q_b_proj','kv_b_proj','query_tensor','key_tensor','attention_core',
+    'o_proj','dense_gate_up','dense_down','lm_head','mtp_eh_proj','mtp_decoder_layer','mtp_shared_head'
+  ]);
+  const TP_COLLECTIVE=new Set(['attn_all_gather','attn_reduce_scatter','moe_all_gather','moe_reduce_scatter','logits_allgather']);
+  const EP_SHARDED=new Set(['expert_pool','a2a_dispatch','a2a_combine']);
+  const finiteInt=(value,label,min=1)=>{const next=Number(value);if(!Number.isInteger(next)||next<min)throw new TypeError(`${label} must be an integer >= ${min}`);return next;};
+  function normalizeTopology(input={}){
+    const dimensions={...DEFAULT_TOPOLOGY.dimensions,...(input.dimensions||{})};
+    Object.keys(dimensions).forEach(key=>{dimensions[key]=finiteInt(dimensions[key],`dimensions.${key}`);});
+    const computed=dimensions.tp*dimensions.pp*dimensions.cp*dimensions.ep*dimensions.edp;
+    const worldSize=input.worldSize==null?computed:finiteInt(input.worldSize,'worldSize');
+    if(worldSize!==computed)throw new RangeError(`worldSize ${worldSize} does not equal TP×PP×CP×EP×EDP (${computed})`);
+    return{...DEFAULT_TOPOLOGY,...input,worldSize,dimensions,sourceLevel:input.sourceLevel||'demo'};
+  }
+
+  function enumerateRanks(topologyInput={}){
+    const topology=normalizeTopology(topologyInput),d=topology.dimensions,coordinates=[];
+    for(let edp=0;edp<d.edp;edp+=1)for(let ep=0;ep<d.ep;ep+=1)for(let cp=0;cp<d.cp;cp+=1)for(let pp=0;pp<d.pp;pp+=1)for(let tp=0;tp<d.tp;tp+=1){
+      const rank=(((((edp*d.ep)+ep)*d.cp+cp)*d.pp+pp)*d.tp+tp);
+      coordinates.push({rank,tp,pp,cp,ep,edp});
+    }
+    if(coordinates.length!==topology.worldSize)throw new Error('Rank enumeration did not produce worldSize coordinates');
+    return coordinates;
+  }
+
+  function groupKey(coordinate,axis){
+    return ['tp','pp','cp','ep','edp'].filter(key=>key!==axis).map(key=>`${key}${coordinate[key]}`).join('-');
+  }
+
+  function buildGroups(coordinates){
+    const groups=[];
+    AXES.forEach(axis=>{
+      const buckets=new Map();
+      coordinates.forEach(coordinate=>{const key=groupKey(coordinate,axis);if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(coordinate);});
+      buckets.forEach((members,key)=>groups.push({
+        id:`${axis}:${key}`,axis,label:`${axis.toUpperCase()} group · ${key}`,
+        ranks:members.sort((a,b)=>a[axis]-b[axis]).map(item=>item.rank),sourceLevel:'derived'
+      }));
+    });
+    return groups;
+  }
+
+  function partitionModel(modelInput={},topologyInput=DEFAULT_TOPOLOGY,rules={}){
+    const topology=normalizeTopology(topologyInput),model={...modelInput},d=topology.dimensions;
+    const layerCount=finiteInt(model.layerCount,'model.layerCount');
+    const stageRanges=(rules.stageRanges||model.stageRanges||[]).map(range=>range.map(Number));
+    if(stageRanges.length!==d.pp)throw new RangeError(`PP ${d.pp} requires ${d.pp} explicit stageRanges`);
+    const covered=[];
+    stageRanges.forEach(([lo,hi],stage)=>{
+      if(!Number.isInteger(lo)||!Number.isInteger(hi)||lo<0||hi<lo||hi>=layerCount)throw new RangeError(`Invalid PP${stage} range ${lo}-${hi}`);
+      for(let layer=lo;layer<=hi;layer+=1)covered.push(layer);
+    });
+    if(covered.length!==layerCount||new Set(covered).size!==layerCount||Math.min(...covered)!==0||Math.max(...covered)!==layerCount-1)throw new Error('PP stageRanges must cover every physical Layer exactly once');
+    const routedExperts=finiteInt(model.routedExperts||256,'model.routedExperts');
+    if(routedExperts%d.ep!==0)throw new RangeError(`routedExperts ${routedExperts} must be divisible by EP ${d.ep}`);
+    const expertsPerRank=routedExperts/d.ep,coordinates=enumerateRanks(topology),groups=buildGroups(coordinates);
+    const groupByAxisRank=Object.fromEntries(AXES.map(axis=>[axis,new Map()]));
+    groups.forEach(group=>group.ranks.forEach(rank=>groupByAxisRank[group.axis].get(rank)?.push(group)||groupByAxisRank[group.axis].set(rank,[group])));
+    const manifests=coordinates.map(coordinate=>{
+      const [lo,hi]=stageRanges[coordinate.pp],expertStart=coordinate.ep*expertsPerRank,expertEnd=expertStart+expertsPerRank-1;
+      const staticRoles=[];if(coordinate.pp===0)staticRoles.push('input');if(coordinate.pp===d.pp-1)staticRoles.push('output','mtp');
+      const nodeOwnership={};
+      TP_SHARDED.forEach(id=>{nodeOwnership[id]={kind:'sharded',axis:'tp',index:coordinate.tp,count:d.tp};});
+      TP_COLLECTIVE.forEach(id=>{nodeOwnership[id]={kind:'sharded',axis:'tp',index:coordinate.tp,count:d.tp};});
+      EP_SHARDED.forEach(id=>{nodeOwnership[id]={kind:'sharded',axis:'ep',index:coordinate.ep,count:d.ep};});
+      const communicationGroups={};
+      AXES.forEach(axis=>{communicationGroups[axis]=(groupByAxisRank[axis].get(coordinate.rank)||[]).map(group=>group.id);});
+      return{
+        rank:coordinate.rank,coordinate:{...coordinate},modelId:model.id||'openpangu-flash',
+        layerSegments:[{start:lo,end:hi,stage:coordinate.pp}],staticRoles,nodeOwnership,
+        expertOwnership:{kind:'sharded',axis:'ep',index:coordinate.ep,count:d.ep,start:expertStart,end:expertEnd,ids:Array.from({length:expertsPerRank},(_,index)=>expertStart+index),sourceLevel:'demo'},
+        communicationGroups,
+        payloadSignature:[model.id||'openpangu-flash',`pp${coordinate.pp}`,`tp${coordinate.tp}`,`cp${coordinate.cp}`,`ep${coordinate.ep}`,`L${lo}-${hi}`,`E${expertStart}-${expertEnd}`].join('|'),
+        sourceLevel:topology.sourceLevel||'demo'
+      };
+    });
+    return{
+      model,topology,coordinates,manifests,groups,
+      manifestByRank:new Map(manifests.map(manifest=>[manifest.rank,manifest])),
+      groupById:new Map(groups.map(group=>[group.id,group])),groupByAxisRank,
+      stats:{rankVolumes:coordinates.length,layerInstances:manifests.reduce((sum,item)=>sum+item.layerSegments.reduce((count,segment)=>count+segment.end-segment.start+1,0),0),staticInstances:manifests.reduce((sum,item)=>sum+(item.staticRoles.includes('input')?1:0)+(item.staticRoles.includes('output')?1:0),0)}
+    };
+  }
+
+
+global.TrainingRankPatternPlanner={normalizeTopology,enumerateRanks,buildGroups,partitionModel};
+})(window);
+</script><script>/* Presentation only. No simulation, timers, network calls or layer selection. */
+(function (global) {
+  'use strict';
+  const colors = {weight:'#D185E6',optimizer:'#8D89EE',gradient:'#79D4F2',activation:'#B1EF6B',workspace:'#D0D0D0',communication:'#606060',pool:'#858585'};
+  const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // Same orthographic projection and 1:1:1 ratio as the source atlas.
+  const P = (x,y,z) => { y=y/155*245; return [575+(x-y)*Math.sqrt(3)/2,510+(x+y)*.5-z/(64*6.7)*245]; };
+  const points = vertices => vertices.map(p => P(...p).join(',')).join(' ');
+  const polygon = (vertices,color) => `<polygon points="${points(vertices)}" fill="${color}"/>`;
+  const shade = (color,factor) => '#'+[1,3,5].map(i=>Math.min(255,Math.round(parseInt(color.slice(i,i+2),16)*factor)).toString(16).padStart(2,'0')).join('');
+  function block(z,h,color,x=6,y=6,w=233,d=143) {
+    return polygon([[x,y+d,z],[x+w,y+d,z],[x+w,y+d,z+h],[x,y+d,z+h]],shade(color,.82))
+      +polygon([[x+w,y,z],[x+w,y+d,z],[x+w,y+d,z+h],[x+w,y,z+h]],shade(color,1.04))
+      +polygon([[x,y,z+h],[x+w,y,z+h],[x+w,y+d,z+h],[x,y+d,z+h]],shade(color,.94));
+  }
+  function render(target,data) {
+    if (!Number.isFinite(data.capacityGB) || data.capacityGB<=0 || !Array.isArray(data.categories)
+      || data.categories.some(c=>!Number.isFinite(c.valueGB)||c.valueGB<0)
+      || Math.abs(data.categories.reduce((sum,c)=>sum+c.valueGB,0)-data.capacityGB)>.001) {
+      throw new Error('Invalid memory snapshot');
+    }
+    const height=64*6.7,unit=height/data.capacityGB;
+    let z=6,drawn=0;
+    const occupied=data.categories.filter(c=>!['free','unknown'].includes(c.id)&&c.valueGB>0);
+    // Decorative separation must fit inside the available capacity frame.
+    const free=data.categories.find(c=>['free','unknown'].includes(c.id))?.valueGB||0;
+    const gap=Math.min(8,Math.max(0,(free*unit-12)/Math.max(1,occupied.length-1)));
+    z=Math.min(6,free*unit/2);
+    let markup=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],'#000')
+      +polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],'#030303')
+      +polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],'#030303');
+    let surfaceLabels='',highlight='';
+    const inspecting=Boolean(data.shardInspection);
+    const cutoff=occupied.findIndex(c=>c.id===data.selectedCategory);
+    for (const [index,c] of occupied.entries()) {
+      if(inspecting&&(cutoff<0||index>cutoff))break;
+      if(drawn++)z+=gap;
+      const h=c.valueGB*unit;
+      const color=colors[c.id]||'#858585';
+      markup+=`<g data-category="${escape(c.id)}"><title>${escape(c.name)} · ${c.valueGB.toFixed(2)} GB</title>${block(z,h,inspecting?shade(color,.28):color)}</g>`;
+      if(data.shardInspection&&c.id===data.selectedCategory){
+        // Isolate a schematic layer slot; highlight is drawn after all darkened
+        // categories so later allocations cannot occlude the target shard.
+        const y=6+(data.shardInspection.layer%8)*(143/8),d=143/8;
+        highlight=`<g class="rank-anomaly-shard" aria-label="L${data.shardInspection.layer} Query 异常分片，模拟位置">${block(z,h,'#FD5644',6,y,233,d)}<path d="M${P(6,y,z+h)} L${P(239,y,z+h)} L${P(239,y+d,z+h)} L${P(6,y+d,z+h)} Z M${P(239,y,z+h)} L${P(239,y,z)} L${P(239,y+d,z)} L${P(239,y+d,z+h)}" fill="none" stroke="#ffb4aa" stroke-width="1.5"/></g>`;
+      }
+      if(!inspecting&&c.id===data.selectedCategory){
+        markup+=`<path d="M${P(6,6,z+h)} L${P(239,6,z+h)} L${P(239,149,z+h)} L${P(6,149,z+h)} Z" fill="none" stroke="#fff" stroke-width="2"/>`;
+      }
+      // Original surface-value label style; omit bands too thin for a readable label.
+      if(!inspecting&&h/height*245>=18){
+        const anchor=P(239,142,z+h/2);
+        surfaceLabels+=`<g class="surface-value" aria-label="${escape(c.name)} ${c.valueGB.toFixed(2)} GB"><text transform="matrix(0.8660254 -.5 0 1 ${anchor[0]} ${anchor[1]})" dominant-baseline="middle" fill="#fff" font-size="18" font-weight="700"><tspan font-weight="400">${escape(c.symbol)} · </tspan><tspan>${c.valueGB.toFixed(2)}</tspan><tspan dx="4" font-size="10.8" font-weight="400">GB</tspan></text></g>`;
+      }
+      z+=h;
+    }
+    // A released category has no live block; show its captured shard as a
+    // schematic snapshot rather than changing the current memory budget.
+    if(inspecting&&!highlight){
+      const y=6+(data.shardInspection.layer%8)*(143/8);
+      highlight=`<g class="rank-anomaly-shard" aria-label="异常分片快照，模拟位置">${block(6,12,'#FD5644',6,y,233,143/8)}</g>`;
+    }
+    markup+=highlight;
+    markup+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="#eee" stroke-width="2.4"/>`;
+    markup+=surfaceLabels;
+    // Reuse v10's rank-wall typography, following the isometric left edge.
+    const wall=P(0,140,height);
+    markup+=`<g transform="matrix(0.8660254 -.5 0 1 ${wall[0]} ${wall[1]-40})" fill="#f5f5f5"><text font-size="26" font-weight="700">Rank ${String(data.rank).padStart(2,'0')}</text><text y="22" font-size="11" fill="#bdbdbd">${data.capacityGB} GB</text></g>`;
+    const title=`Rank ${data.rank} · ${data.scope}；${(data.assumptions||[]).join('；')}`;
+    target.innerHTML=`<svg viewBox="345 222 460 553" role="img" aria-label="${escape(title)}"><title>${escape(title)}</title>${markup}</svg>`;
+  }
+  global.RankMemoryView={render,colors:Object.freeze(colors),geometry:Object.freeze({P,points,polygon,shade,block})};
+})(window);
+</script><script>// Pure training adapter for the local model-parallel-rank-deck planner.
+function trainingRankState(stage,parameters){
+ const config=deriveTrainingConfig(stage,parameters),{tp,ep,sp,seq,experts}=config;
+ const plan=window.TrainingRankPatternPlanner.partitionModel({id:'current-transformer-block',layerCount:1,routedExperts:experts},{worldSize:tp*ep,dimensions:{tp,pp:1,cp:1,ep,edp:1},sourceLevel:'derived'},{stageRanges:[[0,0]]});
+ const titles=['模型参数与输入','前向读写','输入梯度回传','参数梯度生成','TP 权重分片','SP 边界行分片','WGRAD 缓存取数','MoE 专家池','EP 专家部署'];
+ const ranks=plan.manifests.map(m=>{
+  const lane=m.coordinate.tp,group=m.coordinate.ep,owned=stage===8?m.expertOwnership.ids:[];
+  const objects=[{id:'weight-qkv',name:'Wqkv',shape:[8,24/tp]},{id:'weight-proj',name:'Wproj',shape:[8/tp,8]}];
+  if(!config.moe)objects.push({id:'weight-fc1',name:'W1',shape:[8,16/tp]},{id:'weight-fc2',name:'W2',shape:[16/tp,8]});
+  if(config.moe)objects.push({id:'moe-router-weight',name:'Wr',shape:[8,experts]});
+  for(const e of owned)objects.push({id:'expert-'+e+'-w1',name:'E'+e+' W1',shape:[8,16/tp]},{id:'expert-'+e+'-w2',name:'E'+e+' W2',shape:[16/tp,8]});
+  objects.forEach(o=>{o.instanceId='rank:'+m.rank+'/'+o.id;o.parallelIndex=lane;o.parallelCount=o.name==='Wr'?1:tp;});
+  const bands=[{id:'weights',name:config.moe?'Attention / Router W':'线性权重 W',color:'#BCA0F3',detail:objects.filter(o=>!o.id.startsWith('expert-')).map(o=>o.name+' ['+o.shape+']').join('；')+(owned.length?`；专家 E${owned[0]}–E${owned.at(-1)}：每专家 W1[8,${16/tp}]、W2[${16/tp},8]，这是组内 TP 分片。`:'')}];
+  bands.push({id:'activation',name:stage===0?'输入 H₀':stage>=6?(config.recollect?'缓存 Xᵣ / Aᵣ':'完整缓存 X / A'):sp?'本地激活行':'前向激活',color:'#B1EF6B',detail:sp?`子层边界 token 行 ${lane*seq}–${(lane+1)*seq-1}；AG 后线性计算读取完整 8 行。`:'当前 Block 输入与前向中间值；未按显存字节编码。'});
+  if(stage>=2)bands.push({id:'gradient',name:stage>=3?'dX / dW':'输入梯度 dX',color:'#79D4F2',detail:stage>=3?'dX 传回前层，dW 供参数更新；不是两次反向执行。':'损失对激活的梯度，读取 Wᵀ 回传。'});
+  if(stage>=4&&tp>1)bands.push({id:'communication',name:stage===8&&ep>1?'Dispatch / Return':stage>=6&&config.recollect?'AG · 缓存取数':sp?'AG / RS': 'AllReduce',color:'#808080',detail:stage===8&&ep>1?`EP 同 lane 组 {${Array.from({length:ep},(_,g)=>g*tp+lane)}}：按专家归属分发 token，并返回对应 TP lane 的部分输出。`:stage>=6&&config.recollect?'WGRAD 前重新收集缓存输入分片。':'当前 TP 组内的逻辑通信关系，不表示耗时或容量。'});
+  if(stage===8)bands[0].name=`E${owned[0]}–E${owned.at(-1)} · W / ${tp}`;
+  return {id:m.rank,lane,group,objects,experts:owned,tokenRows:sp?Array.from({length:seq},(_,i)=>lane*seq+i):Array.from({length:8},(_,i)=>i),bands,tpGroup:plan.groups.find(g=>g.axis==='tp'&&g.ranks.includes(m.rank)).ranks,epPeers:plan.groups.find(g=>g.axis==='ep'&&g.ranks.includes(m.rank)).ranks};
+ });
+ return {config,title:titles[stage],ranks,groups:plan.groups.filter(g=>['tp','ep'].includes(g.axis)),pendingExperts:stage===7?Array.from({length:experts},(_,i)=>i):[],source:'local-rank-pattern',logicalBands:true};
+}
+</script><script>// Axis geometry from the local Rank renderer; bands encode logical objects, never GB.
+let rankInspectorOpen=false;
+let rankPrimary=false,rankFocus=0,rankBandFocus=null,rankSnapshot=null,rankSignature='',graphReturnCamera=null;
+const rankCamera={z:1,x:0,y:0};let rankPan=null,rankMoved=false,rankSwapBusy=false;
+function rankCube(rank){
+ const {P,polygon,block}=window.RankMemoryView.geometry,height=64*6.7;
+ let out=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],'#181818')+polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],'#202020')+polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],'#202020');
+ const h=(height-32-(rank.bands.length-1)*14)/rank.bands.length;
+ rank.bands.forEach((b,i)=>{const z=16+i*(h+14),a=P(239,142,z+h/2),focused=rank.id===rankFocus&&b.id===rankBandFocus;
+ out+=`<g data-rank-band="${b.id}" data-tip="${esc(b.name+' · 点击查看对象与分片')}">${block(z,h,focused?'#eeeeee':b.color)}<text transform="matrix(.8660254 -.5 0 1 ${a[0]} ${a[1]})" fill="${focused?'#111':'#111'}" font-size="17">${esc(b.name)}</text></g>`;});
+ out+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="#bbb" stroke-width="2"/>`;
+ const wall=P(0,140,height);out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text><text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${current===8?' · 专家组 '+rank.group:''}</text></g>`;
+ return out;
+}
+function fitRanks(){const svg=document.querySelector('#rank-canvas');if(!svg||!rankSnapshot)return;const {tp,ep}=rankSnapshot.config,w=Math.max(600,tp*330),h=ep*390+170+(current===7?90:0),sw=innerWidth,sh=innerHeight,scale=Math.min(Math.max(300,sw-(sw>1000?600:60))/w,Math.max(200,sh-270)/h);svg.setAttribute('viewBox',`${(w-sw/scale)/2} ${(h-sh/scale)/2} ${sw/scale} ${sh/scale}`);}
+function applyRankCamera(){document.querySelector('#rank-world').setAttribute('transform',`translate(${rankCamera.x} ${rankCamera.y}) scale(${rankCamera.z})`);}
+function renderRankView(){
+ rankSnapshot=trainingRankState(current,parameterState);if(rankFocus>=rankSnapshot.ranks.length)rankFocus=0;
+ const state=rankSnapshot,rank=state.ranks[rankFocus];if(rankBandFocus&&!rank.bands.some(b=>b.id===rankBandFocus))rankBandFocus=rankInspectorOpen?'weights':null;document.querySelector('#graph-return').dataset.label='Rank '+rankFocus+' · 计算图 ↗';
+ document.querySelector('#rank-preview').innerHTML=`<svg viewBox="345 222 460 553" aria-hidden="true">${rankCube(rank)}</svg>`;
+ document.querySelector('#rank-preview-caption').textContent=`Rank ${rank.id} · ${state.title}`;
+ const cfg=state.config,w=Math.max(600,cfg.tp*330),coords=new Map(state.ranks.map(r=>[r.id,{x:(w-cfg.tp*330)/2+r.lane*330,y:75+r.group*390}]));
+ let body=`<defs><marker id="rank-route-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="${C.i}"/></marker></defs>`;
+ for(let group=0;group<cfg.ep;group++){
+ const members=state.ranks.filter(r=>r.group===group),y=75+group*390;
+ body+=`<rect x="0" y="${y-35}" width="${w}" height="375" rx="14" fill="#fff" fill-opacity=".035"/>`+text(16,y-12,current===8?`专家组 ${group} · E${members[0].experts[0]}–E${members[0].experts.at(-1)} · 组内 ${cfg.tp} 份 TP 分片`:`${cfg.tp>1?'TP 组':'当前 Block'} · Rank {${members.map(r=>r.id)}}`,'text');
+ if(current>=4&&cfg.tp>1){body+=`<path d="M75 ${y+320}H${w-75}" stroke="#aaa" fill="none"/>`+text(w/2,y+345,cfg.sp?'AG / RS · token 行收集与归约分发':'AllReduce(sum) · TP 部分贡献求和','small','middle');}
+ }
+ for(const r of state.ranks){const p=coords.get(r.id);body+=`<g data-rank-id="${r.id}" class="rank-item" role="button" tabindex="0" aria-label="Rank ${r.id}，TP ${r.lane}，${state.title}" aria-pressed="${r.id===rankFocus}"><svg x="${p.x}" y="${p.y}" width="300" height="290" viewBox="345 222 460 553">${rankCube(r)}</svg>${r.id===rankFocus?`<rect x="${p.x+106}" y="${p.y+287}" width="88" height="26" rx="13" fill="#eee"/>`:''}${text(p.x+150,p.y+305,'Rank '+r.id,'small','middle',r.id===rankFocus?'#111':'#bbb')}</g>`;}
+ if(current===7){const y=75+cfg.ep*390;body+=text(w/2,y,`待分配专家池 · ${cfg.experts} experts · Top-2`,'text','middle')+text(w/2,y+28,'本步只展开 MoE 结构，下一步再指定专家归属','small','middle');}
+ if(current===8){const lane=rankFocus%cfg.tp,source=coords.get(lane),route=moeRoute(parameterState.token,cfg.experts);route.chosen.forEach((e,i)=>{const owner=Math.floor(e/(cfg.experts/cfg.ep)),target=coords.get(owner*cfg.tp+lane);if(owner===0){body+=text(20,75+cfg.ep*390+i*24,`t${parameterState.token}：R${lane} · 本组 E${e} · 无 EP 搬运`,'small');return;}const x=source.x+275;body+=`<path data-rank-route="${e}" d="M${x} ${source.y+145}H${x+40+i*20}V${target.y+145}H${target.x+275}" fill="none" stroke="${C.i}" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#rank-route-arrow)"/><path data-rank-return="${e}" d="M${target.x+275} ${target.y+170}H${x+55+i*20}V${source.y+170}H${source.x+275}" fill="none" stroke="${C.i}" stroke-width="1.5" stroke-dasharray="3 5" marker-end="url(#rank-route-arrow)"/>`+text(20,75+cfg.ep*390+i*24,`t${parameterState.token}：R${lane} ⇄ R${owner*cfg.tp+lane} · E${e} · α ${route.alpha[i].toFixed(2)}`,'small');});}
+ updateGraphSvg(document.querySelector('#rank-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+body+'</svg>');applyRankCamera();
+ const signature=[current,cfg.tp,cfg.ep,cfg.sp,cfg.experts,cfg.recollect].join(':');if(signature!==rankSignature){rankCamera.x=rankCamera.y=0;rankCamera.z=1;applyRankCamera();fitRanks();rankSignature=signature;}if(rankInspectorOpen&&rankPrimary){writeTrainingRankPanel();markRankGraphOwnership();}
+}
+function toggleRankPrimary(value=!rankPrimary){
+ if(rankSwapBusy||value===rankPrimary)return;rankSwapBusy=true;
+ const graph=document.querySelector('#stage'),surface=document.querySelector('#rank-surface'),a=graph.getBoundingClientRect(),b=surface.getBoundingClientRect();
+ if(value)graphReturnCamera={stage:current,signature:rankSignature,view:{...view},box:document.querySelector('#stage>svg').getAttribute('viewBox'),autoLayout};
+ rankPrimary=value;document.querySelector('#rank-open').setAttribute('aria-expanded',String(value));document.body.classList.toggle('rank-primary',value);document.querySelector('#rank-open').hidden=value;document.querySelector('#rank-canvas').toggleAttribute('hidden',!value);document.querySelector('#rank-return').hidden=!value;document.querySelector('#graph-return').hidden=!value;fitRanks();
+ if(!value){if(rankInspectorOpen){rankInspectorOpen=false;document.querySelector('#panel').hidden=true;}if(graphReturnCamera?.stage===current&&graphReturnCamera.signature===rankSignature){view={...graphReturnCamera.view};autoLayout=graphReturnCamera.autoLayout;document.querySelector('#stage>svg').setAttribute('viewBox',graphReturnCamera.box);apply();}else{autoLayout=true;view={z:1,x:0,y:0};apply();fitStage(false);}}
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const animations=reduced?[]:[[graph,a],[surface,b]].map(([el,old])=>{const n=el.getBoundingClientRect();return el.animate([{transformOrigin:'0 0',transform:`translate(${old.left-n.left}px,${old.top-n.top}px) scale(${old.width/n.width},${old.height/n.height})`},{transformOrigin:'0 0',transform:'none'}],{duration:400,easing:'cubic-bezier(.22,1,.36,1)'}).finished.catch(()=>{});});Promise.all(animations).finally(()=>rankSwapBusy=false);
+}
+function inspectTrainingRank(id,band='weights'){
+ rankInspectorOpen=true;rankFocus=id;rankBandFocus=band;renderRankView();markRankGraphOwnership();writeTrainingRankPanel();
+}
+function writeTrainingRankPanel(){const id=rankFocus,band=rankBandFocus;const r=rankSnapshot.ranks[id],b=r.bands.find(b=>b.id===band)||r.bands[0];
+ document.querySelector('#panel').hidden=false;document.querySelector('#ptitle').textContent=`Rank ${id} · ${b.name}`;
+ document.querySelector('#pbody').innerHTML=`<p>${esc(b.detail)}</p><p>TP 组：{${r.tpGroup}}${current===8?'；EP 同 lane 通信组：{'+r.epPeers+'}':''}</p>${current===8?`<p>专家 E${r.experts[0]}–E${r.experts.at(-1)} 的 TP 分片 ${r.lane+1}/${rankSnapshot.config.tp}。</p>`:''}`;
+}
+function linkGraphToRanks(id){rankInspectorOpen=false;const match=id.match(/^moe-e(\d+)/);if(match&&current===8){const group=Math.floor(+match[1]/(graphModel.experts/graphModel.ep));rankFocus=group*graphModel.tp+(rankFocus%graphModel.tp);}rankBandFocus=match||registry[id]?.role==='w'||/param|weight/.test(id)?'weights':registry[id]?.role==='g'||/dw|wgrad|full-w-|full-b-|model-back-/.test(id)?'gradient':/cache|ag|rs/.test(id)?'communication':'activation';renderRankView();}
+document.querySelector('#rank-open').onclick=()=>toggleRankPrimary(true);document.querySelector('#rank-return').onclick=()=>toggleRankPrimary(false);document.querySelector('#graph-return').onclick=()=>toggleRankPrimary(false);
+const rankSurface=document.querySelector('#rank-canvas');
+rankSurface.addEventListener('click',e=>{const item=e.target.closest('[data-rank-id]');if(item&&!rankMoved)inspectTrainingRank(+item.dataset.rankId,e.target.closest('[data-rank-band]')?.dataset.rankBand||'weights');});
+rankSurface.addEventListener('keydown',e=>{const item=e.target.closest('[data-rank-id]');if(item&&['Enter',' '].includes(e.key)){e.preventDefault();inspectTrainingRank(+item.dataset.rankId);}});
+rankSurface.addEventListener('wheel',e=>{e.preventDefault();const p=rankSurface.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(rankSurface.getScreenCTM().inverse()),z=Math.max(.3,Math.min(6,rankCamera.z*Math.exp(-e.deltaY*.001)));rankCamera.x=q.x-(q.x-rankCamera.x)*z/rankCamera.z;rankCamera.y=q.y-(q.y-rankCamera.y)*z/rankCamera.z;rankCamera.z=z;applyRankCamera();},{passive:false});
+rankSurface.onpointerdown=e=>{if(e.button!==0)return;rankMoved=false;rankPan={x:e.clientX,y:e.clientY,vx:rankCamera.x,vy:rankCamera.y};};rankSurface.onpointermove=e=>{if(!rankPan)return;const dx=e.clientX-rankPan.x,dy=e.clientY-rankPan.y;if(Math.hypot(dx,dy)>5)rankMoved=true;if(rankMoved){rankSurface.setPointerCapture(e.pointerId);const scale=rankSurface.getScreenCTM().a;rankCamera.x=rankPan.vx+dx/scale;rankCamera.y=rankPan.vy+dy/scale;applyRankCamera();}};rankSurface.onpointerup=()=>{rankPan=null;setTimeout(()=>rankMoved=false,0);};rankSurface.onpointercancel=()=>rankPan=null;
+window.addEventListener('resize',()=>{if(rankPrimary)fitRanks();});
+
+function rankTool(id){if(id==='fit'){rankCamera.z=1;rankCamera.x=rankCamera.y=0;applyRankCamera();fitRanks();return;}const box=document.querySelector('#rank-canvas').viewBox.baseVal,cx=box.x+box.width/2,cy=box.y+box.height/2,z=Math.max(.3,Math.min(6,rankCamera.z*(id==='plus'?1.3:1/1.3)));rankCamera.x=cx-(cx-rankCamera.x)*z/rankCamera.z;rankCamera.y=cy-(cy-rankCamera.y)*z/rankCamera.z;rankCamera.z=z;applyRankCamera();}
+document.addEventListener('click',e=>{if(e.target.id==='close')rankInspectorOpen=false;});document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(rankInspectorOpen)rankInspectorOpen=false;else if(rankPrimary)toggleRankPrimary(false);}});
+
+function markRankGraphOwnership(){const rank=rankSnapshot.ranks[rankFocus],ids=new Set(rank.objects.map(o=>o.id));document.querySelectorAll('#world [data-node]').forEach(el=>{const n=registry[el.dataset.node],expert=el.dataset.node.match(/^moe-e(\d+)/);const related=rankBandFocus==='weights'?(ids.has(n?.objectId)||ids.has(el.dataset.node)||expert&&rank.experts.includes(+expert[1])):rankBandFocus==='gradient'?n?.role==='g':rankBandFocus==='activation'?n?.role==='i':!!el.querySelector('[data-kind=communication]');el.classList.toggle('rank-owned',!!related);el.classList.toggle('rank-context',!related);});}
 </script><script>
 const $=s=>document.querySelector(s);
 const stages=[
@@ -762,7 +1029,7 @@ const moeSummary=current===7?(graphModel.moe?`${graphModel.experts} 个 GeLU 专
 $('#impact').innerHTML=`<div class="step-number">${String(current+1).padStart(2,'0')}</div><b>${stages[current][1]}</b><span>${moeSummary}</span><pre class="stage-formula">${esc(current>=7?(graphModel.moe?`rₜ = Σᵢ αₜ,ᵢ Eᵢ(aₜ)\nEᵢ(a) = GELU(aW1ᵢ)W2ᵢ\n${graphModel.experts} experts · Top-2${current>=8?' · EP '+graphModel.ep:''}`:'Y = GELU(AW1)W2'):current===4?`Wqkvᵣ [8,${24/tp}] · Wprojᵣ [${8/tp},8]\nW1ᵣ [8,${16/tp}] · W2ᵣ [${16/tp},8]`:current===5?(sp?`AG：[${seq},8] × ${tp} → [8,8]\nRS：Σᵣ Zᵣ[8,8] → [${seq},8]`:'边界激活：[8,8]\n'+(tp===1?'单 Rank 本地计算':'AllReduce(sum)：[8,8] → [8,8]')):STAGE_FORMULAS[current])}</pre><small>${current===2||current===3?'同一次反向传播的两个计算目标':`TP ${tp} · SP ${sp?'ON':'OFF'}`}</small>`;
 if(current>=7&&graphModel.moe){const m=graphModel.stats;$('#impact').insertAdjacentHTML('beforeend',`<div class="moe-metrics"><div><b>${m.totalParameters.toLocaleString()}</b><small>本层 MoE 参数（含 Router）</small></div><div><b>${m.active} / ${graphModel.experts}</b><small>当前 8 token 样本激活专家</small></div><div><b>16 次</b><small>token–专家分配 · Top-2</small></div><small>每位专家 256 参数 · 单 token 使用 ${m.perTokenParameters} 参数（含 Router）</small></div>`);}
 $('#extension').hidden=true;$('#extension').style.display='none';syncSecondary();if(!$('#info-panel').hidden)updateInfo();
-updateNav();syncPlayback();const graphBounds=inner.getBBox();layoutBoxes=graphModel.focusBounds?[graphModel.focusBounds]:[{x:graphBounds.x,y:graphBounds.y,width:graphBounds.width,height:graphBounds.height}];apply();if(oldStage!==current||parameterChanged){autoLayout=true;view={z:1,x:0,y:0};apply();fitStage(oldStage>=0);animateGraph(oldNodes,oldWires,oldStage);}if(selected&&panelOpen)showPanel();lastStage=current;parameterChanged=false;}
+updateNav();syncPlayback();const graphBounds=inner.getBBox();layoutBoxes=graphModel.focusBounds?[graphModel.focusBounds]:[{x:graphBounds.x,y:graphBounds.y,width:graphBounds.width,height:graphBounds.height}];apply();if(oldStage!==current||parameterChanged){autoLayout=true;view={z:1,x:0,y:0};apply();if(!rankPrimary)fitStage(oldStage>=0);animateGraph(oldNodes,oldWires,oldStage);}if(selected&&panelOpen)showPanel();lastStage=current;parameterChanged=false;renderRankView();}
 function setCursor(l,fromPlayback=false){if(!fromPlayback)pausePlayback();cursor=Math.max(0,Math.min(TRACK_END,l));const next=Math.round(cursor/8);if(next!==current){current=next;extension='base';render()}else updateNav();}
 
 const motion=()=>({duration:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--duration-layout'))||500,easing:getComputedStyle(document.documentElement).getPropertyValue('--ease-layout').trim()||'ease-out'});
@@ -776,15 +1043,15 @@ function apply(){const outer=$('#world');outer.setAttribute('transform',`transla
 function nodeBody(id){const d=registry[id];return d?auditedNode(id,d):null;}
 function showPanel(){const d=nodeBody(selected);if(!d){$('#panel').hidden=true;return}$('#panel').hidden=false;$('#ptitle').textContent=d.title;$('#pbody').innerHTML=`<p>${esc(d.body)}</p>`+(registry[selected].expert!==undefined?expertInspectorSvg(registry[selected].expert):'');}
 
-function updateInfo(){const keys=selected&&registry[selected]?registry[selected].docs:STAGE_DOCS[current];$('#info-content').innerHTML=`<h3>图例</h3><div class="info-legend"><span><i style="background:${C.i}"></i>激活与中间值</span><span><i style="background:${C.w}"></i>参数</span><span><i style="background:${C.g}"></i>梯度</span><span>┄ 通信操作</span></div><h3>公式与范围</h3><p>T=8、H=8、FFN=16、4 个头为本例配置，省略 batch 维。公式采用 Y=XW；PyTorch Linear 的 weight 存储方向相反。</p><p>图中展开 Norm 的输入梯度、残差路径及四个线性层的参数梯度；未展开 Norm 参数梯度与偏置梯度。导航表示依赖的逐步展开，不表示实测执行时间。</p>${graphModel.moe?'<h3>MoE 配置</h3><p>沿用 GeLU 专家，专家数可调、Top-2、无容量截断。来源组 0 的 token 仅作路径追踪；其他来源组同样参与 EP 通信。专家组内 TP，组间 EP；总 Rank 数为 TP×EP。TP+EP 时启用 SP。</p><p>前 4 位专家的路由权重复用 Dense→MoE 报告，其余列由固定正弦函数生成；当前统计限于来源组 0 的 8 token 样本。路由输入与前 4 列 Wr，H=3 补零至 H=8，8 行复用两轮 4 行输入。该路由样本独立于符号 Attention 图，系数按矩阵乘法和 top-2 softmax 计算。MoE 反向与参数梯度在图中折叠显示，包含 Router 与专家的梯度贡献。</p>':''}<h3>当前步骤的官方依据</h3><div class="source-links">${docLinks(keys)}</div><details><summary>全部官方文档</summary><div class="source-links">${docLinks(Object.keys(DOCS).filter(k=>k!=='zero'))}</div></details>`;}
-function choose(id){selected=id;panelOpen=true;$('#world').querySelectorAll('[data-node]').forEach(el=>el.classList.toggle('selected',el.dataset.node===id));showPanel();}
-document.addEventListener('click',e=>{if(e.target.closest('#info-icon')){const opening=$('#info-panel').hidden;$('#info-panel').hidden=!opening;$('#info-icon').setAttribute('aria-expanded',String(opening));if(opening)updateInfo();}if(e.target.closest('#info-close')){$('#info-panel').hidden=true;$('#info-icon').setAttribute('aria-expanded','false');}const stageButton=e.target.closest('[data-stage]');if(stageButton)setCursor(+stageButton.dataset.stage*8);const hit=e.target.closest('[data-node]'),r=e.target.closest('[data-rank]'),ext=e.target.closest('[data-extension]');if(hit&&!moved)choose(hit.dataset.node);if(r){activeRank=+r.dataset.rank;render()}if(ext){extension=ext.dataset.extension;$('#extension').querySelectorAll('button').forEach(el=>el.classList.toggle('active',el===ext));render();if(extension!=='base'){selected='full-f-qkv';choose(selected)}}if(e.target.id==='close'){panelOpen=false;$('#panel').hidden=true;}if(e.target.id==='fit'){autoLayout=true;view={z:1,x:0,y:0};apply();fitStage()}if(e.target.id==='plus'||e.target.id==='minus'){autoLayout=false;cancelAnimationFrame(cameraFrame);view.z=Math.max(.4,Math.min(6,view.z*(e.target.id==='plus'?1.3:1/1.3)));apply()}});
+function updateInfo(){const keys=selected&&registry[selected]?registry[selected].docs:STAGE_DOCS[current];$('#info-content').innerHTML=`<h3>图例</h3><div class="info-legend"><span><i style="background:${C.i}"></i>激活与中间值</span><span><i style="background:${C.w}"></i>参数</span><span><i style="background:${C.g}"></i>梯度</span><span>┄ 通信操作</span></div><h3>公式与范围</h3><p>T=8、H=8、FFN=16、4 个头为本例配置，省略 batch 维。公式采用 Y=XW；PyTorch Linear 的 weight 存储方向相反。</p><p>图中展开 Norm 的输入梯度、残差路径及四个线性层的参数梯度；未展开 Norm 参数梯度与偏置梯度。导航表示依赖的逐步展开，不表示实测执行时间。</p>${graphModel.moe?'<h3>MoE 配置</h3><p>沿用 GeLU 专家，专家数可调、Top-2、无容量截断。来源组 0 的 token 仅作路径追踪；其他来源组同样参与 EP 通信。专家组内 TP，组间 EP；总 Rank 数为 TP×EP。TP+EP 时启用 SP。</p><p>前 4 位专家的路由权重复用 Dense→MoE 报告，其余列由固定正弦函数生成；当前统计限于来源组 0 的 8 token 样本。路由输入与前 4 列 Wr，H=3 补零至 H=8，8 行复用两轮 4 行输入。该路由样本独立于符号 Attention 图，系数按矩阵乘法和 top-2 softmax 计算。MoE 反向与参数梯度在图中折叠显示，包含 Router 与专家的梯度贡献。</p>':''}<h3>Rank 视图</h3><p>右下角点击互换主辅画布；缩放工具控制当前主体。Rank 内部色带表达当前 Block 的权重、激活、梯度与通信对象，不编码显存容量或字节比例。MoE 结构步骤不提前指定专家 Rank，专家分布步骤才显示归属。</p><h3>当前步骤的官方依据</h3><div class="source-links">${docLinks(keys)}</div><details><summary>全部官方文档</summary><div class="source-links">${docLinks(Object.keys(DOCS).filter(k=>k!=='zero'))}</div></details>`;}
+function choose(id){selected=id;panelOpen=true;$('#world').querySelectorAll('[data-node]').forEach(el=>el.classList.toggle('selected',el.dataset.node===id));showPanel();linkGraphToRanks(id);}
+document.addEventListener('click',e=>{if(rankPrimary&&['fit','plus','minus'].includes(e.target.id)){rankTool(e.target.id);return;}if(e.target.closest('#info-icon')){const opening=$('#info-panel').hidden;$('#info-panel').hidden=!opening;$('#info-icon').setAttribute('aria-expanded',String(opening));if(opening)updateInfo();}if(e.target.closest('#info-close')){$('#info-panel').hidden=true;$('#info-icon').setAttribute('aria-expanded','false');}const stageButton=e.target.closest('[data-stage]');if(stageButton)setCursor(+stageButton.dataset.stage*8);const hit=e.target.closest('[data-node]'),r=e.target.closest('[data-rank]'),ext=e.target.closest('[data-extension]');if(hit&&!moved)choose(hit.dataset.node);if(r){activeRank=+r.dataset.rank;render()}if(ext){extension=ext.dataset.extension;$('#extension').querySelectorAll('button').forEach(el=>el.classList.toggle('active',el===ext));render();if(extension!=='base'){selected='full-f-qkv';choose(selected)}}if(e.target.id==='close'){panelOpen=false;$('#panel').hidden=true;}if(e.target.id==='fit'){autoLayout=true;view={z:1,x:0,y:0};apply();fitStage()}if(e.target.id==='plus'||e.target.id==='minus'){autoLayout=false;cancelAnimationFrame(cameraFrame);view.z=Math.max(.4,Math.min(6,view.z*(e.target.id==='plus'?1.3:1/1.3)));apply()}});
 
-document.addEventListener('keydown',e=>{if(e.target.closest('#secondary-control,#expert-count-control'))return;if(e.code==='Space'&&!e.target.closest('button,a,input')){e.preventDefault();togglePlayback();return}if(e.key==='Escape'){panelOpen=false;$('#panel').hidden=true;$('#info-panel').hidden=true;$('#info-icon').setAttribute('aria-expanded','false')}if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();setCursor(e.key==='Home'?0:e.key==='End'?TRACK_END:(current+(e.key==='ArrowRight'?1:-1))*8)}if(e.target.dataset.node&&['Enter',' '].includes(e.key)){e.preventDefault();choose(e.target.dataset.node)}});
-const surface=$('#stage svg');surface.addEventListener('wheel',e=>{e.preventDefault();autoLayout=false;cancelAnimationFrame(cameraFrame);const p=surface.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const v=p.matrixTransform(surface.getScreenCTM().inverse()),z=Math.max(.4,Math.min(6,view.z*Math.exp(-e.deltaY*.001))),cx=905,cy=915;view.x=v.x-cx-(v.x-cx-view.x)*z/view.z;view.y=v.y-cy-(v.y-cy-view.y)*z/view.z;view.z=z;apply()},{passive:false});
-surface.onpointerdown=e=>{if(e.button!==0)return;moved=false;drag={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y}};surface.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)moved=true;if(moved){autoLayout=false;cancelAnimationFrame(cameraFrame);surface.setPointerCapture(e.pointerId);const scale=surface.getScreenCTM().a;view.x=drag.vx+dx/scale;view.y=drag.vy+dy/scale;apply()}};surface.onpointerup=()=>{drag=null;setTimeout(()=>moved=false,0)};surface.onpointercancel=()=>drag=null;
+document.addEventListener('keydown',e=>{if(e.defaultPrevented)return;if(e.target.closest('#secondary-control,#expert-count-control'))return;if(e.code==='Space'&&!e.target.closest('button,a,input')){e.preventDefault();togglePlayback();return}if(e.key==='Escape'){panelOpen=false;$('#panel').hidden=true;$('#info-panel').hidden=true;$('#info-icon').setAttribute('aria-expanded','false')}if(['ArrowRight','ArrowLeft','Home','End'].includes(e.key)){e.preventDefault();setCursor(e.key==='Home'?0:e.key==='End'?TRACK_END:(current+(e.key==='ArrowRight'?1:-1))*8)}if(e.target.dataset.node&&['Enter',' '].includes(e.key)){e.preventDefault();choose(e.target.dataset.node)}});
+const surface=$('#stage svg');surface.addEventListener('wheel',e=>{e.preventDefault();if(rankPrimary)return;autoLayout=false;cancelAnimationFrame(cameraFrame);const p=surface.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const v=p.matrixTransform(surface.getScreenCTM().inverse()),z=Math.max(.4,Math.min(6,view.z*Math.exp(-e.deltaY*.001))),cx=905,cy=915;view.x=v.x-cx-(v.x-cx-view.x)*z/view.z;view.y=v.y-cy-(v.y-cy-view.y)*z/view.z;view.z=z;apply()},{passive:false});
+surface.onpointerdown=e=>{if(rankPrimary||e.button!==0)return;moved=false;drag={x:e.clientX,y:e.clientY,vx:view.x,vy:view.y}};surface.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)moved=true;if(moved){autoLayout=false;cancelAnimationFrame(cameraFrame);surface.setPointerCapture(e.pointerId);const scale=surface.getScreenCTM().a;view.x=drag.vx+dx/scale;view.y=drag.vy+dy/scale;apply()}};surface.onpointerup=()=>{drag=null;setTimeout(()=>moved=false,0)};surface.onpointercancel=()=>drag=null;
 function tooltip(e){const el=e.target.closest('[data-tip]');$('#tip').hidden=!el;if(el){const r=el.getBoundingClientRect();$('#tip').textContent=el.dataset.tip;$('#tip').style.left=Math.max(8,Math.min(innerWidth-260,r.left))+'px';$('#tip').style.top=Math.max(8,r.top-37)+'px'}}document.addEventListener('pointerover',tooltip);document.addEventListener('focusin',tooltip);document.addEventListener('focusout',()=>$('#tip').hidden=true);
-new ResizeObserver(()=>{if(autoLayout)fitStage(false)}).observe($('#stage'));
+new ResizeObserver(()=>{if(autoLayout&&!rankPrimary)fitStage(false)}).observe($('#stage'));
 render();
 
 const initial=Number(location.hash.slice(1));if(Number.isInteger(initial)&&initial>=0&&initial<=LAST_STAGE)setCursor(initial*8);

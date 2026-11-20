@@ -1,0 +1,22 @@
+{
+  "planner.js": {
+    "source": "patterns/model-parallel-rank-deck/pattern.js",
+    "sha256": "c20697afac4af736c1196115f6397b39fbd10e96f8da269a707b3c4a6e6fbc69",
+    "usage": "pure partition planner only",
+    "repository": "pto-design-system",
+    "extractedFunctions": [
+      "normalizeTopology",
+      "enumerateRanks",
+      "groupKey",
+      "buildGroups",
+      "partitionModel"
+    ],
+    "artifactSha256": "09a1f45d08656bdc48fdd15592664bbf9d92f5fef6a04fad7442dcd0f57787c1"
+  },
+  "memory-geometry.js": {
+    "source": "layer_stack/rank-memory-view.js",
+    "sha256": "d4dfb4e2a9af61241ab8a1df068bd47f53ac7a804ff50dde173d39737f9c9f2f",
+    "usage": "geometry only; no inference budgets",
+    "repository": "AI_Infra"
+  }
+}
