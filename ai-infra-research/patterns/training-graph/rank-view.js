@@ -2,13 +2,14 @@
 let rankInspectorOpen=false,graphImpactMarkup='';
 let rankPrimary=false,rankFocus=0,rankBandFocus=null,rankSnapshot=null,rankSignature='',graphReturnCamera=null;
 const rankCamera={z:1,x:0,y:0};let rankPan=null,rankMoved=false,rankSwapBusy=false;
-function rankCube(rank,mini=false){
+function rankCube(rank,mini=false,unmapped=false){
  const {P,polygon,block}=window.RankMemoryView.geometry,height=64*6.7;
  let out=polygon([[0,0,0],[245,0,0],[245,155,0],[0,155,0]],'#181818')+polygon([[0,0,0],[245,0,0],[245,0,height],[0,0,height]],'#151515')+polygon([[0,0,0],[0,155,0],[0,155,height],[0,0,height]],'#151515');
  rankBandLayout(rank.bands).forEach(b=>{const {z,h}=b,a=P(239,142,z+h/2),focused=rank.id===rankFocus&&b.id===rankBandFocus;
+ if(unmapped){out+=`<g data-unmapped-band opacity=".45">${block(z,h,'#444444')}</g>`;return;}
  out+=`<g data-rank-band="${b.id}" data-layout-z="${z}" data-layout-height="${h}" data-tip="${esc(b.name+' · 点击查看对象与分片')}">${block(z,h,focused?'#eeeeee':b.color)}<text transform="matrix(.8660254 -.5 0 1 ${a[0]} ${a[1]})" fill="${focused?'#111':'#111'}" font-size="17">${esc(({weights:'权重 W',activation:current===0?'输入 H₀':current>=6?'缓存 X/A':'激活',gradient:current>=3?'dX / dW':'dX',communication:current===8?'TP / EP / DP':rankSnapshot.config.tp===1?'DP':rankSnapshot.config.sp?'AG / RS':'AR'})[b.id]||b.name)}</text></g>`;});
  out+=`<path d="M${P(0,155,height)} L${P(0,0,height)} L${P(245,0,height)} L${P(245,155,height)} Z M${P(0,155,height)} L${P(0,155,0)} L${P(245,155,0)} L${P(245,0,0)} L${P(245,0,height)} M${P(245,155,height)} L${P(245,155,0)}" fill="none" stroke="#bbb" stroke-width="2"/>`;
- const wall=P(0,140,height);out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text>${rankSnapshot.config.tp>1?`<text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${mini&&current===8?' · 专家组 '+rank.group:''}</text>`:''}</g>`;
+ const wall=P(0,140,height);if(!unmapped)out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text>${rankSnapshot.config.tp>1?`<text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${mini&&current===8?' · 专家组 '+rank.group:''}</text>`:''}</g>`;
  return out;
 }
 function fitRanks(){const svg=document.querySelector('#rank-canvas');if(!svg||!rankSnapshot?.config.deployed)return;const w=1320,h=950,sw=innerWidth,sh=innerHeight,left=sw>1000?310:24,right=sw>1000?440:24,available=Math.max(280,sw-left-right),scale=Math.min(available/w,Math.max(200,sh-270)/h),cx=left+available/2;svg.setAttribute('viewBox',`${w/2-cx/scale} ${(h-sh/scale)/2} ${sw/scale} ${sh/scale}`);}
@@ -18,7 +19,7 @@ function applyRankCamera(){document.querySelector('#rank-world').setAttribute('t
 function renderRankView(){
  rankSnapshot=trainingRankState(current,parameterState);
  const opener=document.querySelector('#rank-open');opener.disabled=!rankSnapshot.config.deployed;opener.dataset.tip=rankSnapshot.config.deployed?'展开固定 8 个 Rank 的部署视图':'逻辑计算尚未映射部署；TP 步骤开始显示固定 8 个 Rank';
- if(!rankSnapshot.config.deployed){if(rankPrimary)toggleRankPrimary(false);rankInspectorOpen=false;document.querySelector('#rank-world').innerHTML='';document.querySelector('#rank-preview').innerHTML='<span class="rank-unmapped">尚未映射部署</span>';document.querySelector('#rank-preview-caption').textContent='逻辑模型 → TP 步骤配置分片';return;}
+ if(!rankSnapshot.config.deployed){if(rankPrimary)toggleRankPrimary(false);rankInspectorOpen=false;document.querySelector('#rank-world').innerHTML='';document.querySelector('#rank-preview').innerHTML=`<svg viewBox="345 222 460 553" aria-hidden="true">${rankCube({bands:[{id:'weights'},{id:'activation'},{id:'gradient'}]},true,true)}</svg>`;document.querySelector('#rank-preview-caption').textContent='Rank · 尚未映射部署';return;}
  if(rankFocus>=rankSnapshot.ranks.length)rankFocus=0;
  const state=rankSnapshot,rank=state.ranks[rankFocus];if(rankBandFocus&&!rank.bands.some(b=>b.id===rankBandFocus))rankBandFocus=rankInspectorOpen?'weights':null;document.querySelector('#graph-return').dataset.label='Rank '+rankFocus+' · 计算图 ↗';
  document.querySelector('#rank-preview').innerHTML=`<svg viewBox="345 222 460 553" aria-hidden="true">${rankCube(rank,true)}</svg>`;

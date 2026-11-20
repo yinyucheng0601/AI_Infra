@@ -66,4 +66,4 @@ body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:60
 
 @media(min-width:601px){.rank-primary #stage,.rank-primary #graph-return{bottom:185px}}
 
-.rank-unmapped{display:grid;place-items:center;height:100%;color:#aaa;font-size:16px}#rank-open:disabled{cursor:default;opacity:1}
+#rank-open:disabled{cursor:default;opacity:1}
