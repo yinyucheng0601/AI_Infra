@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const ctx=vm.createContext({window:{},console});
-for(const f of ['canonical.js','content.js','graph-model.js','graph-layout.js','training-graph.js'])vm.runInContext(fs.readFileSync(__dirname+'/'+f,'utf8'),ctx);
+for(const f of ['canonical.js','content.js','graph-model.js','graph-layout.js','expert-glyph.js','training-graph.js'])vm.runInContext(fs.readFileSync(__dirname+'/'+f,'utf8'),ctx);
 vm.runInContext("let current=0;const parameterState={tp:4,sp:true,cache:'shard',ffn:'moe',ep:2,token:0}",ctx);
 let count=0;
 for(let stage=0;stage<9;stage++)for(const tp of [1,2,4])for(const sp of [false,true])for(const ffn of ['dense','moe'])for(const ep of [1,2,4])for(const experts of (stage>=7?[4,8,16,32,64]:[4])){
@@ -30,4 +30,4 @@ assert.deepEqual(Array.from({length:4},(_,t)=>Array.from(vm.runInContext('moeRou
 
 for(const n of [4,8,16,32,64])for(let t=0;t<8;t++){const r=vm.runInContext(`moeRoute(${t},${n})`,ctx);assert.equal(r.scores.length,n);assert(r.chosen.every(e=>e<n));assert.equal(new Set(r.chosen).size,2);assert(Math.abs(r.alpha.reduce((a,b)=>a+b,0)-1)<1e-12);}console.log('PASS: all expert counts, fixed expert sizes, 16 assignments, Router shapes and complete EP partition');
 
-for(const n of [16,32,64])for(const ep of [1,2,4]){const layout=vm.runInContext(`layoutExpertGrid(${n},${ep})`,ctx);assert(layout.cards.every(c=>c.width===256));if(n/ep>=8){const left=layout.cards.filter(c=>c.owner===0).map(c=>c.x);for(let g=1;g<ep;g++)assert.deepEqual(Array.from(layout.cards.filter(c=>c.owner===g),c=>c.x),Array.from(left));}}console.log('PASS: compact expert width matches standard OP; stacked EP groups share column coordinates');
+for(const n of [16,32,64])for(const ep of [1,2,4]){const layout=vm.runInContext(`layoutExpertGrid(${n},${ep})`,ctx);assert(layout.cards.every(c=>c.width===96));if(n/ep>=8){const left=layout.cards.filter(c=>c.owner===0).map(c=>c.x);for(let g=1;g<ep;g++)assert.deepEqual(Array.from(layout.cards.filter(c=>c.owner===g),c=>c.x),Array.from(left));}}console.log('PASS: compact experts use dedicated icon proportions; stacked EP groups share column coordinates');

@@ -52,8 +52,10 @@ body[data-step="7"] #token-controls{bottom:calc(100% + 48px)}@media(max-width:60
 
 #rank-return{top:150px}
 
-@media(min-width:1001px){body:has(#panel:not([hidden])):not(.rank-primary) #rank-surface{right:390px}}
+@media(min-width:1001px){body:has(#panel:not([hidden])):not(.rank-primary) #rank-surface{right:390px;bottom:220px}}
 
 @media(max-width:600px){#rank-surface{bottom:290px}.rank-primary #stage,.rank-primary #graph-return{bottom:290px}}
 
 .rank-primary #graph-return:after{content:attr(data-label)}
+
+.hit.selected [data-kind=expert]>rect:first-child{fill:#777}.hit.selected [data-kind=expert] text{fill:#fff}.hit:hover [data-kind=expert]>rect:first-child{fill:#707070}

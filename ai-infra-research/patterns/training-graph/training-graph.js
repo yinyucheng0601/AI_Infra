@@ -50,12 +50,12 @@ function trainingGraph(){
  const e=card.id,owner=card.owner,x=cf+card.x,y=ys+card.y,active=chosen.includes(e),a=active?alpha[chosen.indexOf(e)]:0;
  const ranks=Array.from({length:tp},(_,i)=>owner*tp+i),remote=owner!==0;
  if(expertLayout.compact){
- const id='moe-e'+e,icon=window.PtoOpIcons.find(i=>i.id==='linear'),scale=card.width/360;
+ const id='moe-e'+e,iconHeight=card.width*91/71;
  const body=`专家 E${e}：当前 8 token 样本分到 ${stats.loads[e]} 次调用。每位专家全局 W1[8,16]、W2[16,8]，256 个参数；${deployed?'Rank {'+ranks+'}。':''}点击查看内部计算。`;
- nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,`<g data-kind="op" transform="translate(${x-card.width/2} ${y}) scale(${scale})">${opNode({...icon,name:'E'+e+' · '+stats.loads[e]},0,0)}</g>`, '专家 E'+e,body)+'</g>';
- remember(id,'专家 E'+e,body,['moe','linear'],{expert:e});positions[id]={x:x-card.width/2,y,width:card.width,height:64*scale};
+ nodes+=`<g data-expert="${e}" class="compact-expert ${active?'is-route':'off-route'}">`+hit(id,expertGlyph(e,x,y,card.width), '专家 E'+e,body)+text(x,y+iconHeight+20,`${stats.loads[e]} tokens${active?' · α '+a.toFixed(2):''}`,'small','middle')+'</g>';
+ remember(id,'专家 E'+e,body,['moe','linear'],{expert:e});positions[id]={x:x-card.width/2,y,width:card.width,height:iconHeight};
+ if(active){links+=edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}H${cf-expertLayout.halfWidth+40}V${y-12}H${x}V${y}`);links+=edge('moe-return-'+e,port(id,x,y+iconHeight),port('moe-combine',cf,ys+expertLayout.combineY),'i',remote,`M${x} ${y+iconHeight}V${y+iconHeight+5}H${x+card.width/2+10}V${y+iconHeight+35}H${cf+expertLayout.halfWidth-40}V${ys+expertLayout.combineY-20}H${cf}V${ys+expertLayout.combineY}`);}
 
- if(active){links+=edge('moe-dispatch-'+e,port('moe-dispatch',cf,ys+95+oh),port(id,x,y),'i',remote,`M${cf} ${ys+95+oh}H${cf-expertLayout.halfWidth+40}V${y-12}H${x}V${y}`);links+=edge('moe-return-'+e,port(id,x,y+64*scale),port('moe-combine',cf,ys+expertLayout.combineY),'i',remote,`M${x} ${y+64*scale}V${y+70}H${cf+expertLayout.halfWidth-40}V${ys+expertLayout.combineY-20}H${cf}V${ys+expertLayout.combineY}`);}
  continue;
  }
  notes+=`<rect class="module-frame" x="${x-140}" y="${y-55}" width="280" height="300" rx="10"/>`+text(x,y-32,`专家 E${e} · nᵢ=${stats.loads[e]}`,'small','middle');
