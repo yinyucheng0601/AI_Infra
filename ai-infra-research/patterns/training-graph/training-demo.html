@@ -1920,7 +1920,7 @@ function anchorDeploymentPanel(event,node){
 }
 function positionDeploymentPanel(){
  const panel=document.querySelector('#panel');
- if(current!==9||panel.hidden||!deploymentPanelAnchor)return;
+ if(typeof current==='undefined'||current!==9||panel.hidden||!deploymentPanelAnchor)return;
  const {x,y}=deploymentPanelAnchor,gap=16,margin=12,rect=panel.getBoundingClientRect(),w=rect.width,h=rect.height;
  let left=x+gap;
  if(left+w>innerWidth-margin)left=x-gap-w;

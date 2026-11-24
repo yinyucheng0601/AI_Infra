@@ -102,3 +102,7 @@ TraceView 已从控制面板 DOM 拆出，位于画布下方独立区域；底�
 TraceView 已移除时间范围读数和缩放工具栏，保留时间刻度、时间窗口交互与独立时间线区。Host H2D / NIC 等中性线使用中性圆点，NPU 语义色连线才使用对应语义色圆点；不再将所有 is-hot marker 染成 EP 色。
 
 浏览器检查设置打开/关闭、配置操作、TraceView 联动、工具栏 DOM 移除、中性/语义 marker 的实际样式与步骤退出，前九步 DOM 快照仍匹配基线。
+
+### 线上首次加载复核
+
+分文件脚本通过网络依次加载时，ResizeObserver 可能早于 demo.js 的 current 状态初始化触发；positionDeploymentPanel 已增加初始化守卫。该时序在离线内联脚本中不会触发。发布使用网络页面重新检查首次加载和完整交互，不能以离线检查代替。
