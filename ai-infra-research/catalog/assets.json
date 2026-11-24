@@ -6,7 +6,7 @@
       "title": "分布式训练 · 计算与通信",
       "type": "pattern",
       "form": "交互 Pattern",
-      "summary": "从 Transformer 结构逐步展开训练计算、TP/SP 与 MoE/EP；计算图和 Rank 视图互换主体，联动核查分片、专家归属与通信路径。",
+      "summary": "从 Transformer 训练计算展开 TP/SP 与 MoE/EP，联动 Rank、灵衢部署拓扑和通信 TraceView，核查分片、专家归属与通信类型。",
       "designValue": "以稳定对象身份、渐进展开、参数轨道和自动聚焦连接模型结构、计算依赖与 Rank 部署。",
       "outline": [
         "模型结构 → 前向 → 输入与参数梯度",
@@ -14,7 +14,9 @@
         "Dense → MoE 专家展开",
         "EP 归属与 token 路径",
         "全窗口画布与 FFN 聚焦",
-        "Rank 主辅画布与逐步归属映射"
+        "Rank 主辅画布与逐步归属映射",
+        "灵衢 POD / 板级部署与主辅视图切换",
+        "通信语义配色与 TraceView 双向联动"
       ],
       "domains": [
         "AI Infra",
@@ -32,27 +34,27 @@
       ],
       "status": "reviewed",
       "visibility": "public",
-      "publicationReview": "2026-11-19：用户明确授权收录 Library / Pattern 并 push 发布。",
+      "publicationReview": "2026-11-24：用户确认最新 demo 后授权发布；更新部署视图、硬件图元、设置入口及 Mock TraceView。",
       "content": "patterns/training-graph/index.html",
       "sources": [
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/training-graph/index.html",
-          "sha256": "b9a3f7c1222483c3c074004b0050ccaa62358f7ac29597cb0f52e2af409918ab",
+          "sha256": "0f921aa9718a754bad1c4a5b6f10c407be9d495c45cb5911a0e935f22e8971c0",
           "url": null,
           "revision": null
         }
       ],
       "validation": [
+        "2026-11-24：1440×1000 浏览器验证部署下钻、视角/主辅画布、设置收起、TraceView 双向联动与语义色；前九步 DOM 快照回归通过。8 Rank / 64 事件为显式 Mock；未完成移动端验收。",
         "2026-11-20：超过 8 专家复用用户提供的 SVG 专属图元，保留编号、负载与 Top-2；五档桌面浏览器检查通过。",
         "2026-11-20：810 Rank 状态、1440×1000 九步/主辅互换/独立镜头/专家定位/DOM 复用检查通过；未完成移动端验收。",
         "2026-11-19：1440×1000 浏览器验证专家数切换、64 专家阵列、点击展开、EP 联动及原生键盘调参通过；未覆盖移动端。",
         "2026-11-19：支持 4/8/16/32/64 专家，固定专家大小与 Top-2；612 配置及参数/路由/分组检查通过。",
-        "2026-11-19：324 配置、路由一致性、DOM 复用/帧调度与 TP 求导检查通过。",
-        "最新浏览器视觉复验未完成；不声明实测训练性能或通用代码工程导入。"
+        "2026-11-19：324 配置、路由一致性、DOM 复用/帧调度与 TP 求导检查通过。"
       ],
       "related": [],
-      "reviewedAt": "2026-11-20",
+      "reviewedAt": "2026-11-24",
       "author": "Yucheng"
     },
     {

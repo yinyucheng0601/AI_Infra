@@ -1,0 +1,37 @@
+<svg width="145" height="106" viewBox="0 0 145 106" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect width="145" height="106" rx="7" fill="#CBCBCB"/>
+<circle cx="13" cy="13" r="5" fill="#E3E3E3"/>
+<circle cx="13" cy="13" r="4.5" stroke="white" stroke-opacity="0.24"/>
+<circle cx="13" cy="93" r="5" fill="#E3E3E3"/>
+<circle cx="13" cy="93" r="4.5" stroke="white" stroke-opacity="0.24"/>
+<circle cx="132" cy="13" r="5" fill="#E3E3E3"/>
+<circle cx="132" cy="13" r="4.5" stroke="white" stroke-opacity="0.24"/>
+<circle cx="132" cy="93" r="5" fill="#E3E3E3"/>
+<circle cx="132" cy="93" r="4.5" stroke="white" stroke-opacity="0.24"/>
+<rect x="35" y="15" width="76" height="76" rx="3" fill="#6C6C6C" fill-opacity="0.3"/>
+<g filter="url(#filter0_d_9676_783)">
+<use xlink:href="#stroke0_9676_783" fill="#F9F9F9"/>
+<use xlink:href="#stroke0_9676_783" fill="url(#paint0_linear_9676_783)" fill-opacity="0.1"/>
+<mask id="stroke1_9676_783" fill="white">
+<path d="M41 24C41 22.3431 42.3431 21 44 21H102C103.657 21 105 22.3431 105 24V82C105 83.6569 103.657 85 102 85H44C42.3431 85 41 83.6569 41 82V24Z"/>
+</mask>
+<path d="M44 85H102C103.657 85 105 83.6569 105 82V24C105 22.3431 103.657 21 102 21H44C42.3431 21 41 22.3431 41 24V82C41 83.6569 42.3431 85 44 85Z" stroke-width="2" stroke="white" stroke-opacity="0.24" mask="url(#stroke1_9676_783)"/>
+</g>
+<defs>
+<filter id="filter0_d_9676_783" x="31" y="15" width="84" height="84" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="5"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9676_783"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9676_783" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_9676_783" x1="73" y1="21" x2="73" y2="85" gradientUnits="userSpaceOnUse">
+<stop stop-color="#666666"/>
+<stop offset="1"/>
+</linearGradient>
+<path id="stroke0_9676_783" d="M41 24C41 22.3431 42.3431 21 44 21H102C103.657 21 105 22.3431 105 24V82C105 83.6569 103.657 85 102 85H44C42.3431 85 41 83.6569 41 82V24Z"/>
+</defs>
+</svg>

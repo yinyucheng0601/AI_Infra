@@ -1,0 +1,257 @@
+/* Source Pattern rules, scoped to the physical scene. Host overrides follow. */
+#deployment-world .lingqu-physical .p-sp{fill: #151515; stroke: #444444; stroke-width: calc(1.5px / var(--zk, 1)); vector-effect: non-scaling-stroke;}
+#deployment-world .lingqu-physical .p-sp.is-on{stroke: #5C5C5C;}
+#deployment-world .lingqu-physical .p-splabel{font-size: 11px; fill: #E8E8E8;}
+#deployment-world .lingqu-physical .p-plane{fill: #1C1C1C; stroke: #3A3A3A; stroke-width: calc(1px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-planelabel{font-size: 8px; fill: #A0A0A0;}
+#deployment-world .lingqu-physical .p-sw1{fill: #222222; stroke: #808080; stroke-width: calc(.8px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-sw1label{font-size: 8px; fill: #A0A0A0;}
+#deployment-world .lingqu-physical .p-pod{fill: #181818; stroke: #3E3E3E; stroke-width: calc(1.5px / var(--zk, 1)); vector-effect: non-scaling-stroke; cursor: zoom-in;}
+#deployment-world .lingqu-physical .p-pod:hover{stroke: #5C5C5C;}
+#deployment-world .lingqu-physical .p-pod.is-on{stroke: #A0A0A0;}
+#deployment-world .lingqu-physical .p-pod.is-fit{stroke: #5C5C5C;}
+#deployment-world .lingqu-physical .p-board{fill: transparent; cursor: pointer;}
+#deployment-world .lingqu-physical .p-pod.is-fit ~ .p-board:hover,#deployment-world .lingqu-physical .p-board:hover{fill: #202020;}
+#deployment-world .lingqu-physical .p-l2{stroke: #808080; stroke-opacity: .45; stroke-width: calc(.6px / var(--zk, 1)); fill: none;}
+#deployment-world .lingqu-physical .p-l1{stroke: #808080; stroke-width: calc(1px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-uboe{stroke: #A0A0A0; stroke-width: calc(1.5px / var(--zk, 1)); stroke-dasharray: 6 4; fill: none;}
+#deployment-world .lingqu-physical .p-uboelabel{font-size: 10px; fill: #A0A0A0;}
+#deployment-world .lingqu-physical .p-cpu,#deployment-world .lingqu-physical .p-dpu,#deployment-world .lingqu-physical .p-nic,#deployment-world .lingqu-physical .p-sw2,#deployment-world .lingqu-physical .p-swicon,#deployment-world .lingqu-physical .p-npupkg,#deployment-world .lingqu-physical .b-npuicon,#deployment-world .lingqu-physical [class^="b-"] use{stroke: none; vector-effect: none;}
+#deployment-world .lingqu-physical .p-npupkg{pointer-events: none;}
+#deployment-world .lingqu-physical .b-npuicon{pointer-events: none;}
+#deployment-world .lingqu-physical .p-bdiv{stroke: #262626; stroke-width: calc(1px / var(--zk, 1));}
+#deployment-world .lingqu-physical .lod1,#deployment-world .lingqu-physical .lod2{display: none;}
+#deployment-world .lingqu-physical svg.lod1 .lod1,#deployment-world .lingqu-physical svg.lod2 .lod2{display: inline;}
+#deployment-world .lingqu-physical .p-colhd text{font-size: 2.6px; fill: #8A8A8A; letter-spacing: .02em;}
+#deployment-world .lingqu-physical .p-npunum{font-size: 1.5px; fill: #E8E8E8; pointer-events: none;}
+#deployment-world .lingqu-physical .p-npu.c2 + .p-npunum{fill: #111111;}
+#deployment-world .lingqu-physical .p-npu.is-dim + .p-npunum{opacity: .3;}
+#deployment-world .lingqu-physical .p-npu.is-sel + .p-npunum{fill: #FFFFFF; font-weight: 500;}
+#deployment-world .lingqu-physical .p-roce{stroke: #8A8A8A; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 3 3;}
+#deployment-world .lingqu-physical .p-rocelabel{font-size: 8px; fill: #A0A0A0;}
+#deployment-world .lingqu-physical .p-npu{cursor: pointer; transition: opacity .15s ease;}
+#deployment-world .lingqu-physical .p-npu.is-dim{opacity: .22;}
+#deployment-world .lingqu-physical .p-npu.is-sel{stroke: none;}
+#deployment-world .lingqu-physical .p-npu.g-tp{stroke: var(--c-tp); stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-npu.g-cp{stroke: var(--c-cp); stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-npu.g-ep{stroke: var(--c-ep); stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-npu.g-dp{stroke: var(--c-dp); stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-npu.g-pp{stroke: var(--c-pp); stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-cpu rect,#deployment-world .lingqu-physical .b-dpu rect,#deployment-world .lingqu-physical .b-nic rect,#deployment-world .lingqu-physical .b-l1 rect,#deployment-world .lingqu-physical .b-nsw rect,#deployment-world .lingqu-physical .b-swb rect{fill: #222222; stroke: #8A8A8A; stroke-width: calc(1.5px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-cpu text,#deployment-world .lingqu-physical .b-dpu text,#deployment-world .lingqu-physical .b-nic text,#deployment-world .lingqu-physical .b-l1 text,#deployment-world .lingqu-physical .b-nsw text,#deployment-world .lingqu-physical .b-swb text{font-size: 10px; fill: #E8E8E8;}
+#deployment-world .lingqu-physical .b-nic text,#deployment-world .lingqu-physical .b-l1 text{font-size: 10px;}
+#deployment-world .lingqu-physical .b-plane{fill: #161616; stroke: #282828; stroke-width: calc(1.5px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-sw2{fill: #8A8A8A;}
+#deployment-world .lingqu-physical .p-bnpu{stroke: #111111; stroke-width: calc(1.5px / var(--zk, 1));}
+#deployment-world .lingqu-physical .p-bnpu.is-sel{stroke: #111111;}
+#deployment-world .lingqu-physical .b-npul{font-size: 11px; fill: #E8E8E8;}
+#deployment-world .lingqu-physical .b-npur{font-size: 9px; fill: #A0A0A0;}
+#deployment-world .lingqu-physical .p-bnpu.c2 ~ .b-npul{fill: #111111;}
+#deployment-world .lingqu-physical .p-bnpu.c2 ~ .b-npur{fill: #2E2E2E;}
+#deployment-world .lingqu-physical .p-bnpu.c3 ~ .b-npul,#deployment-world .lingqu-physical .p-bnpu.c3 ~ .b-npur{fill: #FFFFFF;}
+#deployment-world .lingqu-physical .b-lbl{font-size: 9px; fill: #A0A0A0; paint-order: stroke; stroke: #111111; stroke-width: calc(3px / var(--zk, 1)); stroke-linejoin: round;}
+#deployment-world .lingqu-physical .b-cpu text,#deployment-world .lingqu-physical .b-dpu text,#deployment-world .lingqu-physical .b-nic text,#deployment-world .lingqu-physical .b-l1 text,#deployment-world .lingqu-physical .b-nsw text,#deployment-world .lingqu-physical .b-swb text,#deployment-world .lingqu-physical .b-npul{paint-order: stroke; stroke: #111111; stroke-width: calc(3px / var(--zk, 1)); stroke-linejoin: round;}
+#deployment-world .lingqu-physical .b-lbl-plane{fill: #A0A0A0;}
+#deployment-world .lingqu-physical .b-mesh{fill: none; stroke: #C8C8C8; stroke-opacity: .35; stroke-width: calc(.8px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-fan{stroke: #8A8A8A; stroke-opacity: .5; stroke-width: calc(1px / var(--zk, 1)); transition: stroke-opacity .15s ease;}
+#deployment-world .lingqu-physical .b-h2d,#deployment-world .lingqu-physical .b-nicl{stroke: #A0A0A0; stroke-opacity: .6; stroke-width: calc(1px / var(--zk, 1)); transition: stroke-opacity .15s ease;}
+#deployment-world .lingqu-physical .b-roce{stroke: #8A8A8A; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 3 3;}
+#deployment-world .lingqu-physical .b-pcie{fill: none; stroke: #A0A0A0; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 1 3;}
+#deployment-world .lingqu-physical .b-ub{fill: none; stroke: #8A8A8A; stroke-width: calc(1.5px / var(--zk, 1)); stroke-dasharray: 6 3;}
+#deployment-world .lingqu-physical .b-cpul{fill: none; stroke: #A0A0A0; stroke-width: calc(1.5px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-l12{stroke: #8A8A8A; stroke-width: calc(1px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-uboe{stroke: #A0A0A0; stroke-width: calc(1.5px / var(--zk, 1)); stroke-dasharray: 8 4;}
+#deployment-world .lingqu-physical .b-bus{stroke-width: calc(1.5px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-fan.is-hot,#deployment-world .lingqu-physical .b-h2d.is-hot,#deployment-world .lingqu-physical .b-nicl.is-hot,#deployment-world .lingqu-physical .b-mesh.is-hot{stroke: #FFFFFF; stroke-opacity: 1; stroke-width: calc(1.8px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-fan.is-cold,#deployment-world .lingqu-physical .b-mesh.is-cold{stroke-opacity: .1;}
+#deployment-world .lingqu-physical .b-h2d.is-cold,#deployment-world .lingqu-physical .b-nicl.is-cold{stroke-opacity: .15;}
+#deployment-world .lingqu-physical .lkc{fill: none; stroke: #111111; stroke-linecap: round; stroke-linejoin: round; stroke-width: calc(4.5px / var(--zk, 1)); pointer-events: none;}
+#deployment-world .lingqu-physical .rel .lkc{display: none; stroke: #181818; stroke-width: calc(3.5px / var(--zk, 1));}
+#deployment-world .lingqu-physical svg.lod2 .rel .lkc{display: inline;}
+#deployment-world .lingqu-physical svg.near .b-links line,#deployment-world .lingqu-physical svg.near .b-links path{stroke-linecap: round; stroke-linejoin: round;}
+#deployment-world .lingqu-physical svg.near .b-ub{stroke-dasharray: 7 5;}
+#deployment-world .lingqu-physical svg.near .b-uboe{stroke-dasharray: 4 7; stroke-opacity: .75;}
+#deployment-world .lingqu-physical .b-nsw-l,#deployment-world .lingqu-physical .b-swbx{fill: none; stroke: #A0A0A0; stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-swbl{stroke: #8A8A8A; stroke-opacity: .35; stroke-width: calc(.8px / var(--zk, 1));}
+#deployment-world .lingqu-physical .b-rdma{fill: #111111; stroke: #A0A0A0; stroke-width: calc(1.2px / var(--zk, 1));}
+#deployment-world .lingqu-physical svg.near .b-cpul,#deployment-world .lingqu-physical svg.near .b-pcie,#deployment-world .lingqu-physical svg.near .b-ub:not(.b-bus),#deployment-world .lingqu-physical svg.near .b-nsw-l,#deployment-world .lingqu-physical svg.near .b-swbx,#deployment-world .lingqu-physical svg.near .b-h2d,#deployment-world .lingqu-physical svg.near .b-nicl{marker-start: url(#b-lkp); marker-end: url(#b-lkp);}
+#deployment-world .lingqu-physical svg.near .b-roce:not(.b-bus){marker-start: url(#b-lkj);}
+#deployment-world .lingqu-physical svg.near .b-out{marker-end: url(#b-lkj);}
+#deployment-world .lingqu-physical svg.near .b-links .is-hot{marker-start: url(#b-lkh); marker-end: url(#b-lkh);}
+#deployment-world .lingqu-physical svg.near .b-links .is-cold{marker-start: none; marker-end: none;}
+#deployment-world .lingqu-physical svg.near .b-ub.b-join,#deployment-world .lingqu-physical svg.near .b-swbx{marker-end: none;}
+#deployment-world .lingqu-physical svg.lod2 .rel-cpu,#deployment-world .lingqu-physical svg.lod2 .rel-pcie,#deployment-world .lingqu-physical svg.lod2 .rel-ub,#deployment-world .lingqu-physical svg.lod2 .rel-nic,#deployment-world .lingqu-physical svg.lod2 .rel-nsw,#deployment-world .lingqu-physical svg.lod2 .rel-h2d{marker-start: url(#p-lkp); marker-end: url(#p-lkp);}
+#deployment-world .lingqu-physical svg.lod2 .rel-roce{marker-start: url(#p-lkj);}
+#deployment-world .lingqu-physical svg.lod2 .rel .is-hot{marker-start: url(#p-lkh); marker-end: url(#p-lkh);}
+#deployment-world .lingqu-physical svg.lod2 .rel .is-cold{marker-start: none; marker-end: none;}
+#deployment-world .lingqu-physical .lk-dot{fill: #FFFFFF; fill-opacity: .8; stroke: none; pointer-events: none;}
+#deployment-world .lingqu-physical .rel .is-hot{stroke: #FFFFFF !important; stroke-opacity: 1 !important;}
+#deployment-world .lingqu-physical .rel .is-cold{stroke-opacity: .12 !important;}
+#deployment-world .lingqu-physical .rel-nsw{stroke: #808080; stroke-opacity: .8;}
+#deployment-world .lingqu-physical .rel-inf{stroke: #A0A0A0; stroke-opacity: .7;}
+#deployment-world .lingqu-physical #physStage svg:not(.lod1) .p-roce{stroke-dasharray: none; stroke-opacity: .5;}
+#deployment-world .lingqu-physical #physStage svg:not(.lod1) .p-l2{stroke-opacity: .3;}
+#deployment-world .lingqu-physical svg.lod2 .p-npu:not(.is-sel){fill-opacity: 0;}
+#deployment-world .lingqu-physical svg.lod2 .p-npu.is-sel{fill-opacity: 0;}
+#deployment-world .lingqu-physical .p-npustrip,#deployment-world .lingqu-physical .b-npustrip{fill: #3A3A3A; pointer-events: none;}
+#deployment-world .lingqu-physical .p-npu.c0 + .p-npunum + .p-npupkg + .p-npustrip,#deployment-world .lingqu-physical .p-bnpu.c0 + .b-npuicon + .b-npustrip{fill: #4A4A4A;}
+#deployment-world .lingqu-physical .p-npu.c1 + .p-npunum + .p-npupkg + .p-npustrip,#deployment-world .lingqu-physical .p-bnpu.c1 + .b-npuicon + .b-npustrip{fill: #808080;}
+#deployment-world .lingqu-physical .p-npu.c2 + .p-npunum + .p-npupkg + .p-npustrip,#deployment-world .lingqu-physical .p-bnpu.c2 + .b-npuicon + .b-npustrip{fill: #BDBDBD;}
+#deployment-world .lingqu-physical .p-npu.c3 + .p-npunum + .p-npupkg + .p-npustrip,#deployment-world .lingqu-physical .p-bnpu.c3 + .b-npuicon + .b-npustrip{fill: var(--alert);}
+#deployment-world .lingqu-physical svg.lod2 .p-npunum{fill: #A0A0A0;}
+#deployment-world .lingqu-physical svg.lod2 .p-npu.c2 + .p-npunum{fill: #A0A0A0;}
+#deployment-world .lingqu-physical svg.lod2 .p-npu.is-sel + .p-npunum{fill: #FFFFFF;}
+#deployment-world .lingqu-physical .p-npu.is-dim + .p-npunum + .p-npupkg,#deployment-world .lingqu-physical .p-npu.is-dim + .p-npunum + .p-npupkg + .p-npustrip{opacity: .25;}
+#deployment-world .lingqu-physical .p-bnpu{fill-opacity: 0; stroke: none;}
+#deployment-world .lingqu-physical .p-bnpu.is-dim + .b-npuicon,#deployment-world .lingqu-physical .p-bnpu.is-dim + .b-npuicon + .b-npustrip{opacity: .3;}
+#deployment-world .lingqu-physical .b-npul{fill: #E8E8E8 !important;}
+#deployment-world .lingqu-physical .b-npur{fill: #A0A0A0 !important;}
+#deployment-world .lingqu-physical .b-cpu rect,#deployment-world .lingqu-physical .b-dpu rect,#deployment-world .lingqu-physical .b-nic rect,#deployment-world .lingqu-physical .b-l1 rect,#deployment-world .lingqu-physical .b-nsw rect,#deployment-world .lingqu-physical .b-swb rect{fill: transparent; stroke: none;}
+#deployment-world .lingqu-physical .p-sw1{fill: transparent; stroke: none;}
+#deployment-world .lingqu-physical svg.lod2 .p-npu,#deployment-world .lingqu-physical .board-stage .p-npu{stroke: none !important;}
+#deployment-world .lingqu-physical .rel{display: none;}
+#deployment-world .lingqu-physical svg.lod1 .rel{display: inline;}
+#deployment-world .lingqu-physical .rel line,#deployment-world .lingqu-physical .rel path{fill: none; stroke-width: calc(1px / var(--zk, 1));}
+#deployment-world .lingqu-physical .rel-mesh{stroke: #E8E8E8; stroke-opacity: .55;}
+#deployment-world .lingqu-physical .rel-clos{stroke: #BDBDBD; stroke-opacity: .35;}
+#deployment-world .lingqu-physical .rel-l12{stroke: #808080; stroke-opacity: .6;}
+#deployment-world .lingqu-physical .rel-ub{stroke: #A0A0A0; stroke-opacity: .6; stroke-dasharray: 3 2;}
+#deployment-world .lingqu-physical .rel-h2d{stroke: #A0A0A0; stroke-opacity: .8;}
+#deployment-world .lingqu-physical .rel-nic{stroke: #808080; stroke-opacity: .9;}
+#deployment-world .lingqu-physical .rel-cpu{stroke: #E8E8E8; stroke-width: calc(1.5px / var(--zk, 1)) !important;}
+#deployment-world .lingqu-physical .rel-pcie{stroke: #A0A0A0; stroke-dasharray: 1 1.5;}
+#deployment-world .lingqu-physical .rel-roce{stroke: #808080; stroke-dasharray: 1.2 1.2;}
+#deployment-world .lingqu-physical .rel-row{fill: #FFFFFF; fill-opacity: .04; stroke: #A0A0A0; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 2 2;}
+/* Host selection uses fill, never selection outlines. Geometry/routing retained. */
+#deployment-world .lingqu-physical{--zk:1;--alert:#FF9500}
+#deployment-world .lingqu-physical .p-sp{stroke:none}
+#deployment-world .lingqu-physical .p-npu{fill:transparent!important;stroke:none!important;outline:none}
+#deployment-world .lingqu-physical .p-npupkg{pointer-events:none}
+#deployment-world .lingqu-physical .p-npunum{font-size:1.65px;fill:#ddd;paint-order:stroke;stroke:#181818;stroke-width:.5px}
+#deployment-world .lingqu-physical .physical-rank{cursor:pointer;outline:none}
+#deployment-world .lingqu-physical .physical-rank:focus-visible text{text-decoration:underline}
+#deployment-world .lingqu-physical .physical-rank.is-dim{opacity:.25}
+#deployment-world .lingqu-physical .physical-rank .metric-text{fill:#ddd;font-size:1.2px;paint-order:stroke;stroke:#181818;stroke-width:.4px}
+#deployment-world .lingqu-physical .physical-rank.is-selected .rank-label-bg{fill:#eee}
+#deployment-world .lingqu-physical .physical-rank.is-selected .p-npunum{fill:#111;stroke:none}
+#deployment-world .lingqu-physical .rel-row{fill:rgba(255,255,255,.025);stroke:none;pointer-events:none}
+#deployment-world .lingqu-physical .rel line,#deployment-world .lingqu-physical .rel path{vector-effect:non-scaling-stroke;stroke-width:1px}
+#deployment-world .lingqu-physical .rel .is-hot{stroke:#ddd!important;stroke-width:1.5px}
+#deployment-world .lingqu-physical .rel .is-cold{stroke-opacity:.15!important}
+#deployment-world .lingqu-physical .physical-target .p-npustrip{fill:var(--communication-color,#FF9500)}
+#deployment-world .lingqu-physical .physical-rank .metric-bar{fill:#bbb}
+#deployment-world .lingqu-physical .physical-rank .metric-track{fill:#333}
+#deployment-world .lingqu-physical .b-npug .metric-text{font-size:8px;stroke-width:2px}
+#deployment-world .lingqu-physical .b-npug.is-selected .b-npul{fill:#111!important;stroke:none}
+#deployment-world .lingqu-physical .board-row-active{fill:#ffffff08;stroke:none}
+#physical-path{position:fixed;top:126px;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:6px;font-size:11px;white-space:nowrap}
+#physical-path[hidden]{display:none}
+#physical-path button{padding:5px 10px;background:#222}
+#physical-path button[aria-pressed=true]{background:#eee;color:#111}
+
+#deployment-world .lingqu-physical :is(.b-links path,.b-links line){vector-effect:non-scaling-stroke}
+#deployment-world .lingqu-physical :is(.b-pcie,.rel-pcie,.b-roce,.rel-roce,.b-ub,.rel-ub,.b-uboe){stroke-dasharray:12px 8px}
+
+/* At POD focus, column names carry the local labels; global plane labels remain
+ * readable when zooming out without expanding into headline-sized text. */
+#deployment-world .lingqu-physical .p-sw1label,#deployment-world .lingqu-physical .p-rocelabel,#deployment-world .lingqu-physical .p-planelabel{font-size:2.6px}
+#physical-path .physical-metric{margin-left:8px;color:#aaa;font:11px ui-monospace,monospace}
+
+/* Theme values inherit through SVG use shadow trees, including global defs. */
+:root{--deployment-glyph-dark:inline;--deployment-glyph-light:none}
+:root[data-theme="light"]{--deployment-glyph-dark:none;--deployment-glyph-light:inline}
+[data-asset-theme="dark"]{display:var(--deployment-glyph-dark)}
+[data-asset-theme="light"]{display:var(--deployment-glyph-light)}
+#deployment-world .lingqu-physical .p-sw1{fill:transparent;stroke:none}
+:root[data-theme="light"] #deployment-world .lingqu-physical{color:#444}
+:root[data-theme="light"] #deployment-world .lingqu-physical :is(.p-pod,.p-plane){fill:#F8F8F8;stroke:#AAAAAA}
+:root[data-theme="light"] #deployment-world .lingqu-physical :is(.p-colhd text,.p-sw1label,.p-planelabel,.p-rocelabel,.p-npunum,.b-lbl,.b-npul){fill:#444;stroke:none}
+
+/* Filled device state, matching the approved hardware reference. */
+#deployment-world .lingqu-physical .physical-rank.is-dim{opacity:.5}
+#deployment-world .lingqu-physical .physical-rank.is-selected>.p-npu,
+#deployment-world .lingqu-physical .device-active>rect{fill:rgba(255,255,255,.05)!important;stroke:none!important}
+#deployment-world .lingqu-physical .device-inactive{opacity:.5}
+#deployment-world .lingqu-physical .device-active>text{fill:#FFFFFF;stroke:none}
+:root[data-theme="light"] #deployment-world .lingqu-physical .physical-rank.is-selected>.p-npu,
+:root[data-theme="light"] #deployment-world .lingqu-physical .device-active>rect{fill:rgba(255,255,255,.05)!important}
+:root[data-theme="light"] #deployment-world .lingqu-physical .device-active>text{fill:#222}
+
+/* Active NPU communication uses the operation color; host links stay neutral. */
+#deployment-world .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+#deployment-world .lingqu-physical .rel .is-hot{stroke:var(--communication-color,#808080)!important}
+#deployment-world .lingqu-physical :is(#b-lkh,#p-lkh) path{fill:var(--communication-color,#808080);stroke:var(--communication-color,#808080)}
+
+#deployment-world .lingqu-physical .rank-label-bg{display:none}
+#deployment-world .lingqu-physical .physical-rank.is-selected :is(.b-npul,.p-npunum){fill:#FFFFFF!important;stroke:none;font-weight:600}
+:root[data-theme="light"] #deployment-world .lingqu-physical .physical-rank.is-selected :is(.b-npul,.p-npunum){fill:#222222!important}
+
+#deployment-world .lingqu-physical :is(.b-cpu,.b-dpu,.b-nic,.b-l1,.b-nsw,.b-swb) > text,
+#deployment-world .lingqu-physical .b-npul{font-size:10px}
+
+/* Legacy LOD rules must not suppress the selected device surface. */
+#deployment-world .lingqu-physical .physical-rank.is-selected>.p-npu{fill-opacity:1!important;opacity:1}
+#deployment-world .lingqu-physical :is(.device-active,.physical-rank.is-selected){opacity:1}
+#deployment-world .lingqu-physical .device-active>text{font-weight:600}
+#deployment-world .lingqu-physical :is(.b-npustrip,.p-npustrip){display:none}
+#deployment-world .lingqu-physical .b-rdma{fill:#999;stroke:none}
+
+#deployment-world .lingqu-physical .b-peer rect{fill:rgba(255,255,255,.05);stroke:none}
+#deployment-world .lingqu-physical .b-peer text{fill:#AAAAAA;font-size:8px;stroke:none}
+:root[data-theme="light"] #deployment-world .lingqu-physical .b-peer text{fill:#555555}
+
+#deployment-world .lingqu-physical path.b-swbl{fill:none}
+
+/* Relation semantics: the configured physical fabric remains neutral. */
+#deployment-world .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+#deployment-world .lingqu-physical .rel .is-hot{stroke:#DDDDDD!important}
+#deployment-world .lingqu-physical :is(#b-lkh,#p-lkh) path{fill:#DDDDDD;stroke:#DDDDDD}
+#deployment-world .physical-sections{pointer-events:none}
+#deployment-world .physical-sections rect{fill:rgba(255,255,255,.025);stroke:none}
+#deployment-world .physical-sections text{stroke:none;fill:#999;font-size:10px}
+#deployment-world .physical-sections .physical-section-title{fill:#DDD;font-size:12px;font-weight:550}
+#deployment-world .physical-aggregate .aggregate-region{fill:#292929;stroke:none}
+#deployment-world .physical-aggregate text,#deployment-world .physical-expansion text{fill:#BBB;stroke:none;font-size:9px}
+#deployment-world .physical-aggregate line{fill:none;stroke:#888;stroke-width:1px;vector-effect:non-scaling-stroke}
+#deployment-world .physical-aggregate .aggregate-logical{stroke-dasharray:8px 6px}
+#deployment-world .physical-expansion rect{fill:rgba(255,255,255,.035);stroke:none}
+#deployment-world .physical-composition .b-links :is(.b-mesh,.b-fan,.b-h2d,.b-nicl,.b-swbl){display:none}
+#deployment-world .physical-composition.physical-detail .b-links :is(.b-mesh,.b-fan,.b-h2d,.b-nicl).is-hot{display:inline}
+#deployment-world .physical-composition.physical-detail .physical-aggregate{display:none}
+#deployment-world .physical-composition .b-links :is(.b-swbl,.b-swbx){stroke-dasharray:8px 6px}
+#deployment-world .physical-composition .b-links .b-l12{stroke-dasharray:none}
+:root[data-theme="light"] #deployment-world .physical-sections rect{fill:rgba(0,0,0,.025)}
+:root[data-theme="light"] #deployment-world .physical-sections .physical-section-title{fill:#333}
+:root[data-theme="light"] #deployment-world .physical-aggregate .aggregate-region{fill:#E1E1E1}
+:root[data-theme="light"] #deployment-world :is(.physical-aggregate,.physical-expansion) text{fill:#444}
+.physical-relation-key{display:grid;gap:12px;margin-top:18px}
+.physical-relation-key>div{display:flex;gap:14px;align-items:center}
+.physical-relation-key span{font-size:12px}.physical-relation-key small{display:block;color:#999;font-size:11px;line-height:1.6}
+.physical-relation-key i{width:48px;flex:0 0 48px;height:0;border-top:1px solid #888;position:relative}
+.physical-relation-key .key-logical{border-top-style:dashed}
+.physical-relation-key .key-parallel{height:9px;border:0;background:repeating-linear-gradient(to bottom,#888 0 1px,transparent 1px 3px)}
+.physical-relation-key .key-selected{border-top:2px solid #DDD}
+.physical-relation-key .key-event{border-top:2px solid #FF9500}
+.physical-relation-key .key-event:after{content:'';position:absolute;right:0;top:-5px;border-left:7px solid #FF9500;border-top:4px solid transparent;border-bottom:4px solid transparent}
+
+#deployment-world .physical-measured-exchanges>path{fill:none;stroke-width:3px;vector-effect:non-scaling-stroke;cursor:help}
+
+#deployment-world .physical-composition .b-links :is(.b-pcie,.b-h2d,.b-nicl,.b-roce:not(.b-bus),.b-ub:not(.b-bus):not(.b-out)){stroke-dasharray:none}
+
+/* Communication category is the color of selection, not proof of an executed route. */
+#deployment-world .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+#deployment-world .lingqu-physical .rel .is-hot{stroke:var(--communication-color,#808080)!important}
+#deployment-world .lingqu-physical :is(#b-lkh,#p-lkh) path{fill:var(--communication-color,#808080);stroke:var(--communication-color,#808080)}
+
+/* Transparent neutral wiring: no dark casing that erases crossing relations. */
+#deployment-world .lingqu-physical .lkc{display:none!important}
+#deployment-world .lingqu-physical :is(.b-links,.p-links,.rel) :is(line,path){stroke:rgba(255,255,255,.4)!important;stroke-opacity:1!important}
+#deployment-world .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+#deployment-world .lingqu-physical .rel .is-hot{stroke:var(--communication-color,#FF9500)!important}
+#deployment-world .lingqu-physical :is(#b-lkh,#p-lkh) circle{fill:var(--communication-color,#FF9500);fill-opacity:1}
+#deployment-world .lingqu-physical :is(#b-lkp,#p-lkp,#b-lkj,#p-lkj) circle{fill:rgba(255,255,255,.4);fill-opacity:1}
+
+#deployment-world .lingqu-physical :is(.b-links,.p-links,.rel) :is(line,path).is-cold{stroke-opacity:1!important}
+
+/* Endpoint markers follow the line: host/neutral links never borrow EP color. */
+#deployment-world .lingqu-physical svg.near .b-links :is(.b-h2d,.b-nicl).is-hot{marker-start:url(#b-lkp);marker-end:url(#b-lkp)}

@@ -1,0 +1,43 @@
+/* Scoped to step 10. Existing stages retain their original styles. */
+#deployment-surface{position:fixed;inset:0;width:100vw;height:100svh;z-index:1;touch-action:none;cursor:grab}
+#deployment-surface:active{cursor:grabbing}
+#deployment-world .deployment-board-label{font:14px ui-monospace,monospace;fill:#bbb}
+#deployment-world .deployment-node{cursor:pointer;outline:none}
+#deployment-world .deployment-node:focus-visible text{text-decoration:underline}
+#deployment-world .deployment-path{fill:none;stroke:#b1ef6b;stroke-width:3px;vector-effect:non-scaling-stroke}
+#deployment-world .deployment-tp-path{stroke:#ddd}
+#deployment-world .deployment-return-path{stroke-dasharray:12px 8px}
+#deployment-modes{position:fixed;left:50%;transform:translateX(-50%);bottom:150px;z-index:12;display:flex;flex-wrap:nowrap;align-items:center;box-sizing:border-box;height:38px;max-width:calc(100vw - 40px);overflow-x:auto;overflow-y:hidden;gap:4px;padding:4px;background:#222;border-radius:30px}
+#deployment-modes button{flex:0 0 auto;box-sizing:border-box;height:30px;line-height:16px;white-space:nowrap;font-size:11px;padding:7px 14px}
+#deployment-modes button[aria-pressed=true]{background:#eee;color:#111}
+#deployment-modes button:focus-visible{background:#777;color:#fff;outline:none}
+body.deployment-step #rank-surface,body.deployment-step #graph-return{display:none}
+body.deployment-step #stage{inset:auto 30px 210px auto;width:300px;height:240px;z-index:6;background:#171717;border-radius:12px;pointer-events:auto}
+body.deployment-step #stage>svg{height:100%}
+body.deployment-step #token-controls{bottom:calc(100% + 114px)}
+body.deployment-step #impact b{max-width:240px}
+body.deployment-step #impact .deployment-key{font:12px/1.9 ui-monospace,monospace;white-space:pre-line;color:#ccc}
+@media(max-width:600px){body.deployment-step #stage{right:14px;bottom:300px;width:155px;height:130px}#deployment-modes{bottom:165px;white-space:nowrap}#deployment-modes button{font-size:10px;padding:7px 9px}body.deployment-step #token-controls{bottom:235px}}
+
+body.deployment-step #stage .rank-context{opacity:.2}
+body.deployment-step #stage .rank-owned{opacity:1}
+
+#deployment-world .deployment-path{stroke-linejoin:round;stroke-linecap:butt}
+#deployment-world .deployment-layer-return,#deployment-world .deployment-layer-cache,#deployment-world .deployment-layer-edp{stroke-dasharray:12px 8px}
+#deployment-modes button[aria-pressed=true]{background:var(--mode-color,#eee);color:#111}
+#deployment-modes button:before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--mode-color,#eee);margin-right:5px}
+#deployment-modes button[aria-pressed=true]:before{background:#111}
+
+/* Click-anchored inspector is isolated from stages 01–09. */
+body.deployment-step #panel[data-follow-object]{left:var(--object-panel-x,12px);top:var(--object-panel-y,12px);right:auto;max-width:calc(100vw - 24px);max-height:calc(100svh - 24px)}
+
+/* Stable lower-right thumbnail, with a dedicated canvas gutter. */
+body.deployment-step:not(.deployment-graph-primary) #stage{position:fixed;inset:auto 28px 122px auto;width:240px;height:170px;z-index:14;cursor:pointer;overflow:hidden;background:#171717;border-radius:12px}
+body.deployment-step:not(.deployment-graph-primary) #stage *{pointer-events:none}
+body.deployment-step #stage:focus-visible{outline:none;background:#252525}
+body.deployment-step.deployment-graph-primary #stage{position:fixed;inset:100px 300px 220px 260px;width:auto;height:auto;background:transparent;border-radius:0;cursor:grab;z-index:3}
+body.deployment-step.deployment-graph-primary #deployment-surface{position:fixed;inset:auto 28px 122px auto;width:240px;height:170px;z-index:14;cursor:pointer;background:#171717;border-radius:12px;overflow:hidden}
+body.deployment-graph-primary #deployment-surface *{pointer-events:none}
+body.deployment-step.observation-session:not(.deployment-graph-primary) #stage{display:none}
+body.deployment-step.observation-session.deployment-graph-primary #stage{display:block}
+@media(max-width:1000px){body.deployment-step:not(.deployment-graph-primary) #stage,body.deployment-step.deployment-graph-primary #deployment-surface{right:16px;bottom:214px;width:160px;height:110px}body.deployment-step.deployment-graph-primary #stage{inset:100px 20px 270px 20px}}

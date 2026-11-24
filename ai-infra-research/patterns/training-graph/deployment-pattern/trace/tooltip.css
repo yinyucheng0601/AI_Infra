@@ -1,0 +1,73 @@
+.pto-swimlane-task-tooltip {
+  position: absolute;
+  display: none;
+  z-index: 12;
+  min-width: 220px;
+  max-width: 340px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--pto-swimlane-tooltip-bg, var(--surface-3));
+  color: var(--foreground);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+
+.pto-swimlane-task-tooltip.is-visible {
+  display: block;
+  animation: pto-swimlane-tooltip-in 0.1s ease;
+}
+
+.pto-swimlane-task-tooltip__title {
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-default);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pto-swimlane-task-tooltip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  line-height: 1.5;
+}
+
+.pto-swimlane-task-tooltip__key {
+  color: var(--foreground-muted);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pto-swimlane-task-tooltip__value {
+  color: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+.pto-swimlane-task-tooltip__value.is-bad {
+  color: var(--danger);
+}
+
+.pto-swimlane-task-tooltip__value.is-warn {
+  color: var(--warning);
+}
+
+.pto-swimlane-task-tooltip__value.is-ok {
+  color: var(--success);
+}
+
+@keyframes pto-swimlane-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

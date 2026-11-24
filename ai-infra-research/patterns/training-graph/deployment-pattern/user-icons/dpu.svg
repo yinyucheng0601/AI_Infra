@@ -1,0 +1,60 @@
+<svg width="149" height="114" viewBox="0 0 149 114" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use xlink:href="#stroke0_9671_759" fill="#606060"/>
+<use xlink:href="#stroke0_9671_759" fill="url(#paint0_linear_9671_759)" fill-opacity="0.1"/>
+<rect x="62" y="8" width="70" height="90" rx="4" fill="black" fill-opacity="0.1"/>
+<rect x="32" y="8" width="25" height="43" rx="4" fill="black" fill-opacity="0.1"/>
+<rect x="32" y="55" width="25" height="43" rx="4" fill="black" fill-opacity="0.1"/>
+<rect x="68" y="13" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="83" y="13" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="98" y="13" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="113" y="13" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="68" y="80" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="83" y="80" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="98" y="80" width="12" height="12" rx="2" fill="#767676"/>
+<rect x="113" y="80" width="12" height="12" rx="2" fill="#767676"/>
+<g filter="url(#filter0_d_9671_759)">
+<rect x="74" y="31" width="44" height="44" rx="3" fill="#D9D9D9"/>
+<rect x="74" y="31" width="44" height="44" rx="3" fill="url(#paint1_linear_9671_759)" fill-opacity="0.2"/>
+<rect x="74.5" y="31.5" width="43" height="43" rx="2.5" stroke="white" stroke-opacity="0.24"/>
+</g>
+<path d="M36 14C36 12.8954 36.8954 12 38 12H51C52.1046 12 53 12.8954 53 14V45C53 46.1046 52.1046 47 51 47H38C36.8954 47 36 46.1046 36 45V14Z" fill="#767676"/>
+<path d="M36 61C36 59.8954 36.8954 59 38 59H51C52.1046 59 53 59.8954 53 61V92C53 93.1046 52.1046 94 51 94H38C36.8954 94 36 93.1046 36 92V61Z" fill="#767676"/>
+<g filter="url(#filter1_d_9671_759)">
+<path d="M4 3C4 1.34315 5.34315 0 7 0H24C25.6569 0 27 1.34315 27 3V103C27 104.657 25.6569 106 24 106H7C5.34315 106 4 104.657 4 103V3Z" fill="#858585"/>
+<mask id="stroke1_9671_759" fill="white">
+<path d="M4 3C4 1.34315 5.34315 0 7 0H24C25.6569 0 27 1.34315 27 3V103C27 104.657 25.6569 106 24 106H7C5.34315 106 4 104.657 4 103V3Z"/>
+</mask>
+<path d="M7 106H24C25.6569 106 27 104.657 27 103V3C27 1.34315 25.6569 0 24 0H7C5.34315 0 4 1.34315 4 3V103C4 104.657 5.34315 106 7 106Z" stroke-width="2" stroke="white" stroke-opacity="0.1" mask="url(#stroke1_9671_759)"/>
+</g>
+<defs>
+<filter id="filter0_d_9671_759" x="70" y="31" width="52" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9671_759"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9671_759" result="shape"/>
+</filter>
+<filter id="filter1_d_9671_759" x="0" y="0" width="31" height="114" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9671_759"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9671_759" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_9671_759" x1="76.5" y1="2" x2="76.5" y2="104" gradientUnits="userSpaceOnUse">
+<stop/>
+<stop offset="1" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_9671_759" x1="96" y1="31" x2="96" y2="75" gradientUnits="userSpaceOnUse">
+<stop stop-color="#666666"/>
+<stop offset="1"/>
+</linearGradient>
+<path id="stroke0_9671_759" d="M4 2H142C145.866 2 149 5.13401 149 9V97C149 100.866 145.866 104 142 104H4V2Z"/>
+</defs>
+</svg>

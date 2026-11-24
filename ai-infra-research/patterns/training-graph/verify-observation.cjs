@@ -1,0 +1,24 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const m=require('./observation/model.js');
+const baseline=m.mock(),skew=m.mock(true);
+const values=d=>[...m.rankValues(d,'expert.assigned.tokens','dispatch-0').values()].map(o=>o.value);
+assert.equal(values(baseline).reduce((a,b)=>a+b),8192);
+assert.equal(values(skew).reduce((a,b)=>a+b),8192);
+assert.equal(Math.max(...values(baseline)),128);assert.equal(Math.max(...values(skew)),1136);
+assert.equal(baseline.placements.length,64);assert(baseline.placements.every(p=>p.evidenceIds.includes('layout-evidence')));assert(baseline.resources.filter(r=>r.kind==='npu').every(r=>r.identity.status==='configured'));
+assert.deepEqual(baseline.events.map(e=>e.time),skew.events.map(e=>e.time),'route skew must not fabricate performance changes');
+const legacy=JSON.parse(fs.readFileSync(path.join(__dirname,'observation/mock-ep64-baseline.json')));
+assert.deepEqual(values(m.fromLegacy(legacy)),values(baseline));
+function rejects(mutate,pattern){const d=structuredClone(baseline);mutate(d);assert.throws(()=>m.validate(d),pattern);}
+rejects(d=>d.ranks.push(d.ranks[0]),/ID/);
+rejects(d=>d.observations[0].target.id='missing',/引用/);
+rejects(d=>d.events[0].time.end=0,/时间/);
+rejects(d=>d.observations[0].value=null,/来源/);
+rejects(d=>d.run.captureCoverage.expectedIds=null,/完整覆盖/);
+rejects(d=>{d.run.stack.backend={value:'hccl',status:'configured',evidenceIds:['e-generator']};d.events[0].rawName='cudaLaunchKernel';},/Ascend/);
+rejects(d=>d.observations[0].scope.aggregation='p99',/聚合/);
+const missing=structuredClone(baseline);missing.observations[0].value=null;missing.observations[0].status='unknown';missing.observations[0].reason='未采集';m.validate(missing);
+const summary=structuredClone(baseline);summary.events=[];summary.occurrences=[];summary.observations=summary.observations.filter(o=>o.metricId==='expert.assigned.tokens');summary.observations.forEach(o=>{o.occurrenceId=null;o.scope.kind='summary';});summary.exchanges.forEach(x=>x.occurrenceId=null);m.validate(summary);
+const rawFile=path.resolve(__dirname,'../../..','review-output/distributed-training-evolution/trace-audit/real-rank0-allreduce.json');
+const gpu=m.fromRawLinked(JSON.parse(fs.readFileSync(rawFile)));assert.equal(gpu.events.length,3);assert.equal(gpu.relations.length,2);assert.equal(gpu.groups.length,0);assert.equal(gpu.occurrences.length,0);assert.equal(gpu.run.worldSize.value,64);assert.equal(gpu.run.captureCoverage.completeness,'partial');assert.equal(gpu.events[2].time.end-gpu.events[2].time.start,14423);
+console.log('PASS: legacy/mock adapters, independent NCCL raw adapter, routing conservation, skew without fabricated timing, missing/zero separation, summary without Trace, seven invalid inputs rejected');

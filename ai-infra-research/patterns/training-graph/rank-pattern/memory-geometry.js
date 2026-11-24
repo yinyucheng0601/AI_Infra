@@ -4,7 +4,9 @@
   const colors = {weight:'#D185E6',optimizer:'#8D89EE',gradient:'#79D4F2',activation:'#B1EF6B',workspace:'#D0D0D0',communication:'#606060',pool:'#858585'};
   const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   // Same orthographic projection and 1:1:1 ratio as the source atlas.
-  const P = (x,y,z) => { y=y/155*245; return [575+(x-y)*Math.sqrt(3)/2,510+(x+y)*.5-z/(64*6.7)*245]; };
+  let projection='2.5D';
+  const withProjection=(view,render)=>{const saved=projection;try{projection=view;return render();}finally{projection=saved;}};
+  const P = (x,y,z) => { y=y/155*245; if(projection==='Top')return [452.5+x,265+y];if(projection==='Front')return [452.5+x,510-z/(64*6.7)*245];if(projection==='Side')return [452.5+y,510-z/(64*6.7)*245]; return [575+(x-y)*Math.sqrt(3)/2,510+(x+y)*.5-z/(64*6.7)*245]; };
   const points = vertices => vertices.map(p => P(...p).join(',')).join(' ');
   const polygon = (vertices,color) => `<polygon points="${points(vertices)}" fill="${color}"/>`;
   const shade = (color,factor) => '#'+[1,3,5].map(i=>Math.min(255,Math.round(parseInt(color.slice(i,i+2),16)*factor)).toString(16).padStart(2,'0')).join('');
@@ -69,5 +71,5 @@
     const title=`Rank ${data.rank} · ${data.scope}；${(data.assumptions||[]).join('；')}`;
     target.innerHTML=`<svg viewBox="345 222 460 553" role="img" aria-label="${escape(title)}"><title>${escape(title)}</title>${markup}</svg>`;
   }
-  global.RankMemoryView={render,colors:Object.freeze(colors),geometry:Object.freeze({P,points,polygon,shade,block})};
+  global.RankMemoryView={render,colors:Object.freeze(colors),geometry:Object.freeze({P,points,polygon,shade,block,withProjection})};
 })(window);

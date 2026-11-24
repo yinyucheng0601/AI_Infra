@@ -1,0 +1,29 @@
+#deployment-trace{height:230px;min-width:0;border-radius:14px;overflow:hidden;--background:#191919;--surface-1:#222;--surface-2:#282828;--foreground:#EEE;--foreground-secondary:#BBB;--foreground-muted:#999;--border-subtle:#333;--border-strong:#555;--primary:#FF9500;--space-1:4px;--space-2:8px;--space-3:12px;--font-sans:system-ui;--font-mono:ui-monospace,monospace;--text-label:11px system-ui;--text-body-sm:12px system-ui}
+#deployment-trace[hidden]{display:none}
+#deployment-trace header{height:30px;padding:0 10px;gap:12px;font-size:12px;pointer-events:auto}
+#deployment-trace header small{font-size:10px;letter-spacing:0;margin-left:auto;color:#999}
+#deployment-trace header button{font-size:16px;height:26px;padding:0 8px}
+#deployment-trace-host{height:200px}
+#deployment-trace-empty{height:160px;display:grid;place-items:center;color:#999;font-size:12px}
+#deployment-trace-toggle{height:30px;padding:0 12px;font-size:11px;background:#303030;flex:0 0 auto}
+#deployment-trace-toggle[aria-pressed=true]{background:#EEE;color:#111}
+#deployment-trace .pto-hierarchical-timeline__button{border:0;border-radius:16px;box-shadow:none}
+#deployment-trace .pto-hierarchical-timeline__button:focus-visible{background:#555;text-decoration:underline}
+#deployment-trace .pto-hierarchical-timeline__viewport:focus-visible{box-shadow:none;background:#252525}
+#deployment-trace .pto-swimlane-task-tooltip{border:0;box-shadow:none;background:#333;border-radius:8px;z-index:30}
+#deployment-world .physical-rank.trace-outside-window{opacity:.2}
+body.deployment-graph-primary.deployment-trace-open #stage{bottom:448px}
+
+#deployment-trace:has(#deployment-trace-empty:not([hidden])){height:90px}
+#deployment-trace-empty{height:60px;margin:0}
+
+/* Temporal view has its own reserved canvas, separate from the control dock. */
+#deployment-trace{position:fixed;left:260px;right:300px;bottom:210px;z-index:11;height:242px;padding:6px;box-sizing:border-box;background:#1A1A1A;border-radius:14px}
+#deployment-trace:has(#deployment-trace-empty:not([hidden])){height:102px}
+@media(max-width:1000px){#deployment-trace{left:18px;right:18px;bottom:214px;height:242px}}
+
+body.deployment-graph-primary.deployment-trace-open #stage{bottom:470px}
+
+#deployment-trace .pto-hierarchical-timeline{grid-template-rows:minmax(0,1fr);--pto-hierarchical-timeline-toolbar-height:0px}
+#deployment-trace{bottom:180px}
+body.deployment-graph-primary.deployment-trace-open #stage{bottom:440px}

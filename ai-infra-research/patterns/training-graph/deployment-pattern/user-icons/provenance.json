@@ -1,0 +1,42 @@
+{
+  "cpu": {
+    "file": "cpu.svg",
+    "sha256": "50e2839c5c9c0f31d2aa2f4ce1d56eb4725381aad689697f60d05f4d49dc1ef5",
+    "nativeViewBox": "0 0 145 106",
+    "source": "user supplied SVG",
+    "preserved": "source file byte-for-byte; HTML preserves geometry and resources, gradient overlays at 10% opacity; light variant remaps material palette; IDs namespaced per device and theme",
+    "presentationScale": 1.0738255033557047
+  },
+  "npu": {
+    "file": "npu.svg",
+    "sha256": "23d04da9ad2d3508bc4b66aed53305d5e6a5ebe43abe55746e49795c3b46b4e3",
+    "nativeViewBox": "0 0 146 106",
+    "source": "user supplied SVG",
+    "preserved": "source file byte-for-byte; HTML preserves geometry and resources, gradient overlays at 10% opacity; light variant remaps material palette; IDs namespaced per device and theme",
+    "presentationScale": 1.0738255033557047
+  },
+  "dpu": {
+    "file": "dpu.svg",
+    "sha256": "c234e5dfa085178fb2abb3e9075d2d01002635ecdd17cc38fbe5ba0214d420b3",
+    "nativeViewBox": "0 0 149 114",
+    "source": "user supplied SVG",
+    "preserved": "source file byte-for-byte; HTML preserves geometry and resources, gradient overlays at 10% opacity; light variant remaps material palette; IDs namespaced per device and theme",
+    "presentationScale": 1.0738255033557047
+  },
+  "nic": {
+    "file": "NIC.svg",
+    "sha256": "e8388b3ab116e16c73534ea69d7ad0d6538e29cac7518d0512f3a901739f50f6",
+    "nativeViewBox": "0 0 149 114",
+    "source": "user supplied SVG",
+    "preserved": "source file byte-for-byte; HTML preserves geometry and resources, gradient overlays at 10% opacity; light variant remaps material palette; IDs namespaced per device and theme",
+    "presentationScale": 1.0738255033557047
+  },
+  "sw": {
+    "file": "switch.svg",
+    "sha256": "c0906367f03d51b95fe9b00a459c8d665d2368283c2e7e67a4353c47299d0784",
+    "nativeViewBox": "0 0 325 80",
+    "source": "user supplied SVG",
+    "preserved": "source file byte-for-byte; HTML preserves geometry and resources, gradient overlays at 10% opacity; light variant remaps material palette; IDs namespaced per device and theme",
+    "presentationScale": 1.0738255033557047
+  }
+}

@@ -1,8 +1,10 @@
 # 分布式训练 · Training Graph
 
+当前功能、参数约束与验收基线见 [SPEC.md](SPEC.md)（2026-11-23）；下文含按日期保留的历史迭代记录。
+
 公开入口：`index.html`，离线单文件：`training-demo.html`。本目录为 Library 维护入口，包含配置、图结构、布局、SVG 增量更新与测试源码。
 
-复用正式 Tensor/OP 图元、Layer Stack 进度轨道及 Dense→MoE 路由数值。9 步推导，支持 TP/SP、Dense/MoE 与 EP 配置、token 路径、全窗口画布与 FFN 聚焦。PP、CP、独立 DP 调节未实现。
+复用正式 Tensor/OP 图元、Layer Stack 进度轨道及 Dense→MoE 路由数值。10 步推导，支持 TP/SP、Dense/MoE 与 EP 配置、token 路径、全窗口画布与 FFN 聚焦。PP、CP、独立 DP 调节未实现。
 
 通过 `python3 build-offline.py` 重建离线文件；`node verify-graph.cjs`、`node verify-renderer.cjs`、`python3 verify-math.py` 验证模型与渲染契约。324 配置是测试排列，非同时渲染数量。
 
@@ -49,3 +51,15 @@ Rank 的等高逻辑带仅表示对象类别，不编码字节、容量、显存
 ## 固定部署资源（2026-11-20）
 
 前四步没有 Rank 归属；从 TP 步骤开始固定部署 8 个 Rank，且 Rank 0–7 的位置保持不变。PP=CP=1，稠密层 DP=8/TP，EP 在 DP 维内分组，同一专家的副本数 EDP=DP/EP；planner 采用 TP×EP×EDP=8 的坐标分解。TP=4 时 EP 最大为 2，控件按可用度数收敛。EP 不增加资源，专家数也不改变资源。专家图展示副本 0 的路由，检查器列出所有专家副本的 Rank；Rank 视图展示全部副本。DP/EDP 梯度同步关系在检查器中给出，计算图暂不展开这些同步算子。
+
+### Step 10 顶视重做（2026-11-23）
+
+顶视现接入完整灵衢 POD/板/设备与互联 Pattern，替代 64 Rank 方格及逻辑折线。内置 Mock 使用显式配置的落位，点击板行下钻、POD 面包屑返回，指标仍可从 Rank 详情追溯。实际 Headless Chrome 1440×1000 已检查 POD、板、设备选择与视角恢复；详见 [实现与证据](observation/IMPLEMENTATION.md)。
+
+## 部署与 TraceView 发布（2026-11-24）
+
+第 10 步默认 Top：复用已确认的深浅硬件 SVG、POD / 板级拓扑和 2.5D / 正视 / 侧视切换。右下角缩略图点击互换主体，独立相机；器件点击只更新选择与关联，不再弹出遮挡面板。设置、导入、层级、token 和 TraceView 开关收进右上角设置入口。
+
+关联线按 TP / 缓存 / EP / DP 等语义着色，EP 为 #FF9500；中性线及其端点为 40% 白色。独立 TraceView 复用 hierarchical-timeline / swimlane-task，与 Rank 和通信类型双向选择。当前 8 Rank 配置使用可追溯的 64 事件 Mock，内置 EP64 数据保持独立来源；未对齐的 Rank 时钟不伪造统一时间轴。
+
+见 [布局与交互验证](deployment-validation.md)、[观测 schema](OBSERVABILITY-SCHEMA.md) 与 [Mock 样本](observation/configured-trace-mock.v1.json)。

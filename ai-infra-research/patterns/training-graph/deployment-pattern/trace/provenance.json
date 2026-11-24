@@ -1,0 +1,20 @@
+{
+  "task.js": {
+    "source": "/Users/yin/pto-design-system/patterns/swimlane-task/pattern.js",
+    "sourceSha256": "3a1edaf246e4f214a7fc3eefc438343d98e1bcf5293f9566333c09542cf01b14",
+    "adaptation": "Host selection uses fill instead of outline; semantic colors preserved without lightening."
+  },
+  "timeline.js": {
+    "source": "/Users/yin/pto-design-system/patterns/hierarchical-timeline/pattern.js",
+    "sourceSha256": "93cfd20ca795b6679a879d82cec2beda045f8752b38ad3914310c974c3d9c415",
+    "adaptation": "Canvas gutter caption LANE localized to Rank; renderer geometry and interactions unchanged."
+  },
+  "timeline.css": {
+    "source": "/Users/yin/pto-design-system/patterns/hierarchical-timeline/pattern.css",
+    "sourceSha256": "a5702b1fd05cbd4c639c379227361e204cb68fb7da7001a2e02b3662898806b8"
+  },
+  "tooltip.css": {
+    "source": "/Users/yin/pto-design-system/patterns/swimlane-task/pattern.css",
+    "scope": "tooltip selectors only; preview body styles excluded"
+  }
+}

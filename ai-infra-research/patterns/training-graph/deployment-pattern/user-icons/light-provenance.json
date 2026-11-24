@@ -1,0 +1,37 @@
+{
+  "cpu": {
+    "file": "cpu-light.svg",
+    "sha256": "26f65bdb78d06e1f0bb00e787ef2e42de11289518c7ee3f9ef3caf495cca3b21",
+    "nativeViewBox": "0 0 145 106",
+    "source": "user supplied light SVG",
+    "preserved": "source byte-for-byte; HTML only namespaces local IDs and references"
+  },
+  "npu": {
+    "file": "npu-light.svg",
+    "sha256": "a388469e0bfc99fb3ddf8f08dbb5e27a6257c33d3f78044f8721ce49e0b2cc28",
+    "nativeViewBox": "0 0 154 106",
+    "source": "user supplied light SVG",
+    "preserved": "source byte-for-byte; HTML only namespaces local IDs and references"
+  },
+  "dpu": {
+    "file": "dpu-light.svg",
+    "sha256": "5a3692ad4a0edd2292d54ba9ff757ae4ee8b7a2eb7431720c1d77da8b3d040a1",
+    "nativeViewBox": "0 0 145 106",
+    "source": "user supplied light SVG",
+    "preserved": "source byte-for-byte; HTML only namespaces local IDs and references"
+  },
+  "nic": {
+    "file": "NIC-light.svg",
+    "sha256": "92a50e3a348a0aad2ec5e813ccd38f948acb298e19f62bf1fbbb4f276ea0d5a5",
+    "nativeViewBox": "0 0 145 106",
+    "source": "user supplied light SVG",
+    "preserved": "source byte-for-byte; HTML only namespaces local IDs and references"
+  },
+  "sw": {
+    "file": "switch-light.svg",
+    "sha256": "fb73d79f671a79ea5a01ee3cc57e2035686f36e0e8662f2a64dd7a6c848e3ea0",
+    "nativeViewBox": "0 0 317 72",
+    "source": "user supplied light SVG",
+    "preserved": "source byte-for-byte; HTML only namespaces local IDs and references"
+  }
+}

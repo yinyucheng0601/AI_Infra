@@ -1,0 +1,47 @@
+{
+  "source": "hpc-topology-viewer/previews/lingqu-tour/patterns/lingqu-rank-map",
+  "assets": {
+    "pattern.js": "4c4b91c810e254fd54742f4a57f7e170cf792f8119daac250d31eeaaf6375f78",
+    "pattern.json": "7796943b28956dbd9ae4fc5e778fd079bbcb243873f20dbf3f05fc463d91798d"
+  },
+  "reuse": [
+    "rank-view.js rankCube renderer and original grouping preserved in 2.5D",
+    "memory-geometry.js optional orthographic projection; default used by stages 01–09 unchanged",
+    "deployment-pattern/lingqu-physical.js retains complete source cluster/POD, board and relation renderer bodies; host overlays Rank values",
+    "deployment-pattern/hw-icons.js supplies original CPU/NPU/DPU/NIC/switch symbols for physical Top only"
+  ],
+  "placement": "Explicit case binding: Rank r -> NPU slot r on one 8-NPU UB board. Not driver-discovered; no A3 die count inference.",
+  "scope": "Training communication of original eight-Rank case remains intra-board. Top view renders complete configured Lingqu POD/board template, including host/switch context; these are not measured paths or off-board traffic.",
+  "rankRendererSha256": "0a0c15f6b4a1917223731dcba98353c54c4fedd72957ac953b53c641237e3d73",
+  "viewReuse": {
+    "dial": {
+      "source": "patterns/npu-memory-atlas/variants/atlas-controls.js",
+      "sha256": "9e57fd6d6699e75e935e7c7e736dd4c06012bc4f66d02457633acc074b3e6480",
+      "adapter": "title removed in favor of host data-tip; same mountDial API/icons/layout"
+    },
+    "hardware": {
+      "source": "local lingqu-preview/public/patterns/lingqu-rank-map/hw-icons.js",
+      "sha256": "8f476efdcdea540b22ca921382c27a54621ce898a4ac102f1dafa5e4d3e65a82"
+    },
+    "arcs": {
+      "replaced": "Earlier isolated above-row arc adaptation removed",
+      "current": "Complete original buildPhysSvg, relSvg and buildBoardSvg functions, see physicalRendererReuse hashes"
+    },
+    "liveSource": "127.0.0.1:8768 unreachable during this edit; local preview snapshot used"
+  },
+  "physicalRendererReuse": {
+    "source": "lingqu-rank-map/pattern.js local supplied preview snapshot",
+    "sourceSha256": "4c4b91c810e254fd54742f4a57f7e170cf792f8119daac250d31eeaaf6375f78",
+    "sourceFunctions": {
+      "function buildPhysSvg()": "173944b932858e6eb028930fa57b4daf079ccdeeab456e6ee425d7af760b21f4",
+      "function relSvg(b)": "8807921345531db8f1a080ced812c0144b0c6cfcb9ea600a8e7ac85c8ef31086",
+      "function lkDefs(p)": "dcb06786f021a1e7ca6f5368d3ad90be6ccbe96bfcf3ea0ccaf1f2b43db11916",
+      "function buildBoardSvg(bIdx)": "905c52ed1183ebe627de14f9571b9407802753acd1fe5dada4f893914eb4fa6b"
+    },
+    "vendorSha256": "f83caa6c0f456c2d5b72c064f5fcdf1a6e35473f131597f961de8bae6fe97b1a",
+    "host": "deployment-physical.js",
+    "scope": "Complete source cluster/POD, board and device relationship renderers; host supplies stable Rank selection, metric overlay and viewport. Original 8x8 logical-grid renderer removed.",
+    "placement": "Built-in mock has configured resources and Rank→NPU placement. Import adapters never infer it from rank count. Topology is a named configuration profile, not measured traffic.",
+    "visualEvidence": "Headless Chrome 1440x1000: POD, board drill-in via pointer, selected inspector, return and 2.5D tested; screenshots locally reviewed. Live 8768 page was not verified."
+  }
+}

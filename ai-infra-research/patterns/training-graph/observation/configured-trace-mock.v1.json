@@ -1,0 +1,2648 @@
+{
+  "schemaVersion": "deployment-trace-mock.v1",
+  "configured": true,
+  "id": "configured-mock:{\"tp\":4,\"sp\":true,\"cache\":\"shard\",\"ffn\":\"moe\",\"ep\":2,\"experts\":4,\"token\":0}",
+  "status": "mock",
+  "source": {
+    "producer": "deterministic-configured-trace",
+    "file": "observation/configured-trace-mock.js",
+    "timing": "fixed phase intervals and rank offsets; no performance derivation"
+  },
+  "config": {
+    "tp": 4,
+    "sp": true,
+    "cache": "shard",
+    "ffn": "moe",
+    "ep": 2,
+    "experts": 4,
+    "token": 0
+  },
+  "clock": {
+    "id": "configured-mock",
+    "domain": "constructed",
+    "unit": "us"
+  },
+  "shared": true,
+  "events": [
+    {
+      "id": "mock-r0-compute-0-t0",
+      "rankId": "0",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 0,
+      "end": 110,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 0,
+        "end": 110
+      },
+      "sourceEventIds": [
+        "mock-r0-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r0-tp-1-t0",
+      "rankId": "0",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 130,
+      "end": 172,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 130,
+        "end": 172
+      },
+      "sourceEventIds": [
+        "mock-r0-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r0-cache-2-t0",
+      "rankId": "0",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 190,
+      "end": 224,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 190,
+        "end": 224
+      },
+      "sourceEventIds": [
+        "mock-r0-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r0-dispatch-3-t0",
+      "rankId": "0",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 250,
+      "end": 312,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 250,
+        "end": 312
+      },
+      "sourceEventIds": [
+        "mock-r0-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r0-compute-4-t0",
+      "rankId": "0",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 330,
+      "end": 470,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 330,
+        "end": 470
+      },
+      "sourceEventIds": [
+        "mock-r0-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r0-return-5-t0",
+      "rankId": "0",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 490,
+      "end": 548,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 490,
+        "end": 548
+      },
+      "sourceEventIds": [
+        "mock-r0-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r0-compute-6-t0",
+      "rankId": "0",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 570,
+      "end": 700,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 570,
+        "end": 700
+      },
+      "sourceEventIds": [
+        "mock-r0-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r0-dp-7-t0",
+      "rankId": "0",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 720,
+      "end": 784,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 720,
+        "end": 784
+      },
+      "sourceEventIds": [
+        "mock-r0-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r1-compute-0-t0",
+      "rankId": "1",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 4,
+      "end": 113,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 4,
+        "end": 113
+      },
+      "sourceEventIds": [
+        "mock-r1-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r1-tp-1-t0",
+      "rankId": "1",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 134,
+      "end": 175,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 134,
+        "end": 175
+      },
+      "sourceEventIds": [
+        "mock-r1-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r1-cache-2-t0",
+      "rankId": "1",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 194,
+      "end": 227,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 194,
+        "end": 227
+      },
+      "sourceEventIds": [
+        "mock-r1-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r1-dispatch-3-t0",
+      "rankId": "1",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 254,
+      "end": 315,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 254,
+        "end": 315
+      },
+      "sourceEventIds": [
+        "mock-r1-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r1-compute-4-t0",
+      "rankId": "1",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 334,
+      "end": 473,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 334,
+        "end": 473
+      },
+      "sourceEventIds": [
+        "mock-r1-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r1-return-5-t0",
+      "rankId": "1",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 494,
+      "end": 551,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 494,
+        "end": 551
+      },
+      "sourceEventIds": [
+        "mock-r1-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r1-compute-6-t0",
+      "rankId": "1",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 574,
+      "end": 703,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 574,
+        "end": 703
+      },
+      "sourceEventIds": [
+        "mock-r1-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r1-dp-7-t0",
+      "rankId": "1",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 724,
+      "end": 787,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 724,
+        "end": 787
+      },
+      "sourceEventIds": [
+        "mock-r1-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r2-compute-0-t0",
+      "rankId": "2",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 0,
+      "end": 116,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 0,
+        "end": 116
+      },
+      "sourceEventIds": [
+        "mock-r2-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r2-tp-1-t0",
+      "rankId": "2",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 130,
+      "end": 178,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 130,
+        "end": 178
+      },
+      "sourceEventIds": [
+        "mock-r2-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r2-cache-2-t0",
+      "rankId": "2",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 190,
+      "end": 230,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 190,
+        "end": 230
+      },
+      "sourceEventIds": [
+        "mock-r2-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r2-dispatch-3-t0",
+      "rankId": "2",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 250,
+      "end": 318,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 250,
+        "end": 318
+      },
+      "sourceEventIds": [
+        "mock-r2-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r2-compute-4-t0",
+      "rankId": "2",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 330,
+      "end": 476,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 330,
+        "end": 476
+      },
+      "sourceEventIds": [
+        "mock-r2-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r2-return-5-t0",
+      "rankId": "2",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 490,
+      "end": 554,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 490,
+        "end": 554
+      },
+      "sourceEventIds": [
+        "mock-r2-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r2-compute-6-t0",
+      "rankId": "2",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 570,
+      "end": 706,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 570,
+        "end": 706
+      },
+      "sourceEventIds": [
+        "mock-r2-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r2-dp-7-t0",
+      "rankId": "2",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 720,
+      "end": 790,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 720,
+        "end": 790
+      },
+      "sourceEventIds": [
+        "mock-r2-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r3-compute-0-t0",
+      "rankId": "3",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 4,
+      "end": 110,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 4,
+        "end": 110
+      },
+      "sourceEventIds": [
+        "mock-r3-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r3-tp-1-t0",
+      "rankId": "3",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 134,
+      "end": 172,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 134,
+        "end": 172
+      },
+      "sourceEventIds": [
+        "mock-r3-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r3-cache-2-t0",
+      "rankId": "3",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 194,
+      "end": 224,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 194,
+        "end": 224
+      },
+      "sourceEventIds": [
+        "mock-r3-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r3-dispatch-3-t0",
+      "rankId": "3",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 254,
+      "end": 312,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 254,
+        "end": 312
+      },
+      "sourceEventIds": [
+        "mock-r3-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r3-compute-4-t0",
+      "rankId": "3",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 334,
+      "end": 470,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 334,
+        "end": 470
+      },
+      "sourceEventIds": [
+        "mock-r3-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r3-return-5-t0",
+      "rankId": "3",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 494,
+      "end": 548,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 494,
+        "end": 548
+      },
+      "sourceEventIds": [
+        "mock-r3-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r3-compute-6-t0",
+      "rankId": "3",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 574,
+      "end": 700,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 574,
+        "end": 700
+      },
+      "sourceEventIds": [
+        "mock-r3-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r3-dp-7-t0",
+      "rankId": "3",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 724,
+      "end": 784,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 724,
+        "end": 784
+      },
+      "sourceEventIds": [
+        "mock-r3-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r4-compute-0-t0",
+      "rankId": "4",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 0,
+      "end": 113,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 0,
+        "end": 113
+      },
+      "sourceEventIds": [
+        "mock-r4-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r4-tp-1-t0",
+      "rankId": "4",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 130,
+      "end": 175,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 130,
+        "end": 175
+      },
+      "sourceEventIds": [
+        "mock-r4-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r4-cache-2-t0",
+      "rankId": "4",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 190,
+      "end": 227,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 190,
+        "end": 227
+      },
+      "sourceEventIds": [
+        "mock-r4-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r4-dispatch-3-t0",
+      "rankId": "4",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 250,
+      "end": 315,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 250,
+        "end": 315
+      },
+      "sourceEventIds": [
+        "mock-r4-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r4-compute-4-t0",
+      "rankId": "4",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 330,
+      "end": 473,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 330,
+        "end": 473
+      },
+      "sourceEventIds": [
+        "mock-r4-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r4-return-5-t0",
+      "rankId": "4",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 490,
+      "end": 551,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 490,
+        "end": 551
+      },
+      "sourceEventIds": [
+        "mock-r4-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r4-compute-6-t0",
+      "rankId": "4",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 570,
+      "end": 703,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 570,
+        "end": 703
+      },
+      "sourceEventIds": [
+        "mock-r4-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r4-dp-7-t0",
+      "rankId": "4",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 720,
+      "end": 787,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 720,
+        "end": 787
+      },
+      "sourceEventIds": [
+        "mock-r4-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r5-compute-0-t0",
+      "rankId": "5",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 4,
+      "end": 116,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 4,
+        "end": 116
+      },
+      "sourceEventIds": [
+        "mock-r5-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r5-tp-1-t0",
+      "rankId": "5",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 134,
+      "end": 178,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 134,
+        "end": 178
+      },
+      "sourceEventIds": [
+        "mock-r5-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r5-cache-2-t0",
+      "rankId": "5",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 194,
+      "end": 230,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 194,
+        "end": 230
+      },
+      "sourceEventIds": [
+        "mock-r5-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r5-dispatch-3-t0",
+      "rankId": "5",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 254,
+      "end": 318,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 254,
+        "end": 318
+      },
+      "sourceEventIds": [
+        "mock-r5-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r5-compute-4-t0",
+      "rankId": "5",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 334,
+      "end": 476,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 334,
+        "end": 476
+      },
+      "sourceEventIds": [
+        "mock-r5-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r5-return-5-t0",
+      "rankId": "5",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 494,
+      "end": 554,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 494,
+        "end": 554
+      },
+      "sourceEventIds": [
+        "mock-r5-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r5-compute-6-t0",
+      "rankId": "5",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 574,
+      "end": 706,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 574,
+        "end": 706
+      },
+      "sourceEventIds": [
+        "mock-r5-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r5-dp-7-t0",
+      "rankId": "5",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 724,
+      "end": 790,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 724,
+        "end": 790
+      },
+      "sourceEventIds": [
+        "mock-r5-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r6-compute-0-t0",
+      "rankId": "6",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 0,
+      "end": 110,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 0,
+        "end": 110
+      },
+      "sourceEventIds": [
+        "mock-r6-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r6-tp-1-t0",
+      "rankId": "6",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 130,
+      "end": 172,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 130,
+        "end": 172
+      },
+      "sourceEventIds": [
+        "mock-r6-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r6-cache-2-t0",
+      "rankId": "6",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 190,
+      "end": 224,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 190,
+        "end": 224
+      },
+      "sourceEventIds": [
+        "mock-r6-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r6-dispatch-3-t0",
+      "rankId": "6",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 250,
+      "end": 312,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 250,
+        "end": 312
+      },
+      "sourceEventIds": [
+        "mock-r6-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r6-compute-4-t0",
+      "rankId": "6",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 330,
+      "end": 470,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 330,
+        "end": 470
+      },
+      "sourceEventIds": [
+        "mock-r6-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r6-return-5-t0",
+      "rankId": "6",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 490,
+      "end": 548,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 490,
+        "end": 548
+      },
+      "sourceEventIds": [
+        "mock-r6-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r6-compute-6-t0",
+      "rankId": "6",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 570,
+      "end": 700,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 570,
+        "end": 700
+      },
+      "sourceEventIds": [
+        "mock-r6-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r6-dp-7-t0",
+      "rankId": "6",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 720,
+      "end": 784,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 720,
+        "end": 784
+      },
+      "sourceEventIds": [
+        "mock-r6-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    },
+    {
+      "id": "mock-r7-compute-0-t0",
+      "rankId": "7",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 4,
+      "end": 113,
+      "label": "Attention",
+      "rawName": "Attention",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 4,
+        "end": 113
+      },
+      "sourceEventIds": [
+        "mock-r7-compute-0-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r7-tp-1-t0",
+      "rankId": "7",
+      "occurrenceId": "tp",
+      "kind": "tp",
+      "start": 134,
+      "end": 175,
+      "label": "TP · AllGather",
+      "rawName": "TP · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 134,
+        "end": 175
+      },
+      "sourceEventIds": [
+        "mock-r7-tp-1-t0"
+      ],
+      "color": "#808080"
+    },
+    {
+      "id": "mock-r7-cache-2-t0",
+      "rankId": "7",
+      "occurrenceId": "cache",
+      "kind": "cache",
+      "start": 194,
+      "end": 227,
+      "label": "缓存 · AllGather",
+      "rawName": "缓存 · AllGather",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 194,
+        "end": 227
+      },
+      "sourceEventIds": [
+        "mock-r7-cache-2-t0"
+      ],
+      "color": "#B1EF6B"
+    },
+    {
+      "id": "mock-r7-dispatch-3-t0",
+      "rankId": "7",
+      "occurrenceId": "dispatch",
+      "kind": "dispatch",
+      "start": 254,
+      "end": 315,
+      "label": "EP · Dispatch",
+      "rawName": "EP · Dispatch",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 254,
+        "end": 315
+      },
+      "sourceEventIds": [
+        "mock-r7-dispatch-3-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r7-compute-4-t0",
+      "rankId": "7",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 334,
+      "end": 473,
+      "label": "Expert FFN",
+      "rawName": "Expert FFN",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 334,
+        "end": 473
+      },
+      "sourceEventIds": [
+        "mock-r7-compute-4-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r7-return-5-t0",
+      "rankId": "7",
+      "occurrenceId": "return",
+      "kind": "return",
+      "start": 494,
+      "end": 551,
+      "label": "EP · Return",
+      "rawName": "EP · Return",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 494,
+        "end": 551
+      },
+      "sourceEventIds": [
+        "mock-r7-return-5-t0"
+      ],
+      "color": "#FF9500"
+    },
+    {
+      "id": "mock-r7-compute-6-t0",
+      "rankId": "7",
+      "occurrenceId": null,
+      "kind": "compute",
+      "start": 574,
+      "end": 703,
+      "label": "Backward",
+      "rawName": "Backward",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 574,
+        "end": 703
+      },
+      "sourceEventIds": [
+        "mock-r7-compute-6-t0"
+      ],
+      "color": "#555555"
+    },
+    {
+      "id": "mock-r7-dp-7-t0",
+      "rankId": "7",
+      "occurrenceId": "dp",
+      "kind": "dp",
+      "start": 724,
+      "end": 787,
+      "label": "DP · 梯度同步",
+      "rawName": "DP · 梯度同步",
+      "status": "mock",
+      "time": {
+        "clockId": "configured-mock",
+        "start": 724,
+        "end": 787
+      },
+      "sourceEventIds": [
+        "mock-r7-dp-7-t0"
+      ],
+      "color": "#79D4F2"
+    }
+  ],
+  "rows": [
+    {
+      "id": "0",
+      "label": "Rank 0",
+      "events": [
+        {
+          "id": "mock-r0-compute-0-t0",
+          "rankId": "0",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 0,
+          "end": 110,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 0,
+            "end": 110
+          },
+          "sourceEventIds": [
+            "mock-r0-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r0-tp-1-t0",
+          "rankId": "0",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 130,
+          "end": 172,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 130,
+            "end": 172
+          },
+          "sourceEventIds": [
+            "mock-r0-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r0-cache-2-t0",
+          "rankId": "0",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 190,
+          "end": 224,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 190,
+            "end": 224
+          },
+          "sourceEventIds": [
+            "mock-r0-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r0-dispatch-3-t0",
+          "rankId": "0",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 250,
+          "end": 312,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 250,
+            "end": 312
+          },
+          "sourceEventIds": [
+            "mock-r0-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r0-compute-4-t0",
+          "rankId": "0",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 330,
+          "end": 470,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 330,
+            "end": 470
+          },
+          "sourceEventIds": [
+            "mock-r0-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r0-return-5-t0",
+          "rankId": "0",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 490,
+          "end": 548,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 490,
+            "end": 548
+          },
+          "sourceEventIds": [
+            "mock-r0-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r0-compute-6-t0",
+          "rankId": "0",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 570,
+          "end": 700,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 570,
+            "end": 700
+          },
+          "sourceEventIds": [
+            "mock-r0-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r0-dp-7-t0",
+          "rankId": "0",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 720,
+          "end": 784,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 720,
+            "end": 784
+          },
+          "sourceEventIds": [
+            "mock-r0-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "label": "Rank 1",
+      "events": [
+        {
+          "id": "mock-r1-compute-0-t0",
+          "rankId": "1",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 4,
+          "end": 113,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 4,
+            "end": 113
+          },
+          "sourceEventIds": [
+            "mock-r1-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r1-tp-1-t0",
+          "rankId": "1",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 134,
+          "end": 175,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 134,
+            "end": 175
+          },
+          "sourceEventIds": [
+            "mock-r1-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r1-cache-2-t0",
+          "rankId": "1",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 194,
+          "end": 227,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 194,
+            "end": 227
+          },
+          "sourceEventIds": [
+            "mock-r1-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r1-dispatch-3-t0",
+          "rankId": "1",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 254,
+          "end": 315,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 254,
+            "end": 315
+          },
+          "sourceEventIds": [
+            "mock-r1-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r1-compute-4-t0",
+          "rankId": "1",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 334,
+          "end": 473,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 334,
+            "end": 473
+          },
+          "sourceEventIds": [
+            "mock-r1-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r1-return-5-t0",
+          "rankId": "1",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 494,
+          "end": 551,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 494,
+            "end": 551
+          },
+          "sourceEventIds": [
+            "mock-r1-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r1-compute-6-t0",
+          "rankId": "1",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 574,
+          "end": 703,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 574,
+            "end": 703
+          },
+          "sourceEventIds": [
+            "mock-r1-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r1-dp-7-t0",
+          "rankId": "1",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 724,
+          "end": 787,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 724,
+            "end": 787
+          },
+          "sourceEventIds": [
+            "mock-r1-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "label": "Rank 2",
+      "events": [
+        {
+          "id": "mock-r2-compute-0-t0",
+          "rankId": "2",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 0,
+          "end": 116,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 0,
+            "end": 116
+          },
+          "sourceEventIds": [
+            "mock-r2-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r2-tp-1-t0",
+          "rankId": "2",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 130,
+          "end": 178,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 130,
+            "end": 178
+          },
+          "sourceEventIds": [
+            "mock-r2-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r2-cache-2-t0",
+          "rankId": "2",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 190,
+          "end": 230,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 190,
+            "end": 230
+          },
+          "sourceEventIds": [
+            "mock-r2-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r2-dispatch-3-t0",
+          "rankId": "2",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 250,
+          "end": 318,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 250,
+            "end": 318
+          },
+          "sourceEventIds": [
+            "mock-r2-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r2-compute-4-t0",
+          "rankId": "2",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 330,
+          "end": 476,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 330,
+            "end": 476
+          },
+          "sourceEventIds": [
+            "mock-r2-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r2-return-5-t0",
+          "rankId": "2",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 490,
+          "end": 554,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 490,
+            "end": 554
+          },
+          "sourceEventIds": [
+            "mock-r2-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r2-compute-6-t0",
+          "rankId": "2",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 570,
+          "end": 706,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 570,
+            "end": 706
+          },
+          "sourceEventIds": [
+            "mock-r2-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r2-dp-7-t0",
+          "rankId": "2",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 720,
+          "end": 790,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 720,
+            "end": 790
+          },
+          "sourceEventIds": [
+            "mock-r2-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "label": "Rank 3",
+      "events": [
+        {
+          "id": "mock-r3-compute-0-t0",
+          "rankId": "3",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 4,
+          "end": 110,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 4,
+            "end": 110
+          },
+          "sourceEventIds": [
+            "mock-r3-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r3-tp-1-t0",
+          "rankId": "3",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 134,
+          "end": 172,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 134,
+            "end": 172
+          },
+          "sourceEventIds": [
+            "mock-r3-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r3-cache-2-t0",
+          "rankId": "3",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 194,
+          "end": 224,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 194,
+            "end": 224
+          },
+          "sourceEventIds": [
+            "mock-r3-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r3-dispatch-3-t0",
+          "rankId": "3",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 254,
+          "end": 312,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 254,
+            "end": 312
+          },
+          "sourceEventIds": [
+            "mock-r3-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r3-compute-4-t0",
+          "rankId": "3",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 334,
+          "end": 470,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 334,
+            "end": 470
+          },
+          "sourceEventIds": [
+            "mock-r3-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r3-return-5-t0",
+          "rankId": "3",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 494,
+          "end": 548,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 494,
+            "end": 548
+          },
+          "sourceEventIds": [
+            "mock-r3-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r3-compute-6-t0",
+          "rankId": "3",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 574,
+          "end": 700,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 574,
+            "end": 700
+          },
+          "sourceEventIds": [
+            "mock-r3-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r3-dp-7-t0",
+          "rankId": "3",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 724,
+          "end": 784,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 724,
+            "end": 784
+          },
+          "sourceEventIds": [
+            "mock-r3-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "label": "Rank 4",
+      "events": [
+        {
+          "id": "mock-r4-compute-0-t0",
+          "rankId": "4",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 0,
+          "end": 113,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 0,
+            "end": 113
+          },
+          "sourceEventIds": [
+            "mock-r4-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r4-tp-1-t0",
+          "rankId": "4",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 130,
+          "end": 175,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 130,
+            "end": 175
+          },
+          "sourceEventIds": [
+            "mock-r4-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r4-cache-2-t0",
+          "rankId": "4",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 190,
+          "end": 227,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 190,
+            "end": 227
+          },
+          "sourceEventIds": [
+            "mock-r4-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r4-dispatch-3-t0",
+          "rankId": "4",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 250,
+          "end": 315,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 250,
+            "end": 315
+          },
+          "sourceEventIds": [
+            "mock-r4-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r4-compute-4-t0",
+          "rankId": "4",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 330,
+          "end": 473,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 330,
+            "end": 473
+          },
+          "sourceEventIds": [
+            "mock-r4-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r4-return-5-t0",
+          "rankId": "4",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 490,
+          "end": 551,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 490,
+            "end": 551
+          },
+          "sourceEventIds": [
+            "mock-r4-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r4-compute-6-t0",
+          "rankId": "4",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 570,
+          "end": 703,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 570,
+            "end": 703
+          },
+          "sourceEventIds": [
+            "mock-r4-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r4-dp-7-t0",
+          "rankId": "4",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 720,
+          "end": 787,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 720,
+            "end": 787
+          },
+          "sourceEventIds": [
+            "mock-r4-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "label": "Rank 5",
+      "events": [
+        {
+          "id": "mock-r5-compute-0-t0",
+          "rankId": "5",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 4,
+          "end": 116,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 4,
+            "end": 116
+          },
+          "sourceEventIds": [
+            "mock-r5-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r5-tp-1-t0",
+          "rankId": "5",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 134,
+          "end": 178,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 134,
+            "end": 178
+          },
+          "sourceEventIds": [
+            "mock-r5-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r5-cache-2-t0",
+          "rankId": "5",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 194,
+          "end": 230,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 194,
+            "end": 230
+          },
+          "sourceEventIds": [
+            "mock-r5-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r5-dispatch-3-t0",
+          "rankId": "5",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 254,
+          "end": 318,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 254,
+            "end": 318
+          },
+          "sourceEventIds": [
+            "mock-r5-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r5-compute-4-t0",
+          "rankId": "5",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 334,
+          "end": 476,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 334,
+            "end": 476
+          },
+          "sourceEventIds": [
+            "mock-r5-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r5-return-5-t0",
+          "rankId": "5",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 494,
+          "end": 554,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 494,
+            "end": 554
+          },
+          "sourceEventIds": [
+            "mock-r5-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r5-compute-6-t0",
+          "rankId": "5",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 574,
+          "end": 706,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 574,
+            "end": 706
+          },
+          "sourceEventIds": [
+            "mock-r5-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r5-dp-7-t0",
+          "rankId": "5",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 724,
+          "end": 790,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 724,
+            "end": 790
+          },
+          "sourceEventIds": [
+            "mock-r5-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "label": "Rank 6",
+      "events": [
+        {
+          "id": "mock-r6-compute-0-t0",
+          "rankId": "6",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 0,
+          "end": 110,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 0,
+            "end": 110
+          },
+          "sourceEventIds": [
+            "mock-r6-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r6-tp-1-t0",
+          "rankId": "6",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 130,
+          "end": 172,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 130,
+            "end": 172
+          },
+          "sourceEventIds": [
+            "mock-r6-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r6-cache-2-t0",
+          "rankId": "6",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 190,
+          "end": 224,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 190,
+            "end": 224
+          },
+          "sourceEventIds": [
+            "mock-r6-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r6-dispatch-3-t0",
+          "rankId": "6",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 250,
+          "end": 312,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 250,
+            "end": 312
+          },
+          "sourceEventIds": [
+            "mock-r6-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r6-compute-4-t0",
+          "rankId": "6",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 330,
+          "end": 470,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 330,
+            "end": 470
+          },
+          "sourceEventIds": [
+            "mock-r6-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r6-return-5-t0",
+          "rankId": "6",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 490,
+          "end": 548,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 490,
+            "end": 548
+          },
+          "sourceEventIds": [
+            "mock-r6-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r6-compute-6-t0",
+          "rankId": "6",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 570,
+          "end": 700,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 570,
+            "end": 700
+          },
+          "sourceEventIds": [
+            "mock-r6-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r6-dp-7-t0",
+          "rankId": "6",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 720,
+          "end": 784,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 720,
+            "end": 784
+          },
+          "sourceEventIds": [
+            "mock-r6-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "label": "Rank 7",
+      "events": [
+        {
+          "id": "mock-r7-compute-0-t0",
+          "rankId": "7",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 4,
+          "end": 113,
+          "label": "Attention",
+          "rawName": "Attention",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 4,
+            "end": 113
+          },
+          "sourceEventIds": [
+            "mock-r7-compute-0-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r7-tp-1-t0",
+          "rankId": "7",
+          "occurrenceId": "tp",
+          "kind": "tp",
+          "start": 134,
+          "end": 175,
+          "label": "TP · AllGather",
+          "rawName": "TP · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 134,
+            "end": 175
+          },
+          "sourceEventIds": [
+            "mock-r7-tp-1-t0"
+          ],
+          "color": "#808080"
+        },
+        {
+          "id": "mock-r7-cache-2-t0",
+          "rankId": "7",
+          "occurrenceId": "cache",
+          "kind": "cache",
+          "start": 194,
+          "end": 227,
+          "label": "缓存 · AllGather",
+          "rawName": "缓存 · AllGather",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 194,
+            "end": 227
+          },
+          "sourceEventIds": [
+            "mock-r7-cache-2-t0"
+          ],
+          "color": "#B1EF6B"
+        },
+        {
+          "id": "mock-r7-dispatch-3-t0",
+          "rankId": "7",
+          "occurrenceId": "dispatch",
+          "kind": "dispatch",
+          "start": 254,
+          "end": 315,
+          "label": "EP · Dispatch",
+          "rawName": "EP · Dispatch",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 254,
+            "end": 315
+          },
+          "sourceEventIds": [
+            "mock-r7-dispatch-3-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r7-compute-4-t0",
+          "rankId": "7",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 334,
+          "end": 473,
+          "label": "Expert FFN",
+          "rawName": "Expert FFN",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 334,
+            "end": 473
+          },
+          "sourceEventIds": [
+            "mock-r7-compute-4-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r7-return-5-t0",
+          "rankId": "7",
+          "occurrenceId": "return",
+          "kind": "return",
+          "start": 494,
+          "end": 551,
+          "label": "EP · Return",
+          "rawName": "EP · Return",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 494,
+            "end": 551
+          },
+          "sourceEventIds": [
+            "mock-r7-return-5-t0"
+          ],
+          "color": "#FF9500"
+        },
+        {
+          "id": "mock-r7-compute-6-t0",
+          "rankId": "7",
+          "occurrenceId": null,
+          "kind": "compute",
+          "start": 574,
+          "end": 703,
+          "label": "Backward",
+          "rawName": "Backward",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 574,
+            "end": 703
+          },
+          "sourceEventIds": [
+            "mock-r7-compute-6-t0"
+          ],
+          "color": "#555555"
+        },
+        {
+          "id": "mock-r7-dp-7-t0",
+          "rankId": "7",
+          "occurrenceId": "dp",
+          "kind": "dp",
+          "start": 724,
+          "end": 787,
+          "label": "DP · 梯度同步",
+          "rawName": "DP · 梯度同步",
+          "status": "mock",
+          "time": {
+            "clockId": "configured-mock",
+            "start": 724,
+            "end": 787
+          },
+          "sourceEventIds": [
+            "mock-r7-dp-7-t0"
+          ],
+          "color": "#79D4F2"
+        }
+      ]
+    }
+  ],
+  "timeRange": {
+    "min": 0,
+    "max": 790,
+    "step": 1
+  },
+  "window": {
+    "start": 0,
+    "end": 790
+  },
+  "unit": "us"
+}

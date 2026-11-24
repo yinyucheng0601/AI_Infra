@@ -1,0 +1,52 @@
+#observation-controls{position:fixed;top:76px;left:50%;transform:translateX(-50%);z-index:12;display:flex;align-items:center;gap:6px;max-width:calc(100vw - 40px);height:38px;padding:4px;border-radius:24px;background:#222;box-sizing:border-box;white-space:nowrap}
+#observation-controls[hidden]{display:none}
+#observation-controls select,#observation-controls button{font:11px system-ui;color:#eee;background:#303030;border:0;border-radius:20px;height:30px;padding:0 12px;max-width:180px}
+#observation-controls :focus-visible{outline:0;text-decoration:underline;background:#666}
+#observation-error{position:absolute;top:44px;left:0;color:#eee;white-space:normal;min-width:240px;background:#222;border-radius:8px}
+body.observation-session #stage,body.observation-session #token-controls{display:none}
+#deployment-world .observation-rank{cursor:pointer;outline:none}
+#deployment-world .observation-rank:focus-visible text{text-decoration:underline}
+#pbody pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}
+@media(max-width:600px){#observation-controls{top:110px}#observation-controls select,#observation-controls button{padding:0 8px;max-width:120px}}
+
+#deployment-modes [data-observation-category][data-covered=false]:not([aria-pressed=true]){color:#777}
+.observation-readings{margin:0 0 18px}.observation-readings>div{display:flex;align-items:baseline;justify-content:space-between;gap:18px;padding:6px 0}.observation-readings dt{color:#aaa}.observation-readings dd{margin:0;color:#eee;font-variant-numeric:tabular-nums}
+
+/* One compact control dock, clear of the fitted graph. */
+#deployment-control-dock{position:fixed;left:50%;bottom:122px;transform:translateX(-50%);z-index:12;display:flex;flex-direction:column;gap:6px;width:max-content;max-width:calc(100vw - 48px);padding:6px;background:#222;border-radius:22px;box-sizing:border-box}
+#deployment-control-dock[hidden]{display:none}
+.deployment-control-row{display:flex;align-items:center;justify-content:center;gap:12px;min-height:30px;max-width:100%;overflow-x:auto;scrollbar-width:thin}
+#deployment-control-dock #observation-controls,#deployment-control-dock #physical-path,#deployment-control-dock #token-controls,#deployment-control-dock #deployment-modes{position:static;inset:auto;transform:none;margin:0;max-width:none;flex:0 0 auto;height:30px;padding:0;background:transparent;border-radius:18px}
+#deployment-control-dock #physical-path{gap:4px;font-size:11px}
+#deployment-control-dock #physical-path button{height:30px;padding:0 10px}
+#deployment-control-dock #token-controls{gap:2px;align-items:center}
+#deployment-control-dock #token-controls button{height:30px;padding:0 9px}
+#deployment-control-dock #deployment-modes{height:30px;max-width:100%;gap:2px}
+#deployment-control-dock #deployment-modes button{padding:0 12px}
+#deployment-control-dock #observation-controls{gap:4px}
+#deployment-control-dock #observation-controls select,#deployment-control-dock #observation-controls button{height:30px}
+@media(max-width:700px){#deployment-control-dock{max-width:calc(100vw - 24px);bottom:126px;width:calc(100vw - 24px)}.deployment-control-row{justify-content:flex-start}#deployment-control-dock #deployment-modes button{padding:0 9px}}
+
+/* Configuration is available from a single upper-right entry. */
+body.deployment-step #info-icon{margin-left:0}
+#deployment-settings-toggle{margin-left:auto;display:grid;place-items:center;width:32px;height:32px;padding:7px;background:#272727;color:#CCC;pointer-events:auto}
+#deployment-settings-toggle[hidden]{display:none}
+#deployment-settings-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+#deployment-settings-toggle[aria-expanded=true]{background:#EEE;color:#111}
+#deployment-settings{position:fixed;right:28px;top:132px;width:350px;padding:16px;background:#222;border-radius:16px;z-index:24;max-height:calc(100svh - 160px);overflow:auto;box-sizing:border-box}
+#deployment-settings[hidden]{display:none}
+#deployment-settings header{height:26px;padding:0 0 12px;gap:12px;font-size:13px;pointer-events:auto}
+#deployment-settings header button{margin-left:auto;padding:0 6px;height:26px;font-size:18px}
+#deployment-settings .deployment-control-row{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px;overflow:visible}
+#deployment-settings #observation-controls,#deployment-settings #physical-path,#deployment-settings #token-controls{position:static;inset:auto;transform:none;max-width:100%;width:auto;height:auto;min-height:30px;padding:0;margin:0;background:transparent;flex-wrap:wrap;box-sizing:border-box}
+#deployment-settings #observation-controls{justify-content:flex-start}
+#deployment-settings #observation-controls select{max-width:100%;font-size:11px}
+#deployment-settings #physical-path{justify-content:flex-start;font-size:11px}
+#deployment-settings #token-controls{display:flex;gap:2px}
+#deployment-settings #token-controls button{flex:1;height:30px;padding:0 6px}
+#deployment-settings #deployment-trace-toggle{align-self:flex-start}
+#deployment-settings #observation-error:empty{display:none}
+#deployment-settings #observation-error:not(:empty){position:static;min-width:0;font-size:11px}
+@media(max-width:600px){#deployment-settings{right:12px;top:115px;width:min(350px,calc(100vw - 24px))}}
+
+body.observation-session #deployment-settings #token-controls{display:none}

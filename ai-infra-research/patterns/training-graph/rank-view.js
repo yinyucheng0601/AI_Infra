@@ -12,7 +12,8 @@ function rankCube(rank,mini=false,unmapped=false){
  const wall=P(0,140,height);if(!unmapped)out+=`<g transform="matrix(.8660254 -.5 0 1 ${wall[0]} ${wall[1]-48})"><text fill="#eee" font-size="25">Rank ${rank.id}</text>${rankSnapshot.config.tp>1?`<text y="23" fill="#bbb" font-size="14">TP ${rank.lane}${mini&&current===8?' · 专家组 '+rank.group:''}</text>`:''}</g>`;
  return out;
 }
-function fitRanks(){const svg=document.querySelector('#rank-canvas');if(!svg||!rankSnapshot?.config.deployed)return;const w=1320,h=950,sw=innerWidth,sh=innerHeight,left=sw>1000?310:24,right=sw>1000?440:24,available=Math.max(280,sw-left-right),scale=Math.min(available/w,Math.max(200,sh-270)/h),cx=left+available/2;svg.setAttribute('viewBox',`${w/2-cx/scale} ${(h-sh/scale)/2} ${sw/scale} ${sh/scale}`);}
+function fitRanks(){const svg=document.querySelector('#rank-canvas');if(!svg||!rankSnapshot?.config.deployed)return;const b=document.querySelector('#rank-world').getBBox(),sw=innerWidth,sh=innerHeight,margin=sw>1000?310:24,scale=Math.min(Math.max(280,sw-2*margin)/(b.width+80),Math.max(200,sh-270)/(b.height+80));svg.setAttribute('viewBox',`${b.x+b.width/2-sw/scale/2} ${b.y+b.height/2-sh/scale/2} ${sw/scale} ${sh/scale}`);}
+
 function fitGraphThumbnail(){if(!rankPrimary||!fullGraphBounds)return;cancelAnimationFrame(cameraFrame);view={z:1,x:0,y:0};apply();const b=fullGraphBounds;document.querySelector('#stage>svg').setAttribute('viewBox',`${b.x-24} ${b.y-24} ${b.width+48} ${b.height+48}`);}
 
 function applyRankCamera(){document.querySelector('#rank-world').setAttribute('transform',`translate(${rankCamera.x} ${rankCamera.y}) scale(${rankCamera.z})`);}
