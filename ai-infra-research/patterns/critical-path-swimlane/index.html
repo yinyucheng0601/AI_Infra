@@ -1,8 +1,28 @@
 <!doctype html>
 <html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Inference Request</title>
-<link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="pattern.css"><link rel="stylesheet" href="../sequence-navigation/navigation.css"><link rel="stylesheet" href="liquid-glass/liquid-glass.css">
-<style>body{margin:0;background:#111}</style>
-<main id="workbench"></main><script src="data.js"></script><script src="../sequence-navigation/navigation.js"></script><script src="pattern.js"></script><script defer src="liquid-glass/liquid-glass.js"></script>
-<script>window.swimlane = CriticalPathSwimlane.mount(document.getElementById('workbench'), SWIMLANE_DATA, {syncHash:true});</script>
+<link rel="stylesheet" href="evidence-view.css"><link rel="stylesheet" href="selector.css"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="pattern.css"><link rel="stylesheet" href="../sequence-navigation/navigation.css"><link rel="stylesheet" href="liquid-glass/liquid-glass.css">
+<style>
+body{margin:0;background:#111}
+.dataset-control{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:30;color:#bbb;font:12px system-ui;display:flex;align-items:center;gap:8px}
+.dataset-control select{font:inherit;color:#eee;background:#292929;border:0;border-radius:999px;padding:8px 28px 8px 12px;cursor:pointer}
+.dataset-control select:focus-visible{background:#494949;text-decoration:underline}
+.dataset-control .dataset-tip{display:none;position:absolute;top:42px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#292929;color:#eee;padding:7px 10px;border-radius:6px}
+.dataset-control:hover .dataset-tip,.dataset-control:focus-within .dataset-tip{display:block}
+@media(max-width:800px){.dataset-control{top:54px;left:16px;transform:none}.dataset-control select{max-width:280px}}
+</style>
+<label class="dataset-control">数据集 <select id="dataset" aria-label="选择泳道数据集" aria-describedby="dataset-tip"><option value="deepseek">DeepSeek V4 · TP1 / DP16 · 8K · 16B</option><option value="original">原始示例 · DSpark Serving</option></select><span class="dataset-tip" id="dataset-tip" role="tooltip">切换数据集并重置时间范围与选择</span></label>
+<main id="workbench"></main><script src="data.js"></script><script>window.ORIGINAL_SWIMLANE_DATA=window.SWIMLANE_DATA;</script><script src="trace-data.js"></script><script src="../sequence-navigation/navigation.js"></script><script src="pattern.js"></script><script src="selector.js"></script><script src="evidence-view.js"></script><script defer src="liquid-glass/liquid-glass.js"></script>
+<script>const datasets={deepseek:window.SWIMLANE_DATA,original:window.ORIGINAL_SWIMLANE_DATA};
+const picker=document.getElementById('dataset');
+picker.value=new URLSearchParams(location.search).get('dataset')==='original'?'original':'deepseek';
+function loadDataset(reset){
+  if(window.swimlane)window.swimlane.destroy();
+  const data=datasets[picker.value];
+  if(reset){const url=new URL(location.href);url.searchParams.set('dataset',picker.value);url.hash='';history.replaceState(null,'',url);}
+  window.swimlane=(data.evidence?TraceEvidenceView:CriticalPathSwimlane).mount(document.getElementById('workbench'),data,{syncHash:true,step:data.steps[0].id});
+}
+picker.addEventListener('change',()=>loadDataset(true));
+loadDataset(false);
+window.datasetSelector=TraceSelector.mount(picker);</script>
 </html>

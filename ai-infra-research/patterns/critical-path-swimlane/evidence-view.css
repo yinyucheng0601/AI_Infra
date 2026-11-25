@@ -1,0 +1,47 @@
+
+.ev{height:100dvh;min-height:640px;background:#111;color:#ddd;font:12px system-ui;position:relative;overflow:hidden}
+.ev *{box-sizing:border-box}.ev [hidden]{display:none!important}
+.ev header{position:absolute;left:28px;top:20px}.ev h1{font-size:18px;font-weight:500;margin:0}.ev .scope{color:#999;font-size:11px;margin-top:7px}
+.ev .view-controls{position:absolute;top:68px;left:28px;right:28px;display:flex;gap:8px;align-items:center}
+.ev button,.ev select{border:0;border-radius:999px;background:#262626;color:#ddd;padding:8px 13px;font:12px system-ui;cursor:pointer}
+.ev button[aria-pressed=true]{background:#ddd;color:#111}.ev button:focus-visible,.ev select:focus-visible{outline:none;background:#ddd;color:#111;text-decoration:underline}
+.ev .step-picker{max-width:220px}.ev .view-note{color:#999;margin-left:6px}.ev .tools{margin-left:auto;display:flex;gap:6px}
+.ev .stage{position:absolute;top:110px;left:16px;right:16px;bottom:100px}
+.ev .stage svg{width:100%;height:100%;display:block;touch-action:none;user-select:none;outline:none}
+.ev svg text{fill:#999;font:10px ui-monospace,monospace;pointer-events:none}
+.ev svg .layer{fill:#ddd;font:17px system-ui}.ev svg .sublabel{fill:#aaa;font:10px system-ui}
+.ev [data-event]{cursor:pointer;outline:none}.ev [data-event]:focus-visible{fill:#e5df91}
+.ev .evidence-panel{position:absolute;z-index:10;top:114px;right:28px;width:330px;max-height:calc(100% - 210px);overflow:auto;background:#222e;backdrop-filter:blur(20px);padding:22px;border-radius:16px}
+.ev .evidence-panel h2{font-size:16px;overflow-wrap:anywhere;margin:6px 30px 12px 0;font-weight:500}
+.ev .evidence-panel p{color:#bbb;line-height:1.7}.ev .evidence-panel dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;font:11px ui-monospace,monospace}
+.ev .evidence-panel dt{color:#999}.ev .evidence-panel dd{margin:0;overflow-wrap:anywhere}.ev .evidence-panel pre{font:10px/1.7 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;color:#bbb}
+.ev .panel-close{position:absolute;right:10px;top:10px}.ev .evidence-panel a{color:#ddd}.ev .skew{color:#e5a352}
+.ev .tip{position:fixed;z-index:100;pointer-events:none;background:#282828;padding:10px 14px;border-radius:8px;white-space:pre-wrap;max-width:440px;font:11px/1.7 ui-monospace,monospace;color:#ddd}
+@media(max-width:800px){.ev header{top:14px;left:16px}.ev h1{font-size:14px}.ev .scope{max-width:240px}.ev .view-controls{left:16px;right:16px;top:92px;flex-wrap:wrap}.ev .view-note{display:none}.ev .stage{top:175px}.ev .evidence-panel{right:16px;width:300px;top:178px}}
+
+/* Reuse the original time navigation and task line weight. */
+.ev .lane-label{pointer-events:auto;cursor:help;outline:none}
+.ev .lane-label:focus-visible{fill:#e5df91;text-decoration:underline}
+.ev .bottom-controls{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);width:min(900px,calc(100% - 360px));height:44px;display:flex;align-items:center;z-index:4}
+.ev .navigator.sequence-nav{display:block;margin:4px 0;height:36px;gap:0}
+.ev .navigator.sequence-nav button{min-width:0;min-height:0;padding:0;height:20px;border-radius:2px;background:#606060}
+.ev .navigator.sequence-nav button[aria-current=step]{background:#b8b8b8}
+.ev .navigator.sequence-nav button:hover{background:#929292}
+.ev .navigator.sequence-nav button:focus-visible{outline:none;background:#e5df91;color:#111}
+.ev .navigator.sequence-nav .sequence-label{display:none!important}
+.ev .sequence-window:focus,.ev .sequence-window:focus-visible{outline:none;box-shadow:none;background:#ffffff08}
+.ev .toolbar{position:absolute;right:28px;bottom:24px;display:flex;align-items:center;height:44px;gap:2px;padding:6px;background:#222b;border-radius:999px;z-index:4}
+.ev .toolbar button{min-height:32px;padding:6px 12px;background:transparent}
+.ev .toolbar button:hover{background:#ffffff18}
+.ev .stage{bottom:106px}
+@media(max-width:800px){.ev .bottom-controls{left:12px;right:152px;width:auto;transform:none;bottom:20px}.ev .toolbar{right:12px;bottom:20px}.ev .toolbar button{padding:6px 9px}}
+
+.ev g[data-event]:focus-visible>rect:last-child{fill:#e5df91}
+.ev .navigator.sequence-nav button[aria-current=step] .sequence-label{display:block!important;background:none;padding:0}
+
+/* SVG coordinates follow the stage; type stays in screen pixels. */
+.ev svg text{font:11px ui-monospace,monospace}
+.ev svg .layer{font:23px system-ui}
+.ev svg .sublabel{font:12px system-ui}
+.ev svg .row-number{font:10px ui-monospace,monospace}
+.ev .stage{bottom:82px}

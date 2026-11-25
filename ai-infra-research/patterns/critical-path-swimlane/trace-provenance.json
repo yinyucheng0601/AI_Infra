@@ -1,0 +1,87 @@
+{
+  "source": "trace_view_pto_tp1_dp16_8k_16b.json",
+  "sha256": "04acfb37b21f44f5225b48d2fc6c914cac95aa5cee093cd1dfdfa7bc713a19d2",
+  "eventCount": 16170,
+  "steps": 32,
+  "lanes": 512,
+  "laneIdentity": [
+    {
+      "dev": 0,
+      "pid": 2983083
+    },
+    {
+      "dev": 1,
+      "pid": 2983084
+    },
+    {
+      "dev": 2,
+      "pid": 2983085
+    },
+    {
+      "dev": 3,
+      "pid": 2983086
+    },
+    {
+      "dev": 4,
+      "pid": 2983087
+    },
+    {
+      "dev": 5,
+      "pid": 2983088
+    },
+    {
+      "dev": 6,
+      "pid": 2983089
+    },
+    {
+      "dev": 7,
+      "pid": 2983090
+    },
+    {
+      "dev": 8,
+      "pid": 2983091
+    },
+    {
+      "dev": 9,
+      "pid": 2983092
+    },
+    {
+      "dev": 10,
+      "pid": 2983093
+    },
+    {
+      "dev": 11,
+      "pid": 2983094
+    },
+    {
+      "dev": 12,
+      "pid": 2983095
+    },
+    {
+      "dev": 13,
+      "pid": 2983096
+    },
+    {
+      "dev": 14,
+      "pid": 2983097
+    },
+    {
+      "dev": 15,
+      "pid": 2983098
+    }
+  ],
+  "mapping": {
+    "group": "chip.run args.inv",
+    "bind": "chip.run.bind",
+    "runner": "chip.run.runner_run",
+    "end": "chip.run end",
+    "origin": "earliest complete event; milliseconds",
+    "prefill": "batch_prefill temporal containment; may contain multiple invocations",
+    "worker": "step_id within Worker; temporal candidate across layers",
+    "scope": "complete multi-request capture; not a single request",
+    "lane": "sorted chip child process IDs; ordinal is not a verified physical device ID"
+  },
+  "validation": {
+    "browser": "not run; visual acceptance reserved for user"
+  }
+}

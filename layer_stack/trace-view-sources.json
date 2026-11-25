@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "file": "ai-infra-research/patterns/critical-path-swimlane/trace-data.js",
+      "sha256": "890c52e9fc9f96338bc381fca772f0417c40730e34c43a4d18479c23cbb7ac88"
+    },
+    {
+      "file": "ai-infra-research/patterns/sequence-navigation/navigation.js",
+      "sha256": "579cc8d07244eaa70376a02121d9c4cf23ef5adb4b3314bbce22e00049b73885"
+    },
+    {
+      "file": "ai-infra-research/patterns/critical-path-swimlane/selector.js",
+      "sha256": "f6cd1b70ddaa64550f06654e4a190c2ade437eabb6d1f23d6555a0081bc15ade"
+    },
+    {
+      "file": "ai-infra-research/patterns/critical-path-swimlane/evidence-view.js",
+      "sha256": "55af55ae09c625dc96d08baffd22f8ecf2be76c5c5b99b2382b75d62cd6010f8"
+    },
+    {
+      "file": "ai-infra-research/patterns/sequence-navigation/navigation.css",
+      "sha256": "b8ef0b8f3b5103e1e484b8291677ca42ad68682136f521acd49c37fc19d1cb9a"
+    },
+    {
+      "file": "ai-infra-research/patterns/critical-path-swimlane/selector.css",
+      "sha256": "07601a5fb0de8a7b8fbc45d9ab9e9724449e7d7e165f3c9794439ceeeb52d8f0"
+    },
+    {
+      "file": "ai-infra-research/patterns/critical-path-swimlane/evidence-view.css",
+      "sha256": "55f2108801b8243efa015c963d314f9850b87a84711e1d13f544d876c7da901f"
+    },
+    {
+      "file": "ai-infra-research/patterns/critical-path-swimlane/trace-provenance.json",
+      "sha256": "977e63579a4730c3643b5bf9c78a2b889fcca04cf74ce83ada6055d7432a8b91"
+    }
+  ]
+}

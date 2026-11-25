@@ -70,3 +70,56 @@ Serving diamonds/ticks come from scheduler.process_step_output start timestamps 
 ### Worker phase linkage
 
 Raw Worker intervals are preserved without merging. Phase membership uses Worker step_id. Cross-layer candidates use STRACE group start after dispatch start and latest completion before reclaim end, checked one-to-one across all 53 Worker groups. These are temporal candidates, not causal flow IDs. Prefill and Draft Init share a batch containment context. D53 is retained as an unshown boundary group. Hover links both directions; clicking a Worker event pins its group and opens a shared-axis phase chart.
+
+## DeepSeek V4 Trace 默认数据（2026-11-25）
+
+index.html 默认加载 trace-data.js；pattern.html 与 data.js 保留原示例。
+输入：trace_view_pto_tp1_dp16_8k_16b.json，SHA256 与 PID 对照见 trace-provenance.json。
+重建：`rtk node import-trace.cjs /path/to/trace_view_pto_tp1_dp16_8k_16b.json`。
+
+新版 chip.run 按 args.inv 聚合为 32 组、512 条 lane；3 次 batch_prefill 包含 9 组调用，另有 23 组 Decode。
+完整采集涉及多个请求，Serving 为全采集的 24 次 scheduler.process_step_output。
+起点取最早完整事件；每组坐标相对上一组结束，保留调用间隔和重叠。
+lane 编号为 chip child PID 排序序号，不能据此确认物理 device ID。
+Worker 仅呈现满足时间包含条件的候选关联；没有匹配时不强行绑定。
+原始数据目录只读，不依赖绝对路径加载，也不生成未经确认的远端来源链接。
+
+验证：新版数据全量窗口约束、Worker 候选唯一性、旧示例回归与目录校验通过。
+浏览器验证（1600×1000）：两套数据往返切换两次、运行信息开关、Fit 与检查器通过，无页面异常；已检查渲染截图。页面顶部 selector 支持 DeepSeek V4 / 原始示例切换，切换时重置视角与选择。
+
+
+## Trace 证据视图升级（2026-11-25）
+
+本轮复用现有数据 selector、三层泳道结构、深色画布与浮层检查方式；DeepSeek 数据由 evidence-view.js / evidence-view.css 呈现，原始示例继续由 pattern.js 呈现。没有发布远端或修改输入仓库。
+
+表达约定：
+- 问题：实际请求负载、Host 调度与 Runner 的时间关系及关联证据。
+- 主图：线性真实时间；Overview 为完整采集，Step Detail 为一组 invocation；底部 Overview 始终保留全程和当前视口。
+- 身份：raw-N 指向原 JSON traceEvents[N]；Prefill ID 增加 invocation 后缀以保证唯一性。
+- 关联：run_id / dispatch_id / worker_id / step_id 与 request_id 只按实际字段匹配；同线程包含单列为 nesting，跨层时间候选单列为 temporal-candidate。
+- 颜色：灰色实测窗口、浅黄选中和字段关联、棕橙时间候选；橙色表示时间偏差。当前无已确认异常，因此不使用红色告警。
+- 状态：默认 Overview；选调用进入 Detail；选事件打开原始字段与关系；Esc 清选择并保持视角，Fit 恢复当前层级范围，切换数据集清理监听。
+
+Serving 轨道：16 个 request_id 的起始/queued/stream finished；26 个实际 batch 样本（3 次 WorkerProcess.batch_prefill.batch_size，23 次 DSparkModelRunner.decode.l3_dispatch.actual_batch）；24 次 scheduler.process_step_output.new_tokens，计数属于服务端，不对应客户端送达时间。
+
+Host 的 API Scheduler、共享 Executor、WorkerProcess prepare / dispatch / reclaim 分行。Per-worker Runtime 使用 node.submit / dispatch / frame_submit / complete 的 worker_id 分行；chip bind 另按 PID 分行，禁止将排序序号当成硬件映射。
+
+Entry Skew = max(rrStart) - min(rrStart)。Completion Skew = max(rrEnd) - min(rrEnd)。末端尾差 = 最晚 rrEnd - 次晚 rrEnd。Critical-path Impact 没有因果证据，显示未确认；不把尾差推算为可获收益。
+
+Deployment × Lingqu：通过冒泡 trace-evidence-selection 事件暴露观测 Runtime worker_id（仅 node.* 选中时）、runId、dispatchId、时间窗和 physicalMappingVerified:false。当前没有物理映射，因此没有驱动硬件选中；不发送网络、MoE 或 Layer 进度数据。这是联动契约，未接入实际 Deployment 消费端。
+
+核验：verify-evidence.cjs 支持原始输入路径，逐事件核对字段、SHA256、生命周期、唯一 ID、窗口和关联依据；旧 verify.cjs 保留旧数据回归。浏览器覆盖 Overview、Detail、事件选择与关联检查器、Help、Fit、两套数据切换；1600×1000 渲染截图已检查。无芯片内部事件及设备实测验收。
+
+
+### 样式回归修正（2026-11-25）
+
+数据集与调用组 selector 统一使用 selector.js / selector.css 的深色胶囊菜单；原生 select 仅保留为状态输入。菜单支持键盘、Escape、选中填充与完整名称提示。
+DeepSeek 底部重新复用原 SequenceNavigation（时间窗口拖动、端点缩放、方向键平移），右下恢复原位缩放工具栏；去掉新增 Overview SVG 及其浏览器焦点外框。
+Host / Runtime / Bind / Runner task 统一恢复 1.4 屏幕像素细线，命中区域单独加宽，不改变时间比例。
+lane 标签简化为 Requests / Batch Size / Token Output / Scheduler / Executor / Prepare / Dispatch / Reclaim / Runtime / Bind / Runner。悬停与键盘聚焦均显示完整来源名。
+浏览器核验：1600×1000 实际菜单选择、深色菜单、共享导航、无焦点外框、task 屏幕高度 1.4px、标签 hover/focus、导航方向键和两套数据往返切换通过；截图已检查。
+
+
+### 字体与画布利用率修正（2026-11-25）
+
+删除固定 740 高 viewBox 的非等比拉伸。SVG viewBox 与容器实际像素一致，仅对几何 y 坐标重排；标题、标签和行号保持正常像素字形，task 仍保持 1.4px。画布底部预留从 106px 缩至 82px，同时将诊断信息下移并与刻度分开，腾出的空间用于泳道。已核查 1600×1000 / 1600×1200 下的文字变换均为 1:1，标题字号保持 23px。
