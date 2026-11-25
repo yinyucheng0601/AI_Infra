@@ -41,3 +41,7 @@ body.deployment-graph-primary #deployment-surface *{pointer-events:none}
 body.deployment-step.observation-session:not(.deployment-graph-primary) #stage{display:none}
 body.deployment-step.observation-session.deployment-graph-primary #stage{display:block}
 @media(max-width:1000px){body.deployment-step:not(.deployment-graph-primary) #stage,body.deployment-step.deployment-graph-primary #deployment-surface{right:16px;bottom:214px;width:160px;height:110px}body.deployment-step.deployment-graph-primary #stage{inset:100px 20px 270px 20px}}
+
+/* Muted copper edge and interior; ports cover highlight ends. */
+#deployment-world .ep-copper-path{stroke-width:1.5px!important;stroke:#A96C47!important;vector-effect:none!important}
+#deployment-world [data-ep-copper-overlay]{pointer-events:none}

@@ -101,7 +101,7 @@ function drawDeployment(){
  body+=`<g data-deployment-token="${parameterState.token}" data-token-owner="${rank.id}"><text x="${x}" y="${y}" text-anchor="middle" style="fill:#eee;font:13px ui-monospace,monospace">t${parameterState.token} · ${chosen.map(e=>'E'+e).join(' / ')}</text></g>`;
  }
  body+=`<text class="deployment-board-label" x="660" y="8" text-anchor="middle">板 0 · 灵衢 UB</text>`;
- updateGraphSvg(document.querySelector('#deployment-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+body+'</svg>');applyDeploymentCamera();
+ updateGraphSvg(document.querySelector('#deployment-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+body+'</svg>');applyEPCopper(document.querySelector('#deployment-world'),'.deployment-layer-dispatch,.deployment-layer-return');applyDeploymentCamera();
  const collective=['tp','cache','dp','edp'].includes(s.mode);
  const modes=[['tp',c.tp===1?'TP · 本地':c.sp?'TP/SP · AG/RS':'TP · AllReduce'],...(c.recollect?[['cache','缓存 · AG']]:[]),['dispatch','EP · Dispatch'],['return','EP · Return'],['dp','DP · 梯度'],['edp','专家副本 · 梯度']];
  const tips={tp:'TP 组内前向与反向通信；SP 开启时使用 AG/RS',cache:'WGRAD 前在 TP 组内重新收集保存的输入分片',dispatch:'token 按 Top-2 专家归属分发',return:'专家输出返回来源 Rank',dp:'稠密参数梯度在相同 TP lane 的 DP 组同步',edp:'同一专家、同一 TP 分片在专家副本组同步'};

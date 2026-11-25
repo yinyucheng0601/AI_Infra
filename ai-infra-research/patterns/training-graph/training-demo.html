@@ -196,6 +196,10 @@ body.deployment-graph-primary #deployment-surface *{pointer-events:none}
 body.deployment-step.observation-session:not(.deployment-graph-primary) #stage{display:none}
 body.deployment-step.observation-session.deployment-graph-primary #stage{display:block}
 @media(max-width:1000px){body.deployment-step:not(.deployment-graph-primary) #stage,body.deployment-step.deployment-graph-primary #deployment-surface{right:16px;bottom:214px;width:160px;height:110px}body.deployment-step.deployment-graph-primary #stage{inset:100px 20px 270px 20px}}
+
+/* Muted copper edge and interior; ports cover highlight ends. */
+#deployment-world .ep-copper-path{stroke-width:1.5px!important;stroke:#A96C47!important;vector-effect:none!important}
+#deployment-world [data-ep-copper-overlay]{pointer-events:none}
 </style><style>/* Dial styles extracted verbatim from npu-memory-atlas/variants/atlas-controls.css. */
 .view-dial{width:200px;top:92px;right:28px;height:228px;z-index:2}
 .view-dial .view-orbit{position:absolute;inset:20px 20px 48px;border:1px solid var(--wb-line);border-radius:50%;pointer-events:none}
@@ -1697,6 +1701,30 @@ function trainingDeploymentState(parameters, focus=0, mode='dispatch') {
  }
  return {config:c,ranks:state.ranks,focus,mode,route,members,edges,placement:state.ranks.map(r=>({rank:r.id,device:'npu-'+r.id,npu:r.id,board:0})),source:'explicit-board-binding'};
 }
+</script><script>/* EP surface treatment only: same centerlines, ports, metadata and 1.5 unit footprint. */
+function applyEPCopper(root,selector){
+ const NS='http://www.w3.org/2000/svg';
+ root.querySelectorAll('[data-ep-copper-overlay],[data-ep-copper-defs]').forEach(n=>n.remove());root.querySelectorAll('.ep-copper-path').forEach(n=>n.classList.remove('ep-copper-path'));
+ if(!selector)return;
+ const paths=[...root.querySelectorAll(selector)];if(!paths.length)return;
+ const defs=document.createElementNS(NS,'defs');defs.setAttribute('data-ep-copper-defs','');root.prepend(defs);
+ defs.innerHTML='<marker id="ep-copper-port" viewBox="-3 -3 6 6" markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" orient="auto-start-reverse" refX="0" refY="0"><circle r="1.2" fill="#B87952"/></marker>';
+ paths.forEach((source,index)=>{
+  const b=source.getBBox(),id='ep-copper-'+index,g=document.createElementNS(NS,'linearGradient');g.id=id;g.setAttribute('gradientUnits','userSpaceOnUse');g.setAttribute('x1','0');g.setAttribute('x2','0');g.setAttribute('y1',b.y-3);g.setAttribute('y2',b.y+Math.max(1,b.height)+3);
+  g.innerHTML='<stop offset="0" stop-color="#C58B65"/><stop offset=".18" stop-color="#B97B54"/><stop offset=".48" stop-color="#C98F69"/><stop offset=".72" stop-color="#AF704A"/><stop offset="1" stop-color="#9F623F"/>';defs.append(g);
+  const markers=['start','end'].filter(end=>getComputedStyle(source).getPropertyValue('marker-'+end)!=='none');
+  const overlay=document.createElementNS(NS,'g');overlay.setAttribute('data-ep-copper-overlay','');overlay.setAttribute('aria-hidden','true');overlay.style.pointerEvents='none';source.classList.add('ep-copper-path');
+  const fan=source.matches('.b-fan')&&source.tagName.toLowerCase()==='line';
+  const make=(width,stroke,opacity,shift)=>{const n=document.createElementNS(NS,fan?'path':source.tagName);for(const name of ['d','x1','y1','x2','y2'])if(source.hasAttribute(name))n.setAttribute(name,source.getAttribute(name));if(fan){const x1=+source.getAttribute('x1'),y1=+source.getAttribute('y1'),x2=+source.getAttribute('x2'),y2=+source.getAttribute('y2');n.setAttribute('d',`M${x1},${y1+1.6} L${x2},${y2-7} V${y2-1.6}`);}
+  if(source.matches('.b-mesh')){let d=source.getAttribute('d');d=d.replace(/^(M[-\d.]+,)([-\d.]+)/,(_,m,y)=>m+(+y-1.6)).replace(/V([-\d.]+)$/,(_,y)=>'V'+(+y-1.6));n.setAttribute('d',d);}
+  n.style.setProperty('fill','none');n.style.setProperty('stroke',stroke,'important');n.style.setProperty('stroke-width',width+'px','important');n.style.setProperty('stroke-opacity',String(opacity),'important');n.style.setProperty('vector-effect','none','important');n.style.setProperty('stroke-linecap','butt');n.style.setProperty('stroke-linejoin','miter');n.style.setProperty('marker-start','none','important');n.style.setProperty('marker-end','none','important');if(shift)n.setAttribute('transform','translate(-.18 -.24)');return n;};
+  overlay.append(make(1.5,'#A96C47',1,false),make(1.1,'url(#'+id+')',1,false),make(.2,'#D8A381',.25,false));
+  // Paint ports last so the fine highlight terminates inside the solid copper pad.
+  const ports=make(1.5,'none',0,false);
+  for(const end of markers)ports.style.setProperty('marker-'+end,'url(#ep-copper-port)','important');
+  overlay.append(ports);source.style.setProperty('stroke-opacity','0','important');source.style.setProperty('marker-start','none','important');source.style.setProperty('marker-end','none','important');source.after(overlay);
+ });
+}
 </script><script>// Isolated final step. The nine-stage graph and Rank renderers are inherited.
 let deploymentActive=false,deploymentPreparing=false,deploymentState=null;
 let deploymentGraphPrimary=false;
@@ -1800,7 +1828,7 @@ function drawDeployment(){
  body+=`<g data-deployment-token="${parameterState.token}" data-token-owner="${rank.id}"><text x="${x}" y="${y}" text-anchor="middle" style="fill:#eee;font:13px ui-monospace,monospace">t${parameterState.token} · ${chosen.map(e=>'E'+e).join(' / ')}</text></g>`;
  }
  body+=`<text class="deployment-board-label" x="660" y="8" text-anchor="middle">板 0 · 灵衢 UB</text>`;
- updateGraphSvg(document.querySelector('#deployment-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+body+'</svg>');applyDeploymentCamera();
+ updateGraphSvg(document.querySelector('#deployment-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+body+'</svg>');applyEPCopper(document.querySelector('#deployment-world'),'.deployment-layer-dispatch,.deployment-layer-return');applyDeploymentCamera();
  const collective=['tp','cache','dp','edp'].includes(s.mode);
  const modes=[['tp',c.tp===1?'TP · 本地':c.sp?'TP/SP · AG/RS':'TP · AllReduce'],...(c.recollect?[['cache','缓存 · AG']]:[]),['dispatch','EP · Dispatch'],['return','EP · Return'],['dp','DP · 梯度'],['edp','专家副本 · 梯度']];
  const tips={tp:'TP 组内前向与反向通信；SP 开启时使用 AG/RS',cache:'WGRAD 前在 TP 组内重新收集保存的输入分片',dispatch:'token 按 Top-2 专家归属分发',return:'专家输出返回来源 Rank',dp:'稠密参数梯度在相同 TP lane 的 DP 组同步',edp:'同一专家、同一 TP 分片在专家副本组同步'};
@@ -2388,7 +2416,9 @@ function physicalRender(){
  svg.querySelectorAll('use[href^="#hw-"]').forEach(el=>el.setAttribute('href',el.getAttribute('href').replace('#hw-','#deployment-hw-')));
  if(typeof deploymentTraceOpen!=='undefined'&&deploymentTraceOpen&&deploymentTraceWindow&&deploymentTraceModel?.events){const events=deploymentTraceModel.events;svg.querySelectorAll('.physical-rank').forEach(g=>{const id=g.dataset.observationRank??g.dataset.deploymentRank,occurrence=observationData?observationOccurrence:deploymentMode,local=events.filter(e=>e.rankId===id&&e.occurrenceId===occurrence);if(local.length)g.classList.toggle('trace-outside-window',!local.some(e=>e.time.end>=deploymentTraceWindow.start&&e.time.start<=deploymentTraceWindow.end));});}
  const shell=document.createElementNS('http://www.w3.org/2000/svg','g');shell.classList.add('lingqu-physical');shell.style.setProperty('--communication-color',color);shell.dataset.lingquScene=board?'board':'pod';shell.append(svg);
- updateGraphSvg(document.querySelector('#deployment-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+shell.outerHTML+'</svg>');applyDeploymentCamera();
+ updateGraphSvg(document.querySelector('#deployment-world'),'<svg xmlns="http://www.w3.org/2000/svg">'+shell.outerHTML+'</svg>');
+ const kind=observationData?CommunicationObservation.communicationKind(observationData,observationData.occurrences.find(o=>o.id===observationOccurrence)):deploymentMode;
+ applyEPCopper(document.querySelector('#deployment-world'),['dispatch','return','ep'].includes(kind)?'.b-mesh.is-hot,.b-fan.is-hot,.rel .is-hot,[data-measured-exchange]':null);applyDeploymentCamera();
  physicalContext={inputId:input.id,pattern,input,focus};
  physicalPath.innerHTML=`<button data-physical-level="pod" aria-pressed="${!board}" data-tip="返回 POD ${focus.pod} 的板与设备拓扑">POD ${focus.pod}</button>${board?`<span>›</span><button data-physical-level="board" aria-pressed="true" data-tip="当前板 ${physicalBoard} 的完整互联">板 ${physicalBoard}</button>`:''}`;
  if(input.metric)physicalPath.insertAdjacentHTML('beforeend',`<span class="physical-metric">${esc(input.metric)}${input.unit==='tokens'&&input.metric.includes('token')?'':' · '+esc(input.unit)}</span>`);
