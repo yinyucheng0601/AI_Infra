@@ -2,6 +2,58 @@
   "version": 1,
   "assets": [
     {
+      "id": "harmonyos-ai-development-research",
+      "title": "鸿蒙应用＋端侧模型：开发工具探索",
+      "type": "knowledge",
+      "form": "产品研究 · 34 页",
+      "summary": "从 AI Infra 算子开发视角向应用层探索：梳理苹果 AI 生态与 Core AI 调试调优机制，提出 ArkTS / ArkUI 及 Agent 共用工具能力的设计方向。",
+      "designValue": "面向体验设计师建立应用、模型与设备的关系，连接竞品证据、研究问题与鸿蒙开发工具的新特性设计。",
+      "outline": [
+        "苹果 AI 产品与框架地图",
+        "团队研究范围与应用开发流程",
+        "模型质量调查与应用性能调优",
+        "Swift 接入与 Agent 使用方式",
+        "ArkTS / ArkUI 接入、回归与共用服务"
+      ],
+      "domains": [
+        "HarmonyOS",
+        "Apple",
+        "AI Infra"
+      ],
+      "topics": [
+        "competitive",
+        "ecosystem",
+        "experience",
+        "inference"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "draft",
+      "visibility": "public",
+      "publicationReview": "2026-11-26：用户明确要求收录 Library 知识库并推送；作为产品研究与设计探索稿公开。",
+      "content": "reports/HarmonyOS_AI_Research 4/index.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/reports/HarmonyOS_AI_Research 4/index.html",
+          "sha256": "02e5bcddc36eed7d3a5c951a547df81684a61b460584aa7753f32d10cc7c9140",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "validation": [
+        "2026-11-26：34 页结构、SVG 语法、目录锚点、脚本语法与静态渲染检查通过；未完成浏览器交互验收或设备、模型实测。",
+        "Apple 产品机制依据官方文档；鸿蒙方案与接口为待工程验证的设计建议。"
+      ],
+      "related": [
+        "dynamo-product-analysis"
+      ],
+      "reviewedAt": "2026-11-26",
+      "addedAt": "2026-11-26",
+      "author": "Yucheng"
+    },
+    {
       "id": "training-graph",
       "title": "分布式训练 · 计算与通信",
       "type": "pattern",

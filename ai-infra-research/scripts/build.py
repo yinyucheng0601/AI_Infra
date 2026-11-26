@@ -113,6 +113,7 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
     }
     replacements.update({'__PASS_OBSERVABILITY_COVER__': 'data:image/svg+xml;base64,' + base64.b64encode((ROOT / 'web/media/pass-observability-cover.svg').read_bytes()).decode('ascii'),})
     replacements['__VISUAL_REVIEW_COVER__'] = 'data:image/png;base64,' + base64.b64encode((ROOT / 'web/media/ai-infra-visual-review-cover.png').read_bytes()).decode('ascii')
+    replacements['__HARMONYOS_AI_RESEARCH_COVER__'] = 'data:image/jpeg;base64,' + base64.b64encode((ROOT / 'web/media/harmonyos-ai-research-cover.jpg').read_bytes()).decode('ascii')
     if mode == 'standalone':
         # Embed only compact thumbnails so file and sandbox previews can show covers.
         raster_sources = {

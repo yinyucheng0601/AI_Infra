@@ -12,6 +12,7 @@
   const $=id=>document.getElementById(id);
   let state=C.parseState(location.search,assets), health=null;
   const documentFigures={
+    'harmonyos-ai-development-research':{src:'__HARMONYOS_AI_RESEARCH_COVER__',alt:'苹果 AI 生态产品地图：系统调用应用、应用接入模型与开发调查工具'},
     'ai-infra-visual-review':{src:'__VISUAL_REVIEW_COVER__',alt:'AI Infra 视觉设计复盘：问题驱动、认知减负与有效控制'},
     'unpack-case3-inspector':{src:'__UNPACK_CASE3_COVER__',alt:'Unpack case3：INT32 多输出拆分、任务与核分配'},
     'scale-broadcast-inspector':{src:'__SCALE_BROADCAST_COVER__',alt:'Scale：共享 scale 和 bias 与各批次输出的关系'},
