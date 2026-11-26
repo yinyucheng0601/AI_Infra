@@ -1,0 +1,25 @@
+const fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
+const ROOT=path.resolve(__dirname,'../../../../..'),OUT=path.join(ROOT,'review-output/training-pattern-composition/moe-focus-2026-11-26');
+const {chromium}=require(path.join(ROOT,'ai-infra-visual-arch-v3/presentation/node_modules/playwright'));
+fs.mkdirSync(OUT,{recursive:true});let browser;
+(async()=>{
+ browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+ const p=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.goto('http://127.0.0.1:8907/ai-infra-research/patterns/npu-memory-atlas/variants/index_training.html');
+ await p.evaluate(()=>{playing=false;TrainingComposition.setPrimary(true,false);TrainingComposition.selectLayer(6)});
+ await p.locator('#training-stack .plane[data-layer="6"]').focus();await p.keyboard.press('Enter');
+ await p.waitForFunction(()=>document.body.classList.contains('training-front-view'));
+ const samples=await p.evaluate(()=>new Promise(resolve=>{const samples=[];let n=0;function frame(){const svg=document.querySelector('.training-full-source'),v=svg.viewBox.baseVal;samples.push({x:v.x,y:v.y,width:v.width,height:v.height});if(++n<20)requestAnimationFrame(frame);else resolve(samples);}frame();}));
+ await p.waitForTimeout(450);
+ const focused=await p.evaluate(()=>{const svg=document.querySelector('.training-full-source'),v=svg.viewBox.baseVal;return {camera:{x:v.x,y:v.y,w:v.width,h:v.height},region:{x:+svg.dataset.moeX,y:+svg.dataset.moeY,w:+svg.dataset.moeWidth,h:+svg.dataset.moeHeight},positions:TrainingGraphSnapshot.nodes.filter(n=>n.layout).map(n=>({id:n.id,...n.layout})),groups:[...svg.querySelectorAll('.module-frame')].slice(0,8).map(n=>({x:+n.getAttribute('x'),y:+n.getAttribute('y'),w:+n.getAttribute('width'),h:+n.getAttribute('height')})),width:+svg.dataset.width};});
+ assert.ok(samples.at(-1).width<samples[0].width*.9,'second camera movement zooms into MoE');assert.ok(samples.every((s,i)=>!i||s.width<=samples[i-1].width+.01));
+ const {camera:c,region:r}=focused;assert.ok(c.x<=r.x&&c.x+c.w>=r.x+r.w&&c.y<=r.y&&c.y+c.h>=r.y+r.h,'entire Router/Experts/Combine region remains visible');
+ const experts=focused.positions.filter(n=>/^moe-e\d+$/.test(n.id));assert.equal(experts.length,64);
+ assert.equal(focused.groups[0].y,focused.groups[1].y,'EP0/EP1 share a row');assert.ok(focused.groups[2].y>focused.groups[0].y);assert.ok(focused.groups[1].x>focused.groups[0].x+focused.groups[0].w);
+ const wgrad=focused.positions.find(n=>n.id==='full-w-qkv'),dgrad=focused.positions.find(n=>n.id==='full-b-dq');assert.ok(dgrad.x-wgrad.x<750);assert.ok(focused.width<2800,'canvas follows compact content, not fixed 3200');
+ await p.screenshot({path:path.join(OUT,'moe-focused.png')});
+ await p.locator('#graph-fit').click();const overview=await p.locator('.training-full-source').evaluate(svg=>({w:svg.viewBox.baseVal.width,h:svg.viewBox.baseVal.height}));assert.ok(overview.h>c.h*1.2);await p.screenshot({path:path.join(OUT,'full-overview.png')});
+ await p.evaluate(()=>TrainingWorkbench.focusMoe(true));await p.locator('.training-full-source').dispatchEvent('wheel',{deltaY:100,clientX:720,clientY:400,bubbles:true});const interrupted=await p.evaluate(()=>TrainingWorkbench.camera);await p.waitForTimeout(450);assert.deepEqual(await p.evaluate(()=>TrainingWorkbench.camera),interrupted,'wheel cancels automatic focus');
+ await p.keyboard.press('Escape');await p.emulateMedia({reducedMotion:'reduce'});await p.setViewportSize({width:390,height:844});await p.locator('#training-stack .plane[data-layer="6"]').focus();await p.keyboard.press('Enter');await p.screenshot({path:path.join(OUT,'moe-focused-narrow.png')});
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(OUT,'checks.json'),JSON.stringify({samples,focused,overview,errors},null,2));console.log('PASS two-stage MoE zoom, compact EP groups/columns, 64 experts, full overview return, gesture cancellation, reduced motion/narrow');await browser.close();
+})().catch(async e=>{console.error(e);await browser?.close();process.exitCode=1});

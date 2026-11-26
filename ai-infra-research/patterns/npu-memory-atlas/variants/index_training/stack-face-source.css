@@ -1,0 +1,37 @@
+#training-stack .stack-face{pointer-events:none}
+#training-stack .stack-face text{text-anchor:middle;dominant-baseline:middle;font-family:Inter,"PingFang SC",system-ui,sans-serif}
+#training-stack .stack-face .tensor-label{font-size:13px;font-weight:600;paint-order:stroke fill;stroke:#111;stroke-width:3px;stroke-linejoin:round}
+#training-stack .stack-face .activation .tensor-label{fill:#B1EF6B}
+#training-stack .stack-face .weight .tensor-label{fill:#BCA0F3}
+#training-stack .stack-face .gradient .tensor-label{fill:#79D4F2}
+#training-stack .stack-face .tensor-outline{stroke-width:1.2}
+#training-stack .stack-face .op{fill:#505050;stroke:#858585;stroke-width:1.2}
+#training-stack .stack-face .op-label{fill:#fff;font-size:15px;font-weight:650}
+#training-stack .stack-face .stack-edge{fill:none;stroke:#777;stroke-width:1.3}
+#training-stack .stack-face circle{fill:#111;stroke:#ddd;stroke-width:1.2}
+#training-stack .stack-face .add-mark{fill:none;stroke:#ddd;stroke-width:1.2}
+#training-stack .stack-face .gradient.stack-edge{stroke-dasharray:4 3}
+#training-stack .stack-face .has-alert .tensor-outline{stroke:#FD5644;stroke-width:2}
+#training-stack .stack-face .has-alert .tensor-label{fill:#FD5644}
+#training-stack .stack-face .stack-detail{display:none}
+#training-stack .chosen .stack-face .stack-detail{display:initial}
+#training-stack .stack-face[data-mode=activation] .weight,#training-stack .stack-face[data-mode=activation] .gradient,#training-stack .stack-face[data-mode=weight] .gradient{display:none}
+#training-stack .stack-face[data-mode=weight] .activation,#training-stack .stack-face[data-mode=gradient] .activation{opacity:.4}
+#training-stack .stack-face[data-mode=gradient] .weight{opacity:.5}
+#training-stack .stack-face[data-ready=false] .grid-cell{opacity:.08}
+#training-stack .stack-face[data-ready=false]{opacity:.45}
+#training-stack[data-view=side] .stack-face{display:none}
+#training-stack .plane.chosen .outline{stroke-width:2}
+
+#training-stack .stack-face .weight .tensor-label,#training-stack .stack-face .gradient .tensor-label{font-size:11px}
+
+#training-stack .chosen .stack-summary{display:none}
+
+#training-stack .plane .layer-rms-label{display:none!important}
+
+:root[data-theme=light] #training-stack .stack-face .tensor-outline{fill:var(--plane)}
+:root[data-theme=light] #training-stack .stack-face .tensor-label{fill:var(--ink);stroke:var(--plane)}
+:root[data-theme=light] #training-stack .stack-face .op{fill:var(--op);stroke:var(--line)}
+:root[data-theme=light] #training-stack .stack-face .op-label{fill:var(--ink)}
+:root[data-theme=light] #training-stack .stack-face circle{fill:var(--plane);stroke:var(--muted)}
+:root[data-theme=light] #training-stack .stack-face .add-mark{stroke:var(--ink)}

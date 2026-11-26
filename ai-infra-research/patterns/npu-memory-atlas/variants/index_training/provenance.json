@@ -1,0 +1,107 @@
+{
+  "sources": [
+    {
+      "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html",
+      "sha256": "4895539ee7180b2bab3c1f5f24847f5cb4ed711a55a883887e391d633415ad21"
+    },
+    {
+      "path": "ai-infra-research/patterns/liquid-glass-controls/liquid-glass.js",
+      "sha256": "8123f18de99d7371b68aaf66ae344bbbb6b5e4d187b6daeaf2d8759c6b1780b9"
+    },
+    {
+      "path": "ai-infra-research/patterns/liquid-glass-controls/liquid-glass.css",
+      "sha256": "70742469fd0bace18b22a97b97be7ddf2dc3344146eeecd57d9f5ab022ad8b6d"
+    },
+    {
+      "path": "ai-infra-research/patterns/liquid-glass-controls/LICENSE",
+      "sha256": "62d298ef9dab08ee1ceb20877aa4ad38c3bb71aa0cb779a8738ecfa652160052"
+    },
+    {
+      "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm/ep-model.js",
+      "sha256": "06689a880884ab09507ed851cebd4e9d46b0f8924b928c0c9f565dd95544de44"
+    },
+    {
+      "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm/rank-workbench.js",
+      "sha256": "b167254d1f4622cd09bd1634e8413e5887020172f6d3016aac9771e019c9c591"
+    },
+    {
+      "path": "layer_stack/inference-layer-stack.html",
+      "sha256": "28a8e1b688f346278cf7445cfc348575497043ee569c8ff3a26e3ebdc1e89da3",
+      "revision": "0c10ca141b5be7563754d5daec62b02dc8ac29c8"
+    },
+    {
+      "path": "layer_stack/inference-layer-stack.css",
+      "sha256": "b450b20f0e6255fa8a52869dd006cf97e1f5994e8685aefccf4a8cfe7a2367d1"
+    },
+    {
+      "path": "layer_stack/pangu-layer-stack_2.html",
+      "sha256": "4f67a132107c1eed53204b1ab7f17d97d00d53e3e414e1fe642cfc89b4fefdd2"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/expert-glyph.js",
+      "sha256": "d7e5eed4090b71d48833a413794a7c79466b2f8cc1e99603266e55fcb035d932"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/graph-layout.js",
+      "sha256": "5bf131fbd5f43e6588b7455f47163ecad867ab4173cda84bd11bb6bae0ffd12c"
+    },
+    {
+      "path": "ai-infra-research/prototypes/logsumexp-case5/page.html",
+      "sha256": "8627d7abe12e38bcbfaf7a49752c98e2a3074f0e4f2534324f2d8978a3134415"
+    },
+    {
+      "path": "ai-infra-research/patterns/expand-broadcast-inspector/index.html",
+      "sha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe"
+    },
+    {
+      "path": "layer_stack/pangu-layer-stack_2.html",
+      "sha256": "4f67a132107c1eed53204b1ab7f17d97d00d53e3e414e1fe642cfc89b4fefdd2"
+    },
+    {
+      "path": "layer_stack/pangu-layer-stack-standalone.html",
+      "sha256": "f58f3a1210c380647e02d2424755590afae6c80ef9e1010ee58e0d002a2dbf1f"
+    },
+    {
+      "path": "layer_stack/inference-layer-stack.html",
+      "sha256": "28a8e1b688f346278cf7445cfc348575497043ee569c8ff3a26e3ebdc1e89da3",
+      "revision": "0c10ca141b5be7563754d5daec62b02dc8ac29c8"
+    },
+    {
+      "path": "layer_stack/inference-layer-stack.css",
+      "sha256": "b450b20f0e6255fa8a52869dd006cf97e1f5994e8685aefccf4a8cfe7a2367d1"
+    },
+    {
+      "path": "layer_stack/layer-front.js",
+      "sha256": "5870e1180f22c5bfb21dc7e4bbd6101c859fdb1d0bb6dc1960434d88b1a1b295"
+    },
+    {
+      "path": "layer_stack/layer-stack-face.js",
+      "sha256": "5361925e2d207ddd7b1866371ce2b5939c25b795ceea84830d1bcca3e1b687cb"
+    },
+    {
+      "path": "layer_stack/layer-stack-face.css",
+      "sha256": "72d0b8db3e78f24c820e361bfe7fdc12a03e78a0a10429ae34b6116bf074ac03"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/canonical.js",
+      "sha256": "cfef5923432fd8a374c92cf33ce1474663a4d35f3ac7d29927a61948ac49b41a"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/graph-model.js",
+      "sha256": "150d3351c7258f9b6f536b41e55ab449073bf8c1697fcefc579733983996ff37"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/training-graph.js",
+      "sha256": "89023f64d832b70209dc48b840500de305a2e3f08ca13299f47de230dfcd4c5e"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/graph-renderer.js",
+      "sha256": "c283e3d6c2c6169265b91d4361994283512732d0ecc248ba72cca45c37d01911"
+    },
+    {
+      "path": "ai-infra-research/patterns/training-graph/demo.css",
+      "sha256": "053959db940ce20a992771e885b632b329acff2cf9c0e75add57b225d8ca9f36"
+    }
+  ],
+  "note": "Source UI reused; independent semantic and layout adapters. No measured training trace."
+}

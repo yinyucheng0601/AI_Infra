@@ -1585,6 +1585,61 @@
       "author": "Yucheng"
     },
     {
+      "id": "training-visualization-integrated-v2",
+      "title": "训练可视化 整合新版",
+      "type": "pattern",
+      "form": "交互 Pattern",
+      "summary": "将训练 Layer Stack、MoE 计算图与多 Rank 内存视图整合，联动逐层 F/B 播放、专家归属和通信组。",
+      "designValue": "以稳定 Layer 身份串联空间层叠、转正聚焦和 Rank 关联，复用现有图元、无限画布与定稿 Liquid Glass 控件。",
+      "outline": [
+        "Layer / Rank 主辅视图互换",
+        "连续邻层吸附与单击转正",
+        "MoE 自动聚焦与完整计算图",
+        "专家分组与 Dispatch / Combine / TP 通信关联",
+        "逐层 F/B、梯度累积及权重更新",
+        "深浅主题与 Liquid Glass v2 控件"
+      ],
+      "domains": [
+        "AI Infra",
+        "Distributed Training",
+        "MoE",
+        "Visualization"
+      ],
+      "topics": [
+        "training",
+        "operators",
+        "experience",
+        "visual"
+      ],
+      "media": [
+        "web"
+      ],
+      "status": "reviewed",
+      "visibility": "public",
+      "content": "patterns/npu-memory-atlas/variants/index_training.html",
+      "sources": [
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_training.html",
+          "sha256": "142f2c41e37a463780841c9fb2208028ba54930c132b082a83713435d8956929",
+          "url": null,
+          "revision": null
+        }
+      ],
+      "publicationReview": "2026-11-26：用户授权将当前整合版本收录为“训练可视化 整合新版”并 push。",
+      "validation": [
+        "2026-11-26：1440×900 与 390×844 本地浏览器检查覆盖连续 Layer 吸附、F/B 定位、转正及 MoE 聚焦、返回视角、Rank 计算图入口、EP/TP 组关联、深浅主题及无模糊播放条；Liquid Glass v2 文件与定稿源一致。",
+        "模型、分片、容量与路由基于宿主配置推导；播放表示步骤顺序，不作为实测性能 Trace。"
+      ],
+      "related": [
+        "training-graph",
+        "npu-memory-atlas-training",
+        "pangu-layer-atlas-2"
+      ],
+      "reviewedAt": "2026-11-26",
+      "author": "Yucheng"
+    },
+    {
       "id": "npu-memory-atlas-training",
       "title": "NPU 训练内存与 EP 通信",
       "form": "交互 Pattern",

@@ -1,0 +1,21 @@
+.training-full-source .text{font-size:18px;fill:#e8e8e8}
+.training-full-source .small{font-size:14px;fill:#bbb}
+.training-full-source .tiny{font-size:12px;fill:#bbb}
+.training-full-source .mono{font-family:ui-monospace,monospace}
+.training-full-source .wire{fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.training-full-source .hit{cursor:pointer}
+.training-full-source .hit:hover [data-kind=op]>rect{fill:#626262}
+.training-full-source .hit.selected [data-kind=op]>rect{fill:#f0f0f0}
+.training-full-source .hit.selected [data-kind=communication]>rect{fill:#f0f0f0}
+.training-full-source .hit.selected [data-kind] text{fill:#111}
+.training-full-source .hit.selected [data-object]>rect{fill:#eee}
+.training-full-source .hit:focus{outline:none}
+.training-full-source .hit:focus text{text-decoration:underline}
+.training-full-source .panel-frame{fill:none;stroke:#353535;stroke-width:1}
+.training-full-source .module-frame{fill:#fff;fill-opacity:.05;stroke:none;stroke-width:0}
+.training-full-source .off-route{opacity:.35}
+.training-full-source .is-route{opacity:1}
+.training-full-source .compact-expert.off-route{opacity:.35}
+.training-full-source .hit.selected [data-kind=expert]>rect:first-child{fill:#777}
+.training-full-source .hit.selected [data-kind=expert] text{fill:#fff}
+.training-full-source .hit:hover [data-kind=expert]>rect:first-child{fill:#707070}

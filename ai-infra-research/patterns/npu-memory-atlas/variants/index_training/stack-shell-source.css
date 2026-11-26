@@ -1,0 +1,14 @@
+/* Source plane surfaces and outline. Current user explicitly requested the
+reference layer border; scope this to the Stack, not global selection UI. */
+#training-stack .plane>.outline{fill:#131313;stroke:#393939;stroke-width:1.5;vector-effect:non-scaling-stroke}
+#training-stack .plane.chosen>.outline{fill:#1b1b1b;stroke:#fff;stroke-width:2}
+#training-stack .plane.preview:not(.chosen)>.outline{stroke:#bcbcbc;stroke-width:1.5}
+#training-stack .external-layer-number{user-select:none;paint-order:stroke;stroke:#111;stroke-width:3px;stroke-linejoin:round}
+#training-stack .external-layer-number:focus-visible{text-decoration:underline;outline:none}
+:root[data-theme=light] #training-stack .plane>.outline{fill:#efefef;stroke:#fff;filter:drop-shadow(0 5px 12px rgb(0 0 0 / 16%))}
+:root[data-theme=light] #training-stack .plane.chosen>.outline{fill:#dedede;stroke:#fff}
+
+#training-stack{color-scheme:dark;--bg:#111;--panel:#1c1c1c;--surface:#292929;--ink:#eee;--muted:#aaa;--line:#555;--plane:#131313;--selected-plane:#1b1b1b;--op:#494949;--cube-top:#353535;--cube-left:#202020;--cube-right:#515151;--activation:#b1ef6b;--token-blue:#3187EC;--cache-blue:#afd2f6;--cache-surface:#94aecc;--cache-ink:#080a0d}
+:root[data-theme=light] #training-stack{color-scheme:light;--bg:#f6f6f6;--panel:#fff;--surface:#e6e6e6;--ink:#252525;--muted:#626262;--line:#999;--plane:#efefef;--selected-plane:#dedede;--op:#d5d5d5;--cube-top:#fff;--cube-left:#dedede;--cube-right:#ececec;--activation:#417724}
+#training-stack .external-layer-number{fill:var(--muted);stroke:var(--bg);font-size:13px;font-family:monospace}
+#training-stack .external-layer-number.active,#training-stack .external-layer-number.preview{fill:var(--ink);font-size:18px}

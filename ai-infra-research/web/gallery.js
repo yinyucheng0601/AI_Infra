@@ -36,6 +36,7 @@
     'pypto-compilation-guide':{src:'__PYPTO_COMPILATION_COVER__',alt:'PyPTO 编译图解：张量、计算、Kernel 与 Task 的关系'},
     'pangu-layer-atlas-2':{src:'__PANGU_LAYER_ATLAS_2_COVER__',alt:'Pangu Layer Atlas 2：层内计算结构、空间层叠与 L18 异常高亮'},
     'pangu-layer-atlas':{src:'__PANGU_LAYER_ATLAS_COVER__',alt:'Layer Atlas：49 层空间堆叠、异常层高亮、选中 L32 与 Rank 内存联动'},
+    'training-visualization-integrated-v2':{src:'__TRAINING_INTEGRATED_COVER__',alt:'训练可视化整合新版：计算图、MoE 专家分布与关联 Rank'},
     'npu-memory-atlas-training':{src:'__NPU_MEMORY_COVER__',alt:'Rank 2 训练内存轴测分层：权重、梯度、优化器态、激活与空余容量'},
     'spatial-systems-ui-style-guide':{src:'__SPATIAL_SYSTEMS_COVER__',alt:'Layer Atlas 空间系统界面：模型层叠、选中层与异常定位'},
     'llm-inference-dense-to-clusters':{src:'__LLM_INFERENCE_COVER__',alt:'LLM 推理封面：Prefill 建立缓存，Decode 循环生成 Token'},

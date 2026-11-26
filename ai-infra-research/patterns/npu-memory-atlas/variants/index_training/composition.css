@@ -1,0 +1,177 @@
+/* Layout bindings only. Surfaces/controls use index_comm's --ui/--wb tokens.
+ * Preview geometry: inference-layer-stack.css .rank-primary/.atlas-pane.
+ * Plane geometry: pangu-layer-stack_2.html. Menus/help are extracted sources.
+ */
+@import url('help-source.css');
+@import url('menu-source.css');
+@import url('stack-face-source.css');
+@import url('stack-shell-source.css');
+@import url('full-graph-source.css');
+@import url('reference-ui.css');
+#training-stack{position:fixed;inset:0;width:100%;height:100dvh;min-width:0;touch-action:none;cursor:grab;z-index:0}
+#training-stack .plane{cursor:pointer;outline:none}
+
+#training-stack text{pointer-events:none}
+#training-stack .external-layer-number{pointer-events:auto;cursor:pointer}
+#training-stack .ground-rail{color:var(--muted)}
+#training-stack .ground-rail text{font:18px ui-monospace,monospace;fill:var(--muted)}
+#training-stack .rail-baseline{stroke:var(--line);opacity:.5}
+#training-stack .rail-plane-link{stroke:var(--muted);opacity:.4}
+#training-stack .mb-flow-arrow{transform-box:fill-box;transform-origin:center;transform:scale(.75);stroke-linecap:round;stroke-linejoin:round}
+#training-stack .mb-mark{cursor:pointer;outline:none}
+#training-stack .mb-mark:focus-visible rect,#training-stack .mb-mark:hover rect{fill:var(--surface)}
+:root{--training-turn-duration:400ms;--training-turn-ease:cubic-bezier(.22,1,.36,1)}
+#training-layer-turn{position:fixed;inset:0;width:100%;height:100%;z-index:18;pointer-events:none}
+body.training-front-view #training-stack{visibility:hidden}
+body.training-front-view #graph-query{position:fixed;inset:0!important;width:100%!important;max-width:none;max-height:none;border:0;border-radius:0;padding:20px 24px 90px;z-index:10;background:var(--wb-bg)}
+body.training-front-view #graph-query .graph-query-head{padding-right:180px}
+body.training-front-view #graph-query .graph-query-locator{position:absolute;top:72px;left:24px;z-index:2;max-width:300px;background:var(--wb-bg)}
+body.training-front-view #graph-query .graph-resize{display:none}
+body.training-front-view #graph-tools{position:absolute;left:200px;top:24px;z-index:2}
+body.training-front-view #stack-view-dial,body.training-front-view #primary-swap{z-index:13}
+body.training-front-view #scene{z-index:12}
+body.training-front-view #training-identity{visibility:hidden}
+body #scene{position:fixed;inset:0;width:100%;height:100dvh}
+body.stack-primary #scene{inset:auto 24px 90px auto;width:230px;height:180px;pointer-events:none;z-index:2}
+body:not(.stack-primary) #training-stack{inset:auto 24px 90px auto;width:230px;height:180px;pointer-events:none;z-index:2}
+#primary-swap{position:fixed;right:24px;bottom:85px;width:230px;height:185px;z-index:3;border:0;background:transparent;color:var(--ui-text);padding:10px;display:flex;align-items:flex-end;justify-content:center;cursor:pointer}
+#primary-swap:hover{background:transparent}
+#primary-swap:focus-visible{background:transparent;outline:0;text-decoration:underline}
+.composition-swapping #primary-swap{pointer-events:none}
+body.stack-primary .scope-switch,body.stack-primary #view-scope,body.stack-primary #flat-stage,body.stack-primary #flat-help,body.stack-primary #flat-context,body.stack-primary #memory-legend,body.stack-primary #ep-token-legend{display:none!important}
+body.stack-primary #ep-dock [data-mode],body.stack-primary #ep-oom-mode,body.stack-primary #tensor,body.stack-primary .graph-toggle-separator{display:none!important}
+#training-identity{position:fixed;top:28px;left:28px;z-index:1;color:var(--ui-muted);font:12px/1.7 ui-monospace,monospace;pointer-events:none}
+#training-identity strong{display:block;font:20px/1.5 Arial,sans-serif;color:var(--ui-text)}
+#graph-query .graph-query-head span:empty,#query-note:empty{display:none}
+#graph-query{background:var(--wb-bg)!important;color:var(--wb-fg)}
+#graph-query .graph-query-head,#graph-query .graph-query-locator,#graph-query .operator-path{background:var(--wb-bg)}
+#graph-query .operator-path{padding:12px;overflow:hidden;display:flex;flex-direction:column}
+.cg-viewport{flex:1;height:auto;min-height:0}
+.training-compute .training-expert:not(.is-route)>g{opacity:1}
+:root[data-theme=light] .training-compute .cg-annotation{fill:#555}
+.training-compute .training-expert.is-route>g>rect:first-child{fill:var(--wb-fg)}
+.training-compute .training-expert.is-route>g>text{fill:var(--wb-bg)}
+.training-compute .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .training-expert>g>rect:first-child{fill:var(--wb-fg)}
+.training-compute .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .training-expert>g>text{fill:var(--wb-bg)}
+.training-compute .cg-hit:focus-visible{outline:none}
+.training-compute .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .op-label{fill:#111}
+.training-compute .cg-hit:is(:hover,:focus-visible,[aria-pressed=true]) .op{fill:#e8e8e8;stroke:none}
+.training-compute .cg-hit.is-executing .op{fill:#e8e8e8;stroke:none}
+.training-compute .cg-hit.is-executing .op-label{fill:#111}
+.training-compute .backward-edge{opacity:.35}
+.training-compute[data-training-phase=backward] .backward-edge{opacity:1}
+#graph-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 20px 8px;font:12px ui-monospace,monospace}
+#graph-tools button{border:0;border-radius:999px;background:transparent;color:var(--ui-text);min-height:36px;padding:5px 10px;cursor:pointer}
+#graph-tools button:hover,#graph-tools button:focus-visible{background:var(--ui-hover);outline:0}
+#graph-tools input{width:68px!important;min-height:36px}
+#graph-tools label{display:flex;align-items:center;gap:8px}
+.training-menu-trigger{background:var(--input-fill,var(--ui-fill));color:var(--ui-text);max-width:100%;justify-content:space-between}
+.training-menu-trigger[hidden]{display:none!important}
+.training-menu{position:fixed!important;z-index:70;max-height:min(360px,60dvh);overflow:auto;min-width:150px;visibility:visible}
+.training-menu-trigger:focus-visible{box-shadow:none!important;background:var(--ui-hover);text-decoration:underline}
+.training-menu button{min-height:36px}
+#training-help.usage-window{color:var(--ui-text);background:var(--wb-bg);font:14px/1.7 system-ui,sans-serif;overflow:auto}
+#training-help .panel-head{display:flex;align-items:center;justify-content:space-between}
+#training-help button{color:inherit;background:transparent;border:0;min-width:36px;min-height:36px;cursor:pointer}
+#training-help pre{white-space:pre-wrap;background:var(--ui-hover);padding:12px}
+#training-help .prompt-block{position:relative}
+#training-help #training-copy{position:absolute;right:8px;top:8px}
+#training-help #training-prompt{padding-right:54px}
+#training-help button:focus-visible{outline:0;text-decoration:underline;background:var(--ui-hover)}
+#ep-dock>nav{box-sizing:border-box;min-height:54px}
+body button:focus-visible,body summary:focus-visible{outline:none;box-shadow:none;text-decoration:underline}
+body .layout-tabs,body .layout-tabs button{border-radius:999px}
+body .expert-grid button[aria-pressed=true]{border-color:transparent;background:var(--wb-fg);color:var(--wb-bg)}
+body [data-shard-detail]:focus-visible{outline:none}
+body #scene :is(.rank-focus-selected,.rank-focus-related) :is(.rank-outline,.rank-outer-border){stroke:none}
+:root[data-theme=light] #scene :is(.rank-focus-selected,.rank-focus-related) :is(.rank-outline,.rank-outer-border){stroke:none}
+body #graph-query .graph-query-head strong{font-weight:500}
+@media(max-width:760px){
+ body.training-front-view #graph-query{padding:14px 14px 145px}
+ body.training-front-view #graph-query .graph-query-head{padding-right:0}
+ body.training-front-view #graph-query .graph-query-head strong{font-size:13px}
+ body.training-front-view #graph-query .graph-query-locator{position:static;max-width:none}
+ body.training-front-view #graph-tools{position:static;padding:4px 0}
+ body.training-front-view #stack-view-dial{display:none}
+ #primary-swap,body:not(.stack-primary) #training-stack,body.stack-primary #scene{right:14px;bottom:150px;width:150px;height:120px}
+ #primary-swap{height:132px;font-size:11px}
+ #training-identity{left:14px;top:18px;max-width:calc(100vw - 130px)}
+ #graph-query{left:14px;right:14px;max-width:calc(100vw - 28px);width:auto;top:70px}
+ #ep-dock button{min-height:44px}
+ #ep-dock #play,#ep-dock #restart{width:44px;min-width:44px}
+ .training-menu button,#graph-tools button{min-height:44px}
+ #training-help.usage-window{width:calc(100vw - 28px);max-height:calc(100dvh - 48px);padding:18px}
+}
+@media(prefers-reduced-motion:reduce){#training-stack *{transition:none!important}}
+
+/* Restored reference components: continuous plane faces, central cube dial,
+ * and discrete segmented playback. These override the abbreviated v1 chrome. */
+#stack-view-dial{position:fixed;right:26px;top:94px;width:148px;z-index:13;transform:none}
+#stack-view-dial>button{display:block;width:148px;height:148px;border:0;background:transparent;padding:0;cursor:pointer}
+#stack-view-dial svg{display:block;width:148px;height:148px;overflow:visible}
+#stack-view-dial .cube-face{stroke:var(--ui-text);stroke-width:1.2;stroke-linejoin:round}
+#stack-view-dial .dial-ring{fill:none;stroke:var(--wb-line);stroke-width:1}
+#stack-view-dial .dial-label{fill:var(--ui-muted);font:9px ui-monospace,monospace;text-anchor:middle}
+#stack-view-dial .dial-marker{fill:var(--ui-text)}
+#stack-view-name{position:static;display:block;width:auto;transform:none;text-align:center;font:13px ui-monospace,monospace;letter-spacing:1.5px;background:none;border:0;padding:0;margin-top:8px}
+#training-stack .stack-face{opacity:1}
+#ep-dock>nav[aria-label="视图操作"]{display:none!important}
+.scope-switch{display:none!important}
+.training-graph-entry.bar{position:fixed;left:28px;bottom:28px;height:54px;min-height:54px;padding:8px;border-radius:999px;z-index:8}
+body.stack-primary .training-graph-entry{display:none!important}
+#ep-dock>.zoom-controls{margin-left:auto}
+/* Replace the host's legacy frosted skins with the final v2 material. */
+body :is([data-liquid-glass=control],[data-liquid-glass=icon]){background:var(--glass-fill)!important;border:0!important;box-shadow:0 7px 20px rgb(0 0 0 / 8%)!important}
+body [data-liquid-glass=icon]{position:relative}
+body [data-liquid-glass=panel]{background:rgb(26 26 26 / 78%)!important;border:0!important;box-shadow:0 16px 48px rgb(0 0 0 / 18%),0 3px 10px rgb(0 0 0 / 8%)!important}
+:root[data-theme=light] body [data-liquid-glass=panel]{background:rgb(255 255 255 / 74%)!important;box-shadow:0 16px 48px rgb(0 0 0 / 10%),0 3px 10px rgb(0 0 0 / 5%)!important}
+body #ep-playback.training-progress,body #ep-playback .mb-process,body #ep-playback .request-track,body #ep-playback #ep-progress{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none;box-shadow:none!important;border:0}
+body:not(.stack-primary)[data-query=true] #scene{left:var(--training-graph-edge,54%);right:0;width:calc(100% - var(--training-graph-edge,54%));height:100dvh}
+#stack-view-dial{--cube-top:#353535;--cube-left:#202020;--cube-right:#515151}
+:root[data-theme=light] #stack-view-dial{--cube-top:#fff;--cube-left:#dedede;--cube-right:#ececec}
+#stack-dial-cube path:nth-child(1){fill:var(--cube-top)}
+#stack-dial-cube path:nth-child(2){fill:var(--cube-left)}
+#stack-dial-cube path:nth-child(3){fill:var(--cube-right)}
+/* Approved keynote-light OP palette: preserve source category icon geometry. */
+:root[data-theme=light] .training-full-source :is([data-kind=op],[data-kind=communication])>rect:first-child{fill:#e6e6e6}
+:root[data-theme=light] .training-full-source :is([data-kind=op],[data-kind=communication])>circle{fill:#fafafa}
+:root[data-theme=light] .training-full-source :is([data-kind=op],[data-kind=communication])>path{stroke:#252525!important}
+:root[data-theme=light] .training-full-source :is([data-kind=op],[data-kind=communication])>text{fill:#252525}
+.training-full-source{font-family:Arial,'PingFang SC',sans-serif;--ss-text:var(--wb-fg);--ss-bg:var(--wb-bg)}
+.training-full-source text{fill:var(--wb-fg);font-family:inherit}
+.training-full-source .text{font-size:20px}.training-full-source .small{font-size:14px}.training-full-source .tiny{font-size:12px}.training-full-source .mono{font-family:ui-monospace,monospace}
+.training-full-source .wire{fill:none;stroke-width:1.5}
+.training-full-source .module-frame{fill:#fff;fill-opacity:.05;stroke:none}
+.training-full-source .off-route{opacity:1}
+.training-full-source [data-kind=op]>text,.training-full-source [data-kind=expert]>text{fill:#eee}
+.training-full-source .hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-kind=expert]>rect:first-child{fill:var(--wb-fg)}
+.training-full-source .hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-kind=expert]>text{fill:var(--wb-bg)}
+.training-full-source .hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-kind=op]>rect:first-child{fill:#e8e8e8;stroke:none}
+.training-full-source .hit:is(:hover,:focus-visible,[aria-pressed=true]) [data-kind=op]>text{fill:#111}
+body #ep-playback.training-progress{position:fixed;left:135px;right:245px;top:auto;bottom:18px;width:auto;max-width:none;height:54px;min-height:54px;z-index:16;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:0;margin:0;transform:none!important;border-radius:0}
+body.stack-primary #ep-playback.training-progress{left:135px}
+.training-progress .mb-process{display:flex;gap:5px;align-items:center;padding-top:1px}
+.training-progress .mb-process button{height:30px;width:30px;min-width:30px;border:0;background:transparent;color:var(--ui-text);padding:6px;border-radius:0}
+.training-progress .mb-process svg{width:22px;height:22px}
+.training-progress .request-track{min-width:0}
+.training-progress #ep-progress{display:block;position:relative;width:100%;min-width:0;flex:none}
+.training-progress #timeline{display:block;appearance:none;width:100%;height:16px;margin:0;background:transparent;cursor:ew-resize}
+.training-progress #timeline::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--ui-muted) var(--played),var(--wb-line) var(--played));border-radius:0}
+.training-progress #timeline::-webkit-slider-thumb{appearance:none;width:8px;height:14px;margin-top:-5px;border:0;border-radius:1px;background:var(--ui-text)}
+.training-progress #training-steps{display:grid;gap:3px}
+.training-progress #training-steps button{padding:3px 0;background:transparent;border:0;border-radius:5px;color:var(--ui-muted);font:11px ui-monospace,monospace;min-width:0;min-height:24px;white-space:nowrap;cursor:pointer}
+.training-progress #training-steps button[aria-current=step]{background:var(--ui-fill);color:var(--ui-text)}
+.training-progress #phase{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:root[data-theme=light] .training-full-source .module-frame{fill:#000;fill-opacity:.035}
+:root[data-theme=light] .training-full-source :is(.text,.small,.tiny){fill:#252525}
+:root[data-theme=light] .training-full-source text[style*='fill:#B1EF6B']{fill:#537e1c!important}
+:root[data-theme=light] .training-full-source text[style*='fill:#BCA0F3']{fill:#7850ad!important}
+@media(max-width:760px){
+ .training-graph-entry.bar{left:14px;bottom:90px;height:44px;min-height:44px;padding:4px}
+ body:not(.stack-primary)[data-query=true] #scene{left:0;width:100%}
+ body #ep-playback.training-progress,body.stack-primary #ep-playback.training-progress{left:14px;right:175px;bottom:18px;height:60px;grid-template-columns:58px minmax(0,1fr);gap:5px}
+ .training-progress #training-steps{overflow-x:auto;grid-auto-flow:column;grid-auto-columns:44px;grid-template-columns:none!important}
+ .training-progress #training-steps button{min-height:28px}
+ #stack-view-dial{width:112px;right:14px;top:90px}
+ #stack-view-dial>button,#stack-view-dial svg{width:112px;height:112px}
+}
