@@ -1621,7 +1621,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/npu-memory-atlas/variants/index_training.html",
-          "sha256": "142f2c41e37a463780841c9fb2208028ba54930c132b082a83713435d8956929",
+          "sha256": "1e96b9354d52569f95839a1c64150ac1cfcfc20c61b87e890d2b5333a2e48259",
           "url": null,
           "revision": null
         }

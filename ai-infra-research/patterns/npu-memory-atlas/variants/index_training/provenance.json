@@ -27,7 +27,7 @@
     {
       "path": "layer_stack/inference-layer-stack.html",
       "sha256": "28a8e1b688f346278cf7445cfc348575497043ee569c8ff3a26e3ebdc1e89da3",
-      "revision": "0c10ca141b5be7563754d5daec62b02dc8ac29c8"
+      "revision": "c18a8cd89375fbe342a5716c015ba3fa7970ddbf"
     },
     {
       "path": "layer_stack/inference-layer-stack.css",
@@ -64,7 +64,7 @@
     {
       "path": "layer_stack/inference-layer-stack.html",
       "sha256": "28a8e1b688f346278cf7445cfc348575497043ee569c8ff3a26e3ebdc1e89da3",
-      "revision": "0c10ca141b5be7563754d5daec62b02dc8ac29c8"
+      "revision": "c18a8cd89375fbe342a5716c015ba3fa7970ddbf"
     },
     {
       "path": "layer_stack/inference-layer-stack.css",

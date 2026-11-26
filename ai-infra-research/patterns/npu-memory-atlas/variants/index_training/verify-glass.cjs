@@ -19,6 +19,6 @@ fs.mkdirSync(OUT,{recursive:true});let browser;
   await p.mouse.move(2,2);await p.screenshot({path:path.join(OUT,theme+'-full.png')});await p.locator('.zoom-controls').screenshot({path:path.join(OUT,theme+'-zoom.png')});
  }
  await p.setViewportSize({width:390,height:844});await p.waitForTimeout(200);assert.equal(await p.locator('#ep-playback').evaluate(n=>getComputedStyle(n).backdropFilter),'none');assert.equal(await p.locator('.zoom-controls .liquid-b-shine').count(),1);
- await p.locator('#graph-mode').click();assert.ok(await p.locator('#graph-query').isVisible());await p.keyboard.press('Escape');assert.deepEqual(errors,[]);
+ await p.locator('#graph-mode').click();assert.ok(await p.locator('#graph-query').isVisible());await p.keyboard.press('Escape');await p.evaluate(async()=>{for(let i=0;i<8;i++){TrainingComposition.setPrimary(true,false);TrainingComposition.setPrimary(false,false);await new Promise(requestAnimationFrame);}});await p.waitForTimeout(100);assert.deepEqual(errors,[]);
  fs.writeFileSync(path.join(OUT,'checks.json'),JSON.stringify({verbatimFinalPattern:true,themes,errors},null,2));console.log('PASS final v2 files/defaults, directional shine/filter, no legacy glass, fully transparent playback in both themes/resize, graph entry');await browser.close();
 })().catch(async e=>{console.error(e);await browser?.close();process.exitCode=1});
