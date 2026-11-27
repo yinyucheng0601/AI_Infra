@@ -15,7 +15,9 @@
 
 ## 快速开始
 
-[下载 Skill ZIP](../design-spatial-systems-ui.zip)
+[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+
+用 `$design-spatial-systems-ui` 实现或评审已有视图。按呈现契约绑定对象、证据和操作，复用定稿工作台、Pattern 及控件，核查选择与视角保持。
 
 将完整目录按所用 coding agent 的 Skill 机制配置；也可以直接让 agent 读取 checkout 内的 `SKILL.md`。保留 references、assets 和 scripts 等资源，不要只复制入口文件。
 

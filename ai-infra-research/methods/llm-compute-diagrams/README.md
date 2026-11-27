@@ -15,7 +15,9 @@
 
 ## 快速开始
 
-[下载 Skill ZIP](../llm-compute-diagrams.zip)
+[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+
+用 `$llm-compute-diagrams` 组织模型、编译、并行与推理图解。配合总入口可读取 PyPTO 事件及固定 DeepSeek 证据，按采集覆盖解释 Host 路径和时间。
 
 将完整目录按所用 coding agent 的 Skill 机制配置；也可以直接让 agent 读取 checkout 内的 `SKILL.md`。保留 references、assets 和 scripts 等资源，不要只复制入口文件。
 

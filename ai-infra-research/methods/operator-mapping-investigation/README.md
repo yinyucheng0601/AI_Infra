@@ -15,7 +15,9 @@
 
 ## 快速开始
 
-[下载 Skill ZIP](../operator-mapping-investigation.zip)
+[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+
+用 `$operator-mapping-investigation` 核查当前配置的索引、地址、Task 和源码。固定 Compact FP16 Unpack 路径调用组合包中总入口的工程工具，保留源码证据与尾行缺口。
 
 将完整目录按所用 coding agent 的 Skill 机制配置；也可以直接让 agent 读取 checkout 内的 `SKILL.md`。保留 references、assets 和 scripts 等资源，不要只复制入口文件。
 

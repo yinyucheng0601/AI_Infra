@@ -17,7 +17,9 @@
 
 完整 workflow 包含六个同级 Skill 目录，分别提供总入口、两个领域能力、计算图元、呈现设计与 Systems UI。
 
-[下载完整 workflow](../ai-infra-investigation-workflow.zip) · [仅下载调度 Skill](../ai-infra-investigation.zip)
+[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+
+从 `$ai-infra-investigation` 发起任务，提供源码、配置或 Trace。内置工具支持固定 Unpack 源码投影、DeepSeek 原始 Trace 复核、PyPTO 事件规范化与证据图校验。根据任务直接答复或交给呈现与界面阶段。
 
 将完整目录按所用 coding agent 的 Skill 机制配置；也可以直接让 agent 读取 checkout 内的 `SKILL.md`。保留 references、assets 和 scripts 等资源，不要只复制入口文件。
 
@@ -65,7 +67,7 @@
 
 ## 能力边界
 
-这是 workflow 调度入口，不是自动诊断引擎。不同框架与 API 仍需要领域适配。完整包包含六个 Skill；只下载调度 Skill 不包含其余能力。
+这是 workflow 调度入口，不是自动诊断引擎。不同框架与 API 仍需要领域适配。完整包包含六个 Skill。总入口独立包提供工作流与工程工具；配套领域、呈现与资产能力见组合包。[安装后首次任务](references/first-task.md)提供调用方式。
 
 没有 trace 时不画实测时长，没有 API 依据时保留未知；源码模型、CPU 数值检查、真实渲染与设备运行分别报告。全流程是任务路由范围，不表示已具备所有框架的自动解析器。
 
