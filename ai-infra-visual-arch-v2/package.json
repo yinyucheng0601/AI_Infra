@@ -1,8 +1,0 @@
-{
-  "name": "ai-infra-visual-arch-v2-workspace",
-  "private": true,
-  "scripts": {
-    "dev": "npm --prefix presentation run dev",
-    "build": "npm --prefix presentation run build"
-  }
-}

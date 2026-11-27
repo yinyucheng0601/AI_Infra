@@ -111,7 +111,7 @@
     },
     {
       "id": "ai-infra-visual-framework-v2",
-      "title": "AI Infra视觉设计框架v2",
+      "title": "AI Infra 视觉设计汇报",
       "type": "case",
       "form": "设计汇报",
       "summary": "从领域语义与视觉认知推导设计原则，结合三钻协作、执行泳道、Layer Stack 与 Scale，沉淀设计资产与 Agent 协作框架。",
@@ -145,7 +145,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-visual-arch-v3/presentation/slides.md",
-          "sha256": "9b44b4b9c55ab186cf73314cd091021125ce2d108d3d45f5d77d479f8e3e288c",
+          "sha256": "3bbb47e6c32d85a546743b9c57575861500ad4a901727327c84ecb1090c34a5f",
           "url": "https://yinyucheng0601.github.io/AI_Infra/ai-infra-visual-arch-v3/ppt/#/1",
           "revision": null
         }
@@ -159,58 +159,6 @@
         "observability-design-style"
       ],
       "reviewedAt": "2026-11-16",
-      "author": "Yucheng"
-    },
-    {
-      "id": "ai-infra-visual-review",
-      "title": "AI Infra 视觉设计复盘 · Keynote",
-      "type": "case",
-      "form": "设计汇报",
-      "summary": "以问题 / 结果驱动、认知减负、有效控制串联执行泳道、Layer Stack 与 Scale，呈现设计推导、交互案例和可复用框架。",
-      "designValue": "把业务痛点、设计依据与具体设计响应连接成渐进式汇报，沉淀视觉设计的论证方式与演示结构。",
-      "outline": [
-        "设计目标与三项原则",
-        "执行泳道：从问题进入证据",
-        "Layer Stack：连续对象与上下文",
-        "Scale：核查、调整与继续",
-        "页面框架：功能分组与控件",
-        "图元、Pattern 与 Skill 体系"
-      ],
-      "domains": [
-        "AI Infra",
-        "Visualization",
-        "Agent"
-      ],
-      "topics": [
-        "experience",
-        "visual",
-        "operators",
-        "inference"
-      ],
-      "media": [
-        "web"
-      ],
-      "status": "draft",
-      "visibility": "internal",
-      "content": "reports/ai-infra-visual-review/index.html",
-      "sources": [
-        {
-          "repository": "ai-infra",
-          "path": "ai-infra-visual-review-architecture/index.html",
-          "sha256": "a5f7dcf4394a04c00bd751d4650c4195c9341e261a7c2bd10146029ac7ad9f25",
-          "url": null,
-          "revision": null
-        }
-      ],
-      "validation": [
-        "2026-11-03：按用户要求收录并推送 HTML Keynote 草稿；已逐轮检查浏览器布局、章节播放与 iframe 演示。",
-        "本轮检查目录、打包资源与入口；当前案例交互与 Agent 目标工作流分别表述，不代表设备验证或用户效率收益。"
-      ],
-      "related": [
-        "critical-path-swimlane",
-        "observability-design-style"
-      ],
-      "reviewedAt": "2026-11-03",
       "author": "Yucheng"
     },
     {

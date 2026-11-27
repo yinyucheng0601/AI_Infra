@@ -1,9 +1,0 @@
-node_modules/
-dist/
-public/assets
-public/scenes.json
-public/original.css
-results/
-.cache/
-public/scenes/
-dist-templates/
