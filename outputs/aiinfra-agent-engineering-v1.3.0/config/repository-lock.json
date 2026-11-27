@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "repository": "https://github.com/yinyucheng0601/AI_Infra",
+  "branch": "main",
+  "commit": "781de42dabfbedbb284553d689129737c237e06e",
+  "entrypoint": "https://yinyucheng0601.github.io/AI_Infra/ai-infra-research/skills.html",
+  "locked_at": "2026-11-27",
+  "scope": {
+    "include": [
+      "ai-infra-research/methods/ai-infra-investigation",
+      "ai-infra-research/methods/llm-compute-diagrams",
+      "ai-infra-research/methods/ai-infra-glyphs",
+      "ai-infra-research/methods/observability-design-style",
+      "ai-infra-research/methods/design-spatial-systems-ui",
+      "ai-infra-research/methods/operator-mapping-investigation",
+      "ai-infra-research/reports/llm-compute/diagram-legend-library",
+      "ai-infra-research/patterns"
+    ],
+    "exclude": [
+      "DevKit",
+      "pto/vendor/pto-design-system"
+    ],
+    "notes": [
+      "Source tree lock is pinned; no source files are copied wholesale into this engineering package.",
+      "The glyph package snapshot records provenance hashes; actual asset reuse must resolve to the pinned repository or its approved package distribution."
+    ]
+  }
+}

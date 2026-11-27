@@ -1,0 +1,16 @@
+{
+  "consumes": {"pairs": [["operator", "tensor"], ["ir_operator", "ir_value"]], "same": ["build"]},
+  "produces": {"pairs": [["operator", "tensor"], ["ir_operator", "ir_value"]], "same": ["build"]},
+  "transforms": {"pairs": [["tensor", "tensor"], ["ir_value", "ir_value"]], "same": ["build"]},
+  "maps_to": {"pairs": [["tensor", "ir_value"], ["operator", "ir_operator"]], "same": ["build"]},
+  "sharded_into": {"pairs": [["tensor", "shard"]], "same": ["build"]},
+  "bufferized_as": {"pairs": [["tensor", "memref"], ["ir_value", "memref"]], "same": ["build"]},
+  "references": {"pairs": [["memref", "allocation"]], "same": ["run"]},
+  "instance_of": {"pairs": [["kernel_launch", "kernel"]], "same": ["build"], "max_targets": 1},
+  "executes_on": {"pairs": [["kernel_launch", "npu"], ["task", "npu"]], "same": ["run", "rank", "device"], "evidence": "observed", "when_shared": ["step"]},
+  "placed_on": {"pairs": [["rank", "npu"]], "same": ["run", "rank", "device"]},
+  "observed_by": {"pairs": [["kernel_launch", "observation"], ["task", "observation"]], "same": ["run"], "when_shared": ["step"]},
+  "observed_during": {"pairs": [["observation", "interval"]], "same": ["run"], "time": "within", "when_shared": ["step"]},
+  "derived_from": {"pairs": [["ir_value", "tensor"], ["shard", "tensor"], ["observation", "observation"]]},
+  "overlaps": {"pairs": [["interval", "interval"], ["observation", "observation"]], "same": ["run"], "time": "overlap"}
+}

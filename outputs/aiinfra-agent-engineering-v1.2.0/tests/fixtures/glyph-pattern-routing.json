@@ -1,0 +1,27 @@
+{
+  "cases": [
+    {
+      "object_type": "tensor",
+      "task_type": "tensor-lineage",
+      "glyph_id": "system-value",
+      "pattern_id": "tensor-lineage"
+    },
+    {
+      "object_type": "rank",
+      "task_type": "rank-analysis",
+      "glyph_id": "system-rank",
+      "pattern_id": "rank-shard-matrix"
+    },
+    {
+      "object_type": "collective",
+      "task_type": "communication",
+      "glyph_id": "relation-data",
+      "pattern_id": "communication-topology"
+    },
+    {
+      "object_type": "unknown_future_type",
+      "task_type": "unknown",
+      "status": "unresolved"
+    }
+  ]
+}
