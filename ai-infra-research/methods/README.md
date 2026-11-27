@@ -4,14 +4,17 @@
 
 开发者只需一个入口：**ai-infra-investigation · AI Infra 计算可视化 workflow**。它负责按任务调度，不要求用户先理解所有 Skill。机制讲解仍使用 llm-compute-diagrams，普通报错与单项查询不强制生成页面。
 
-| 顺序 | Skill | 独立职责 | 不承担 |
-|---|---|---|---|
-| 调度 | [ai-infra-investigation](ai-infra-investigation/SKILL.md) | 输入、阶段调度、冲突处理与验收 | 通用自动诊断 |
-| 领域 · 模型/编译/部署/运行 | [llm-compute-diagrams](llm-compute-diagrams/SKILL.md) | 按主题组织计算、变换、分布与事件关系 | 任意框架自动解析 |
-| 领域 · 算子 | [operator-mapping-investigation](operator-mapping-investigation/SKILL.md) | 集合、地址、分块、布局、API 与证据模型 | 页面样式 |
-| 2 | [ai-infra-glyphs](ai-infra-glyphs/SKILL.md) | 从正式库选择 variant / SVG / renderer | 领域推断 |
-| 3 | [observability-design-style](observability-design-style/SKILL.md) | 总览、检查器、前提与调查交接 | 材质与配色重定义 |
-| 4 | [design-spatial-systems-ui](design-spatial-systems-ui/SKILL.md) | 布局、尺度、选择、缩放与面板 | 改写数据和图元内部语义 |
+**识别任务与交付目标 → 建立领域模型与证据 → 定义呈现契约 → 选择并实现界面 → 按任务验收。** 直接答复可停在领域分析。机制讲解、结构浏览、实验比较和交互调查按需组合。接入 Agent Runtime 时，宿主负责事件传输和操作回传，具体绑定在案例中验证。
+
+| 阶段或资产 | 维护入口 | 输出 |
+|---|---|---|
+| 调度与验收 | [ai-infra-investigation](ai-infra-investigation/SKILL.md) | 任务路由、阶段选择和交付判据 |
+| 领域 · 模型/编译/部署/运行 | [llm-compute-diagrams](llm-compute-diagrams/SKILL.md) | 对象、计算与事件关系、证据与未知项 |
+| 领域 · 算子 | [operator-mapping-investigation](operator-mapping-investigation/SKILL.md) | 集合、地址、分块、布局、API 与证据 |
+| 共享语义 | [任务契约](ai-infra-investigation/references/task-contract.md) | 对象、关系、作用域、证据与跨层引用 |
+| 呈现设计 | [呈现契约](ai-infra-investigation/references/presentation-semantics.md) 与 [observability-design-style](observability-design-style/SKILL.md) | 组件无关的定位、核查、比较、操作和结果更新约定 |
+| 界面实现 | [design-spatial-systems-ui](design-spatial-systems-ui/SKILL.md) | 画布、组件、布局和交互 |
+| 共享资产 | [Pattern 路由](ai-infra-investigation/references/pattern-routing.md) 与 [正式泳道接口](../patterns/critical-path-swimlane/README.md) | 按 catalog 定位正式资产，核对声明和实际入口。专项图元复核用 [ai-infra-glyphs](ai-infra-glyphs/SKILL.md) |
 
 ## 开始试用
 

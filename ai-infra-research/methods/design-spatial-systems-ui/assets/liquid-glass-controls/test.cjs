@@ -15,4 +15,10 @@ root.dataset.theme='light';assert.equal(api.getSettings().shine,2.2);assert.equa
 api.configure({blur:100,depth:-1,shine:NaN});assert.equal(api.getSettings().blur,20);assert.equal(api.getSettings().depth,0);assert.equal(api.getSettings().shine,2.2);
 const restored=boot(saved);assert.equal(restored.api.getSettings().blur,20);restored.root.dataset.theme='dark';assert.equal(restored.api.getSettings().shine,1.1);
 api.disconnect();api.start();assert.equal(api.getSettings().blur,20);
-console.log('PASS: v2 defaults, theme isolation, shared blur, bounds, persistence, restart');
+const css=fs.readFileSync(require('node:path').join(__dirname,'liquid-glass.css'),'utf8');
+const panel=css.match(/^\[data-liquid-glass=panel\]\{([^}]+)\}/m)?.[1]||'';
+assert.match(panel,/background:rgb\(44 44 44 \/ 86%\)/);
+assert.match(panel,/(?:^|;)backdrop-filter:blur\(24px\)/);
+assert.match(css,/^\[data-liquid-glass\]\{[^}]*;border:0\}/m);
+assert.match(css,/^\[data-theme=light\] \[data-liquid-glass=panel\]\{background:rgb\(255 255 255 \/ 74%\)/m);
+console.log('PASS: v2 panel material and runtime defaults, theme isolation, shared blur, bounds, persistence, restart');

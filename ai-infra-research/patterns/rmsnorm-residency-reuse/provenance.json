@@ -8,9 +8,9 @@
       "numeric_data": "local CPU Golden windows; deterministic explicitly Mock NPU values and derived differences; no device validation",
       "golden_sha256": "93650b3c8795b4ad9f179ad59cf013860c02f1a83f2a48947ed96c53a222bf2f",
       "op_renderer": "diagram-legend-library/build.cjs opNode/opGlyph; visual-system.js add/multiply",
-      "op_renderer_sha256": "fba7dfa700cacca48f37e95f667117a5f9a13eca014423db9036932243650298"
+      "op_renderer_sha256": "37d9be755bc49cf2dbf9f0d3d841f68f0e72c2a776ca9c82ee5386623c73fd94"
     },
-    "sha256": "a5e3e2b3fd824eed731b03af80360050ca6eb58dfe752a306d1250bda40049c6",
+    "sha256": "1a94c605ad6410c86ac85078bd57d6f77027841c73bfb64ac6f0133f912f751f",
     "layout": "Device Perf Lane inline resource-row composition adapted to source-order axis; MTE2/Vector/MTE3 and UB lifetimes share coordinates; hardware mapping opens a linked 950B corner window; bottom-left input/implementation/mapping dock; playback removed; queue request lifetimes use actual Alloc/Free records"
   },
   "tensor": {

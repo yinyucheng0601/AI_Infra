@@ -9,6 +9,8 @@ description: 从 AI Infra 正式图例与 Pattern 库选择并复用 Tensor、OP
 
 此 Skill 负责图元层，不负责完整 Pattern 选型。模型层级、Rank/服务器布局、训练内存、泳道、编译与比较工具先由总 workflow 检索 catalog 与实际页面，复用交互/布局实现；不能把图例库当成全部可视化能力。
 
+常规图元选型与渲染优先直接读取正式图例资产及其 variant、renderer 和来源清单。专项来源复核、缺失图元处理和样式漂移修复继续使用本入口。
+
 ## 来源顺序
 
 AI_Infra checkout 中的正式源为 `ai-infra-research/reports/llm-compute/diagram-legend-library/`：先读 OBJECT-SYSTEM.md，以 index.html / inventory.json 的已收录对象为准，按需读取 visual-system.js、op-icons.js 或 build.cjs 对应 renderer。review / extract 页面和旧报告不自动成为已确认资产。

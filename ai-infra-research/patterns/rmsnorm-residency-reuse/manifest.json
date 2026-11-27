@@ -1,11 +1,12 @@
 {
   "authoritativeSource": "prototypes/rmsnorm-performance-investigation/index.html",
-  "sourceSha256": "e825157f8deaf32135e694ddf39db7dba41a35937fa3c5a5ae2f1a3a346fd40b",
+  "sourceSha256": "2c9fa21e4c3967991cfe3be242cac13d965d5ac3aaa2ff3e40247a35a44ff55d",
   "files": {
-    "index.html": "e825157f8deaf32135e694ddf39db7dba41a35937fa3c5a5ae2f1a3a346fd40b",
-    "provenance.json": "edd661466e19692ac80ffa23bbf4022c08954f7e0ec4f6e1457dcd34d4bf82e9",
-    "fused-add.html": "23756ca27044067fde1a6fa43ceda6f250cbb9c0f98a5b7cfe76a2dd1c09c869",
-    "fused-add-provenance.json": "e46e9d382f8c64468bac9dca73c8fb185d7314554cc47cbf0f741dedc7e4c4f4"
+    "index.html": "2c9fa21e4c3967991cfe3be242cac13d965d5ac3aaa2ff3e40247a35a44ff55d",
+    "provenance.json": "350b734f21dd1529ee82a88ac6ac3b8a6fe2392c4bbc221ccfdb2da92aa8ed4b",
+    "fused-add.html": "fc36808ef8c1b960fe36fcadc78b62772199b5372157ce8a926dad3c6352cd94",
+    "fused-add-provenance.json": "61ea1116cddd5eb6b18f59a3b3aaa10276a2d9501ae63ba0ea51a3ad8aa84f7a",
+    "layer-norm-v4.html": "eb3dc912f2657e2e27e1319833132880e56094fa734726058bd80ca9cb005b07"
   },
   "groupEntries": [
     {
@@ -15,6 +16,10 @@
     {
       "path": "fused-add.html",
       "source": "prototypes/fused-add-rmsnorm-independent"
+    },
+    {
+      "path": "layer-norm-v4.html",
+      "source": "prototypes/layernorm-v4-950"
     }
   ],
   "cover": "web/media/rmsnorm-residency-reuse-cover.png",

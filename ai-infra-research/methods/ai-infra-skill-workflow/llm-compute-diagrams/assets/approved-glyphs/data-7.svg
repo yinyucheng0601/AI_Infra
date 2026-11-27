@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="front-graph" viewBox="0 0 640 280"><style>#layer-front{position:fixed;inset:85px 190px 85px 290px;z-index:7;display:flex;flex-direction:column;min-width:0;background:#111}
+#layer-front[hidden],#layer-front [hidden]{display:none!important}
+.front-view #scene,.front-view .path-demo{visibility:hidden;pointer-events:none}
+.front-heading{display:flex;align-items:flex-start;justify-content:flex-end;gap:12px;flex:none}
+.front-tools{display:flex;gap:5px;align-items:center}
+.front-tools button,#front-node-info button{font:12px inherit;color:#ccc;background:#191919;border:1px solid #444;padding:6px 8px;cursor:pointer;white-space:nowrap}
+.front-canvas{flex:1;min-height:0;overflow:hidden;margin-top:8px}
+#front-graph{width:100%;height:100%;display:block;touch-action:none;user-select:none}
+#front-graph text{fill:#eee;font:18px Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;pointer-events:none}
+#front-graph .minor{fill:#ababab;font-size:14px}
+#front-graph .section-label{fill:#ababab;font-size:14px}
+#front-graph .tensor-label{font-size:16px;font-weight:600;dominant-baseline:middle;paint-order:stroke fill;stroke:#111;stroke-width:4px;stroke-linejoin:round}
+#front-graph .weight .tensor-label,#front-graph .gradient .tensor-label{font-size:14px}
+#front-graph .activation .tensor-label{fill:#B1EF6B}
+#front-graph .weight .tensor-label{fill:#BCA0F3}
+#front-graph .gradient .tensor-label{fill:#79D4F2}
+#front-graph .op-label{fill:#fff;font-size:18px;font-weight:650;dominant-baseline:middle}
+#front-graph .op{fill:#505050;stroke:#858585;stroke-width:1.5}
+#front-graph circle{fill:#111;stroke:#ddd;stroke-width:1.6}
+#front-graph .residual-circle{fill:#111;stroke:#ddd;stroke-width:1.6;transform:none}
+#front-graph .add-mark{fill:none;stroke:#ddd;stroke-width:1.6;stroke-linecap:butt;pointer-events:none}
+#front-graph .residual-label{fill:#B1EF6B;font-size:18px}
+#front-graph .sublayer{fill:#161616;stroke:#333;stroke-width:1}
+#front-graph .front-edge{fill:none;stroke:#777777;stroke-width:2}
+#front-graph .gradient.front-edge{stroke-dasharray:6 6}
+#front-graph .tensor-outline{fill:#111;stroke-width:1.2}
+#front-graph .front-node{cursor:pointer;outline:none}
+#front-graph .front-node:hover>.op,#front-graph .front-node:focus-visible>.op,#front-graph [aria-pressed=true]>.op,#front-graph .front-node:hover>.tensor-outline,#front-graph .front-node:focus-visible>.tensor-outline,#front-graph [aria-pressed=true]>.tensor-outline,#front-graph .front-node:hover>circle,#front-graph .front-node:focus-visible>circle,#front-graph [aria-pressed=true]>circle{stroke:#fff;stroke-width:2.5}
+/* Fixed graph glyphs follow the reference guide; observation modes emphasize semantic roles. */
+#front-graph[data-mode=activation] .weight,#front-graph[data-mode=activation] .gradient{visibility:hidden}
+#front-graph[data-mode=weight] .gradient{visibility:hidden}
+#front-graph[data-mode=weight] .activation.front-node,#front-graph[data-mode=gradient] .activation.front-node{opacity:.55}
+#front-graph[data-mode=gradient] .weight.front-node{opacity:.6}
+.front-foot{font-size:11px;color:#aaa;padding-top:7px;text-align:center}
+#front-node-info,#front-evidence{position:absolute;z-index:10;right:0;top:60px;width:300px;padding:18px;background:#191919;border:1px solid #555;box-shadow:0 8px 30px #0008;font-size:12px;line-height:1.8}
+#front-node-info h3{font-size:15px;margin:0 24px 10px 0;font-weight:500}
+#front-node-info p{color:#bbb;margin:0 0 14px}
+#front-node-info #front-node-close{position:absolute;top:8px;right:8px;border:0;background:none;font-size:18px}
+#front-evidence{width:360px;max-height:80%;overflow:auto}
+#front-evidence p{color:#bbb}#front-evidence a{color:#ddd}
+@media(max-width:1100px){#layer-front{inset:235px 22px 100px}.front-view .identity h2{font-size:40px;margin-bottom:8px}.front-view .identity h3{font-size:15px;margin-bottom:6px}.front-view .identity button{margin-top:8px}.front-view .identity{top:93px}.front-view .sampling-note{display:none}}
+@media(max-width:600px){#layer-front{inset:275px 12px 100px}.front-heading{flex-wrap:wrap;gap:6px}.front-tools button{padding:4px 6px;font-size:11px}#front-layer-label{font-size:13px}#front-mode-label{font-size:11px;margin-top:4px}.front-foot{font-size:10px}.front-view .identity{top:140px}.front-view .identity h2{font-size:32px}.front-view .identity h3{margin-bottom:3px}.front-view .identity p{font-size:10px}#front-node-info,#front-evidence{max-width:100%;top:68px;max-height:75%;overflow:auto}}
+
+#front-graph .has-alert .tensor-outline{stroke:#FD5644;stroke-opacity:1;stroke-width:2}
+#front-graph .has-alert .tensor-label,#front-graph .anomaly-mark{fill:#FD5644}
+#front-graph .anomaly-mark{font-size:20px;font-weight:650}
+
+#front-node-info{position:fixed;right:auto;box-sizing:border-box;max-width:calc(100vw - 24px);max-height:calc(100vh - 24px);overflow:auto}
+
+#front-graph .tensor-rms{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+</style><defs><marker id="front-activation" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#777777" stroke-width="1.3"/></marker><marker id="front-weight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#777777" stroke-width="1.3"/></marker><marker id="front-gradient" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M1 1 L8 5 L1 9" fill="none" stroke="#777777" stroke-width="1.3"/></marker></defs><g class="front-node activation has-alert" data-node="query" role="button" tabindex="0" aria-label="Query" aria-pressed="false"><title>采样示例 1 个采样点超阈值；橙红格表示对应区域含异常采样。 采样 RMS 0.1250。</title><rect class="tensor-outline" x="230" y="105" width="180" height="62" rx="6" fill="#111" stroke="#B1EF6B"/><rect class="grid-cell" x="236" y="111" width="14.1" height="14.1" fill="#FD5644" opacity="1"/><rect class="grid-cell" x="253.1" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.22"/><rect class="grid-cell" x="270.2" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.26"/><rect class="grid-cell" x="287.3" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.3"/><rect class="grid-cell" x="304.4" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.24"/><rect class="grid-cell" x="321.5" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.28"/><rect class="grid-cell" x="338.6" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.22"/><rect class="grid-cell" x="355.70000000000005" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.26"/><rect class="grid-cell" x="372.8" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.3"/><rect class="grid-cell" x="389.9" y="111" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.24"/><rect class="grid-cell" x="236" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.22"/><rect class="grid-cell" x="253.1" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.26"/><rect class="grid-cell" x="270.2" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.3"/><rect class="grid-cell" x="287.3" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.24"/><rect class="grid-cell" x="304.4" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.28"/><rect class="grid-cell" x="321.5" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.22"/><rect class="grid-cell" x="338.6" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.26"/><rect class="grid-cell" x="355.70000000000005" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.3"/><rect class="grid-cell" x="372.8" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.24"/><rect class="grid-cell" x="389.9" y="128.95" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.28"/><rect class="grid-cell" x="236" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.26"/><rect class="grid-cell" x="253.1" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.3"/><rect class="grid-cell" x="270.2" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.24"/><rect class="grid-cell" x="287.3" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.28"/><rect class="grid-cell" x="304.4" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.22"/><rect class="grid-cell" x="321.5" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.26"/><rect class="grid-cell" x="338.6" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.3"/><rect class="grid-cell" x="355.70000000000005" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.24"/><rect class="grid-cell" x="372.8" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.28"/><rect class="grid-cell" x="389.9" y="146.9" width="14.1" height="14.1" fill="#B1EF6B" opacity="0.22"/><text x="418" y="97" text-anchor="middle" class="anomaly-mark">!</text><text x="320" y="126" text-anchor="middle" class="tensor-label">[T × 1024]</text><text x="320" y="148" text-anchor="middle" class="tensor-label tensor-rms">RMS 0.1250</text></g></svg>

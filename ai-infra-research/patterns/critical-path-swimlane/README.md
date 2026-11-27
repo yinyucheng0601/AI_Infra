@@ -123,3 +123,29 @@ lane 标签简化为 Requests / Batch Size / Token Output / Scheduler / Executor
 ### 字体与画布利用率修正（2026-11-25）
 
 删除固定 740 高 viewBox 的非等比拉伸。SVG viewBox 与容器实际像素一致，仅对几何 y 坐标重排；标题、标签和行号保持正常像素字形，task 仍保持 1.4px。画布底部预留从 106px 缩至 82px，同时将诊断信息下移并与刻度分开，腾出的空间用于泳道。已核查 1600×1000 / 1600×1200 下的文字变换均为 1:1，标题字号保持 23px。
+
+## 工作台入口
+
+打开 [泳道工作台](index.html)，可切换 DeepSeek V4 与 DSpark 采集。页面加载的脚本和 CSS 都在仓库中。旧 `pattern.html` 和 `CriticalPathSwimlane.mount` 继续提供独立嵌入。
+
+```js
+const call = {
+  version: 1,
+  pattern: 'critical-path-swimlane',
+  layout: 'investigation-workbench',
+  axis: 'trace-time',
+  controls: {
+    zoom: 'required',
+    inspector: 'required',
+    eventEvidence: 'optional',
+    playback: 'optional',
+  },
+};
+const instance = CriticalPathWorkbench.mount(root, data, call);
+```
+
+调用方从 `pattern.json` 的 `workbench` 及正式页面核对入口与加载顺序。数据使用 `data.js` 或 `trace-data.js` 的原生形状。可用 `step` 指定当前采集的初始调用组。任何必选能力无法满足时抛出包含字段名的错误。实例的 `omitted` 列出无法启用的可选能力。两份采集支持检查器、缩放、Fit、调用组定位及销毁。DeepSeek 额外支持原始事件核查、`trace-evidence-selection` 和调用组播放。播放是按采集中的调用组推进，间隔用于阅读，时间轴仍保持原采集比例。跳步、缩放、切换数据和销毁都会停止播放。源码步骤轴、跨采集时钟比较、物理设备映射和芯片内执行均超出本接口输入范围。
+
+DeepSeek 选择事件使用 `{scope, id}`。作用域为原始 Trace 的 SHA256，ID 为原始事件序号。例如 `raw-1110`（Host `node.dispatch`）经 `run_id=8, dispatch_id=8` 关联 `raw-1112`（`chip.run`），后者经 PID 2983083 与 `inv=8` 关联 `raw-1269`（`chip.run.runner_run`）。这是两个分别可核查的关联。面板保留事件 ID、原始字段、指纹链接和关联类别。物理设备与因果耗时保持未知。DSpark 继续使用固定 revision 的调用组和 lane 窗口，可在运行信息查看来源指纹。
+
+`verify-evidence.cjs <原始 Trace 路径>` 检查原始证据、范围、关系与调用约束。设置 `AI_INFRA_DOM_CHECK=1` 并使 Node 可解析 jsdom，可加跑两套数据的 DOM 挂载、点选、证据、视角、播放和销毁。 `verify.cjs` 验证 DSpark 数据回归。DOM 检查与浏览器视觉验收分别记录。

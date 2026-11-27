@@ -1,0 +1,165 @@
+{
+  "scope": "only new physical glyphs introduced by lingqu-rank-map/pattern.html",
+  "status": "hardware review and current demo compositions",
+  "count": 13,
+  "items": [
+    {
+      "id": "H-cpu",
+      "category": "物理器件",
+      "name": "CPU",
+      "meaning": "保留原版封装、金属顶盖与固定点，降低中心面与固定点的对比度。",
+      "source": "lingqu-rank-map/hw-icons.js · hw-cpu",
+      "notes": {
+        "family": "封装",
+        "change": "优化版使用你提供的 SVG，各器件按同一倍率缩放，交换机保留原始横向宽度；深色沿用提供的配色，浅色单独调整材质灰阶。",
+        "replacementSource": "cpu.svg",
+        "type": "cpu"
+      }
+    },
+    {
+      "id": "H-npu",
+      "category": "物理器件",
+      "name": "NPU",
+      "meaning": "保留原版封装、计算与存储分区，压低内部块面和微小细节的灰阶差。",
+      "source": "lingqu-rank-map/hw-icons.js · hw-npu",
+      "notes": {
+        "family": "封装",
+        "change": "优化版使用你提供的 SVG，各器件按同一倍率缩放，交换机保留原始横向宽度；深色沿用提供的配色，浅色单独调整材质灰阶。",
+        "replacementSource": "npu.svg",
+        "type": "npu"
+      }
+    },
+    {
+      "id": "H-dpu",
+      "category": "物理器件",
+      "name": "DPU",
+      "meaning": "保留 PCB、挡板、接口与 ASIC 的物理形态，柔化内部芯片与底座的反差。",
+      "source": "lingqu-rank-map/hw-icons.js · hw-dpu",
+      "notes": {
+        "family": "板卡",
+        "change": "优化版使用你提供的 SVG，各器件按同一倍率缩放，交换机保留原始横向宽度；深色沿用提供的配色，浅色单独调整材质灰阶。",
+        "replacementSource": "dpu.svg",
+        "type": "dpu"
+      }
+    },
+    {
+      "id": "H-nic",
+      "category": "物理器件",
+      "name": "NIC · 网卡",
+      "meaning": "保留原版网卡轮廓、挡板和笼口，仅弱化小接口细节。",
+      "source": "lingqu-rank-map/hw-icons.js · hw-nic",
+      "notes": {
+        "family": "板卡",
+        "change": "优化版使用你提供的 SVG，各器件按同一倍率缩放，交换机保留原始横向宽度；深色沿用提供的配色，浅色单独调整材质灰阶。",
+        "replacementSource": "NIC.svg",
+        "type": "nic"
+      }
+    },
+    {
+      "id": "H-sw",
+      "category": "物理器件",
+      "name": "交换机",
+      "meaning": "保留机箱与端口排布，不重新设计外形；适当降低端口细节亮度。",
+      "source": "lingqu-rank-map/hw-icons.js · hw-sw",
+      "notes": {
+        "family": "设备",
+        "change": "优化版使用你提供的 SVG，各器件按同一倍率缩放，交换机保留原始横向宽度；深色沿用提供的配色，浅色单独调整材质灰阶。",
+        "replacementSource": "switch.svg",
+        "type": "sw"
+      }
+    },
+    {
+      "id": "T-plane",
+      "category": "结构与组合",
+      "name": "L2 网络平面 · P1",
+      "meaning": "由四台 L2 交换机构成的独立交换网络，连接同一平面内的 L1。P1 是第一个网络平面，不是一台交换机或一个 Rank。",
+      "source": "lingqu-rank-map/pattern.js · buildPhysSvg() p-plane",
+      "notes": {
+        "change": "压缩空白，改用轻括线分组；标题直接写明 L2 网络平面，不再只写 P1。"
+      }
+    },
+    {
+      "id": "T-l1",
+      "category": "结构与组合",
+      "name": "L1 交换设备",
+      "meaning": "交换层级靠标签与所在拓扑表达，不能靠另造一个相似器件图标。",
+      "source": "lingqu-rank-map/pattern.js · p-sw1 / p-swicon",
+      "notes": {
+        "change": "复用同一交换机图元，层级保持为对象元数据。"
+      }
+    },
+    {
+      "id": "T-switchboard",
+      "category": "结构与组合",
+      "name": "框内交换板",
+      "meaning": "由两颗交换器件构成的板级组合；对应原 Pattern 的 2×SW。",
+      "source": "lingqu-rank-map/pattern.js · buildBoardSvg() b-swb",
+      "notes": {
+        "change": "板级承载面和交换器件分层表达，不再只剩一个 2×SW 标签。"
+      }
+    },
+    {
+      "id": "T-board-row",
+      "category": "结构与组合",
+      "name": "板 · 设备排列",
+      "meaning": "沿用两颗 CPU、八颗 NPU、DPU、四个 NIC 的原始相邻关系。",
+      "source": "lingqu-rank-map/pattern.js · buildPhysSvg() board row",
+      "notes": {
+        "change": "排列不改，检验替换器件后的类别辨识及缩小效果。"
+      }
+    },
+    {
+      "id": "T-board-full",
+      "category": "结构与组合",
+      "name": "板 · 完整互联",
+      "meaning": "保留来源 Pattern 的器件位置与关系，预览新器件在密集互联中的识别效果。",
+      "source": "lingqu-rank-map/pattern.js · buildBoardSvg()",
+      "notes": {
+        "change": "继承互联结构，仅替换器件与局部材质；正式接入前还需按新可见边界核对端点。"
+      }
+    },
+    {
+      "id": "T-pod-full",
+      "category": "结构与组合",
+      "name": "POD · 完整布局",
+      "meaning": "八块板组成一个 POD；用于检查图元缩小后的轮廓层次。",
+      "source": "lingqu-rank-map/pattern.js · buildPhysSvg()",
+      "notes": {
+        "change": "保留原空间层级，核查灰阶、器件轮廓与信息密度。"
+      }
+    },
+    {
+      "id": "D-copper",
+      "category": "Demo 最新组合",
+      "name": "EP · 黄铜质感连线",
+      "meaning": "当前 Demo 的 EP 铜质走线与端点。",
+      "source": "training-demo.html · applyEPCopper()",
+      "notes": {
+        "demo": true,
+        "single": true,
+        "change": "复用当前 Demo 的暗铜底色、细高光、1.5 单位线宽及垂直接入端点；线尾截到圆心。"
+      }
+    },
+    {
+      "id": "D-hierarchy",
+      "category": "Demo 最新组合",
+      "name": "计算板 · 五层布局",
+      "meaning": "Host 接入、计算互联、交换网络、扩展互联与框内互联。",
+      "source": "training-demo.html · physicalBoardComposition()",
+      "notes": {
+        "demo": true,
+        "change": "左侧为未加功能分区的板级 renderer，右侧为当前 Demo 的完整五层组合，保留原有器件与关系。"
+      }
+    }
+  ],
+  "sourceHashes": {
+    "deployment-pattern/hw-icons.js": "8f476efdcdea540b22ca921382c27a54621ce898a4ac102f1dafa5e4d3e65a82",
+    "deployment-pattern/lingqu-physical.js": "2d3c751c6c93864a8c8a157a9ab9f630cde35d76147cf192642a4c7fd8b2715a",
+    "deployment-pattern/hw-glyphs-v2.js": "aacd4adee14343dae7a958b1fcbad123746aeaa5134a2caad885e4dffde4a909",
+    "deployment-pattern/user-icons/cpu.svg": "50e2839c5c9c0f31d2aa2f4ce1d56eb4725381aad689697f60d05f4d49dc1ef5",
+    "deployment-pattern/user-icons/npu.svg": "23d04da9ad2d3508bc4b66aed53305d5e6a5ebe43abe55746e49795c3b46b4e3",
+    "deployment-pattern/user-icons/dpu.svg": "c234e5dfa085178fb2abb3e9075d2d01002635ecdd17cc38fbe5ba0214d420b3",
+    "deployment-pattern/user-icons/NIC.svg": "e8388b3ab116e16c73534ea69d7ad0d6538e29cac7518d0512f3a901739f50f6",
+    "deployment-pattern/user-icons/switch.svg": "c0906367f03d51b95fe9b00a459c8d665d2368283c2e7e67a4353c47299d0784"
+  }
+}

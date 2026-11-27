@@ -104,13 +104,20 @@ function renderComparison(){
  const cm=current.label.match(/\[(\d+)\]/);if(split&&cm){const k=Number(cm[1]),first=life.find(l=>l.id==='x'&&l.name.includes(`[${k}]`)),second=life.find(l=>l.id==='reread'&&l.name.includes(`[${k}]`));if(first&&second){const left=at(first.end)-5,right=at(second.start)+5;s+=`<path d="M${left} ${my+18}V${my+3}H${right}V${my+18}" fill="none" stroke="#bdbdbd" stroke-width="1.2" stroke-dasharray="3 4" pointer-events="none"/>`;}}
  let bufferBottom=my+249;
  const mock=mockUBLayout();
- if(showBufferLife&&mock){const top=my+300,sy=640/mock.capacity,plotEnd=Math.min(mock.capacity,Math.ceil(Math.max(...mock.tensors.map(t=>t.mockAddress+t.size))/8192)*8192),h=plotEnd*sy;bufferBottom=top+h;
- for(let bytes=0;bytes<=plotEnd;bytes+=32768){const y=top+bytes*sy;s+=`<path d="M${x0} ${y}H${x0+ww}" stroke="#303030" stroke-width="1"/>`+tx(30,y+4,(bytes/1024)+' KiB · 0x'+bytes.toString(16),'muted');}
- s+=headerTip(20,top-46,500,36,tx(30,top-20,'UB 地址 · 生命周期','resource-label'),'本案例用于编译前开发分析，地址数据来自 Mock。实际 UB 地址布局属于编译后观测，需接入编译器分配报告；这是应用阶段与输入产物的区别。');
- for(let b=8192;b<plotEnd;b+=8192){if(b%32768===0)continue;const y=top+b*sy;s+=`<path d="M${x0} ${y}H${x0+ww}" stroke="#202020" stroke-width="1"/>`;}
- for(let i=0;i<=events.length;i++){s+=`<path d="M${at(i)} ${top}V${top+h}" stroke="#252525" stroke-width="1"/>`;}
-
- for(const t of mock.tensors){const start=t.start,end=t.end,y=top+t.mockAddress*sy,height=t.size*sy,roleColor=/gamma|gQ/.test(t.buffer)?'#BCA0F3':/rstd|work/.test(t.buffer)?'#F2C45F':'#79D4F2',e=events[executionStep],eventId=e?.id,live=start<=executionStep&&executionStep<end,sameChunk=!e?.label.match(/\[(\d+)\]/)||!t.name.match(/\[(\d+)\]/)||e.label.match(/\[(\d+)\]/)[1]===t.name.match(/\[(\d+)\]/)[1],uses=eventId==='scale'?true:eventId==='vf'?/inQ|rstd|work/.test(t.buffer):eventId==='weight'?/gamma|gQ/.test(t.buffer):eventId==='y'?t.buffer==='outQ':t.buffer==='inQ',related=hasExecutionSelection&&live&&sameChunk&&uses,color=related||lastQueueTensor?.id===t.id?roleColor:'#666';s+=`<g data-step="${t.eventIndex}" data-buffer-id="${t.id}" role="button" tabindex="0" aria-label="${esc(t.buffer+' / '+t.name)}" data-tip="${esc(t.buffer+' / '+t.name+' · Mock UB [0x'+t.mockAddress.toString(16)+', 0x'+(t.mockAddress+t.size).toString(16)+') · '+kib(t.size)+' · 源码 L'+t.srcLineStart+'—'+t.srcLineEnd)}">${MemoryInspectorBlock.render({x:at(start)+1,y,width:(end-start)*cw-2,height,name:t.name,size:t.size,line:t.srcLineStart,endLine:t.srcLineEnd,color,selected:false})}</g>`;}
+ if(showBufferLife&&mock){
+  const plot=renderBufferLifetimePlot({x0,width:ww,top:my+300,steps:events.length,capacity:mock.capacity,
+   title:'UB 地址 · 生命周期',description:'本案例用于编译前开发分析，地址数据来自 Mock。实际 UB 地址布局属于编译后观测，需接入编译器分配报告；这是应用阶段与输入产物的区别。',
+   axis:b=>(b/1024)+' KiB · 0x'+b.toString(16),items:mock.tensors.map(t=>{
+    const e=events[executionStep],eventId=e?.id,live=t.start<=executionStep&&executionStep<t.end;
+    const chunk=value=>value.match(/\[(\d+)\]/)?.[1],sameChunk=!chunk(e?.label||'')||!chunk(t.name)||chunk(e.label)===chunk(t.name);
+    const uses=eventId==='scale'||(eventId==='vf'?/inQ|rstd|work/.test(t.buffer):eventId==='weight'?/gamma|gQ/.test(t.buffer):eventId==='y'?t.buffer==='outQ':t.buffer==='inQ');
+    const related=hasExecutionSelection&&live&&sameChunk&&uses;
+    const roleColor=/gamma|gQ/.test(t.buffer)?'#BCA0F3':/rstd|work/.test(t.buffer)?'#F2C45F':'#79D4F2';
+    return {...t,offset:t.mockAddress,color:related||lastQueueTensor?.id===t.id?roleColor:'#666',
+     tip:t.buffer+' / '+t.name+' · Mock UB [0x'+t.mockAddress.toString(16)+', 0x'+(t.mockAddress+t.size).toString(16)+') · '+kib(t.size)+' · 源码 L'+t.srcLineStart+'—'+t.srcLineEnd};
+   })});
+  s+=plot.markup;
+  bufferBottom=plot.bottom;
  }
  const cx=at(executionStep)+cw/2;s+=`<path d="M${cx} 117V${bufferBottom}" stroke="#bdbdbd" stroke-dasharray="2 5" opacity=".4"/>`;
  const read=events.slice(0,executionStep+1).reduce((s,e)=>s+(e.bytes||0),0),reread=events.slice(0,executionStep+1).filter(e=>e.reread).reduce((s,e)=>s+e.bytes,0),statusY=bufferBottom+44;

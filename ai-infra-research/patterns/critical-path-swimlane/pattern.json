@@ -19,6 +19,16 @@
       "destroy()"
     ]
   },
+  "workbench": {
+    "entry": "workbench.js",
+    "mount": "CriticalPathWorkbench.mount(root,data,call,options)",
+    "version": 1,
+    "axis": "trace-time",
+    "layout": "investigation-workbench",
+    "controls": ["zoom", "inspector"],
+    "traceEvidenceControls": ["eventEvidence", "playback"],
+    "reference": "README.md"
+  },
   "sourceParity": "semantic extraction; source module unchanged; shared scale and lane identities retained",
   "status": "reviewed",
   "validation": {

@@ -69,7 +69,7 @@
 [data-liquid-glass=control],[data-liquid-glass=icon]{background:var(--glass-fill);box-shadow:0 7px 20px rgb(0 0 0 / 8%);isolation:isolate}
 .liquid-b-shine{position:absolute!important;inset:0;display:block;pointer-events:none;border-radius:inherit;z-index:-1}
 [data-liquid-glass=control] :is(button:not([aria-pressed=true]),select,[data-liquid-readout]){color:var(--glass-ink);text-shadow:none}
-[data-liquid-glass=panel]{background:rgb(26 26 26 / 78%);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 16px 48px rgb(0 0 0 / 18%),0 3px 10px rgb(0 0 0 / 8%)}
+[data-liquid-glass=panel]{background:rgb(44 44 44 / 86%);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 16px 48px rgb(0 0 0 / 18%),0 3px 10px rgb(0 0 0 / 8%)}
 [data-theme=light] [data-liquid-glass=panel]{background:rgb(255 255 255 / 74%);box-shadow:0 16px 48px rgb(0 0 0 / 10%),0 3px 10px rgb(0 0 0 / 5%)}
 [data-liquid-glass=panel] :is(p,legend,[data-liquid-muted]){color:var(--glass-ink);opacity:.7}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
@@ -2304,7 +2304,44 @@ const api={draw,frame,scale,viewBox:'0 0 160 160'};if(typeof module!=='undefined
  document.body.prepend(root);
 })();
 </script>
-<script>/* Host adapter for the complete Lingqu Pattern renderers. No packet paths are
+<script>
+(function(root){
+const NS='http://www.w3.org/2000/svg';
+function composeBoard(svg,detailed){
+ svg.classList.add('physical-composition');svg.classList.toggle('physical-detail',detailed);
+ const NS='http://www.w3.org/2000/svg',g=document.createElementNS(NS,'g');g.classList.add('physical-sections');
+ const sections=[[-6,40,906,106,'Host 接入','CPU / PCIe'],[112,154,790,124,'计算互联','NPU Mesh'],[112,282,790,110,'交换网络','L1 / L2 Clos'],[46,401,856,42,'扩展互联','POD / SuperPOD'],[46,449,856,70,'框内互联','Board-to-Board']];
+ g.innerHTML=sections.map(([x,y,w,h,title,sub])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/><text x="-116" y="${y+23}" class="physical-section-title">${title}</text><text x="-116" y="${y+40}" class="physical-section-sub">${sub}</text>`).join('');
+ svg.insertBefore(g,svg.firstChild.nextSibling);
+ const agg=document.createElementNS(NS,'g');agg.classList.add('physical-aggregate');
+ agg.innerHTML='<rect class="aggregate-region" x="126" y="164" width="752" height="18" rx="4"/><text x="502" y="176" text-anchor="middle">Full Mesh · 7 × 4 · 拓扑聚合</text><rect class="aggregate-region" x="126" y="286" width="752" height="20" rx="4"/><text x="502" y="299" text-anchor="middle">Clos Fabric · 8 × 4 · 拓扑聚合</text>';
+ for(let i=0;i<8;i++){const x=152+i*100;agg.insertAdjacentHTML('beforeend',`<line class="aggregate-physical" x1="${x}" y1="182" x2="${x}" y2="200"/><line class="aggregate-logical" x1="${x}" y1="269" x2="${x}" y2="286"/><line class="aggregate-physical" x1="${x}" y1="306" x2="${x}" y2="314"/>`);}
+ svg.insertBefore(agg,svg.querySelector('.b-nodes'));
+ // Expansion interfaces are destinations of the plane links, not extra switches.
+ svg.querySelectorAll('.b-lbl-ub,.b-lbl-uboe,.b-bus.b-ub,.b-bus.b-uboe').forEach(n=>n.remove());
+ svg.querySelectorAll('.b-out').forEach(n=>n.setAttribute('y2','401'));
+ const ext=document.createElementNS(NS,'g');ext.classList.add('physical-expansion');
+ ext.innerHTML='<rect x="60" y="401" width="410" height="42" rx="4"/><text x="265" y="426" text-anchor="middle" class="b-lbl-ub">Unified Bus → POD</text><rect x="498" y="401" width="402" height="42" rx="4"/><text x="699" y="426" text-anchor="middle" class="b-lbl-uboe">UBoE → SuperPOD</text>';
+ svg.append(ext);
+ svg.querySelectorAll('.b-lbl').forEach(n=>{if(/^(fullmesh|Clos|框内板间互联)/.test(n.textContent))n.remove();});
+}
+
+function board({boardIndex=0,focusSlot=0,onSelect=()=>{},mode='ep'}={}){
+ const temp=document.createElementNS(NS,'g');temp.innerHTML=LingquPhysicalPattern.create({world:Math.max(16,(boardIndex+1)*8)}).board(boardIndex);const svg=temp.firstElementChild;
+ svg.classList.add('lingqu-physical','lod1','lod2','near');svg.style.setProperty('--communication-color',mode==='ep'?'#FF9500':'#808080');
+ composeBoard(svg,true);svg.setAttribute('viewBox','-140 0 1100 550');
+ svg.querySelectorAll('use[href^="#hw-"]').forEach(n=>n.setAttribute('href',n.getAttribute('href').replace('#hw-','#deployment-hw-')));
+ svg.querySelectorAll('.p-npu').forEach(rect=>{
+  const rank=+rect.dataset.rank,slot=rank%8,g=rect.parentElement;const label=g.querySelector('.b-npul');if(label)label.textContent='NPU '+slot;g.classList.add('physical-rank',slot===focusSlot?'is-selected':'is-dim');g.dataset.rankId=rank;g.setAttribute('role','button');g.setAttribute('tabindex','0');g.setAttribute('aria-pressed',String(slot===focusSlot));g.onclick=()=>onSelect(rank);g.onkeydown=e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();onSelect(rank);}};
+ });
+ svg.querySelectorAll('.b-cpu,.b-nic,.b-dpu,.b-l1,.b-nsw,.b-swb').forEach(n=>{const active=n.matches('.b-cpu')?+n.dataset.cpu===Math.floor(focusSlot/4):n.matches('.b-nic')?+n.dataset.nic===Math.floor(focusSlot/2):false;n.classList.add(active?'device-active':'device-inactive');});
+ svg.querySelectorAll('[data-n],[data-m]').forEach(n=>n.classList.add((n.dataset.n??n.dataset.m).split(',').map(Number).includes(focusSlot)?'is-hot':'is-cold'));
+ svg.querySelectorAll('title').forEach(n=>n.remove());
+ return svg;
+}
+root.LingquHardware={version:'1.0.0',composeBoard,board,applyCopper:applyEPCopper};
+})(globalThis);
+</script><script>/* Host adapter for the complete Lingqu Pattern renderers. No packet paths are
  * invented: configured topology and observed logical exchanges stay separate. */
 let physicalLevel='pod',physicalBoard=0,physicalContext=null,physicalFitBounds=null;
 const physicalPath=document.createElement('nav');physicalPath.id='physical-path';physicalPath.hidden=true;physicalPath.setAttribute('aria-label','物理层级');document.body.append(physicalPath);
@@ -2328,24 +2365,7 @@ function physicalSelection(input){
  }else for(const mode of deploymentLayers){const state=trainingDeploymentState(parameterState,deploymentFocus,mode);state.members.forEach(r=>members.add(String(r)));state.edges.filter(e=>e.from===deploymentFocus||e.to===deploymentFocus).forEach(e=>{targets.add(String(e.from));targets.add(String(e.to));});}
  return {targets,members};
 }
-function physicalBoardComposition(svg,detailed){
- svg.classList.add('physical-composition');svg.classList.toggle('physical-detail',detailed);
- const NS='http://www.w3.org/2000/svg',g=document.createElementNS(NS,'g');g.classList.add('physical-sections');
- const sections=[[-6,40,906,106,'Host 接入','CPU / PCIe'],[112,154,790,124,'计算互联','NPU Mesh'],[112,282,790,110,'交换网络','L1 / L2 Clos'],[46,401,856,42,'扩展互联','POD / SuperPOD'],[46,449,856,70,'框内互联','Board-to-Board']];
- g.innerHTML=sections.map(([x,y,w,h,title,sub])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/><text x="-116" y="${y+23}" class="physical-section-title">${title}</text><text x="-116" y="${y+40}" class="physical-section-sub">${sub}</text>`).join('');
- svg.insertBefore(g,svg.firstChild.nextSibling);
- const agg=document.createElementNS(NS,'g');agg.classList.add('physical-aggregate');
- agg.innerHTML='<rect class="aggregate-region" x="126" y="164" width="752" height="18" rx="4"/><text x="502" y="176" text-anchor="middle">Full Mesh · 7 × 4 · 拓扑聚合</text><rect class="aggregate-region" x="126" y="286" width="752" height="20" rx="4"/><text x="502" y="299" text-anchor="middle">Clos Fabric · 8 × 4 · 拓扑聚合</text>';
- for(let i=0;i<8;i++){const x=152+i*100;agg.insertAdjacentHTML('beforeend',`<line class="aggregate-physical" x1="${x}" y1="182" x2="${x}" y2="200"/><line class="aggregate-logical" x1="${x}" y1="269" x2="${x}" y2="286"/><line class="aggregate-physical" x1="${x}" y1="306" x2="${x}" y2="314"/>`);}
- svg.insertBefore(agg,svg.querySelector('.b-nodes'));
- // Expansion interfaces are destinations of the plane links, not extra switches.
- svg.querySelectorAll('.b-lbl-ub,.b-lbl-uboe,.b-bus.b-ub,.b-bus.b-uboe').forEach(n=>n.remove());
- svg.querySelectorAll('.b-out').forEach(n=>n.setAttribute('y2','401'));
- const ext=document.createElementNS(NS,'g');ext.classList.add('physical-expansion');
- ext.innerHTML='<rect x="60" y="401" width="410" height="42" rx="4"/><text x="265" y="426" text-anchor="middle" class="b-lbl-ub">Unified Bus → POD</text><rect x="498" y="401" width="402" height="42" rx="4"/><text x="699" y="426" text-anchor="middle" class="b-lbl-uboe">UBoE → SuperPOD</text>';
- svg.append(ext);
- svg.querySelectorAll('.b-lbl').forEach(n=>{if(/^(fullmesh|Clos|框内板间互联)/.test(n.textContent))n.remove();});
-}
+function physicalBoardComposition(svg,detailed){return LingquHardware.composeBoard(svg,detailed);}
 function physicalRelationLegend(){return `<div class="physical-relation-key" style="--mode-color:${observationData?observationColor():deploymentColors[deploymentMode]||'#808080'}"><div><i class="key-physical"></i><span>物理连接<small>静态硬件连接</small></span></div><div><i class="key-logical"></i><span>逻辑互联<small>聚合关系，不代表实体总线</small></span></div><div><i class="key-parallel"></i><span>并行链路<small>独立通道，×4 表示四条</small></span></div><div><i class="key-selected" style="border-color:var(--mode-color,#FF9500)"></i><span>选中关联<small>按通信类型着色的拓扑关系；不代表实测路径</small></span></div><div><i class="key-event"></i><span>通信事件<small>有运行时证据时显示语义色箭头；不等于物理路径</small></span></div></div>`;}
 function physicalRender(){
  physicalPath.hidden=true;physicalFitBounds=null;

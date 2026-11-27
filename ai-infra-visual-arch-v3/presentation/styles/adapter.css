@@ -103,3 +103,11 @@ nav:has(button[title="Show slide overview"]):hover,nav:has(button[title="Show sl
 .trial-stage #system .pass-dimension .dimension-audit::before{content:"核查";position:absolute;right:calc(100% + 6px);top:50%;transform:translateY(-50%);font-size:11px;white-space:nowrap}
 .trial-stage #system .pass-dimension [data-frame-target=".focus-heading"]{font-size:0}
 .trial-stage #system .pass-dimension [data-frame-target=".focus-heading"]::before{content:"01 对象与上下文";position:absolute;left:calc(100% + 8px);top:0;font-size:10px;white-space:nowrap}
+
+/* The audit trigger lives in the original iframe toolbar and inherits its liquid material. */
+.trial-stage #system .pass-audit.toolbar-linked>summary{display:none}
+.trial-stage #system .pass-audit.toolbar-linked aside{top:calc(var(--audit-size,42px) + 8px)}
+.trial-stage #system .pass-audit.toolbar-linked[open]::after{top:calc(var(--audit-size,42px) + 8px)}
+
+.trial-stage #system .pass-audit.toolbar-linked aside{right:var(--audit-panel-right,0px)}
+.trial-stage #system .pass-audit.toolbar-linked[open]::after{right:var(--audit-panel-right,0px)}

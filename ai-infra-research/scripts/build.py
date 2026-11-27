@@ -64,6 +64,8 @@ def build(mode='standalone', service='http://127.0.0.1:8766/', collection='knowl
         from skill_readme import render as render_skill_readme
         config['skillReadmes'] = {a['id']: render_skill_readme((ROOT / a['readmePath']).read_text(), a['readmePath']) for a in data['assets'] if a['type'] == 'method' and a.get('readmePath')}
         config['skillTexts'] = {a['id']: (ROOT / a['content']).read_text() for a in data['assets'] if a['type'] == 'method'}
+        workflow = (ROOT.parent / 'outputs/workflow-editor.html').read_text()
+        config['investigationWorkflow'] = workflow.replace('../ai-infra-research/methods/', 'methods/')
     if mode == 'standalone':
         repositories = json.loads((ROOT / '.local/sources.json').read_text())['repositories']
         config['fileRoots'] = {key: Path(os.path.relpath(value, ROOT)).as_posix() + '/' for key, value in repositories.items()}
@@ -149,6 +151,7 @@ if __name__ == '__main__':
     from collect_trial_patterns import collect as collect_trial_patterns
     collect_trial_patterns()
     from package_investigation import package as package_investigation
+    from package_investigation import standalone_references
     package_investigation()
     packages = [('methods/llm-compute-diagrams', 'methods/llm-compute-diagrams.zip')]
     data = json.loads((ROOT / 'catalog/assets.json').read_text())
@@ -160,6 +163,8 @@ if __name__ == '__main__':
             for file in sorted(skill_root.rglob('*')):
                 if file.is_file() and not any(part.startswith('.') for part in file.relative_to(skill_root).parts):
                     archive.write(file, file.relative_to(skill_root.parent))
+            for source, target in standalone_references(skill_root):
+                archive.write(source, target)
     (ROOT / 'index.html').write_text(build(), encoding='utf-8')
     (ROOT / 'skills.html').write_text(build(collection='skills'), encoding='utf-8')
     (ROOT / 'patterns.html').write_text(build(collection='patterns'), encoding='utf-8')

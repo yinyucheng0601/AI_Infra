@@ -3,7 +3,7 @@
   "collectedAt": "2026-11-19",
   "source": "review-output/distributed-training-evolution",
   "files": {
-    "index.html": "eee9fc3a1e0b41502104c7d13f6cdcbf1438a3c6d0af6c428f1c23d810ed15bf",
+    "index.html": "c3e40755ba3cc3744e4679fbc22a0038a5da4ff0d59e88f02b20aad051a5287d",
     "canonical.js": "cfef5923432fd8a374c92cf33ce1474663a4d35f3ac7d29927a61948ac49b41a",
     "content.js": "9ff8cf48840af2f9b788a8655666c7d4ea1183cec9b76f5e8fb8af88a5388a9d",
     "demo.css": "053959db940ce20a992771e885b632b329acff2cf9c0e75add57b225d8ca9f36",
@@ -13,7 +13,7 @@
     "graph-model.js": "150d3351c7258f9b6f536b41e55ab449073bf8c1697fcefc579733983996ff37",
     "graph-renderer.js": "c283e3d6c2c6169265b91d4361994283512732d0ecc248ba72cca45c37d01911",
     "layer-stack-progress.css": "ca209226c07d63470c0b0cc9b7eb644de93c75d9eff0773cf1e1dcfad38ff15f",
-    "liquid-glass.css": "70742469fd0bace18b22a97b97be7ddf2dc3344146eeecd57d9f5ab022ad8b6d",
+    "liquid-glass.css": "380d09842e9e1257b1b59d03f731d01c4a45359321ac3e016f4642ac1a3cb099",
     "liquid-glass.js": "8123f18de99d7371b68aaf66ae344bbbb6b5e4d187b6daeaf2d8759c6b1780b9",
     "secondary.js": "8edb64230bbd9b9a7e161a9ae6d4aa049c9ddcec5f6d52d8e3d9bf2b1bc37ae9",
     "training-graph.js": "89023f64d832b70209dc48b840500de305a2e3f08ca13299f47de230dfcd4c5e",
@@ -21,7 +21,7 @@
     "verify-graph.cjs": "7e60e2d927e79eb282ef8dc51248cda9bcf2fbaa625455a3a9ae938c2b7bf1c9",
     "verify-math.py": "da88e62022213c493dddd1fa1a71740cb6cd4b0133fc7ccbe33bfd66b5f1b674",
     "verify-renderer.cjs": "c0a618db6aaea69d05fcca986d9e90babcf6918705f701b757c6224fd50f013b",
-    "build-offline.py": "9ff53ce20c5816df503573812622df223cf8209e96c182ac4079b88ff90eed50",
+    "build-offline.py": "6037a04e919cdd63cdd3e803413f77134adb1d5db8c93e89302927f4e14ad391",
     "LICENSE": "62d298ef9dab08ee1ceb20877aa4ad38c3bb71aa0cb779a8738ecfa652160052",
     "sources-audit.md": "5cdda7d7d98d29cbaf7d197fa6d3d1843057ea779a821061063fcf317f83e62d",
     "verify-browser-experts.cjs": "4bece5b5a835d36aaf2fbf2b761438b7e02e526e42cce33583c63c1d2a6265cb",
@@ -39,7 +39,7 @@
     "deployment-pattern/provenance.json": "c21812732cbf21c5d23e548ed8f1805b1697bd8b59bf528370faa75543f3ed61",
     "verify-deployment-dom.cjs": "e04ec82597fde99c0108e8f684d90736ec8b46cc0facafb04b7a6087cbdd992c",
     "SPEC.md": "a2bcf0461a4e04e8b0fa22d1e32b2656719ce847820d10627834a99eacf036c3",
-    "training-demo.html": "d12a9538512aa7f5de10133836a6127bac0fc4a9c2cb7649f986da5d3e984e7c",
+    "training-demo.html": "6ffc13d86e3ab63ce7121df5ccc60292dbe993252a03808b76d8fabef74c1ea7",
     "deployment-step.js": "2749d1435c296634f41150b203f2dd16f52edc161003ca7ac226827790ee18fe",
     "deployment-model.js": "c09c2a90d1e3564f1cfe8b48116a91bd2ab8986836c0c9208cc3e3f4f923a967",
     "deployment-validation.md": "3c1fe5e3a5b1eb570431fdd8fe26a50bb522429b5c82fbb7a8d31aa12741d920",
@@ -58,7 +58,7 @@
     "deployment-pattern/view-dial.css": "9a94c8f0e8a98b2bcb9267c5833267d5bbee2a355ee5361d7be548a1b349638e",
     "deployment-pattern/hw-icons.js": "8f476efdcdea540b22ca921382c27a54621ce898a4ac102f1dafa5e4d3e65a82",
     "README.md": "1521e31cb753f522c56224b0f4a9e6993ed17f02522edd1c730a4ea6196a2043",
-    "deployment-physical.js": "bd36cdfe0bac6d782feae138549e5054dc29e156af259fff2a1118c72daf62ed",
+    "deployment-physical.js": "f5fb3d65b464a15a946ccf030a82dc4e88b5e3508e82502ab33e1751efb23f91",
     "deployment-pattern/lingqu-physical.js": "2d3c751c6c93864a8c8a157a9ab9f630cde35d76147cf192642a4c7fd8b2715a",
     "deployment-pattern/lingqu-physical.css": "9ce7174419147a30427f03cbed29afc2a11551985c7290e8b41041077e89b968",
     "verify-physical-browser.cjs": "2b6a06695cc9a82054430556afc5457bf119a3c17eb2d9df3ccd7e7da49bb27a",
@@ -77,6 +77,8 @@
     "observation/configured-trace-mock.js": "ffcace836fde41301f73dfe79aedfabb14794b878a781e3be1aed3f3d9773026",
     "observation/build-configured-trace-mock.cjs": "12f060173bedc641d60faa23bc759be6c7bfe5d388565eabe80d1b742eb5528f",
     "observation/configured-trace-mock.v1.json": "ee4172c1b65c3481430f6b2349fb50cd505286788ed731cb3d16332bc2781928",
-    "deployment-pattern/ep-copper.js": "6ef2a56905d246dc220bf639427edd718a4dce38bb92c48b29414baf0a0e6057"
+    "deployment-pattern/ep-copper.js": "6ef2a56905d246dc220bf639427edd718a4dce38bb92c48b29414baf0a0e6057",
+    "deployment-pattern/hardware-system.js": "66ef0eb29f31908f37e3a06fea41decb787779af66b2329b36ea568c5042932d",
+    "deployment-pattern/HARDWARE-SYSTEM.md": "572e45cb6059ea1539825b3a5d556602da4e028aa345c028939629aa4ade3305"
   }
 }

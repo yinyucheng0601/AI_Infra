@@ -1,0 +1,14 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict');
+(async()=>{const b=await chromium.launch({headless:true,...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});const p=await b.newPage({viewport:{width:1600,height:1000}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
+await p.goto('http://127.0.0.1:8896/inference-layer-stack.html');await p.evaluate(()=>{pausePlayback();get('model-select').value='deepseek';get('model-select').onchange();pausePlayback();setRankPrimary(true,false);});
+assert.equal(await p.locator('#parallel-rank-scene [data-rank-id]').count(),16);
+assert.equal(await p.locator('#parallel-rank-scene .rank-outline').count(),16);
+assert(await p.locator('#parallel-rank-scene').evaluate(n=>{const r=n.getBoundingClientRect();return r.x===0&&r.y===0&&Math.abs(r.width-innerWidth)<1&&Math.abs(r.height-innerHeight)<1;}));
+await p.evaluate(()=>togglePlayback());const handle=await p.locator('#parallel-rank-scene').elementHandle();await p.waitForTimeout(500);assert(await handle.evaluate(n=>n.isConnected));await p.evaluate(()=>pausePlayback());
+assert(await p.locator('#open-front').isHidden());await p.locator('#parallel-rank-scene [data-rank-id="0"]').click();await p.waitForTimeout(450);assert.equal(await p.evaluate(()=>rankDetail),true);assert.equal(await p.locator('[data-rank-content]').count(),1);assert.equal(await p.locator('#parallel-rank-scene .rank-outline').count(),1);await p.evaluate(()=>choose(9,false));assert.equal(await p.locator('[data-rank-live]').getAttribute('data-layer'),'9');assert((await p.locator('[data-rank-runtime]').textContent()).includes('L9'));await p.screenshot({path:'/private/tmp/rank-content-final.png'});await p.locator('#viewport-fit').click();assert.equal(await p.evaluate(()=>rankDetail),false);
+await p.locator('#cycle-view').click();assert.equal(await p.locator('#view-name').textContent(),'Top');
+assert.equal(await p.locator('#parallel-rank-scene [data-hardware-board]').count(),0);assert.equal(await p.locator('#parallel-rank-scene .rank-outline').count(),16);await p.waitForTimeout(300);await p.screenshot({path:'/private/tmp/rank-top-final.png'});
+for(let i=0;i<3;i++)await p.locator('#cycle-view').click();assert.equal(await p.locator('#view-name').textContent(),'2.5D');
+await p.screenshot({path:'/private/tmp/rank-spatial-final.png'});
+assert.deepEqual(errors,[]);console.log('PASS persistent scene during playback, 16 ranks, Rank content detail, 4 dial views, no page errors');await b.close();})().catch(e=>{console.error(e);process.exitCode=1;});

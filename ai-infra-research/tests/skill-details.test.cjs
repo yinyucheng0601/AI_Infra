@@ -10,7 +10,7 @@ for(const asset of catalog.assets.filter(a=>a.type==='method'))test('Skill detai
  const nodes=new Map();
  const node=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',innerHTML:'',hidden:false,dataset:{},classList:{add(){},toggle(){}},setAttribute(){},addEventListener(){}});return nodes.get(id)};
  node('catalogData').textContent=JSON.stringify(catalog);
- node('runtimeConfig').textContent=JSON.stringify({collection:'skills',mode:'standalone',skillReadmes:runtime.skillReadmes,skillTexts:{[asset.id]:fs.readFileSync(path.join(root,asset.content),'utf8')}});
+ node('runtimeConfig').textContent=JSON.stringify({collection:'skills',mode:'standalone',skillReadmes:runtime.skillReadmes,investigationWorkflow:runtime.investigationWorkflow,skillTexts:{[asset.id]:fs.readFileSync(path.join(root,asset.content),'utf8')}});
  const C={escapeHtml:s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;'),parseState:()=>({asset:asset.id}),topics:[],projects:{},stateQuery:()=>'?asset='+asset.id};
  const context={window:{CatalogCore:C,addEventListener(){}},document:{getElementById:node,querySelector:()=>node('query'),documentElement:{dataset:{}},addEventListener(){},title:''},location:{protocol:'file:',search:'?asset='+asset.id},localStorage:{getItem:()=>null},history:{},fetch(){throw Error('Skill details must not need source service')}};
  vm.runInNewContext(code,context);
@@ -21,5 +21,12 @@ for(const asset of catalog.assets.filter(a=>a.type==='method'))test('Skill detai
  assert.ok(runtime.skillReadmes[asset.id]);
  assert.ok(node('detailView').innerHTML.includes(runtime.skillReadmes[asset.id]));
  assert.ok(!node('detailView').innerHTML.includes('skill-start'));
+ if(asset.id==='ai-infra-investigation'){
+  const workflow=fs.readFileSync(path.join(root,'../outputs/workflow-editor.html'),'utf8');
+  assert.equal(runtime.investigationWorkflow,workflow.replaceAll('../ai-infra-research/methods/','methods/'));
+  assert.ok(node('detailView').innerHTML.includes('srcdoc="'+C.escapeHtml(runtime.investigationWorkflow)+'"'));
+ }else{
+  assert.ok(!node('detailView').innerHTML.includes('id="skill-workflow-title"'));
+ }
  assert.notEqual(node('connectionStatus').textContent,'');
 });

@@ -1,0 +1,56 @@
+{
+  "task_type": "operator-memory-investigation",
+  "objects": [
+    "tensor",
+    "operator",
+    "ir_value",
+    "allocation",
+    "kernel",
+    "instruction"
+  ],
+  "relationships": [
+    "consumes",
+    "produces",
+    "derived_from",
+    "stored_in",
+    "observed_during"
+  ],
+  "pattern_id": "memory-lifecycle",
+  "glyph_bindings": [
+    {
+      "object_type": "tensor",
+      "glyph_id": "system-value",
+      "variant": "matrix",
+      "reason": "tensor shape and logical data role"
+    },
+    {
+      "object_type": "operator",
+      "glyph_id": "system-op",
+      "variant": "system-op",
+      "reason": "operator execution node"
+    },
+    {
+      "object_type": "memory",
+      "glyph_id": "system-memref",
+      "variant": "system-memref",
+      "reason": "memory representation"
+    }
+  ],
+  "evidence_summary": {
+    "observed": 0,
+    "derived": 1,
+    "assumed": 2,
+    "unknown": 3
+  },
+  "drilldowns": [
+    "tensor-lineage",
+    "compiler-pass",
+    "memory-allocation",
+    "kernel-instruction"
+  ],
+  "agent_actions": [
+    "inspect missing correlation IDs",
+    "compare pass outputs",
+    "validate runtime trace"
+  ]
+}

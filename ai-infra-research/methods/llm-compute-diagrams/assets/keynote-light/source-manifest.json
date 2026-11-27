@@ -1,0 +1,50 @@
+{
+  "library": "reports/llm-compute/diagram-legend-library/index.html?v=69860fd1f593&theme=light",
+  "actualSha256": "3ad38df6b34839e92916ce58f7571355c11edd649dab1df094c505a78ed8053c",
+  "theme": "template.html themedSvg",
+  "assets": {
+    "Tensor": "system-value/data-1: tensorNode",
+    "Shard": "system-value/data-1: tensorNode",
+    "Tile": "system-value/data-1: tensorNode",
+    "Attention": "index.html#system-op / attention actual catalog SVG crop (label only)",
+    "Operator": "index.html#system-kernel / exact IR OP group, fx variant",
+    "MatMul": "index.html#system-kernel / exact IR OP group, fx variant",
+    "GELU": "index.html#system-op / activation actual catalog SVG crop (label only)",
+    "Collective": "index.html#system-op / exchange actual catalog SVG crop (label only)",
+    "Add": "system-add",
+    "Kernel": "index.html#system-kernel / complete projection + AIC + MatMul",
+    "Kernel A": "system-kernel: VisualSystem.node",
+    "Kernel B": "system-kernel: VisualSystem.node",
+    "Task": "system-task: task",
+    "DMA": "system-instruction: instruction",
+    "Pass": "system-pass: VisualSystem.node",
+    "IR": "ir: doc",
+    "Rank": "Compact presentation adaptation of system-rank four-pin board; user requested visual refinement 2026-11-13",
+    "LayerFrame": "container: frame",
+    "Event": "pypto-runtime-evidence-guide/index.html / bar()"
+  },
+  "unsupported": [
+    "Shape",
+    "Register",
+    "HBM",
+    "GPU",
+    "Core",
+    "Node",
+    "TP",
+    "EP",
+    "Stream",
+    "Event",
+    "Trace",
+    "Metric",
+    "Profile"
+  ],
+  "note": "Unsupported concepts retain plain labels; no substitute physical or runtime identity is invented.",
+  "viewportPadding": "3 source units around every SVG; image box grows proportionally, glyph geometry and port bounds remain unchanged.",
+  "opSource": "Actual system-op.svg crops from legendData, passed through the library themedSvg. No report OP renderer.",
+  "approvedPresentationOverrides": {
+    "gap": 16,
+    "irOp": "Preserve capsule ratio; fx badge radius 18 vs original 12; fx font 18. User requested larger circle on 2026-11-13.",
+    "palette": "User requested pale purple and dark Tensor labels on 2026-11-12.",
+    "rank": "Compact 136x64 four-pin variant; radius 7 corners, #c7ccd4 pins radius 2.4, centered 16px label, no outline. User refined 2026-11-13."
+  }
+}

@@ -15,7 +15,7 @@ architecture_css='\n'.join((DS/p).read_text() for p in architecture_paths if p.e
 architecture_js='\n'.join((DS/p).read_text() for p in architecture_paths if p.endswith('.js'))
 architecture_js=architecture_js.replace("resident: '#58a6ff'","resident: '#858585'").replace("temp: '#3fb950'","temp: '#858585'").replace("loop: '#f0883e'","loop: '#858585'")
 architecture_js=architecture_js.replace('rulerStep(plot, capacity) {','rulerStep(plot, capacity) { if(capacity<1024)return Math.max(1,capacity/4);').replace('const kb = bytes / 1024;', 'if(bytes<1024)return `${Math.round(bytes)} B`; const kb = bytes / 1024;').replace('地址 / Buffer offset ->','单次请求尺寸 →').replace("ctx.fillStyle = color;\n        this.roundRect", "ctx.fillStyle = selected ? (/gamma|gQ/.test(tensor.buffer) ? '#BCA0F3' : /rstd|work/.test(tensor.buffer) ? '#F2C45F' : '#B1EF6B') : color;\n        this.roundRect").replace("? this.cssVar('--reuse-viewer-tensor-selected', '#ffaa3b')", "? 'transparent'")
-architecture_js+='\n'+(P/'memory-inspector-adapter.js').read_text()
+architecture_js+='\n'+(P/'memory-inspector-adapter.js').read_text()+'\n'+(P/'buffer-lifetime-plot.js').read_text()
 legend=R/'reports/llm-compute/diagram-legend-library'
 op_lines=(legend/'build.cjs').read_text().splitlines()
 op_renderer='\n'.join(next(line for line in op_lines if line.startswith('const '+name+'=')) for name in ['opGlyph','opNode'])

@@ -123,7 +123,7 @@ body.stack-primary .training-graph-entry{display:none!important}
 /* Replace the host's legacy frosted skins with the final v2 material. */
 body :is([data-liquid-glass=control],[data-liquid-glass=icon]){background:var(--glass-fill)!important;border:0!important;box-shadow:0 7px 20px rgb(0 0 0 / 8%)!important}
 body [data-liquid-glass=icon]{position:relative}
-body [data-liquid-glass=panel]{background:rgb(26 26 26 / 78%)!important;border:0!important;box-shadow:0 16px 48px rgb(0 0 0 / 18%),0 3px 10px rgb(0 0 0 / 8%)!important}
+body [data-liquid-glass=panel]{background:rgb(44 44 44 / 86%)!important;border:0!important;box-shadow:0 16px 48px rgb(0 0 0 / 18%),0 3px 10px rgb(0 0 0 / 8%)!important}
 :root[data-theme=light] body [data-liquid-glass=panel]{background:rgb(255 255 255 / 74%)!important;box-shadow:0 16px 48px rgb(0 0 0 / 10%),0 3px 10px rgb(0 0 0 / 5%)!important}
 body #ep-playback.training-progress,body #ep-playback .mb-process,body #ep-playback .request-track,body #ep-playback #ep-progress{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none;box-shadow:none!important;border:0}
 body:not(.stack-primary)[data-query=true] #scene{left:var(--training-graph-edge,54%);right:0;width:calc(100% - var(--training-graph-edge,54%));height:100dvh}

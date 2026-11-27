@@ -92,7 +92,7 @@ for(const group of workerGroups){
   }
  }
 }
-data.evidence={records,links,requests,batchSamples,tokenSamples,clock:'trace microseconds → milliseconds',deployment:{enabled:false,reason:'No verified physical worker-to-device mapping in this capture'}};
+data.evidence={records,links,requests,batchSamples,tokenSamples,clock:'trace microseconds → milliseconds',scope:'trace:sha256:'+crypto.createHash('sha256').update(bytes).digest('hex'),deployment:{enabled:false,reason:'No verified physical worker-to-device mapping in this capture'}};
 fs.writeFileSync(path.join(__dirname,'trace-data.js'),'window.SWIMLANE_DATA = '+JSON.stringify(data)+';\n');
 fs.writeFileSync(path.join(__dirname,'trace-provenance.json'),JSON.stringify({source:path.basename(file),sha256:crypto.createHash('sha256').update(bytes).digest('hex'),eventCount:raw.traceEvents.length,steps:steps.length,lanes:calls.length,laneIdentity:pids.map((pid,dev)=>({dev,pid})),mapping:{group:'chip.run args.inv',bind:'chip.run.bind',runner:'chip.run.runner_run',end:'chip.run end',origin:'earliest complete event; milliseconds',prefill:'batch_prefill temporal containment; may contain multiple invocations',worker:'step_id within Worker; temporal candidate across layers',scope:'complete multi-request capture; not a single request',lane:'sorted chip child process IDs; ordinal is not a verified physical device ID'},validation:{browser:'not run; visual acceptance reserved for user'}},null,2)+'\n');
 console.log(steps.length+' invocation groups / '+calls.length+' lanes / '+batches.length+' prefill batches / '+outputs.length+' server outputs');

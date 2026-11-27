@@ -9,3 +9,20 @@
 /ai-infra-visual-review-architecture/history/
 /ai-infra-visual-review-architecture/preview*.png
 /ai-infra-visual-review-architecture/vendor/
+
+# Local verification inputs and generated review artifacts.
+/review-output/
+/dist/
+/layer_stack/audits/
+/layer_stack/deepseek-profile-data.json
+/layer_stack/deepseek-profile-validation.md
+/layer_stack/deepseek-trace-config-audit.md
+/layer_stack/lingqu-hardware-provenance-audit.md
+/layer_stack/shared-hardware-validation.md
+/ai-infra-visual-arch-v3/review-2026-11-16/
+/outputs/workflow-skill-node-audit.md
+/outputs/aiinfra-agent-engineering/examples/deepseek-trace-excerpt.json
+/outputs/aiinfra-agent-engineering/examples/trace-evidence-graph.json
+/outputs/aiinfra-agent-engineering/examples/artifact/deepseek-trace.html
+/outputs/aiinfra-agent-engineering/reports/regression-report.*
+/outputs/aiinfra-agent-engineering/**/__pycache__/

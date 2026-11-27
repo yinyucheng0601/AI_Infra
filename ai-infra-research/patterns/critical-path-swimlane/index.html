@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Inference Request</title>
+<link rel="alternate" type="application/json" href="trace-provenance.json" title="DeepSeek V4 采集指纹">
+<link rel="alternate" type="application/json" href="provenance.json" title="DSpark 采集指纹">
 <link rel="stylesheet" href="evidence-view.css"><link rel="stylesheet" href="selector.css"><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="pattern.css"><link rel="stylesheet" href="../sequence-navigation/navigation.css"><link rel="stylesheet" href="liquid-glass/liquid-glass.css">
 <style>
 body{margin:0;background:#111}
@@ -12,15 +14,24 @@ body{margin:0;background:#111}
 @media(max-width:800px){.dataset-control{top:54px;left:16px;transform:none}.dataset-control select{max-width:280px}}
 </style>
 <label class="dataset-control">数据集 <select id="dataset" aria-label="选择泳道数据集" aria-describedby="dataset-tip"><option value="deepseek">DeepSeek V4 · TP1 / DP16 · 8K · 16B</option><option value="original">原始示例 · DSpark Serving</option></select><span class="dataset-tip" id="dataset-tip" role="tooltip">切换数据集并重置时间范围与选择</span></label>
-<main id="workbench"></main><script src="data.js"></script><script>window.ORIGINAL_SWIMLANE_DATA=window.SWIMLANE_DATA;</script><script src="trace-data.js"></script><script src="../sequence-navigation/navigation.js"></script><script src="pattern.js"></script><script src="selector.js"></script><script src="evidence-view.js"></script><script defer src="liquid-glass/liquid-glass.js"></script>
-<script>const datasets={deepseek:window.SWIMLANE_DATA,original:window.ORIGINAL_SWIMLANE_DATA};
+<main id="workbench"></main><script src="data.js"></script><script>window.ORIGINAL_SWIMLANE_DATA=window.SWIMLANE_DATA;</script><script src="trace-data.js"></script><script src="../sequence-navigation/navigation.js"></script><script src="pattern.js"></script><script src="selector.js"></script><script src="evidence-view.js"></script><script src="workbench.js"></script><script defer src="liquid-glass/liquid-glass.js"></script>
+<script>const deepseek=window.SWIMLANE_DATA;
+// The original published dataset predates scoped references.
+deepseek.evidence.scope ??= 'trace:sha256:04acfb37b21f44f5225b48d2fc6c914cac95aa5cee093cd1dfdfa7bc713a19d2';
+const datasets={deepseek,original:window.ORIGINAL_SWIMLANE_DATA};
 const picker=document.getElementById('dataset');
+const syncUrl=location.protocol!=='file:';
 picker.value=new URLSearchParams(location.search).get('dataset')==='original'?'original':'deepseek';
 function loadDataset(reset){
-  if(window.swimlane)window.swimlane.destroy();
   const data=datasets[picker.value];
-  if(reset){const url=new URL(location.href);url.searchParams.set('dataset',picker.value);url.hash='';history.replaceState(null,'',url);}
-  window.swimlane=(data.evidence?TraceEvidenceView:CriticalPathSwimlane).mount(document.getElementById('workbench'),data,{syncHash:true,step:data.steps[0].id});
+  const call={version:1,pattern:'critical-path-swimlane',layout:'investigation-workbench',axis:'trace-time',
+    controls:{zoom:'required',inspector:'required',eventEvidence:'optional',playback:'optional'}};
+  window.swimlane?.destroy();
+  window.swimlane=null;
+  if(reset&&syncUrl){const url=new URL(location.href);url.searchParams.set('dataset',picker.value);url.hash='';history.replaceState(null,'',url);}
+  const root=document.getElementById('workbench');
+  try{window.swimlane=CriticalPathWorkbench.mount(root,data,call,{syncHash:syncUrl,defaultStep:data.steps[0].id});}
+  catch(error){root.replaceChildren();const status=document.createElement('p');status.setAttribute('role','alert');status.style.color='#ddd';status.textContent=error.message;root.append(status);}
 }
 picker.addEventListener('change',()=>loadDataset(true));
 loadDataset(false);

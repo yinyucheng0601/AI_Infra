@@ -32,8 +32,12 @@ class ResourceParser(HTMLParser):
         a = dict(attrs)
         if tag in ('script', 'img', 'iframe', 'source', 'video', 'audio') and a.get('src'):
             self.refs.append(a['src'])
-        if tag == 'link' and a.get('href') and a.get('rel') in ('stylesheet', 'icon', 'preload', 'modulepreload'):
-            self.refs.append(a['href'])
+        if tag == 'link' and a.get('href'):
+            related = a.get('rel')
+            if related in ('stylesheet', 'icon', 'preload', 'modulepreload') or (
+                related == 'alternate' and a.get('type') == 'application/json'
+            ):
+                self.refs.append(a['href'])
         if a.get('style'):
             self.refs.extend(re.findall(r'url\([\s\'"]*([^\)\'"\s]+)', a['style']))
 
@@ -163,6 +167,8 @@ class Preview:
         self.files.update({'/' + p: file for p, file in report_files.items()})
         skill_files = ['patterns.html', 'skills.html', 'methods/llm-compute-diagrams.zip', 'methods/llm-compute-diagrams/assets/reference-guide.html']
         skill_files.append('methods/observability-design-style/observability-design-system.md')
+        skill_files.extend(path.relative_to(ROOT).as_posix() for path in
+                           (ROOT / 'methods/ai-infra-investigation/references').glob('*.md'))
         skill_files.extend(a['downloadUrl'] for a in self.assets if a.get('packagePath'))
         self.files.update({'/' + p: ROOT / p for p in skill_files if (ROOT / p).is_file()})
         for repo, root in config.get('repositories', {}).items():

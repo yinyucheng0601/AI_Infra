@@ -1,7 +1,7 @@
 {
   "authoritativeSource": "prototypes/compute-investigation-trial/expand.html",
-  "sourceSha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
-  "outputSha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
+  "sourceSha256": "520bc41bdf4bb791b7ecad8d15ac84783815cc135acfb97f2439d3de9f60feab",
+  "outputSha256": "520bc41bdf4bb791b7ecad8d15ac84783815cc135acfb97f2439d3de9f60feab",
   "cover": "web/media/expand-mapping-inspector-cover.svg",
   "coverSha256": "603c59836dd79e76a8cd24936d3ac488740ede97fa870ec35491dc3d9cdc5963",
   "coverMethod": "export of actual SVG scene from delivered application; not a browser screenshot",

@@ -1,0 +1,263 @@
+/* Source Pattern rules, scoped to the physical scene. Host overrides follow. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sp{fill: #151515; stroke: #444444; stroke-width: calc(1.5px / var(--zk, 1)); vector-effect: non-scaling-stroke;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sp.is-on{stroke: #5C5C5C;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-splabel{font-size: 11px; fill: #E8E8E8;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-plane{fill: #1C1C1C; stroke: #3A3A3A; stroke-width: calc(1px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-planelabel{font-size: 8px; fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sw1{fill: #222222; stroke: #808080; stroke-width: calc(.8px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sw1label{font-size: 8px; fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-pod{fill: #181818; stroke: #3E3E3E; stroke-width: calc(1.5px / var(--zk, 1)); vector-effect: non-scaling-stroke; cursor: zoom-in;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-pod:hover{stroke: #5C5C5C;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-pod.is-on{stroke: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-pod.is-fit{stroke: #5C5C5C;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-board{fill: transparent; cursor: pointer;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-pod.is-fit ~ .p-board:hover,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-board:hover{fill: #202020;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-l2{stroke: #808080; stroke-opacity: .45; stroke-width: calc(.6px / var(--zk, 1)); fill: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-l1{stroke: #808080; stroke-width: calc(1px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-uboe{stroke: #A0A0A0; stroke-width: calc(1.5px / var(--zk, 1)); stroke-dasharray: 6 4; fill: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-uboelabel{font-size: 10px; fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-cpu,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-dpu,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-nic,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sw2,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-swicon,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npupkg,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npuicon,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical [class^="b-"] use{stroke: none; vector-effect: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npupkg{pointer-events: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npuicon{pointer-events: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bdiv{stroke: #262626; stroke-width: calc(1px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .lod1,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .lod2{display: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod1 .lod1,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .lod2{display: inline;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-colhd text{font-size: 2.6px; fill: #8A8A8A; letter-spacing: .02em;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npunum{font-size: 1.5px; fill: #E8E8E8; pointer-events: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.c2 + .p-npunum{fill: #111111;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.is-dim + .p-npunum{opacity: .3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.is-sel + .p-npunum{fill: #FFFFFF; font-weight: 500;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-roce{stroke: #8A8A8A; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 3 3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-rocelabel{font-size: 8px; fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu{cursor: pointer; transition: opacity .15s ease;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.is-dim{opacity: .22;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.is-sel{stroke: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.g-tp{stroke: var(--c-tp); stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.g-cp{stroke: var(--c-cp); stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.g-ep{stroke: var(--c-ep); stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.g-dp{stroke: var(--c-dp); stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.g-pp{stroke: var(--c-pp); stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-cpu rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-dpu rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nic rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-l1 rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nsw rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-swb rect{fill: #222222; stroke: #8A8A8A; stroke-width: calc(1.5px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-cpu text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-dpu text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nic text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-l1 text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nsw text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-swb text{font-size: 10px; fill: #E8E8E8;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nic text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-l1 text{font-size: 10px;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-plane{fill: #161616; stroke: #282828; stroke-width: calc(1.5px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-sw2{fill: #8A8A8A;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu{stroke: #111111; stroke-width: calc(1.5px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.is-sel{stroke: #111111;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npul{font-size: 11px; fill: #E8E8E8;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npur{font-size: 9px; fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c2 ~ .b-npul{fill: #111111;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c2 ~ .b-npur{fill: #2E2E2E;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c3 ~ .b-npul,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c3 ~ .b-npur{fill: #FFFFFF;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-lbl{font-size: 9px; fill: #A0A0A0; paint-order: stroke; stroke: #111111; stroke-width: calc(3px / var(--zk, 1)); stroke-linejoin: round;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-cpu text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-dpu text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nic text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-l1 text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nsw text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-swb text,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npul{paint-order: stroke; stroke: #111111; stroke-width: calc(3px / var(--zk, 1)); stroke-linejoin: round;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-lbl-plane{fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-mesh{fill: none; stroke: #C8C8C8; stroke-opacity: .35; stroke-width: calc(.8px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-fan{stroke: #8A8A8A; stroke-opacity: .5; stroke-width: calc(1px / var(--zk, 1)); transition: stroke-opacity .15s ease;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-h2d,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nicl{stroke: #A0A0A0; stroke-opacity: .6; stroke-width: calc(1px / var(--zk, 1)); transition: stroke-opacity .15s ease;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-roce{stroke: #8A8A8A; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 3 3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-pcie{fill: none; stroke: #A0A0A0; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 1 3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-ub{fill: none; stroke: #8A8A8A; stroke-width: calc(1.5px / var(--zk, 1)); stroke-dasharray: 6 3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-cpul{fill: none; stroke: #A0A0A0; stroke-width: calc(1.5px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-l12{stroke: #8A8A8A; stroke-width: calc(1px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-uboe{stroke: #A0A0A0; stroke-width: calc(1.5px / var(--zk, 1)); stroke-dasharray: 8 4;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-bus{stroke-width: calc(1.5px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-fan.is-hot,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-h2d.is-hot,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nicl.is-hot,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-mesh.is-hot{stroke: #FFFFFF; stroke-opacity: 1; stroke-width: calc(1.8px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-fan.is-cold,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-mesh.is-cold{stroke-opacity: .1;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-h2d.is-cold,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nicl.is-cold{stroke-opacity: .15;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .lkc{fill: none; stroke: #111111; stroke-linecap: round; stroke-linejoin: round; stroke-width: calc(4.5px / var(--zk, 1)); pointer-events: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .lkc{display: none; stroke: #181818; stroke-width: calc(3.5px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel .lkc{display: inline;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-links line,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-links path{stroke-linecap: round; stroke-linejoin: round;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-ub{stroke-dasharray: 7 5;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-uboe{stroke-dasharray: 4 7; stroke-opacity: .75;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nsw-l,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-swbx{fill: none; stroke: #A0A0A0; stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-swbl{stroke: #8A8A8A; stroke-opacity: .35; stroke-width: calc(.8px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-rdma{fill: #111111; stroke: #A0A0A0; stroke-width: calc(1.2px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-cpul,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-pcie,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-ub:not(.b-bus),:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-nsw-l,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-swbx,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-h2d,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-nicl{marker-start: url(#b-lkp); marker-end: url(#b-lkp);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-roce:not(.b-bus){marker-start: url(#b-lkj);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-out{marker-end: url(#b-lkj);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-links .is-hot{marker-start: url(#b-lkh); marker-end: url(#b-lkh);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-links .is-cold{marker-start: none; marker-end: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-ub.b-join,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-swbx{marker-end: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-cpu,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-pcie,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-ub,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-nic,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-nsw,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-h2d{marker-start: url(#p-lkp); marker-end: url(#p-lkp);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel-roce{marker-start: url(#p-lkj);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel .is-hot{marker-start: url(#p-lkh); marker-end: url(#p-lkh);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .rel .is-cold{marker-start: none; marker-end: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .lk-dot{fill: #FFFFFF; fill-opacity: .8; stroke: none; pointer-events: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-hot{stroke: #FFFFFF !important; stroke-opacity: 1 !important;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-cold{stroke-opacity: .12 !important;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-nsw{stroke: #808080; stroke-opacity: .8;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-inf{stroke: #A0A0A0; stroke-opacity: .7;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical #physStage svg:not(.lod1) .p-roce{stroke-dasharray: none; stroke-opacity: .5;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical #physStage svg:not(.lod1) .p-l2{stroke-opacity: .3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .p-npu:not(.is-sel){fill-opacity: 0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .p-npu.is-sel{fill-opacity: 0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npustrip,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npustrip{fill: #3A3A3A; pointer-events: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.c0 + .p-npunum + .p-npupkg + .p-npustrip,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c0 + .b-npuicon + .b-npustrip{fill: #4A4A4A;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.c1 + .p-npunum + .p-npupkg + .p-npustrip,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c1 + .b-npuicon + .b-npustrip{fill: #808080;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.c2 + .p-npunum + .p-npupkg + .p-npustrip,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c2 + .b-npuicon + .b-npustrip{fill: #BDBDBD;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.c3 + .p-npunum + .p-npupkg + .p-npustrip,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.c3 + .b-npuicon + .b-npustrip{fill: var(--alert);}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .p-npunum{fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .p-npu.c2 + .p-npunum{fill: #A0A0A0;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .p-npu.is-sel + .p-npunum{fill: #FFFFFF;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.is-dim + .p-npunum + .p-npupkg,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu.is-dim + .p-npunum + .p-npupkg + .p-npustrip{opacity: .25;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu{fill-opacity: 0; stroke: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.is-dim + .b-npuicon,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-bnpu.is-dim + .b-npuicon + .b-npustrip{opacity: .3;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npul{fill: #E8E8E8 !important;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npur{fill: #A0A0A0 !important;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-cpu rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-dpu rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nic rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-l1 rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-nsw rect,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-swb rect{fill: transparent; stroke: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sw1{fill: transparent; stroke: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod2 .p-npu,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .board-stage .p-npu{stroke: none !important;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel{display: none;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.lod1 .rel{display: inline;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel line,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel path{fill: none; stroke-width: calc(1px / var(--zk, 1));}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-mesh{stroke: #E8E8E8; stroke-opacity: .55;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-clos{stroke: #BDBDBD; stroke-opacity: .35;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-l12{stroke: #808080; stroke-opacity: .6;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-ub{stroke: #A0A0A0; stroke-opacity: .6; stroke-dasharray: 3 2;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-h2d{stroke: #A0A0A0; stroke-opacity: .8;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-nic{stroke: #808080; stroke-opacity: .9;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-cpu{stroke: #E8E8E8; stroke-width: calc(1.5px / var(--zk, 1)) !important;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-pcie{stroke: #A0A0A0; stroke-dasharray: 1 1.5;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-roce{stroke: #808080; stroke-dasharray: 1.2 1.2;}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-row{fill: #FFFFFF; fill-opacity: .04; stroke: #A0A0A0; stroke-width: calc(1px / var(--zk, 1)); stroke-dasharray: 2 2;}
+/* Host selection uses fill, never selection outlines. Geometry/routing retained. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical{--zk:1;--alert:#FF9500}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sp{stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npu{fill:transparent!important;stroke:none!important;outline:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npupkg{pointer-events:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-npunum{font-size:1.65px;fill:#ddd;paint-order:stroke;stroke:#181818;stroke-width:.5px}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank{cursor:pointer;outline:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank:focus-visible text{text-decoration:underline}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-dim{opacity:.25}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank .metric-text{fill:#ddd;font-size:1.2px;paint-order:stroke;stroke:#181818;stroke-width:.4px}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected .rank-label-bg{fill:#eee}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected .p-npunum{fill:#111;stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel-row{fill:rgba(255,255,255,.025);stroke:none;pointer-events:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel line,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel path{vector-effect:non-scaling-stroke;stroke-width:1px}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-hot{stroke:#ddd!important;stroke-width:1.5px}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-cold{stroke-opacity:.15!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-target .p-npustrip{fill:var(--communication-color,#FF9500)}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank .metric-bar{fill:#bbb}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank .metric-track{fill:#333}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npug .metric-text{font-size:8px;stroke-width:2px}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npug.is-selected .b-npul{fill:#111!important;stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .board-row-active{fill:#ffffff08;stroke:none}
+#physical-path{position:fixed;top:126px;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:6px;font-size:11px;white-space:nowrap}
+#physical-path[hidden]{display:none}
+#physical-path button{padding:5px 10px;background:#222}
+#physical-path button[aria-pressed=true]{background:#eee;color:#111}
+
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-links path,.b-links line){vector-effect:non-scaling-stroke}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-pcie,.rel-pcie,.b-roce,.rel-roce,.b-ub,.rel-ub,.b-uboe){stroke-dasharray:12px 8px}
+
+/* At POD focus, column names carry the local labels; global plane labels remain
+ * readable when zooming out without expanding into headline-sized text. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sw1label,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-rocelabel,:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-planelabel{font-size:2.6px}
+#physical-path .physical-metric{margin-left:8px;color:#aaa;font:11px ui-monospace,monospace}
+
+/* Theme values inherit through SVG use shadow trees, including global defs. */
+:root{--deployment-glyph-dark:inline;--deployment-glyph-light:none}
+:root[data-theme="light"]{--deployment-glyph-dark:none;--deployment-glyph-light:inline}
+[data-asset-theme="dark"]{display:var(--deployment-glyph-dark)}
+[data-asset-theme="light"]{display:var(--deployment-glyph-light)}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .p-sw1{fill:transparent;stroke:none}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical{color:#444}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.p-pod,.p-plane){fill:#F8F8F8;stroke:#AAAAAA}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.p-colhd text,.p-sw1label,.p-planelabel,.p-rocelabel,.p-npunum,.b-lbl,.b-npul){fill:#444;stroke:none}
+
+/* Filled device state, matching the approved hardware reference. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-dim{opacity:.5}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected>.p-npu,
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .device-active>rect{fill:rgba(255,255,255,.05)!important;stroke:none!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .device-inactive{opacity:.5}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .device-active>text{fill:#FFFFFF;stroke:none}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected>.p-npu,
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .device-active>rect{fill:rgba(255,255,255,.05)!important}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .device-active>text{fill:#222}
+
+/* Active NPU communication uses the operation color; host links stay neutral. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-hot{stroke:var(--communication-color,#808080)!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(#b-lkh,#p-lkh) path{fill:var(--communication-color,#808080);stroke:var(--communication-color,#808080)}
+
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rank-label-bg{display:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected :is(.b-npul,.p-npunum){fill:#FFFFFF!important;stroke:none;font-weight:600}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected :is(.b-npul,.p-npunum){fill:#222222!important}
+
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-cpu,.b-dpu,.b-nic,.b-l1,.b-nsw,.b-swb) > text,
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-npul{font-size:10px}
+
+/* Legacy LOD rules must not suppress the selected device surface. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .physical-rank.is-selected>.p-npu{fill-opacity:1!important;opacity:1}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.device-active,.physical-rank.is-selected){opacity:1}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .device-active>text{font-weight:600}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-npustrip,.p-npustrip){display:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-rdma{fill:#999;stroke:none}
+
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-peer rect{fill:rgba(255,255,255,.05);stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-peer text{fill:#AAAAAA;font-size:8px;stroke:none}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-peer text{fill:#555555}
+
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical path.b-swbl{fill:none}
+
+/* Relation semantics: the configured physical fabric remains neutral. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-hot{stroke:#DDDDDD!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(#b-lkh,#p-lkh) path{fill:#DDDDDD;stroke:#DDDDDD}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-sections{pointer-events:none}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-sections rect{fill:rgba(255,255,255,.025);stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-sections text{stroke:none;fill:#999;font-size:10px}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-sections .physical-section-title{fill:#DDD;font-size:12px;font-weight:550}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-aggregate .aggregate-region{fill:#292929;stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-aggregate text,:is(#parallel-rank-scene,#lingqu-scene) .physical-expansion text{fill:#BBB;stroke:none;font-size:9px}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-aggregate line{fill:none;stroke:#888;stroke-width:1px;vector-effect:non-scaling-stroke}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-aggregate .aggregate-logical{stroke-dasharray:8px 6px}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-expansion rect{fill:rgba(255,255,255,.035);stroke:none}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-composition .b-links :is(.b-mesh,.b-fan,.b-h2d,.b-nicl,.b-swbl){display:none}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-composition.physical-detail .b-links :is(.b-mesh,.b-fan,.b-h2d,.b-nicl).is-hot{display:inline}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-composition.physical-detail .physical-aggregate{display:none}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-composition .b-links :is(.b-swbl,.b-swbx){stroke-dasharray:8px 6px}
+:is(#parallel-rank-scene,#lingqu-scene) .physical-composition .b-links .b-l12{stroke-dasharray:none}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .physical-sections rect{fill:rgba(0,0,0,.025)}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .physical-sections .physical-section-title{fill:#333}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) .physical-aggregate .aggregate-region{fill:#E1E1E1}
+:root[data-theme="light"] :is(#parallel-rank-scene,#lingqu-scene) :is(.physical-aggregate,.physical-expansion) text{fill:#444}
+.physical-relation-key{display:grid;gap:12px;margin-top:18px}
+.physical-relation-key>div{display:flex;gap:14px;align-items:center}
+.physical-relation-key span{font-size:12px}.physical-relation-key small{display:block;color:#999;font-size:11px;line-height:1.6}
+.physical-relation-key i{width:48px;flex:0 0 48px;height:0;border-top:1px solid #888;position:relative}
+.physical-relation-key .key-logical{border-top-style:dashed}
+.physical-relation-key .key-parallel{height:9px;border:0;background:repeating-linear-gradient(to bottom,#888 0 1px,transparent 1px 3px)}
+.physical-relation-key .key-selected{border-top:2px solid #DDD}
+.physical-relation-key .key-event{border-top:2px solid #FF9500}
+.physical-relation-key .key-event:after{content:'';position:absolute;right:0;top:-5px;border-left:7px solid #FF9500;border-top:4px solid transparent;border-bottom:4px solid transparent}
+
+:is(#parallel-rank-scene,#lingqu-scene) .physical-measured-exchanges>path{fill:none;stroke-width:3px;vector-effect:non-scaling-stroke;cursor:help}
+
+:is(#parallel-rank-scene,#lingqu-scene) .physical-composition .b-links :is(.b-pcie,.b-h2d,.b-nicl,.b-roce:not(.b-bus),.b-ub:not(.b-bus):not(.b-out)){stroke-dasharray:none}
+
+/* Communication category is the color of selection, not proof of an executed route. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-hot{stroke:var(--communication-color,#808080)!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(#b-lkh,#p-lkh) path{fill:var(--communication-color,#808080);stroke:var(--communication-color,#808080)}
+
+/* Transparent neutral wiring: no dark casing that erases crossing relations. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .lkc{display:none!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-links,.p-links,.rel) :is(line,path){stroke:rgba(255,255,255,.4)!important;stroke-opacity:1!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-mesh,.b-fan).is-hot,
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .rel .is-hot{stroke:var(--communication-color,#FF9500)!important}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(#b-lkh,#p-lkh) circle{fill:var(--communication-color,#FF9500);fill-opacity:1}
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(#b-lkp,#p-lkp,#b-lkj,#p-lkj) circle{fill:rgba(255,255,255,.4);fill-opacity:1}
+
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-links,.p-links,.rel) :is(line,path).is-cold{stroke-opacity:1!important}
+
+/* Endpoint markers follow the line: host/neutral links never borrow EP color. */
+:is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical svg.near .b-links :is(.b-h2d,.b-nicl).is-hot{marker-start:url(#b-lkp);marker-end:url(#b-lkp)}
+
+:root{--glyph-dark-display:inline;--glyph-light-display:none}:root[data-theme=light]{--glyph-dark-display:none;--glyph-light-display:inline}[data-asset-theme=dark]{display:var(--glyph-dark-display)}[data-asset-theme=light]{display:var(--glyph-light-display)}
+:is(#parallel-rank-scene,#lingqu-scene) .ep-copper-path{stroke-width:1.5px!important;vector-effect:none!important}
+:root[data-theme=light] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical .b-plane{fill:#E7E7E7;stroke:#D5D5D5}
+:root[data-theme=light] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical text{stroke:none}
+:root[data-theme=light] :is(#parallel-rank-scene,#lingqu-scene) .lingqu-physical :is(.b-links,.p-links,.rel) :is(line,path){stroke:rgba(0,0,0,.4)!important}

@@ -14,6 +14,14 @@ GLYPH_SOURCES = {
     "visual-system.js": "reports/llm-compute/diagram-legend-library/visual-system.js",
     "op-icons.js": "reports/llm-compute/diagram-legend-library/op-icons.js",
 }
+PRESENTATION_REFS = ("presentation-semantics.md", "task-contract.md", "candidate-review.md")
+
+
+def standalone_references(skill_root):
+    """Give the standalone presentation Skill the same contracts as the workflow bundle."""
+    if skill_root.name == "observability-design-style":
+        for name in PRESENTATION_REFS:
+            yield ROOT / "methods/ai-infra-investigation/references" / name, Path(skill_root.name) / "references" / name
 
 def collect():
     dest = ROOT / "methods/ai-infra-glyphs/assets"

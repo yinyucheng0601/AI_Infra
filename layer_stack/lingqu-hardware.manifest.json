@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "canonical": "ai-infra-research/patterns/training-graph/deployment-pattern/hardware-system.js",
+  "sources": {
+    "ai-infra-research/patterns/training-graph/deployment-pattern/hw-glyphs-v2.js": "aacd4adee14343dae7a958b1fcbad123746aeaa5134a2caad885e4dffde4a909",
+    "ai-infra-research/patterns/training-graph/deployment-pattern/approved-icons.js": "dc472e6cb2ce092ebff329c918c4b315cffa60caa120837ee8294983d9f76f9b",
+    "ai-infra-research/patterns/training-graph/deployment-pattern/lingqu-physical.js": "2d3c751c6c93864a8c8a157a9ab9f630cde35d76147cf192642a4c7fd8b2715a",
+    "ai-infra-research/patterns/training-graph/deployment-pattern/ep-copper.js": "6ef2a56905d246dc220bf639427edd718a4dce38bb92c48b29414baf0a0e6057",
+    "ai-infra-research/patterns/training-graph/deployment-pattern/hardware-system.js": "66ef0eb29f31908f37e3a06fea41decb787779af66b2329b36ea568c5042932d",
+    "ai-infra-research/patterns/training-graph/deployment-pattern/lingqu-physical.css": "9ce7174419147a30427f03cbed29afc2a11551985c7290e8b41041077e89b968"
+  }
+}

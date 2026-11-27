@@ -1,0 +1,35 @@
+{
+  "events": [
+    {
+      "id": "op:0",
+      "name": "RMSNorm",
+      "layer": "operator",
+      "object_type": "operator",
+      "shape": [
+        16,
+        4096
+      ],
+      "dtype": "bf16"
+    },
+    {
+      "id": "pass:lower",
+      "name": "LowerToTileIR",
+      "layer": "compiler",
+      "timestamp": 100,
+      "duration": 3.1
+    },
+    {
+      "id": "kernel:0",
+      "name": "rmsnorm_kernel",
+      "layer": "instruction",
+      "timestamp": 104,
+      "duration": 8.2,
+      "instruction": "VECTOR"
+    }
+  ],
+  "expected_layers": [
+    "operator",
+    "compiler",
+    "instruction"
+  ]
+}

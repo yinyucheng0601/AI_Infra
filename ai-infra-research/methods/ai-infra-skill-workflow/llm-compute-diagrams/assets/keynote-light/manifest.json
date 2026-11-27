@@ -1,0 +1,158 @@
+{
+  "version": "2026-11-18-keynote-light",
+  "variant": "presentation-light",
+  "glyphs": [
+    {
+      "id": "Tensor",
+      "file": "Tensor.svg",
+      "width": 136,
+      "height": 41,
+      "source": "system-value/data-1: tensorNode",
+      "sha256": "edc7644f132001fdc1f9dfdae2101e038739a1572c0c5eade2d6e32b777cb530"
+    },
+    {
+      "id": "Shard",
+      "file": "Shard.svg",
+      "width": 136,
+      "height": 41,
+      "source": "system-value/data-1: tensorNode",
+      "sha256": "b7e7c87862dcc7bc84e70cbc90023f99922590e9e790d73f2bbc2d752c557bdd"
+    },
+    {
+      "id": "Tile",
+      "file": "Tile.svg",
+      "width": 136,
+      "height": 41,
+      "source": "system-value/data-1: tensorNode",
+      "sha256": "88999f0edeeec7e5a78cb17ccb4f87b6458bc64e3cc6aa6e21729167a54c4e6c"
+    },
+    {
+      "id": "Attention",
+      "file": "Attention.svg",
+      "width": 220.8,
+      "height": 43.2,
+      "source": "index.html#system-op / attention actual catalog SVG crop (label only)",
+      "sha256": "c9248ef8cb4b26f943f0ec210cdc3affb640922b0ff2dc08fde2415df8f1f111"
+    },
+    {
+      "id": "Operator",
+      "file": "Operator.svg",
+      "width": 190,
+      "height": 56,
+      "source": "index.html#system-kernel / exact IR OP group, fx variant",
+      "sha256": "760738fdc76c9544b97bba3fcfd0bebd2377bee7b0f755b7d3a365011b24e8f2"
+    },
+    {
+      "id": "MatMul",
+      "file": "MatMul.svg",
+      "width": 190,
+      "height": 56,
+      "source": "index.html#system-kernel / exact IR OP group, fx variant",
+      "sha256": "760738fdc76c9544b97bba3fcfd0bebd2377bee7b0f755b7d3a365011b24e8f2"
+    },
+    {
+      "id": "GELU",
+      "file": "GELU.svg",
+      "width": 220.8,
+      "height": 43.2,
+      "source": "index.html#system-op / activation actual catalog SVG crop (label only)",
+      "sha256": "97b29520e844bb425e7894f79db941629956b9873301e5e0ad3fa6225444b97a"
+    },
+    {
+      "id": "Collective",
+      "file": "Collective.svg",
+      "width": 220.8,
+      "height": 43.2,
+      "source": "index.html#system-op / exchange actual catalog SVG crop (label only)",
+      "sha256": "d3f5213848c1d0c345afb010027acb39b582e473f82bc6b56a5dcd4b60078b6e"
+    },
+    {
+      "id": "Add",
+      "file": "Add.svg",
+      "width": 54,
+      "height": 54,
+      "source": "system-add",
+      "sha256": "e229a030a6e728c9e2fd48882b8a90e6f2ecaadad608834d4c0a2f4693ff7353"
+    },
+    {
+      "id": "Kernel",
+      "file": "Kernel.svg",
+      "width": 227.04,
+      "height": 121.44,
+      "source": "index.html#system-kernel / complete projection + AIC + MatMul",
+      "sha256": "40614ac95e5f7349c44a340d87a941b8d3005eb5172c111ee67d897bbc17cf5c"
+    },
+    {
+      "id": "Kernel A",
+      "file": "Kernel-A.svg",
+      "width": 181.35000000000002,
+      "height": 68.25,
+      "source": "system-kernel: VisualSystem.node",
+      "sha256": "442a7ef3395593ffe2fd9126f0644cc24a4d4967a0231c3fece32048a7b5d2fd"
+    },
+    {
+      "id": "Kernel B",
+      "file": "Kernel-B.svg",
+      "width": 181.35000000000002,
+      "height": 68.25,
+      "source": "system-kernel: VisualSystem.node",
+      "sha256": "b7f112540ddfa8ab1cffc81659e9e627389301a30317d84277abe39b0bf0a88e"
+    },
+    {
+      "id": "Task",
+      "file": "Task.svg",
+      "width": 125.53846153846153,
+      "height": 65.53846153846153,
+      "source": "system-task: task",
+      "sha256": "dc247aded2d8199231904f410cc104da8ca8aef377960b17586b9c576ab8eeb6"
+    },
+    {
+      "id": "DMA",
+      "file": "DMA.svg",
+      "width": 136,
+      "height": 33,
+      "source": "system-instruction: instruction",
+      "sha256": "4f8809a130fd03ead91c045d145cc05682d9e4de26fd2b4b987e0562f028de81"
+    },
+    {
+      "id": "Pass",
+      "file": "Pass.svg",
+      "width": 134.33333333333334,
+      "height": 27.444444444444443,
+      "source": "system-pass: VisualSystem.node",
+      "sha256": "2a221dfd9063ef5798840c964e5d62622e47e27670b2c094d88549b8b4ac7c02"
+    },
+    {
+      "id": "IR",
+      "file": "IR.svg",
+      "width": 111.1578947368421,
+      "height": 51.78947368421053,
+      "source": "ir: doc",
+      "sha256": "8ae9909dc7e018d35ef3826aa2ad45049d428463b4d0e36abd6f59a59cd55c40"
+    },
+    {
+      "id": "Rank",
+      "file": "Rank.svg",
+      "width": 142,
+      "height": 70,
+      "source": "Compact presentation adaptation of system-rank four-pin board; user requested visual refinement 2026-11-13",
+      "sha256": "9b9167d78ec509c4f338db86924c6dc10f456d8039d09d4a2473d7a40166fbdd"
+    },
+    {
+      "id": "LayerFrame",
+      "file": "LayerFrame.svg",
+      "width": 516,
+      "height": 151,
+      "source": "container: frame",
+      "sha256": "b81b7c4dea3420b2a24b2f2ec00db75829fc8642b186b5b8a454d2eaf4aed921"
+    },
+    {
+      "id": "Event",
+      "file": "Event.svg",
+      "width": 210,
+      "height": 54,
+      "source": "pypto-runtime-evidence-guide/index.html / bar()",
+      "sha256": "a47662e3a376e26d12f1c311fffa817377a79710fa93168490a383d4108ecdba"
+    }
+  ]
+}

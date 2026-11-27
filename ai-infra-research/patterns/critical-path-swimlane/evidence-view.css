@@ -45,3 +45,10 @@
 .ev svg .sublabel{font:12px system-ui}
 .ev svg .row-number{font:10px ui-monospace,monospace}
 .ev .stage{bottom:82px}
+
+.ev .playback{left:28px;right:auto}
+.ev-playback .bottom-controls{width:min(900px,calc(100% - 360px))}
+@media(max-width:800px){
+  .ev .playback{left:12px}
+  .ev-playback .bottom-controls{left:76px;width:auto}
+}

@@ -1,9 +1,9 @@
 {
   "authoritativeSource": "prototypes/unpack-case3/index.html",
-  "sourceSha256": "113c6a5aa715b58069bc1f943e2ba80c66614dc869b8f2d9d9fbfb3c563fb6c6",
-  "outputSha256": "e2f808739144d8293bb43267e5644f7604c7fe5965c85be2290cd707443953e6",
+  "sourceSha256": "ca8d14d2573e479e6001890f79bbf77826c743c41f21b8b962833e99c08154d1",
+  "outputSha256": "de54b568a836c38389aec08eeacffbf8fe5bd837cbd3ddf269a8631916698f34",
   "files": {
-    "index.html": "e2f808739144d8293bb43267e5644f7604c7fe5965c85be2290cd707443953e6"
+    "index.html": "de54b568a836c38389aec08eeacffbf8fe5bd837cbd3ddf269a8631916698f34"
   },
   "cover": "web/media/unpack-case3-inspector-cover.svg",
   "coverSha256": "f67a3e89138252941eb69176bd8bcfa43a55c51f030856dc27f0b3a246c71f4c",

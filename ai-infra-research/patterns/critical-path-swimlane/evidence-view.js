@@ -1,11 +1,20 @@
 (function(global){
 'use strict';
 const NS='http://www.w3.org/2000/svg',ms=n=>Number(n).toFixed(3)+' ms';
+let nextClip=0;
 function mount(root,data,options={}){
  const E=data.evidence,records=E.records,byId=new Map(records.map(r=>[r.id,r])),abort=new AbortController();
  const on=(e,n,f)=>e.addEventListener(n,f,{signal:abort.signal});
+ const onTransient=(e,n,f)=>e.addEventListener(n,f);
+ const linksByEvent=new Map(records.map(record=>[record.id,[]]));
+ for(const link of E.links){
+  linksByEvent.get(link.from).push(link);
+  linksByEvent.get(link.to).push(link);
+ }
  const maxTime=Math.max(data.run.request.end,...records.map(r=>r.end)),full=[0,maxTime];
  let mode='overview',stepIndex=0,range=[...full],selected=null,related=new Map(),showPanel=false,help=false,drag=null,canvasScaleY=1;
+ const clipId='evidence-clip-'+ ++nextClip;
+ let playbackTimer=null;
  const hash=new URLSearchParams(options.syncHash?location.hash.slice(1):'');
  const found=data.steps.findIndex(s=>s.id===(hash.get('step')||options.step));if(found>=0)stepIndex=found;
  if(hash.get('view')==='detail'){mode='detail';range=stepRange(data.steps[stepIndex]);}
@@ -14,10 +23,22 @@ function mount(root,data,options={}){
  <div class="stage"><svg tabindex="0" role="group" aria-label="Serving Host Device Runner Execution 时间轴"></svg></div>
  <aside class="evidence-panel" hidden></aside><div class="bottom-controls"><div class="navigator" aria-label="完整采集时间导航"></div></div><nav class="toolbar" aria-label="Canvas zoom"><button data-zoom="out">−</button><button data-zoom="in">＋</button><button data-fit>Fit</button></nav><div class="tip" role="tooltip" hidden></div>`;
  const $=s=>root.querySelector(s),svg=$('.stage svg'),panel=$('.evidence-panel'),tip=$('.tip'),picker=$('.step-picker');
+ let playButton;
+ if(options.playback){
+  root.classList.add('ev-playback');
+  const playback=document.createElement('nav');
+  playback.className='toolbar playback';
+  playback.setAttribute('aria-label','按采集调用组播放');
+  playback.innerHTML='<button data-play aria-pressed="false">播放</button>';
+  $('.bottom-controls').before(playback);
+  playButton=$('[data-play]');
+  on(playButton,'click',togglePlayback);
+  control(playButton,'按调用组顺序播放或暂停；步进间隔用于阅读');
+ }
  $('h1').textContent=data.run.title;$('.scope').textContent=E.requests.length+' requests · '+data.steps.length+' calls · '+ms(maxTime);
  for(const s of data.steps){const opt=document.createElement('option');opt.value=s.id;opt.textContent=s.label;picker.append(opt);}
  const stepSelector=TraceSelector.mount(picker);
- const navigation=SequenceNavigation.mount($('.navigator'),{variant:'time',full,items:data.steps.map(s=>({label:s.label,start:s.absoluteStart,end:s.absoluteEnd})),onSelect:i=>{stepIndex=i;selected=null;related.clear();view('detail');},onFocus:i=>{stepIndex=i;view('detail');},onRange:next=>{range=next;render();}});
+ const navigation=SequenceNavigation.mount($('.navigator'),{variant:'time',full,items:data.steps.map(s=>({label:s.label,start:s.absoluteStart,end:s.absoluteEnd})),onSelect:i=>jump(i),onFocus:i=>jump(i),onRange:next=>{pause();range=next;render();}});
  $('.navigator').querySelectorAll('button').forEach(b=>{b.removeAttribute('title');control(b,b.getAttribute('aria-label'));});
  const navWindow=$('.sequence-window');control(navWindow,'拖动平移时间窗；拖动两端缩放；方向键平移，＋ / − 缩放');
  function node(parent,tag,attrs={},value){const el=document.createElementNS(NS,tag);for(const [k,v]of Object.entries(attrs))el.setAttribute(k,['y','y1','y2','height'].includes(k)&&typeof v==='number'?v*canvasScaleY:v);if(value!=null)el.textContent=value;parent.append(el);return el;}
@@ -26,23 +47,31 @@ function mount(root,data,options={}){
  function sync(){options.onContextChange?.({step:data.steps[stepIndex].id,view:mode,range:[...range],selected});if(options.syncHash){const h=new URLSearchParams({view:mode,step:data.steps[stepIndex].id});history.replaceState(null,'','#'+h);}}
  function hideTip(){tip.hidden=true;}
  function showTip(value,e,el){tip.textContent=value;tip.hidden=false;const b=el?.getBoundingClientRect(),x=e?.clientX??b?.left??20,y=e?.clientY??b?.bottom??20;tip.style.left=Math.max(8,Math.min(innerWidth-tip.offsetWidth-12,x+14))+'px';tip.style.top=Math.max(8,Math.min(innerHeight-tip.offsetHeight-12,y+14))+'px';}
- function control(el,value){on(el,'pointerenter',e=>showTip(typeof value==='function'?value():value,e,el));on(el,'focus',()=>showTip(typeof value==='function'?value():value,null,el));on(el,'pointerleave',hideTip);on(el,'blur',hideTip);}
+ function control(el,value,listen=on){listen(el,'pointerenter',e=>showTip(typeof value==='function'?value():value,e,el));listen(el,'focus',()=>showTip(typeof value==='function'?value():value,null,el));listen(el,'pointerleave',hideTip);listen(el,'blur',hideTip);}
  function chooseEvent(r){
+  pause();
   const matching=data.steps.findIndex(s=>s.rawEventIds.includes(r.id));
   if(matching>=0)stepIndex=matching;
   selected=r.id;related=new Map([[r.id,'selected']]);
-  // Limited graph traversal: retain exact/nesting chains and at most one temporal edge.
-  let queue=[{id:r.id,depth:0,temporal:false}];
-  while(queue.length){const q=queue.shift();if(q.depth>=3)continue;
-   for(const l of E.links){const next=l.from===q.id?l.to:l.to===q.id?l.from:null;if(!next)continue;
-    const temporal=l.basis==='temporal-candidate';if(temporal&&q.temporal)continue;
-    const basis=temporal||q.temporal?'temporal-candidate':l.basis;
-    if(related.has(next))continue;related.set(next,basis);queue.push({id:next,depth:q.depth+1,temporal:temporal||q.temporal});
+  // Resolve exact and nesting chains first so a temporal candidate cannot mask them.
+  for(const allowTemporal of [false,true]){
+   const queue=[{id:r.id,depth:0,temporal:false}],seen=new Set([r.id]);
+   for(let i=0;i<queue.length;i++){const q=queue[i];if(q.depth>=3)continue;
+    for(const link of linksByEvent.get(q.id)){
+     const next=link.from===q.id?link.to:link.from;
+     const temporal=link.basis==='temporal-candidate';
+     if(temporal&&(!allowTemporal||q.temporal))continue;
+     const usesTemporal=q.temporal||temporal,key=usesTemporal?next+':temporal':next;
+     if(seen.has(key))continue;
+     seen.add(key);
+     if(!related.has(next))related.set(next,usesTemporal?'temporal-candidate':link.basis);
+     queue.push({id:next,depth:q.depth+1,temporal:usesTemporal});
+    }
    }
   }
-  showPanel=true;help=false;render();renderPanel();
+  showPanel=true;help=false;render();sync();
   // Consumers must resolve physical placement separately; no inferred lane/worker identity.
-  root.dispatchEvent(new CustomEvent('trace-evidence-selection',{bubbles:true,detail:{eventId:r.id,start:r.start,end:r.end,observedWorkerId:r.track==='runtime'?r.args.worker_id??null:null,runId:r.args.run_id??null,dispatchId:r.args.dispatch_id??null,evidence:'observed-host-runtime',physicalMappingVerified:false,networkPath:null,moeCommunication:null,layerProgress:null}}));
+  root.dispatchEvent(new CustomEvent('trace-evidence-selection',{bubbles:true,detail:{eventId:r.id,objectRef:{scope:E.scope,id:r.id},start:r.start,end:r.end,observedWorkerId:r.track==='runtime'?r.args.worker_id??null:null,runId:r.args.run_id??null,dispatchId:r.args.dispatch_id??null,evidence:'observed-host-runtime',physicalMappingVerified:false,networkPath:null,moeCommunication:null,layerProgress:null}}));
  }
  function recordTip(r){return r.name+'\n'+ms(r.start)+' → '+ms(r.end)+' · '+ms(r.end-r.start)+'\nPID '+r.pid+' · TID '+r.tid+'\n'+Object.entries(r.args).filter(([k])=>['run_id','dispatch_id','worker_id','step_id','inv','batch_size','actual_batch','new_tokens'].includes(k)).map(([k,v])=>k+'='+v).join(' · ');}
  function mark(r,y,h,X,parent=svg,value){
@@ -54,25 +83,29 @@ function mount(root,data,options={}){
   const group=node(parent,'g',{'data-event':r.id,tabindex:0,role:'button','aria-label':r.name+' '+ms(r.end-r.start)});
   node(group,'rect',{x,y:y-3,width:Math.max(3,w),height:h+6,fill:'transparent'});
   node(group,'rect',{x,y,width:w,height:h,rx:0,fill,opacity:selected&&!state?'.4':'1','pointer-events':'none'});
-  const rect=group;on(rect,'pointerenter',e=>showTip(value||recordTip(r),e,rect));on(rect,'focus',()=>showTip(value||recordTip(r),null,rect));on(rect,'pointerleave',hideTip);on(rect,'blur',hideTip);on(rect,'click',e=>{e.stopPropagation();chooseEvent(r);});on(rect,'keydown',e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();chooseEvent(r);}});
+  control(group,()=>value||recordTip(r),onTransient);
+  onTransient(group,'click',e=>{e.stopPropagation();chooseEvent(r);});
+  onTransient(group,'keydown',e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();chooseEvent(r);}});
  }
  function diagnostic(s){
   const a=s.lanes,latest=a.reduce((p,c)=>p.rrStart>c.rrStart?p:c),last=a.reduce((p,c)=>p.rrEnd>c.rrEnd?p:c);
   return {entry:Math.max(...a.map(l=>l.rrStart))-Math.min(...a.map(l=>l.rrStart)),completion:Math.max(...a.map(l=>l.rrEnd))-Math.min(...a.map(l=>l.rrEnd)),latest:last.dev===latest.dev,tail:Math.max(0,last.rrEnd-Math.max(...a.filter(l=>l!==last).map(l=>l.rrEnd))),last,latestEntry:latest};
  }
  function renderPanel(){
-  panel.hidden=!showPanel;if(!showPanel)return;panel.replaceChildren();
-  const close=document.createElement('button');close.className='panel-close';close.textContent='×';close.setAttribute('aria-label','关闭证据');on(close,'click',()=>{showPanel=false;panel.hidden=true;});control(close,'关闭证据并保留视角与选择');panel.append(close);
+  panel.hidden=!showPanel;if(!showPanel)return;panel.replaceChildren();delete panel.dataset.eventId;
+  const close=document.createElement('button');close.className='panel-close';close.textContent='×';close.setAttribute('aria-label','关闭证据');onTransient(close,'click',()=>{showPanel=false;panel.hidden=true;hideTip();$('[data-inspect]').focus();});control(close,'关闭证据并保留视角与选择',onTransient);panel.append(close);
   const h=document.createElement('h2');panel.append(h);
   const para=value=>{const p=document.createElement('p');p.textContent=value;panel.append(p);};
   if(help){h.textContent='Trace 证据与操作';
    for(const s of ['Overview 显示完整采集，Step Detail 单独放大一组调用；两者均保持真实线性时间。滚轮缩放、拖动画布平移，底部 Overview 可定位时间。','Serving：Request Lifecycle 使用请求 ID 配对的起始与流式结束；Actual Batch Size 使用实际采集字段；Token Output 为服务端 new_tokens，不是客户端送达时间。','Host：Scheduler 属于 API 进程；Executor / WorkerProcess 属于共享服务 Worker 进程；Per-worker Runtime 使用 node.* 的 worker_id。chip child PID 序号不等于 worker_id。','Device Runner Execution：Host 侧 chip.run.runner_run 调用窗，不能据此计算芯片有效利用率或算子执行时长。','选中为浅黄填充。字段匹配 / 同线程嵌套为浅黄关联，跨层时间候选为棕橙色。Entry / Completion Skew 为时间差异，不自动判定异常。','Critical-path Impact 尚无因果证据；只展示观测尾差与末端 lane，不能把相关性解释为收益估算。','Deployment × Lingqu 接口只发送观测到的 Runtime worker_id；没有物理映射时不高亮硬件。网络路径、MoE 通信、模型 Layer 进度不由这份 Trace 驱动。'])para(s);
-   const a=document.createElement('a');a.href=data.run.provenanceFile;a.textContent='数据来源与指纹';panel.append(a);return;
+   const a=document.createElement('a');a.href=data.run.provenanceFile;a.textContent='数据来源与指纹';panel.append(a);control(a,'查看采集指纹和关联依据',onTransient);return;
   }
   const r=byId.get(selected),s=data.steps[stepIndex],d=diagnostic(s);
   h.textContent=r?r.name:s.label;
-  if(r){para(recordTip(r));const pre=document.createElement('pre');pre.textContent=JSON.stringify(r.args,null,2);panel.append(pre);
-   const edges=E.links.filter(l=>l.from===r.id||l.to===r.id);
+  if(r){panel.dataset.eventId=r.id;para(recordTip(r));const pre=document.createElement('pre');pre.textContent=JSON.stringify(r.args,null,2);panel.append(pre);
+   const source=document.createElement('a');source.href=data.run.provenanceFile;
+   source.textContent='采集指纹 · 原始事件 '+r.id;panel.append(source);control(source,'核对采集文件指纹和关联依据',onTransient);
+   const edges=linksByEvent.get(r.id);
    para('直接关联 '+edges.length+' 条 · 可选高亮含最多 3 跳关系，最多经过一次时间候选');
    for(const l of edges.slice(0,12)){const other=byId.get(l.from===r.id?l.to:l.from);para((other?.name||'')+' · '+l.basis+' · '+l.fields.join(' + '));}
   }
@@ -84,9 +117,9 @@ function mount(root,data,options={}){
   hideTip();svg.replaceChildren();const width=$('.stage').clientWidth,height=Math.max($('.stage').clientHeight,options.minCanvasHeight||0);svg.style.height=height+'px';
   const W=width,H=740;canvasScaleY=height/H;svg.setAttribute('viewBox','0 0 '+W+' '+height);svg.setAttribute('preserveAspectRatio','xMinYMin meet');
   const left=W<800?142:172,right=W-18,X=t=>left+(t-range[0])/(range[1]-range[0])*(right-left);
-  const defs=node(svg,'defs'),clip=node(defs,'clipPath',{id:'evidence-clip'});node(clip,'rect',{x:left,y:0,width:right-left,height:H});
-  const plot=node(svg,'g',{'clip-path':'url(#evidence-clip)'});
-  const label=(name,y,fullName=name)=>{const el=text(svg,20,y+7,name,'sublabel');el.setAttribute('tabindex','0');el.setAttribute('role','img');el.setAttribute('aria-label',fullName);el.classList.add('lane-label');on(el,'pointerenter',e=>showTip(fullName,e,el));on(el,'focus',()=>showTip(fullName,null,el));on(el,'pointerleave',hideTip);on(el,'blur',hideTip);return el;};
+  const defs=node(svg,'defs'),clip=node(defs,'clipPath',{id:clipId});node(clip,'rect',{x:left,y:0,width:right-left,height:H});
+  const plot=node(svg,'g',{'clip-path':'url(#'+clipId+')'});
+  const label=(name,y,fullName=name)=>{const el=text(svg,20,y+7,name,'sublabel');el.setAttribute('tabindex','0');el.setAttribute('role','img');el.setAttribute('aria-label',fullName);el.classList.add('lane-label');control(el,fullName,onTransient);return el;};
   const row=(name,y,fullName=name)=>{label(name,y,fullName);node(plot,'line',{x1:left,x2:right,y1:y+11,y2:y+11,stroke:'#222'});};
   text(svg,20,20,'Serving','layer');
   row('Requests',34,'Request Lifecycle · '+E.requests.length+' requests · start / queued / stream finished');
@@ -123,21 +156,40 @@ function mount(root,data,options={}){
   renderPanel();
  }
  function view(next){mode=next;range=mode==='overview'?[...full]:stepRange(data.steps[stepIndex]);sync();render();}
- root.querySelectorAll('[data-mode]').forEach(b=>{on(b,'click',()=>view(b.dataset.mode));control(b,b.dataset.mode==='overview'?'查看完整采集的真实时间比例':'放大当前调用组，保留真实线性时间');});
- on(picker,'change',()=>{stepIndex=data.steps.findIndex(s=>s.id===picker.value);selected=null;related.clear();view('detail');});
+ function jump(index,{fromPlayback=false}={}){
+  if(!fromPlayback)pause();
+  stepIndex=index;selected=null;related.clear();view('detail');
+ }
+ function pause(){
+  if(playbackTimer!==null)clearInterval(playbackTimer);
+  playbackTimer=null;
+  if(playButton){playButton.textContent='播放';playButton.setAttribute('aria-pressed','false');}
+ }
+ function togglePlayback(){
+  if(playbackTimer!==null){pause();return;}
+  const last=data.steps.length-1;
+  jump(stepIndex===last?0:stepIndex);
+  playButton.textContent='暂停';playButton.setAttribute('aria-pressed','true');
+  playbackTimer=setInterval(()=>{
+   jump(stepIndex+1,{fromPlayback:true});
+   if(stepIndex===last)pause();
+  },1200);
+ }
+ root.querySelectorAll('[data-mode]').forEach(b=>{on(b,'click',()=>{pause();view(b.dataset.mode);});control(b,b.dataset.mode==='overview'?'查看完整采集的真实时间比例':'放大当前调用组，保留真实线性时间');});
+ on(picker,'change',()=>jump(data.steps.findIndex(s=>s.id===picker.value)));
  function bounded(a,b){const w=Math.min(maxTime,Math.max(.1,b-a)),start=Math.max(0,Math.min(maxTime-w,a));return[start,start+w];}
- function zoom(f,anchor=.5){const w=range[1]-range[0],at=range[0]+w*anchor;range=bounded(at-w*f*anchor,at+w*f*(1-anchor));render();}
+ function zoom(f,anchor=.5){pause();const w=range[1]-range[0],at=range[0]+w*anchor;range=bounded(at-w*f*anchor,at+w*f*(1-anchor));render();}
  root.querySelectorAll('[data-zoom]').forEach(b=>{on(b,'click',()=>zoom(b.dataset.zoom==='in'?.65:1.5));control(b,b.dataset.zoom==='in'?'放大当前时间窗':'缩小当前时间窗');});
- on($('[data-fit]'),'click',()=>view(mode));control($('[data-fit]'),'恢复当前 Overview 或 Step Detail 的完整时间窗');
+ on($('[data-fit]'),'click',()=>{pause();view(mode);});control($('[data-fit]'),'恢复当前 Overview 或 Step Detail 的完整时间窗');
  on($('[data-info]'),'click',()=>{help=!help;showPanel=help;renderPanel();});control($('[data-info]'),'查看数据来源、关系口径与操作方法');
  on($('[data-inspect]'),'click',()=>{help=false;showPanel=!showPanel;renderPanel();});control($('[data-inspect]'),'查看选中事件、关联字段与时间偏差');
  on(svg,'wheel',e=>{e.preventDefault();const b=svg.getBoundingClientRect(),left=b.width<800?142:172;zoom(Math.exp(Math.max(-100,Math.min(100,e.deltaY))*.004),Math.max(0,Math.min(1,(e.clientX-b.left-left)/(b.width-left-18))));});
- on(svg,'pointerdown',e=>{if(e.target.closest('[data-event]'))return;drag={x:e.clientX,range:[...range]};svg.setPointerCapture(e.pointerId);});
+ on(svg,'pointerdown',e=>{if(e.target.closest('[data-event]'))return;pause();drag={x:e.clientX,range:[...range]};svg.setPointerCapture(e.pointerId);});
  on(svg,'pointermove',e=>{if(!drag)return;const delta=(e.clientX-drag.x)/Math.max(100,svg.clientWidth-(svg.clientWidth<800?142:172)-18)*(drag.range[1]-drag.range[0]);range=bounded(drag.range[0]-delta,drag.range[1]-delta);render();});
  on(svg,'pointerup',()=>drag=null);on(svg,'pointercancel',()=>drag=null);
- on(root,'keydown',e=>{if(e.key==='Escape'){selected=null;related.clear();showPanel=false;help=false;render();}if(['ArrowLeft','ArrowRight'].includes(e.key)&&e.target.tagName!=='SELECT'&&!e.target.closest('.trace-selector,.navigator')){e.preventDefault();stepIndex=Math.max(0,Math.min(data.steps.length-1,stepIndex+(e.key==='ArrowRight'?1:-1)));view('detail');}});
+ on(root,'keydown',e=>{if(e.key==='Escape'){pause();selected=null;related.clear();showPanel=false;help=false;render();}if(['ArrowLeft','ArrowRight'].includes(e.key)&&e.target.tagName!=='SELECT'&&!e.target.closest('.trace-selector,.navigator')){e.preventDefault();jump(Math.max(0,Math.min(data.steps.length-1,stepIndex+(e.key==='ArrowRight'?1:-1))));}});
  const observer=new ResizeObserver(render);observer.observe(root);sync();render();
- return{getState:()=>({step:data.steps[stepIndex].id,view:mode,range:[...range],selected,related:[...related]}),selectEvent:id=>{const r=byId.get(id);if(!r)throw Error('Unknown event');chooseEvent(r);},setRange:next=>{if(!Array.isArray(next)||next.length!==2||!next.every(Number.isFinite)||next[0]>=next[1])throw Error('Invalid range');range=[Math.max(0,next[0]),Math.min(maxTime,next[1])];render();},setStep:id=>{const i=data.steps.findIndex(s=>s.id===id);if(i<0)throw Error('Unknown step');stepIndex=i;selected=null;related.clear();view('detail');},destroy:()=>{observer.disconnect();stepSelector.destroy();navigation.destroy();abort.abort();root.replaceChildren();root.classList.remove('ev');}};
+ return{getState:()=>({step:data.steps[stepIndex].id,view:mode,range:[...range],selected,related:[...related],playing:playbackTimer!==null}),selectEvent:id=>{const r=byId.get(id);if(!r)throw Error('Unknown event');chooseEvent(r);},setRange:next=>{if(!Array.isArray(next)||next.length!==2||!next.every(Number.isFinite)||next[0]>=next[1])throw Error('Invalid range');pause();range=bounded(...next);render();},setStep:id=>{const i=data.steps.findIndex(s=>s.id===id);if(i<0)throw Error('Unknown step');jump(i);},destroy:()=>{pause();observer.disconnect();stepSelector.destroy();navigation.destroy();abort.abort();root.replaceChildren();root.classList.remove('ev','ev-playback');}};
 }
 global.TraceEvidenceView={mount};
 })(window);

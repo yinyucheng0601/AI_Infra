@@ -22,24 +22,7 @@ function physicalSelection(input){
  }else for(const mode of deploymentLayers){const state=trainingDeploymentState(parameterState,deploymentFocus,mode);state.members.forEach(r=>members.add(String(r)));state.edges.filter(e=>e.from===deploymentFocus||e.to===deploymentFocus).forEach(e=>{targets.add(String(e.from));targets.add(String(e.to));});}
  return {targets,members};
 }
-function physicalBoardComposition(svg,detailed){
- svg.classList.add('physical-composition');svg.classList.toggle('physical-detail',detailed);
- const NS='http://www.w3.org/2000/svg',g=document.createElementNS(NS,'g');g.classList.add('physical-sections');
- const sections=[[-6,40,906,106,'Host 接入','CPU / PCIe'],[112,154,790,124,'计算互联','NPU Mesh'],[112,282,790,110,'交换网络','L1 / L2 Clos'],[46,401,856,42,'扩展互联','POD / SuperPOD'],[46,449,856,70,'框内互联','Board-to-Board']];
- g.innerHTML=sections.map(([x,y,w,h,title,sub])=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/><text x="-116" y="${y+23}" class="physical-section-title">${title}</text><text x="-116" y="${y+40}" class="physical-section-sub">${sub}</text>`).join('');
- svg.insertBefore(g,svg.firstChild.nextSibling);
- const agg=document.createElementNS(NS,'g');agg.classList.add('physical-aggregate');
- agg.innerHTML='<rect class="aggregate-region" x="126" y="164" width="752" height="18" rx="4"/><text x="502" y="176" text-anchor="middle">Full Mesh · 7 × 4 · 拓扑聚合</text><rect class="aggregate-region" x="126" y="286" width="752" height="20" rx="4"/><text x="502" y="299" text-anchor="middle">Clos Fabric · 8 × 4 · 拓扑聚合</text>';
- for(let i=0;i<8;i++){const x=152+i*100;agg.insertAdjacentHTML('beforeend',`<line class="aggregate-physical" x1="${x}" y1="182" x2="${x}" y2="200"/><line class="aggregate-logical" x1="${x}" y1="269" x2="${x}" y2="286"/><line class="aggregate-physical" x1="${x}" y1="306" x2="${x}" y2="314"/>`);}
- svg.insertBefore(agg,svg.querySelector('.b-nodes'));
- // Expansion interfaces are destinations of the plane links, not extra switches.
- svg.querySelectorAll('.b-lbl-ub,.b-lbl-uboe,.b-bus.b-ub,.b-bus.b-uboe').forEach(n=>n.remove());
- svg.querySelectorAll('.b-out').forEach(n=>n.setAttribute('y2','401'));
- const ext=document.createElementNS(NS,'g');ext.classList.add('physical-expansion');
- ext.innerHTML='<rect x="60" y="401" width="410" height="42" rx="4"/><text x="265" y="426" text-anchor="middle" class="b-lbl-ub">Unified Bus → POD</text><rect x="498" y="401" width="402" height="42" rx="4"/><text x="699" y="426" text-anchor="middle" class="b-lbl-uboe">UBoE → SuperPOD</text>';
- svg.append(ext);
- svg.querySelectorAll('.b-lbl').forEach(n=>{if(/^(fullmesh|Clos|框内板间互联)/.test(n.textContent))n.remove();});
-}
+function physicalBoardComposition(svg,detailed){return LingquHardware.composeBoard(svg,detailed);}
 function physicalRelationLegend(){return `<div class="physical-relation-key" style="--mode-color:${observationData?observationColor():deploymentColors[deploymentMode]||'#808080'}"><div><i class="key-physical"></i><span>物理连接<small>静态硬件连接</small></span></div><div><i class="key-logical"></i><span>逻辑互联<small>聚合关系，不代表实体总线</small></span></div><div><i class="key-parallel"></i><span>并行链路<small>独立通道，×4 表示四条</small></span></div><div><i class="key-selected" style="border-color:var(--mode-color,#FF9500)"></i><span>选中关联<small>按通信类型着色的拓扑关系；不代表实测路径</small></span></div><div><i class="key-event"></i><span>通信事件<small>有运行时证据时显示语义色箭头；不等于物理路径</small></span></div></div>`;}
 function physicalRender(){
  physicalPath.hidden=true;physicalFitBounds=null;

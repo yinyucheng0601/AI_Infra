@@ -107,7 +107,10 @@
     if(a?.type==='method'){
       document.title=a.title+' · AI Infra Skill';
       const readme=config.skillReadmes?.[a.id]||`<h1 id="detailTitle">${esc(a.title)}</h1><p>${esc(a.summary)}</p>`;
-      $('detailView').innerHTML=`<div class="skill-readme-page"><a class="skill-back" href="skills.html">← Skill 库</a><article class="skill-readme">${readme}<details class="readme-instructions"><summary>展开当前版本的完整 Skill 指令</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></article></div>`;
+      const workflow=a.id==='ai-infra-investigation'&&config.investigationWorkflow
+        ? `<section class="skill-workflow" aria-labelledby="skill-workflow-title"><h2 id="skill-workflow-title">Skill 架构与工作流</h2><iframe title="AI Infra Skill 架构、总 Workflow 与 Set / Wait 案例" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" loading="lazy" srcdoc="${esc(config.investigationWorkflow)}"></iframe></section>`
+        : '';
+      $('detailView').innerHTML=`<div class="skill-readme-page"><a class="skill-back" href="skills.html">← Skill 库</a><article class="skill-readme">${readme}${workflow}<details class="readme-instructions"><summary>展开当前版本的完整 Skill 指令</summary><pre class="skill-source">${esc(config.skillTexts?.[a.id]||'')}</pre></details></article></div>`;
       return;
     }
     const back=`<a class="btn btn-sm" href="${esc(C.stateQuery({...state,asset:''}))}">← 返回知识库</a>`;

@@ -1,0 +1,13 @@
+{
+  "task": "Diagnose an operator's memory residency and trace its tensor identity across compiler stages.",
+  "inputs": [
+    "operator source",
+    "compiler pass log",
+    "runtime trace"
+  ],
+  "constraints": {
+    "offline_artifact": true,
+    "preserve_evidence_levels": true,
+    "no_unverified_physical_address_claims": true
+  }
+}

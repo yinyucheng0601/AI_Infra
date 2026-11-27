@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "objects": [
+    {
+      "object_id": "tensor:x",
+      "object_type": "tensor",
+      "layer": "model",
+      "name": "Activation X",
+      "evidence_level": "assumed",
+      "source_ref": "fixture:tensor-cross-layer",
+      "shape": [
+        8,
+        4096
+      ],
+      "dtype": "bf16"
+    },
+    {
+      "object_id": "tensor:x/op:layernorm",
+      "object_type": "tensor_value",
+      "layer": "operator",
+      "name": "LayerNorm input X",
+      "evidence_level": "derived",
+      "source_ref": "fixture:tensor-cross-layer",
+      "shape": [
+        8,
+        4096
+      ],
+      "dtype": "bf16"
+    },
+    {
+      "object_id": "ir:v17",
+      "object_type": "ir_value",
+      "layer": "compiler",
+      "name": "IR value v17",
+      "evidence_level": "assumed",
+      "source_ref": "fixture:tensor-cross-layer"
+    },
+    {
+      "object_id": "mem:buf4",
+      "object_type": "allocation",
+      "layer": "memory",
+      "name": "UB buffer 4",
+      "evidence_level": "assumed",
+      "source_ref": "fixture:tensor-cross-layer"
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "e1",
+      "from": "tensor:x",
+      "to": "tensor:x/op:layernorm",
+      "relation": "same_logical_value_as",
+      "evidence_level": "derived",
+      "source_ref": "fixture:tensor-cross-layer"
+    },
+    {
+      "edge_id": "e2",
+      "from": "tensor:x/op:layernorm",
+      "to": "ir:v17",
+      "relation": "derived_from",
+      "evidence_level": "assumed",
+      "source_ref": "fixture:tensor-cross-layer"
+    },
+    {
+      "edge_id": "e3",
+      "from": "ir:v17",
+      "to": "mem:buf4",
+      "relation": "stored_in",
+      "evidence_level": "assumed",
+      "source_ref": "fixture:tensor-cross-layer"
+    }
+  ]
+}

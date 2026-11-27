@@ -1,0 +1,13 @@
+interface:
+  display_name: 大模型计算图解
+  short_description: 制作循序渐进的大模型计算图解，统一图元、专业文字与离线网页交互
+  default_prompt: 使用 $llm-compute-diagrams 将指定的大模型计算主题制作成可离线打开的交互图解网页。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

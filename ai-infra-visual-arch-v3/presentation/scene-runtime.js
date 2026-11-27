@@ -72,6 +72,32 @@ export async function createSceneRuntime(root,scene,id){
  function syncFrameAnnotations(){
   if(!frameworkFrame?.contentDocument)return;
   const doc=frameworkFrame.contentDocument,win=frameworkFrame.contentWindow;
+  const toolbar=doc.querySelector('.top-actions');
+  if(toolbar&&passAudit){
+   let button=toolbar.querySelector('[data-deck-audit]');
+   if(!button){
+    const original=toolbar.querySelector('button');
+    if(original){
+     button=original.cloneNode(true);button.dataset.deckAudit='true';
+     button.removeAttribute('id');button.removeAttribute('data-tooltip');
+     button.setAttribute('aria-label','核查当前问题与证据');button.title='核查当前问题与证据';
+     button.innerHTML=passAudit.querySelector('summary').innerHTML;
+     button.onclick=()=>{passAudit.open=!passAudit.open;syncFrameAnnotations();};
+     toolbar.prepend(button);
+    }
+   }
+   if(button){
+    button.setAttribute('aria-expanded',String(passAudit.open));
+    const b=button.getBoundingClientRect();
+    passAudit.style.top=b.top/win.innerHeight*100+'%';
+    passAudit.style.right=(win.innerWidth-b.right)/win.innerWidth*100+'%';
+    passAudit.style.setProperty('--audit-size',b.height+'px');
+    passAudit.style.setProperty('--audit-panel-right',(24-(win.innerWidth-b.right))+'px');
+    const label=root.querySelector('.dimension-audit');
+    if(label){label.style.top=b.top/win.innerHeight*100+'%';label.style.right=(win.innerWidth-b.right)/win.innerWidth*100+'%';label.style.width=b.width/win.innerWidth*100+'%';label.style.height=b.height/win.innerHeight*100+'%';}
+    passAudit.classList.add('toolbar-linked');
+   }
+  }
   root.querySelectorAll('[data-frame-target]').forEach(label=>{
    const target=doc.querySelector(label.dataset.frameTarget);
    if(!target)return;

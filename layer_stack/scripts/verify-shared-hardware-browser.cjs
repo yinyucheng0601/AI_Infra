@@ -1,0 +1,31 @@
+const {spawn}=require('node:child_process'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const port=18000+process.pid%20000,output='/private/tmp/training-glyph-review';fs.mkdirSync(output,{recursive:true});
+const chrome=spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless','--disable-gpu','--no-first-run','--remote-debugging-address=127.0.0.1','--remote-debugging-port='+port,'--user-data-dir='+output+'/chrome-'+process.pid,'about:blank'],{stdio:['ignore','ignore','pipe']});
+let diagnostic='';chrome.stderr.on('data',d=>diagnostic=(diagnostic+d).slice(-1800));chrome.on('error',e=>diagnostic+=e.message);
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{let socket;try{
+ let targets;for(let i=0;i<100;i++){try{targets=await(await fetch('http://127.0.0.1:'+port+'/json')).json();break;}catch{await delay(100);}}
+ if(!targets)throw Error('Chrome unavailable: '+diagnostic);
+ socket=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j;});
+ const pending=new Map(),errors=[];let serial=0;socket.onmessage=e=>{const d=JSON.parse(e.data);if(d.id){pending.get(d.id)?.(d);pending.delete(d.id);}if(d.method==='Runtime.exceptionThrown')errors.push(d.params.exceptionDetails.text);};
+ const call=(method,params={})=>new Promise((resolve,reject)=>{const id=++serial;pending.set(id,d=>d.error?reject(Error(JSON.stringify(d.error))):resolve(d.result));socket.send(JSON.stringify({id,method,params}));});
+ const evaluate=async expression=>{const d=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(d.exceptionDetails)throw Error(JSON.stringify(d.exceptionDetails));return d.result.value;};
+ const click=async selector=>{const p=await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});if(!el)throw Error('Missing target');const r=el.getBoundingClientRect();return {x:r.left+r.width*.5,y:r.top+r.height*.5};})()`);await call('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...p});await call('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...p});await delay(120);};
+ const shot=async name=>{const r=await call('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name,Buffer.from(r.data,'base64'));};
+ await call('Runtime.enable');await call('Page.enable');await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+ await call('Page.navigate',{url:'http://127.0.0.1:8896/inference-layer-stack.html'});await delay(900);
+ await evaluate("pausePlayback();get('model-select').value='deepseek';get('model-select').dispatchEvent(new Event('change'));pausePlayback();setRankPrimary(true);setRankView(1)");await delay(300);
+ assert.equal(await evaluate("document.querySelectorAll('#parallel-rank-scene .physical-section-title').length"),5);
+ assert.equal(await evaluate("document.querySelectorAll('#parallel-rank-scene .physical-rank').length"),8);
+ assert.equal(await evaluate("[...document.querySelectorAll('symbol[id^=deployment-hw-]')].filter(s=>s.querySelector('[data-user-glyph]')).length"),5);
+ assert.equal(await evaluate("getComputedStyle(document.querySelector('#parallel-rank-scene .is-selected>.p-npu')).fill"),'rgba(255, 255, 255, 0.05)');
+ await shot('inference-glyphs-dark.png');
+ await evaluate("get('theme-mode').click()");await delay(200);await shot('inference-glyphs-light.png');
+ assert.equal(await evaluate("getComputedStyle(document.querySelector('symbol#deployment-hw-cpu [data-asset-theme=light]')).display"),'inline');
+ await click('#parallel-rank-scene [data-rank-id="3"]');assert.equal(await evaluate('selectedRank'),3);
+ await click('[data-hardware-board="1"]');assert.equal(await evaluate('selectedRank'),8);
+ await evaluate("rankRelation='moe';rankSceneKey='';renderKVMemory()");assert.equal(await evaluate("document.querySelectorAll('[data-ep-copper-overlay]').length"),15);await shot('inference-copper-light.png');
+ await evaluate("get('theme-mode').click()");await delay(200);await shot('inference-copper-dark.png');
+ await evaluate('setRankView(0)');assert.equal(await evaluate("document.querySelectorAll('#parallel-rank-scene [data-rank-id]').length"),16);
+ assert.deepEqual(errors,[]);console.log('PASS: shared board hierarchy, five approved symbols, 5% selected fill, two boards, copper mode, dark/light variants and 2.5D return');
+ }catch(e){console.error(e);process.exitCode=1;}finally{socket?.close();chrome.kill();}})();

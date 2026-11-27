@@ -1,0 +1,13 @@
+interface:
+  display_name: Spatial Systems UI
+  short_description: 以编辑排版与精密图形设计复杂系统界面，支持多尺度观测与交互检查
+  default_prompt: 使用 $design-spatial-systems-ui 设计或优化这个可视化界面，并检查实际渲染效果。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

@@ -1,0 +1,20 @@
+{
+  "source": "ai-infra-research/patterns/npu-memory-atlas/variants/index_comm.html",
+  "rendererSnapshotSha256": "9002829afcfbf6330c8e68a412a79e9286c6a6fddae958966cdc8eb48e4feb65",
+  "positionSnapshotSha256": "d08c538c449ebd1a5abcb07d1443b4caf66d990b44f5a3b47e984b83ff264523",
+  "functions": [
+    "P",
+    "pts",
+    "polygon",
+    "shade",
+    "block",
+    "backFaces",
+    "outerRankBorder",
+    "outline",
+    "rankContentLayout",
+    "drawRank",
+    "rankWallLabel",
+    "rankPosition"
+  ],
+  "adaptation": "推理类别数据及宿主选择回调；原绘制和坐标函数逐字保留，rankRatio恢复源默认3:3:4。分区高度是布局单位，不代表实测显存比例；单Rank引线标注公共权重、本地路由专家、请求KV及运行缓冲。"
+}

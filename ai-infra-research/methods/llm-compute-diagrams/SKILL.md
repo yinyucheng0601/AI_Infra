@@ -15,6 +15,10 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 
 制作或修改图元前，先读取 [已确认图元规范](references/approved-glyphs.md)，按 `assets/approved-glyphs/manifest.json` 复用 SVG，并查看 [当前离线图例库](assets/approved-legend-library.html)。该基线优先于旧示例与旧 renderer 的视觉默认值；用户当前要求优先。
 
+## Keynote 浅色图元更新
+
+制作浅色图解或复用 keynote 图元时，先读 [Keynote 浅色变体](references/keynote-light-glyphs.md)，直接使用 `assets/keynote-light/manifest.json` 与对应 SVG。此变体优先于旧示例的浅色默认值；深色图沿用已确认基线。不要根据截图重新画 Tensor、OP、Kernel 或 Rank。
+
 ## 先确定要解释的关系
 
 从用户的问题中识别具体认知缺口，明确本次范围：模型计算结构、张量及形状、设备部署、运行事件，或几者之间的映射。以给定材料的当前内容为依据；修改现有网页时优先使用用户选中的最新文件，而非本技能示例。
@@ -82,3 +86,5 @@ description: 制作或扩展大模型计算领域的渐进式交互图解网页�
 ## 复用与验收契约
 
 创建或改造有源码证据、多视图联动的可视化时，先读 [可视化交付契约](references/visual-delivery-contract.md)。先落实任务路径、资产版本和代表状态，再展开页面；不要用新增说明面板补救不清楚的布局。已有项目有同等约束时直接复用，不另建重复流程。
+
+用于统一 workflow 时，先按同级 ai-infra-investigation 的 `references/task-contract.md` 交付对象、关系、证据和未确认项。领域参考和工程推导仍由本 Skill 维护。由 observability-design-style 按任务定义呈现契约，构图与绑定交给 design-spatial-systems-ui，完整 Pattern 与正式图元沿各自资产入口调用。直接调用本 Skill 时，继续沿用上述渐进讲解与离线交付流程。

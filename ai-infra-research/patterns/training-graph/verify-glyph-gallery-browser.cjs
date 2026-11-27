@@ -1,0 +1,45 @@
+const {spawn}=require('node:child_process'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const port=18000+process.pid%20000,output='/private/tmp/training-glyph-review';fs.mkdirSync(output,{recursive:true});
+const chrome=spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',['--headless','--disable-gpu','--no-first-run','--remote-debugging-address=127.0.0.1','--remote-debugging-port='+port,'--user-data-dir='+output+'/chrome-'+process.pid,'about:blank'],{stdio:['ignore','ignore','pipe']});
+let diagnostic='';chrome.stderr.on('data',d=>diagnostic=(diagnostic+d).slice(-1800));chrome.on('error',e=>diagnostic+=e.message);
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{let socket;try{
+ let targets;for(let i=0;i<100;i++){try{targets=await(await fetch('http://127.0.0.1:'+port+'/json')).json();break;}catch{await delay(100);}}
+ if(!targets)throw Error('Chrome unavailable: '+diagnostic);
+ socket=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j;});
+ const pending=new Map(),errors=[];let serial=0;socket.onmessage=e=>{const d=JSON.parse(e.data);if(d.id){pending.get(d.id)?.(d);pending.delete(d.id);}if(d.method==='Runtime.exceptionThrown')errors.push(d.params.exceptionDetails.text);};
+ const call=(method,params={})=>new Promise((resolve,reject)=>{const id=++serial;pending.set(id,d=>d.error?reject(Error(JSON.stringify(d.error))):resolve(d.result));socket.send(JSON.stringify({id,method,params}));});
+ const evaluate=async expression=>{const d=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(d.exceptionDetails)throw Error(JSON.stringify(d.exceptionDetails));return d.result.value;};
+ const click=async selector=>{const p=await evaluate(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});if(!el)throw Error('Missing target');const r=el.getBoundingClientRect();return {x:r.left+r.width*.5,y:r.top+r.height*.5};})()`);await call('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,...p});await call('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,...p});await delay(120);};
+ const shot=async name=>{const r=await call('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name,Buffer.from(r.data,'base64'));};
+ await call('Runtime.enable');await call('Page.enable');await call('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,deviceScaleFactor:1,mobile:false});
+ await call('Page.navigate',{url:'file://'+path.join(__dirname,'glyph-gallery.html')});await delay(600);
+ const count=await evaluate("document.querySelectorAll('article').length");assert.equal(count,13);assert.equal(await evaluate("document.querySelectorAll('script[src],link[rel=stylesheet]').length"),0);
+ const bad=await evaluate("[...document.querySelectorAll('article .art>svg')].filter(s=>!s.hasAttribute('viewBox')||s.getAttribute('viewBox').includes('NaN')).length");assert.equal(bad,0);
+ assert.equal(await evaluate("document.querySelectorAll('article.hardware .new-art .device-v2').length"),5);
+ await shot('gallery.png');
+ await click('[data-category="Demo 最新组合"]');assert.equal(await evaluate("document.querySelectorAll('article:not([hidden])').length"),2);assert.equal(await evaluate("document.querySelector('[data-id=\"D-hierarchy\"] .new-art .physical-sections').querySelectorAll('text.physical-section-title').length"),5);await shot('demo-compositions.png');await click('[data-id="D-copper"]>button');assert.equal(await evaluate("getComputedStyle(document.querySelector('#detail-before')).display"),'none');assert.equal(await evaluate("getComputedStyle(document.querySelector('#detail-after .b-plane')).fill"),'rgb(231, 231, 231)');await shot('copper-comparison.png');await click('#close');await click('[data-category="全部"]');
+ await evaluate("show(items.find(i=>i.id==='T-l1'))");await delay(100);await shot('l1-light.png');await click('#close');
+ await click('#theme');await evaluate("show(items.find(i=>i.id==='T-l1'))");await delay(100);await shot('l1-dark.png');await click('#close');await click('#theme');
+ assert.equal(await evaluate("getComputedStyle(document.querySelector('symbol#review-sw [data-asset-theme=dark]')).display"),'none');
+
+ await evaluate("document.querySelector('#search').value='交换机';document.querySelector('#search').dispatchEvent(new Event('input'))");await delay(50);await shot('switch-light.png');
+ await evaluate("document.querySelector('#search').value='平面';document.querySelector('#search').dispatchEvent(new Event('input'))");await delay(50);
+ assert(await evaluate("document.querySelectorAll('article:not([hidden])').length>0"));
+ await click('[data-id="T-plane"]>button');assert.equal(await evaluate("document.querySelector('#inspector').open"),true);
+ assert((await evaluate("document.querySelector('#detail-meaning').textContent")).includes('不是一台交换机'));
+ await shot('plane-detail.png');await click('#close');
+ await evaluate("document.querySelector('#search').value='';document.querySelector('#search').dispatchEvent(new Event('input'))");
+ await click('[data-category="物理器件"]');assert.equal(await evaluate("document.querySelectorAll('article:not([hidden])').length"),5);
+ assert.equal(await evaluate("document.querySelectorAll('[data-size]').length"),0);
+ const iconSizes=await evaluate("[...document.querySelectorAll('article.hardware .new-art>svg')].map(s=>({width:s.getBoundingClientRect().width,height:s.getBoundingClientRect().height,viewBox:s.getAttribute('viewBox'),type:s.closest('article').dataset.id}))");
+ assert(iconSizes.filter(s=>s.type!=='H-sw').every(s=>s.width===160&&s.height===160));assert(iconSizes.find(s=>s.type==='H-sw').width>340);
+ const supplied=await evaluate("[...document.querySelectorAll('article.hardware [data-asset-theme=light] [data-user-glyph]')].map(s=>({type:s.dataset.userGlyph,viewBox:s.getAttribute('viewBox'),ratio:s.getAttribute('preserveAspectRatio')}))");assert.equal(supplied.length,5);assert(supplied.every(s=>s.ratio==='xMidYMid meet'));assert.equal(supplied.find(s=>s.type==='sw').viewBox,'0 0 317 72');
+ await click('[data-id="H-cpu"]>button');assert.equal(await evaluate("document.querySelector('#detail-after>svg').getBoundingClientRect().width"),160);await shot('cpu-160.png');await click('#close');
+ const commonScales=await evaluate("[...document.querySelectorAll('article.hardware [data-asset-theme=light] [data-user-glyph]')].map(s=>s.getScreenCTM().a)");assert(Math.max(...commonScales)-Math.min(...commonScales)<.001,JSON.stringify(commonScales));
+ const lightFill=await evaluate("document.querySelector('[data-id=\"H-cpu\"] [data-asset-theme=light] rect').getAttribute('fill')");const darkFill=await evaluate("document.querySelector('[data-id=\"H-cpu\"] [data-asset-theme=dark] rect').getAttribute('fill')");assert.notEqual(lightFill,darkFill);
+ await click('#theme');assert.equal(await evaluate('document.documentElement.dataset.theme'),'dark');await shot('gallery-dark-160.png');
+ await call('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await delay(100);
+ assert.equal(await evaluate('document.documentElement.scrollWidth<=innerWidth'),true);await shot('gallery-mobile.png');
+ assert.deepEqual(errors,[]);console.log('PASS: '+count+' Lingqu-only comparison specimens, revised device SVGs, five provided SVGs at a common scale, wide switch and independent light palette, theme control, fitted SVGs, search/filter, P1 meaning/source inspector, close, 1440×1000 and 390px layout. Screenshots: '+output);
+ }catch(e){console.error(e);process.exitCode=1;}finally{socket?.close();chrome.kill();}})();

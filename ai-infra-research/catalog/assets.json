@@ -469,14 +469,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/expand-broadcast-inspector/index.html",
-          "sha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
+          "sha256": "520bc41bdf4bb791b7ecad8d15ac84783815cc135acfb97f2439d3de9f60feab",
           "url": null,
           "revision": null
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/compute-investigation-trial/expand.html",
-          "sha256": "c8bd978f97e2117d3b92b8cb43c4c1b20adbeadd89394b64157336670e3a77fe",
+          "sha256": "520bc41bdf4bb791b7ecad8d15ac84783815cc135acfb97f2439d3de9f60feab",
           "url": null,
           "revision": null
         }
@@ -527,14 +527,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/unpack-layout-inspector/index.html",
-          "sha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
+          "sha256": "148bbd86223305c11efc679ba60dcd0d977d18c6b5d1a505771e1bf756bc35ef",
           "url": null,
           "revision": null
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/compute-investigation-trial/unpack.html",
-          "sha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
+          "sha256": "148bbd86223305c11efc679ba60dcd0d977d18c6b5d1a505771e1bf756bc35ef",
           "url": null,
           "revision": null
         }
@@ -866,7 +866,7 @@
         "Serving",
         "Profiling"
       ],
-      "summary": "沿共享时间轴查看一次推理请求，从 Prefill 到 Decode 连续缩放，联动检查 Host 与 Device 的执行关系。",
+      "summary": "沿共享时间轴查看推理采集，通过缩放、调用组导航和证据面板核查 Serving、Host 与 Runner 的关联。",
       "designValue": "保留真实时长、并行与间隙，以稀疏标签和渐进检查替代满屏任务标签。",
       "outline": [
         "完整请求时间轴与连续缩放",
@@ -887,14 +887,14 @@
           "path": "ai-infra-research/patterns/critical-path-swimlane/index.html",
           "url": null,
           "revision": null,
-          "sha256": "ef52b9fe734115f7bae7cb86555c591848bbc256dd5ac088828e17cc4645c3fc"
+          "sha256": "7135addb0b4627d6eb9e40780089af2dc8f69a30dd906aa089dff33ec8c50c9d"
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/critical-path-swimlane/pattern.js",
           "url": null,
           "revision": null,
-          "sha256": "09fbd3757e608d15903d6b6a50d9f33ef1f96b0a3c25d81d854dd3c0e8f778ce"
+          "sha256": "2f830de5077fd0dd80880307a0d7509791d701cbe5e1fd6e95b840484ac0c54b"
         },
         {
           "repository": "PyPTO3-main",
@@ -909,13 +909,28 @@
           "sha256": "dd3ced4ca616b8577a216e8eaea6e3f26d524c7a6494bd3c1badee6d419b2add",
           "url": "https://github.com/yinyucheng0601/PyPTO3/blob/5547283136bca92467a9b02dd0a02697e39fc4d4/Design/execution-triage-workbench/home.js",
           "revision": "5547283136bca92467a9b02dd0a02697e39fc4d4"
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/critical-path-swimlane/workbench.js",
+          "url": null,
+          "revision": null,
+          "sha256": "be4fdac03ac0e58907cae21666b450bfc936815c81576039f2827e258eef001e"
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/patterns/critical-path-swimlane/evidence-view.js",
+          "url": null,
+          "revision": null,
+          "sha256": "f1774592e574cbe2daafe213bad5b12c3a1931161a7e9fe09aa7daf06f0310ea"
         }
       ],
       "validation": [
         "2026-10-20：用户多轮截图评审及迭代后明确要求收录 Library / Pattern。",
         "54 step / 864 lane 与原始 STRACE 回查通过；D09 指标、时间窗约束与范围边界检查通过。",
         "代码与目录校验通过；未执行浏览器自动化及完整交互回归。",
-        "2026-10-21：采用用户指定截图作为卡片封面，修正卡片入口为 index.html，保留 pattern.js 来源指纹。"
+        "2026-10-21：采用用户指定截图作为卡片封面，修正卡片入口为 index.html，保留 pattern.js 来源指纹。",
+        "2026-11-27：DeepSeek V4 原始 Trace、DSpark 回归、两套采集的 DOM 挂载与调用约束通过；当前界面的浏览器视觉待验收。"
       ],
       "related": [],
       "reviewedAt": "2026-10-20",
@@ -1469,7 +1484,7 @@
           "url": null,
           "path": "layer_stack/inference-layer-stack.html",
           "revision": null,
-          "sha256": "28a8e1b688f346278cf7445cfc348575497043ee569c8ff3a26e3ebdc1e89da3"
+          "sha256": "8770b84d7bd74ab89d64ea502e91c07952bb02eb05a2eb5573f456c9cbef4a01"
         }
       ],
       "validation": [
@@ -2835,14 +2850,14 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/patterns/unpack-case3-inspector/index.html",
-          "sha256": "e2f808739144d8293bb43267e5644f7604c7fe5965c85be2290cd707443953e6",
+          "sha256": "de54b568a836c38389aec08eeacffbf8fe5bd837cbd3ddf269a8631916698f34",
           "url": null,
           "revision": null
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/unpack-case3/index.html",
-          "sha256": "113c6a5aa715b58069bc1f943e2ba80c66614dc869b8f2d9d9fbfb3c563fb6c6",
+          "sha256": "ca8d14d2573e479e6001890f79bbf77826c743c41f21b8b962833e99c08154d1",
           "url": null,
           "revision": null
         }
@@ -2975,14 +2990,15 @@
       "title": "驻留、重读与内存复用 · RMSNorm",
       "type": "pattern",
       "form": "交互 Pattern",
-      "summary": "联动执行泳道、Tensor 驻留与队列申请生命周期，收录 RMSNorm 驻留与重读（950）、Fused Add RMSNorm（910B）两个案例。",
+      "summary": "联动执行泳道、Tensor 驻留与队列申请生命周期，收录 RMSNorm 驻留与重读（950）、Fused Add RMSNorm（910B）和 LayerNormV4（950）三个案例。",
       "designValue": "用源码步骤串联容量条件、方案选择、数据重读及性能估算，并关联硬件位置和核查证据。",
       "outline": [
         "执行泳道与 Tensor 生命周期",
         "内存复用分屏与双向选择",
         "950 硬件映射与模型估算",
         "配置关联核查与继续调查",
-        "Fused Add RMSNorm · 910B：源码步骤、队列复用与硬件联动"
+        "Fused Add RMSNorm · 910B：源码步骤、队列复用与硬件联动",
+        "LayerNormV4 · 950：两条 Host tiling 路径、UB 生命周期与源码核查"
       ],
       "domains": [
         "AI Infra",
@@ -3004,14 +3020,21 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/rmsnorm-performance-investigation/index.html",
-          "sha256": "1b4bedb25edc948e013c26bc7d3af1708054b0a50215c79d5ad5b1f28bbe79b3",
+          "sha256": "2c9fa21e4c3967991cfe3be242cac13d965d5ac3aaa2ff3e40247a35a44ff55d",
           "url": null,
           "revision": null
         },
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/prototypes/fused-add-rmsnorm-independent/index.html",
-          "sha256": "f8f2aed6fa6d9fe391a5d71c9e6dc5ec2720199782176eb944d3f57ffada6341",
+          "sha256": "fc36808ef8c1b960fe36fcadc78b62772199b5372157ce8a926dad3c6352cd94",
+          "url": null,
+          "revision": null
+        },
+        {
+          "repository": "ai-infra",
+          "path": "ai-infra-research/prototypes/layernorm-v4-950/index.html",
+          "sha256": "eb3dc912f2657e2e27e1319833132880e56094fa734726058bd80ca9cb005b07",
           "url": null,
           "revision": null
         }
@@ -3037,6 +3060,11 @@
           "label": "Add + RMSNorm · 910B",
           "content": "patterns/rmsnorm-residency-reuse/fused-add.html",
           "description": "打开 Fused Add RMSNorm 源码步骤、内存复用与硬件联动 · Ascend 910B"
+        },
+        {
+          "label": "LayerNormV4 · 950",
+          "content": "patterns/rmsnorm-residency-reuse/layer-norm-v4.html",
+          "description": "打开 LayerNormV4 两条 Host tiling 路径、UB 生命周期与 Kernel 源码核查 · Ascend 950"
         }
       ]
     }

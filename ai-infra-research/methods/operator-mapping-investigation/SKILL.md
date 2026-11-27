@@ -20,3 +20,5 @@ description: 核查算子源码中的多维索引、线性地址、分块、搬�
 后续可交给 ai-infra-glyphs 选图元、observability-design-style 组织证据、design-spatial-systems-ui 呈现。仅要求分析时到模型和证据即止，不擅自生成网站或修改算子。
 
 复核外部扫描候选时，保留原始结果并追加独立判断：追查控制流、调用方与 helper，而非仅重述扫描消息；判断绑定源码版本与成立条件。已排除只针对具体指控，无法确认时列出缺失证据。向工作台提供可达配置/Task/步骤绑定；不可达不编造示例配置。
+
+用于统一 workflow 时，按同级 ai-infra-investigation 的 `references/task-contract.md` 交付对象、关系、证据和未确认项。直接回答在领域阶段交付；需要界面时，下游从同一模型定义呈现契约。

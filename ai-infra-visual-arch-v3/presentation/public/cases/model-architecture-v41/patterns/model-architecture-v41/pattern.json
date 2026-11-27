@@ -1,0 +1,21 @@
+{
+  "id": "model-architecture-v41",
+  "name": "DeepSeek V4.1 Model Architecture",
+  "type": "hybrid",
+  "description": "Source-validated V4.1 Flash 1017 model architecture using the approved V4 presentation.",
+  "source": {
+    "classification": "hybrid-pattern",
+    "patternHtml": "patterns/model-architecture-v41/pattern.html",
+    "patternCss": "patterns/model-architecture-v41/pattern.css",
+    "renderScript": "patterns/model-architecture-v41/adapter.js",
+    "canonicalGraph": "patterns/model-architecture-v41/model_architecture_graph.json",
+    "revision": "1bae0e1088993b9b82de08f59de5be5a34e42170",
+    "fileCount": 28
+  },
+  "dependencies": ["model-graphviz", "model-architecture-v4/pattern.css"],
+  "requiredApis": ["PtoV41Adapter.project(data,state)", "PtoV41Adapter.defaults(data,layer,level)"],
+  "allowedOverrides": ["selected layer", "expanded module IDs", "theme", "viewport dimensions"],
+  "forbiddenOverrides": ["using V4-specific fact builders", "inventing runtime or compiler evidence", "inferring topology from node order"],
+  "validation": "validate.cjs: pinned sources, config parity, 127 layout projections; model_architecture_validation.md",
+  "status": "source-validated-preview"
+}

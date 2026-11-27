@@ -15,7 +15,7 @@
 
 ## 快速开始
 
-首次使用建议获取完整 workflow，而不是只下载调度 Skill。组合包包含六个同级 Skill 目录：总入口、两个领域能力、计算图元、证据工作台和 Systems UI。
+完整 workflow 包含六个同级 Skill 目录，分别提供总入口、两个领域能力、计算图元、呈现设计与 Systems UI。
 
 [下载完整 workflow](../ai-infra-investigation-workflow.zip) · [仅下载调度 Skill](../ai-infra-investigation.zip)
 
@@ -37,21 +37,23 @@
 | 项目 | 内容 |
 | --- | --- |
 | 输入 | 代码仓库、配置或 trace，以及你想理解或核对的问题。 |
-| 交付 | 可交互页面、对象与源码/数据的关联、验证记录和可复制的调查上下文。 |
+| 交付 | 直接答复、结构呈现／对照或交互调查，附适用的来源、证据边界和验证记录。 |
 
 ## 工作方式
 
-你描述任务，不必先指定 Pattern。agent 先判断文字是否足够，再选择领域路径；需要视图时，复用已有模型、图元和交互，不从零重画整页。
+先识别任务与调用约束，再建立领域模型与证据。结论和来源足够时可直接回答。需要视图时，先定义[呈现契约](references/presentation-semantics.md)，约定对象如何定位、依据如何核查，以及适用的操作和结果更新规则，再选择组件。实现读取调用约束与呈现契约，最后按实际交付路径验收。
 
 | 阶段 | 负责内容 | Skill |
 | --- | --- | --- |
 | 领域：计算与系统 | 模型、编译、并行部署、运行证据的关系组织 | [大模型计算图解](../llm-compute-diagrams/README.md) |
 | 领域：索引与布局 | 生效分支、数学集合、请求和计算范围 | [算子映射调查](../operator-mapping-investigation/README.md) |
+| 呈现设计 | 定义机制讲解、结构浏览、实验对照或调查所需的呈现契约 | [呈现设计与证据工作台](../observability-design-style/README.md) |
 | 图元 | 从正式库选择 Tensor、OP、存储和关系表示 | [计算可视化图元体系](../ai-infra-glyphs/README.md) |
-| 证据 | 对象身份、检查器、前提与问题交接 | [证据工作台](../observability-design-style/README.md) |
 | 界面 | 布局、尺度、选择、缩放和面板 | [Systems UI](../design-spatial-systems-ui/README.md) |
 
 这是按需调度，不要求每个任务走完全部阶段。已有数据模型可直接进入呈现；只核对公式时也可以停在分析，不生成页面。
+
+需要控制界面时，可在同一 prompt 加一句「必选 Critical Path Swimlane 工作台、Trace 毫秒轴、检查器和缩放，调用组播放按现有数据启用」。用正式 Pattern 校验调用声明，兑现已支持的能力并报告缺口。可用资产及入口见 [Pattern 路由](references/pattern-routing.md)。
 
 ## 一个实际例子：LogSumExp Case05
 

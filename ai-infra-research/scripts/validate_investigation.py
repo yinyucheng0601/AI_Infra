@@ -4,7 +4,19 @@ from zipfile import ZipFile
 import hashlib
 import json
 import re
-from package_investigation import ROOT, SKILLS
+import posixpath
+from package_investigation import ROOT, SKILLS, standalone_references
+
+
+def validate_archive_links(archive):
+    files = set(archive.namelist())
+    for name in files:
+        if not (name.endswith("/SKILL.md") or "/references/" in name and name.endswith(".md")):
+            continue
+        for target in re.findall(r"\]\(([^)]+)\)", archive.read(name).decode()):
+            target = target.split("#")[0]
+            if target and "://" not in target:
+                assert posixpath.normpath(posixpath.join(posixpath.dirname(name), target)) in files, (name, target)
 
 for name in SKILLS:
     folder = ROOT / "methods" / name
@@ -16,12 +28,16 @@ for name in SKILLS:
             if target and "://" not in target:
                 assert (doc.parent / target).exists(), (doc, target)
     with ZipFile(ROOT / "methods" / (name + ".zip")) as archive:
+        validate_archive_links(archive)
         assert name + "/SKILL.md" in archive.namelist(), name
         for file in folder.rglob("*"):
             rel = file.relative_to(folder)
             if file.is_file() and not any(p.startswith(".") or p == "__pycache__" for p in rel.parts):
                 assert archive.read(str(Path(name) / rel)) == file.read_bytes(), file
+        for source, target in standalone_references(folder):
+            assert archive.read(str(target)) == source.read_bytes(), target
 with ZipFile(ROOT / "methods/ai-infra-investigation-workflow.zip") as archive:
+    validate_archive_links(archive)
     assert {n.split("/")[0] for n in archive.namelist()} == set(SKILLS)
     for name in SKILLS:
         folder = ROOT / "methods" / name

@@ -1,0 +1,275 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Infra · Workflow</title>
+<style>
+:root{--canvas:#f8f8f8;--white:#fff;--ink:#202823;--muted:#525a53;--fill:#e1eacb;--line:#8a968c}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--canvas);color:var(--ink);font:14px/1.5 system-ui;display:flex;flex-direction:column;height:100vh;height:100dvh}
+#toolbar{position:relative;z-index:5;background:var(--canvas);padding:16px clamp(16px,3vw,44px);display:flex;align-items:center;gap:14px;flex-wrap:wrap;flex:none}
+h1{font-size:17px;letter-spacing:-.025em;margin:0 auto 0 0}
+button{background:#eceeec;color:var(--ink);border:0;border-radius:999px;padding:9px 14px;cursor:pointer;font:inherit;font-weight:600}
+button:hover{background:#e2e6e2}
+button:focus-visible,.node:focus-visible{outline:none;background:var(--fill);text-decoration:underline}
+.views,.zoom-controls{display:flex;gap:5px;align-items:center}
+.views{background:#eceeec;border-radius:999px;padding:3px}
+.views button{background:transparent;white-space:nowrap}
+.views button:hover{background:#e2e6e2}
+.views button[aria-pressed="true"],.views button:focus-visible{background:var(--fill);color:var(--ink)}
+.zoom-controls button{width:37px;height:36px;padding:0;font-size:17px}
+.architecture-only .zoom-controls{display:none}
+main{overflow:auto;flex:1;min-height:0}
+#stage{position:relative;width:1460px;margin:12px auto 36px;transform-origin:top left}
+#edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.node{position:absolute;width:250px;min-height:76px;background:var(--white);border-radius:14px;padding:14px 16px;cursor:pointer}
+.node b{font-size:15px;line-height:1.35;display:block;margin-bottom:6px}
+.node small{font-size:13px;color:var(--muted);line-height:1.55;display:block}
+.node.decision{background:#f2ede2}.node.case{background:#edf2f5}.node.internal{background:#e9eef3}.node.tool{background:#eaf0e3}
+.node:hover,.node:focus-visible,.node.selected{background:var(--fill)}
+.scope{position:absolute;left:155px;top:20px;width:920px}
+.scope b{font-size:26px;letter-spacing:-.025em}.scope p{margin:6px 0;color:var(--muted);font-size:15px}
+.edge-label{fill:var(--muted);font-size:12px;paint-order:stroke;stroke:var(--canvas);stroke-width:5px}
+.connector{fill:none;stroke:var(--line);stroke-width:1.5}.connector.reference{stroke:#66849a;stroke-dasharray:4 4}.connector.loop{stroke:#aa875d;stroke-dasharray:6 5}
+[data-tip]{position:relative}
+.node[data-tip]{position:absolute}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;z-index:2;top:calc(100% + 5px);left:0;padding:6px 9px;border-radius:6px;background:#303833;color:#fff;font:12px system-ui;white-space:nowrap;pointer-events:none}
+.zoom-controls [data-tip]::after{left:auto;right:0}
+.node[data-tip]:hover,.node[data-tip]:focus-visible{z-index:2}
+#node-detail{position:fixed;right:20px;bottom:20px;width:min(400px,calc(100vw - 40px));max-height:calc(100dvh - 115px);overflow:auto;background:#fff;border-radius:18px;padding:22px;z-index:6;box-shadow:0 10px 44px #18281d18}
+.detail-head{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+.detail-head h2{font-size:19px;line-height:1.35;margin:0}.detail-head button{font-size:12px;padding:5px 10px;flex:none}
+#detail-summary{margin:12px 0;color:var(--muted)}
+#instructions dl{display:grid;gap:5px;margin:15px 0 0}
+#instructions dt{font-weight:650;margin-top:7px}#instructions dd{margin:0;line-height:1.55}
+#instructions a{display:inline-block;margin:12px 12px 0 0;color:#365040}
+#architecture{max-width:1110px;margin:0 auto;padding:30px 28px 60px}
+.arch-heading{font-size:27px;margin:0 0 20px;letter-spacing:-.025em}
+.arch-lead,.arch-role,.arch-shared,.arch-host{padding:19px 21px;border-radius:14px;background:var(--white)}
+.arch-lead{text-align:center;max-width:620px;margin:auto;background:#e8eee1}
+#architecture h3{font-size:16px;margin:0 0 8px}
+#architecture p{margin:0;line-height:1.65}
+#architecture code{font-size:13px;overflow-wrap:anywhere}
+.arch-track{height:25px;width:1px;background:var(--line);margin:auto}
+.arch-level{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;position:relative}
+.arch-level::before{content:"";position:absolute;left:calc((100% - 36px)/6);right:calc((100% - 36px)/6);top:0;height:1px;background:var(--line)}
+.arch-role{position:relative;margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.arch-role::before{content:"";position:absolute;top:-22px;left:50%;height:22px;width:1px;background:var(--line)}
+#architecture .arch-role h3{margin:0}
+.arch-list{margin:0;padding-inline-start:1.15em;display:grid;gap:10px}
+.arch-list li::marker{color:#65806a}
+.arch-list strong{display:block;line-height:1.45}
+.arch-list small{display:block;color:var(--muted);line-height:1.5}
+#architecture .arch-list code{display:block;color:var(--muted);font-size:11px;line-height:1.45;margin-top:2px}
+#architecture .arch-output{margin-top:auto;padding-top:5px;color:#45574a;font-size:13px}
+.arch-output b{margin-inline-end:.4em}
+.arch-foundation{margin-top:24px;padding:18px;border-radius:15px;background:#edf0ef}
+.arch-foundation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.arch-shared b{display:block;margin-bottom:6px}
+.arch-host{margin-top:16px;background:#eeedf3}
+@media(max-width:740px){
+  #architecture{padding:22px 17px}.arch-level,.arch-foundation-grid{grid-template-columns:1fr}
+  .arch-level::before,.arch-role::before{display:none}.arch-role{margin-top:0}
+  #toolbar{gap:8px}.views button{padding:7px 9px;font-size:12px}
+}
+</style>
+<header id="toolbar">
+  <h1>AI Infra Investigation</h1>
+  <div class="views" role="group" aria-label="工作流视图">
+    <button id="architecture-view" aria-pressed="true" data-tip="查看 Skill 层级">Skill 架构</button>
+    <button id="workflow-view" aria-pressed="false" data-tip="查看完整交付路径">总 Workflow</button>
+    <button id="case-view" aria-pressed="false" data-tip="追踪同步候选的复核过程">Set / Wait 案例</button>
+  </div>
+  <div class="zoom-controls" role="group" aria-label="画布缩放">
+    <button id="minus" aria-label="缩小画布" data-tip="缩小画布">−</button>
+    <button id="plus" aria-label="放大画布" data-tip="放大画布">＋</button>
+  </div>
+</header>
+<main><div id="stage"><div class="scope"><b id="scope-title"></b><p id="scope-detail"></p></div><svg id="edges" aria-hidden="true"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" style="fill:#8a968c;stroke:none"/></marker></defs></svg><div id="nodes"></div></div>
+<section id="architecture" hidden aria-labelledby="architecture-heading">
+  <h2 class="arch-heading" id="architecture-heading">AI Infra Skill 架构</h2>
+  <div class="arch-lead">
+    <h3>统一入口 · <code>ai-infra-investigation</code></h3>
+    <p>根据问题和现有材料选择交付路径。把开发者指定的界面要求传给实现和验收。</p>
+  </div>
+  <div class="arch-track" aria-hidden="true"></div>
+  <div class="arch-level">
+    <section class="arch-role">
+      <h3>领域分析</h3>
+      <ul class="arch-list">
+        <li><strong>解释模型与计算关系</strong><small>核对模型、配置和 Trace</small><code>llm-compute-diagrams</code></li>
+        <li><strong>核查算子实现</strong><small>从 Host tiling 和 Kernel 追查索引、搬运与同步</small><code>operator-mapping-investigation</code></li>
+      </ul>
+      <p class="arch-output"><b>交付</b> 带版本和适用范围的证据。证据充分时可直接回答。</p>
+    </section>
+    <section class="arch-role">
+      <h3>呈现设计</h3>
+      <ul class="arch-list">
+        <li><strong>选定呈现方式</strong><small>按任务组织讲解、浏览、对照或调查</small><code>observability-design-style</code></li>
+        <li><strong>定义操作路径</strong><small>约定如何定位对象、核查依据和继续调查</small></li>
+      </ul>
+      <p class="arch-output"><b>交付</b> 呈现契约。</p>
+    </section>
+    <section class="arch-role">
+      <h3>界面设计与实现</h3>
+      <ul class="arch-list">
+        <li><strong>匹配布局和组件</strong><small>按呈现契约核对开发者指定的能力</small><code>design-spatial-systems-ui</code></li>
+        <li><strong>绑定数据并验收</strong><small>用代表任务验证视图与证据能否联动</small></li>
+      </ul>
+      <p class="arch-output"><b>交付</b> 可操作的视图和验收记录。</p>
+    </section>
+  </div>
+  <section class="arch-foundation">
+    <h3>共享基础</h3>
+    <div class="arch-foundation-grid">
+      <div class="arch-shared"><b>共享语义 · Task Contract</b><p>让领域模型、视图和操作引用同一对象及其证据。Observation Model 保留运行记录。</p></div>
+      <div class="arch-shared"><b>共享资产 · Catalog / Pattern / Glyphs</b><p>通过 Catalog 找到正式 Pattern，核对入口和支持能力。<code>ai-infra-glyphs</code> 负责正式图元选型、来源与版本核查。</p></div>
+    </div>
+  </section>
+  <section class="arch-host"><h3>可选宿主接入 · Agent Runtime</h3><p>宿主执行调查并传回事件。开发者即使切换选择，结果也会归到发起时的对象、配置和版本。</p></section>
+</section></main>
+<aside id="node-detail" hidden aria-labelledby="detail-title">
+  <div class="detail-head"><h2 id="detail-title" tabindex="-1"></h2><button id="close" data-tip="返回图中节点">关闭</button></div>
+  <p id="detail-summary"></p>
+  <section id="instructions" aria-label="执行说明"></section>
+</aside>
+<script id="data" type="application/json">{"workflow": {"height": 1755, "nodes": [["task", "明确问题与交付", "先确定开发者要查清什么，再记录界面要求。已有 Pattern 可帮助识别所需数据。", 570, 300, "", "", {"inputs": "问题、选中代码或现有产物。", "output": "任务对象、交付目标及所需输入。", "passed": "能说清用户要完成的操作和本轮完成标准。", "back": "目标模糊时补齐上下文；领域初查发现新对象时收敛范围。", "refs": [["Pattern 路由", "pattern-routing.md"], ["任务契约", "task-contract.md"]], "checks": []}, "updated-copy"], ["domain", "建立可追溯的证据链", "将每条结论连到对象、关系、源码版本和成立条件，同时标明待补证据。", 570, 450, "", "", {"inputs": "源码、配置、Trace、工具结果及任务范围。", "output": "对象 ID、关系、证据引用和未确认项。", "passed": "判断可追溯到具体对象、版本及适用条件。", "back": "证据不足进补证分支；必要证据不可获取进阶段性交付。", "refs": [["任务契约", "task-contract.md"]], "checks": []}], ["tools", "按缺口补证", "例如缺实际搬运记录时，查找适用的 CANNBot 工具。核对输入和环境，把结果关联回原对象。", 960, 450, "tool", "", {"inputs": "具体证据缺口及工具可用性。", "output": "能关联回领域对象的新增证据，或明确的未补齐原因。", "passed": "验证框架、设备、输入和输出适用性。", "back": "回领域分析；仍无必要证据时走阶段性交付。", "refs": [["任务契约", "task-contract.md"]], "checks": []}], ["path", "证据支持哪种交付？", "能回答的问题直接交付。需要看结构、做对照或继续调查时，先约定界面要支持的操作。", 570, 620, "decision", "", {"inputs": "任务目标和领域证据。", "output": "本轮交付路径。", "passed": "明确结果是否足以回答，以及用户是否需要界面操作。", "back": "回领域分析补证；无法补齐则交付阶段性结果。", "refs": [["任务契约", "task-contract.md"]], "checks": []}], ["answer", "直接回答", "交付结论、对应源码或运行记录，以及结论成立的范围。", 960, 620, "", "", {"inputs": "可确认的结论与原始证据。", "output": "直接答复、来源及适用范围。", "passed": "答复回应用户问题，证据足以支持表述，未知项显式保留。", "back": "结论或证据不成立时回领域分析。", "refs": [["任务契约", "task-contract.md"]], "checks": []}], ["contract", "定义开发者的操作路径", "先写清用户要定位哪个对象、核查哪些证据。继续调查还要记录发起上下文和更新条件。", 570, 820, "internal", "", {"inputs": "领域对象、证据和开发者任务。", "output": "定位与核查约定；交互调查另含操作上下文和更新条件。", "passed": "不依赖组件即可说明用户会定位什么、看什么及如何继续。", "back": "对象或证据有误回领域分析；遗漏操作或更新条件留在本阶段补齐。", "refs": [["任务契约", "task-contract.md"], ["呈现语义契约", "presentation-semantics.md"]], "checks": [["数据前提", "核对指定能力所需的数据。源码步骤播放需要离散步骤；设备时间播放需要对应的 Trace 和时间单位。"]]}], ["handoff", "呈现契约", "让对象 ID、定位目标、证据和操作规则随任务进入界面实现。", 960, 820, "internal", "", {"inputs": "已确认的呈现契约。", "output": "界面实现必须读取的交付记录。", "passed": "实现者能按对象 ID 与证据引用绑定视图，并区分适用的操作和更新规则。", "back": "契约缺一项就回定义呈现契约。", "refs": [["呈现语义契约", "presentation-semantics.md"]], "checks": []}, "updated-copy"], ["interface", "选择并实现界面", "按契约匹配布局、组件和轴。校验能力后挂载已选 Pattern，再绑定本案数据。", 570, 1010, "", "", {"inputs": "调用约束、呈现契约、可用 Pattern 及数据。", "output": "视图、交互与约束兑现记录。偏好有调整时记录选择和原因。", "passed": "代表性操作可达，对象、证据和状态遵循契约。", "back": "缺输入先补证；必选能力确实无法满足时进入阶段性交付。契约欠缺退回定义阶段。", "refs": [["Pattern 路由", "pattern-routing.md"], ["呈现语义契约", "presentation-semantics.md"]], "checks": []}, "updated-copy"], ["review", "用代表任务验收", "逐项核对必选能力，走通开发者的操作。问题按证据、契约或实现回退。", 570, 1170, "decision", "", {"inputs": "任务目标、调用约束、领域证据、呈现契约及交付物。", "output": "按路径的通过／失败与未验证项。", "passed": "必选约束兑现，偏好调整有记录，代表任务通过；界面反馈和证据充足性分别验收。", "back": "领域证据缺失或有误 → 领域分析；绑定或规则缺失 → 呈现契约；界面不符合约定 → 实现。", "refs": [["任务契约", "task-contract.md"], ["联合操作路径验收", "journey-review.md"]], "checks": [["直接回答", "在领域分析阶段验收。结论回答问题，有可追溯来源并写明适用范围。"], ["结构呈现／对照", "能找到关键对象并核查依据。对照额外核对共同基准、单位与比较口径。"], ["交互调查", "走通定位、核查、继续调查和结果返回。同一对象 ID 贯穿路径，反馈与更新条件符合契约。"], ["约束兑现", "逐项核对实际布局、Pattern、组件及轴模式。组件启用后还需验证对象联动与选择、视角保持。"]]}, "updated-copy"], ["feedback", "核查“仍需验证”反馈", "界面要说清缺哪项证据、下一步查什么。任务要求的证据仍缺失时回到补证。", 960, 1370, "", "", {"inputs": "有意覆盖证据不足的调查路径。", "output": "明确的未知状态、缺口和下一步。", "passed": "反馈准确，且本轮其他必要证据与验收项均满足。", "back": "反馈不符回界面实现；缺反馈规则回呈现契约；本轮必要证据缺失回领域分析。", "refs": [["联合操作路径验收", "journey-review.md"]], "checks": []}], ["done", "交付结果与验证记录", "列明已走通的任务、适用范围和待验证项。", 570, 1580, "", "", {"inputs": "通过的任务路径和验证证据。", "output": "结果、来源、验证范围和未验证项。", "passed": "交付物与本轮范围一致。", "back": "任何验收失败按根因回对应阶段。", "refs": [["联合操作路径验收", "journey-review.md"]], "checks": []}], ["partial", "阶段性交付", "先给已确认的结果，再列出缺失证据或未兑现的必选能力，以及恢复条件。", 155, 620, "internal", "", {"inputs": "已确认事实、不可获取的必要证据或无法满足的必选约束。", "output": "已确认结果、暂不能作出的判断和补证清单。", "passed": "读者知道当前可用结果、未兑现项，以及恢复完整交付所需条件。", "back": "取得新证据后回领域分析。", "refs": [["任务契约", "task-contract.md"]], "checks": []}, "updated-copy"], ["example-prompt", "示例 · 排查尾块", "输入张量分块后怎么搬运？最后一块有没有漏算？请把块索引连到对应源码，并指出哪些判断还要用运行数据核查。", 960, 135, "case", "", null], ["invocation", "调用约束", "把布局、轴、Pattern 和组件区分为必选、偏好或由 Skill 决定。实现和验收读取同一份约束。", 960, 300, "internal", "", {"inputs": "开发者的任务描述及指定的布局、Pattern、组件或轴模式。", "output": "必选项、偏好项、由 Skill 决定的事项，以及各项适用的交付路径。", "passed": "开发者要求可逐项核对；只有代码和问题时，由 Skill 按任务推导。", "back": "任务或约束含义不清时补齐上下文；发现能力不适用时回核对输入，不自行替换必选项。", "checks": [["调用示例", "全画布 + 泳道 + 核查面板必选，播放可选。若仅有源码，选源码步骤轴；有离散步骤时可逐步播放。若要求按设备时间播放，先检查对应 Trace 与时间单位。"]], "refs": [["Pattern 路由", "pattern-routing.md"]]}], ["user-input", "从开发者的问题出发", "提交问题、选中代码或提供配置与 Trace。可以直接调用 Skill，也可由宿主匹配任务。", 570, 135, "", "", {"inputs": "开发者的调查目标、代码选择和可用工程材料。", "output": "进入 Skill 的原始任务、引用对象及用户给出的约束。", "passed": "任务已通过显式调用或宿主匹配进入 Skill，且提供了可识别的目标或对象。", "back": "宿主未匹配时继续路由；问题和对象均不明确时补充上下文。", "refs": [], "checks": []}, "updated-copy"]], "edges": [["user-input", "task"], ["task", "domain"], ["domain", "tools", "发现缺口"], ["tools", "domain", "回填", null, "under"], ["domain", "path"], ["path", "answer", "结论和来源足够"], ["path", "contract", "结构呈现／对照 · 交互调查"], ["contract", "handoff", "交付"], ["interface", "review"], ["review", "done", "通过"], ["review", "feedback", "验证未知状态"], ["feedback", "done"], ["review", "domain", "领域证据不足或有误", 85], ["review", "interface", "实现不符合契约", 1360], ["path", "partial", "必要证据不可获取"], ["handoff", "interface", "读取契约后实现"], ["review", "contract", "呈现契约有误", 215], ["task", "invocation", "产出"], ["interface", "partial", "必选能力无法满足", 115], ["invocation", "interface", "读取约束", 1250, "reference"], ["invocation", "review", "核对约束", 1340, "reference"]], "scope": ["从开发者问题到可核查交付", "沿主线看五步怎么交接，沿分支看何时直接回答、补证或阶段性交付。"]}, "case": {"height": 1760, "nodes": [["candidate", "从候选列表选中 sync-1", "列表保留扫描原文与固定版本源码。候选 ID 随后贯穿定位、核查和归档。", 570, 135, "", "", {"inputs": "扫描记录与候选 ID。", "output": "选中 sync-1。", "passed": "候选与原始扫描、固定源码版本一致。", "back": "核对扫描记录。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["target", "定位配置、Task 和搬出步骤", "优先在当前配置定位。跨配置时提示目标及原因。没有画布绑定时打开固定版本源码。", 570, 295, "", "", {"inputs": "当前配置与有效定位绑定。", "output": "定位到配置、Task 与步骤，或查看固定源码。", "passed": "跨配置前提示目标及原因，无绑定时不伪造定位。", "back": "修正对象或配置绑定。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["evidence", "核对 Set / Wait 的配对依据", "在 Inspector 查看调用条件、event ID、对应源码和仍缺的证据。", 570, 475, "", "", {"inputs": "sync-1、源码和当前适用条件。", "output": "原始疑点、配对依据、条件与缺口。", "passed": "证据引用指向同一候选和版本。", "back": "回领域证据或核查契约。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["request", "带着当前证据发起调查", "冻结候选、配置、Task、步骤、源码版本和证据引用，连同问题发出。", 570, 635, "", "", {"inputs": "当前候选、配置、Task／步骤与证据。", "output": "记录发起时的调查上下文。", "passed": "回传可以识别发起上下文，之后切换选择不改变它。", "back": "补齐操作上下文。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["archive", "把返回结果归到原调查", "按发起时的候选、配置和版本归档。开发者可切到别的对象继续浏览。", 570, 795, "", "", {"inputs": "发起记录和返回结果。", "output": "结果按原候选、配置和版本归档。", "passed": "改变当前选择后仍能在原调查找到结果。", "back": "修正归档归属。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["match", "返回结果能更新结论吗？", "先核对对象、范围和版本，再判断证据是否支持更新。", 570, 965, "decision", "", {"inputs": "归档结果、发起上下文和证据。", "output": "为四个分支选定反馈及写入规则。", "passed": "上下文匹配且证据充分才更新复核判断。", "back": "身份或范围不匹配走留档分支。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["accepted", "追加复核结论", "上下文匹配且依据充分时，更新候选判断并保留扫描原文。", 170, 1160, "", "", {"inputs": "匹配的上下文和充分证据。", "output": "向发起候选追加复核结论。", "passed": "结论附证据，原扫描可见，其余候选无变化。", "back": "重查证据或身份。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["unknown", "仍需验证", "显示证据缺口和下一步核查方向。", 570, 1160, "", "", {"inputs": "匹配的上下文，但复核证据不足。", "output": "记录仍需验证、具体缺口和后续步骤。", "passed": "无证据支持的结论不会写入。", "back": "补证后重新复核。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["failure", "执行失败", "记录失败，提供适用的重试操作，保留已有判断。", 970, 1160, "", "", {"inputs": "失败的执行记录。", "output": "展示执行失败与适用的重试操作。", "passed": "已有判断和原始扫描保持，重试仍能识别发起对象。", "back": "回到原发起上下文重试。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["mismatch", "返回上下文不匹配", "按发起上下文留档，提示对象或版本差异。禁止用这条返回更新候选。", 970, 965, "", "", {"inputs": "与发起对象、配置或版本不匹配的结果。", "output": "留档并提示不匹配原因。", "passed": "候选结论保持原值，禁止用不匹配结果更新。", "back": "核对发起记录和返回标识。", "refs": [["候选复核", "candidate-review.md"]], "checks": []}], ["replay", "用回放检验结果归属", "点选、核查、继续调查并查看返回。检查候选 ID、跨配置提示和四种结果反馈。", 570, 1470, "", "", {"inputs": "同一候选的四种预设返回。", "output": "四条路径的验收记录。", "passed": "逐项通过，回放来源明确。", "back": "按失败项回到相应节点。", "refs": [["候选复核", "candidate-review.md"], ["联合操作路径验收", "journey-review.md"]], "checks": [["匹配且证据充分", "追加有证据的复核结论，保留原始扫描。"], ["证据不足", "显示仍需验证及缺口。"], ["执行失败", "保留原判断，提供适用重试。"], ["上下文不匹配", "按发起上下文留档并提示差异，候选结论不得更新。"]]}], ["runtime", "接入 Agent Runtime", "宿主执行调查并回传事件。界面按契约解释执行状态、证据和结论更新。", 970, 1460, "internal", "", {"inputs": "继续调查携带发起时的候选 ID、配置、Task、源码版本和证据引用。", "output": "Runtime 返回执行状态和复核结果。语义层按发起上下文归档，按契约判断是否更新候选。", "passed": "执行失败只更新执行反馈。上下文不匹配留档。匹配且证据充分时才更新结论。", "back": "执行或回传问题交给 Runtime 或宿主。定位、核查与结果更新规则回呈现契约修正。", "refs": [["呈现语义契约", "presentation-semantics.md"], ["候选复核", "candidate-review.md"]], "checks": [["验证范围", "案例使用预设回放。真实事件传输、操作回传和重试要在 Runtime 接入后验证。"]]}], ["candidate-note", "sync-1 从哪里来？", "Unpack 静态扫描在固定版本源码 L430 附近提示核对搬出前的同步。案例用保存的结果回放。", 955, 132, "case", "", null], ["component-binding", "同一候选怎样贯穿四个组件？", "列表选中候选，画布定位步骤，Inspector 打开证据，Action 携带上下文发起调查。", 955, 476, "case", "", {"inputs": "呈现契约中的 sync-1、配置与步骤绑定、源码证据、发起上下文和结果更新条件。", "output": "共享候选 ID 的组件绑定，以及操作后的状态反馈。", "passed": "列表、画布、Inspector、Action 和返回记录都能追溯到同一发起候选；布局切换或选择变化不改写其身份。", "back": "对象或证据错误回领域分析；绑定或写入规则缺失回呈现契约；显示与操作不符回界面实现。", "checks": [["候选列表 · 选择", "每一行绑定候选 ID 与扫描摘要。点选 sync-1，更新当前选择并请求定位。"], ["画布 · 定位", "依据候选和配置定位 Task 与搬出步骤。跨配置先提示目标及原因，无可达绑定时转到固定版本源码。"], ["Inspector · 核查", "按候选 ID 展示原始疑点、Set / Wait 依据、适用条件和缺口。"], ["Action · 继续调查", "携带发起时的候选 ID、配置、Task、步骤、源码版本和证据。返回按发起上下文归档，再按契约更新或反馈。"]], "refs": [["候选复核", "candidate-review.md"], ["呈现语义契约", "presentation-semantics.md"]]}]], "edges": [["candidate", "target"], ["target", "evidence"], ["evidence", "request"], ["request", "archive"], ["archive", "match"], ["match", "accepted", "证据支持"], ["match", "unknown", "证据不足"], ["match", "failure", "执行失败"], ["match", "mismatch", "不匹配"], ["accepted", "replay"], ["unknown", "replay"], ["failure", "replay"], ["mismatch", "replay", "归档后可核对", 1360]], "scope": ["Set / Wait · 追踪一条核查候选", "以 Unpack 的 sync-1 为例，检验开发者切换配置后，复核结果还能否回到发起对象。"]}}</script>
+<script>
+const $ = id => document.getElementById(id);
+const documentData = JSON.parse($('data').textContent);
+let model = documentData.workflow;
+let activeView = 'workflow';
+let selected = null;
+const viewZoom = {};
+const views = ['architecture', 'workflow', 'case'];
+
+function switchView(name) {
+  activeView = name;
+  const architecture = name === 'architecture';
+  for (const view of views) $(view + '-view').setAttribute('aria-pressed', String(name === view));
+  $('toolbar').classList.toggle('architecture-only', architecture);
+  $('architecture').hidden = !architecture;
+  $('stage').hidden = architecture;
+  selected = null;
+  $('node-detail').hidden = true;
+  const viewport = document.querySelector('main');
+  viewport.scrollTop = 0;
+  viewport.scrollLeft = 0;
+  if (architecture) return;
+  model = documentData[name];
+  $('scope-title').textContent = model.scope[0];
+  $('scope-detail').textContent = model.scope[1];
+  $('stage').style.height = model.height + 'px';
+  applyZoom();
+  render();
+}
+for (const view of views) $(view + '-view').onclick = () => switchView(view);
+function applyZoom() {
+  const width = document.querySelector('main').clientWidth;
+  const zoom = viewZoom[activeView] ?? Math.max(.64, Math.min(1, (width - 24) / 1460));
+  $('stage').style.zoom = zoom;
+  return zoom;
+}
+function render() {
+  const root = $('nodes');
+  root.replaceChildren();
+  for (const node of model.nodes) {
+    const el = document.createElement('div');
+    el.className = 'node ' + (node[5] || '') + (selected === node ? ' selected' : '');
+    el.style.left = node[3] + 'px';
+    el.style.top = node[4] + 'px';
+    el.id = 'node-' + node[0];
+    el.tabIndex = 0;
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-pressed', String(selected === node));
+    el.dataset.tip = '查看执行说明';
+    const heading = document.createElement('b');
+    const detail = document.createElement('small');
+    heading.textContent = node[1];
+    detail.textContent = node[2];
+    el.append(heading, detail);
+    el.onclick = () => select(node);
+    el.onkeydown = event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        select(node);
+      }
+    };
+    root.append(el);
+  }
+  draw();
+}
+function renderInstructions(info){
+ const root=$('instructions');
+ root.replaceChildren();
+ if(!info)return;
+ const heading=document.createElement('h3');
+ heading.textContent=info.sections?'架构说明':'执行说明';
+ const list=document.createElement('dl');
+ const details=info.sections||[
+  ['输入',info.inputs],['产出',info.output],
+  ['通过条件',info.passed],['回退位置',info.back],
+  ...info.checks
+ ];
+ for(const [label,description] of details){
+  const term=document.createElement('dt');
+  const value=document.createElement('dd');
+  term.textContent=label;
+  value.textContent=description;
+  list.append(term,value);
+ }
+ root.append(heading,list);
+ const sources=info.sourceLinks||info.refs.map(([label,file])=>
+  [label,'../ai-infra-research/methods/ai-infra-investigation/references/'+file]);
+ for(const [label,file] of sources){
+  const link=document.createElement('a');
+  link.textContent=label;
+  link.href=file;
+  link.target='_blank';
+  link.rel='noopener';
+  root.append(link);
+ }
+}
+function select(node) {
+  selected = node;
+  renderInstructions(node[7]);
+  $('node-detail').hidden = false;
+  $('detail-title').textContent = node[1];
+  $('detail-summary').textContent = node[2];
+  render();
+  $('detail-title').focus({preventScroll:true});
+}
+function draw() {
+  const svg = $('edges');
+  svg.querySelectorAll('path.connector,text').forEach(el => el.remove());
+model.edges.forEach(([a,b,label,lane,route])=>{const x=model.nodes.find(n=>n[0]===a),y=model.nodes.find(n=>n[0]===b),ah=$('node-'+a).offsetHeight;let sx=x[3]+125,sy=x[4]+ah,tx=y[3]+125,ty=y[4],d;
+if(route==='under'){
+ ty=y[4]+$('node-'+b).offsetHeight;
+ const baseline=Math.max(sy,ty)+24;
+ d=`M${sx},${sy} V${baseline} H${tx} V${ty}`;
+}else if(route==='reference'){
+ sx=x[3]+250;
+ sy=x[4]+(lane===1250?35:65);
+ tx=y[3]+250;
+ ty=y[4]+35;
+ d=`M${sx},${sy} H${lane} V${ty} H${tx}`;
+}else if(lane){sx=x[3]+(lane>700?250:0);sy=x[4]+35;tx=y[3]+(lane>700?250:0);ty=y[4]+35;d=`M${sx},${sy} H${lane} V${ty} H${tx}`}else if(y[4]===x[4]){sx=x[3]+(y[3]>x[3]?250:0);sy=x[4]+35;tx=y[3]+(y[3]>x[3]?0:250);ty=y[4]+35;d=`M${sx},${sy} H${tx}`}else{let mid=(sy+ty)/2;d=`M${sx},${sy} V${mid} H${tx} V${ty}`}let p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',d);p.setAttribute('class','connector'+(route==='reference'?' reference':(lane || route ? ' loop' : '')));p.setAttribute('marker-end','url(#arrow)');svg.append(p);if(label){let t=document.createElementNS(svg.namespaceURI,'text');t.textContent=label;t.setAttribute('class','edge-label');if(lane>1000 || x[4]===y[4])t.setAttribute('text-anchor',lane>1000?'end':'middle');t.setAttribute('x',lane?(lane>1000?lane-8:lane+5):(sx+tx)/2+7);t.setAttribute('y',route==='under'?Math.max(sy,ty)+42:lane?(sy+ty)/2:(sy+ty)/2-7);svg.append(t)}})}
+$('close').onclick = () => {
+  const nodeId = selected?.[0];
+  $('node-detail').hidden = true;
+  selected = null;
+  render();
+  if (nodeId) $('node-' + nodeId)?.focus();
+};
+function scale(delta) {
+  viewZoom[activeView] = Math.max(.4, Math.min(1.5, applyZoom() + delta));
+  applyZoom();
+}
+$('minus').onclick = () => scale(-.1);
+$('plus').onclick = () => scale(.1);
+$('node-detail').addEventListener('keydown', event => {
+  if (event.key === 'Escape') $('close').click();
+});
+window.addEventListener('resize', () => {
+  if (activeView !== 'architecture') applyZoom();
+});
+const initialView = location.hash.slice(1);
+switchView(views.includes(initialView) ? initialView : views[0]);
+</script></html>

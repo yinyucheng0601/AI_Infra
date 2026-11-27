@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LayerNormV4 · Ascend 950</title>
+<style>
+/* HARDWARE_CSS */
+/* RMS_CSS */
+/* GLASS_CSS */
+.canvas [data-step],.canvas [data-life]{cursor:pointer;outline:none}
+.canvas g:focus-visible{filter:brightness(1.45)}
+.canvas svg svg { width:revert; height:revert; display:revert }
+.scene .data-label text{font-size:13px}
+.scene [data-live=true] .tensor-node{fill:var(--tensor-fill);stroke:none}
+.scene [data-live=true] .data-label{stroke:none!important}
+.scene [data-live=true] .data-label text{fill:#111}
+.scene [data-live=true] .data-tile{fill:#111}
+.scene [data-life][aria-pressed=true] .tensor-node{fill:var(--hi);stroke:none}
+.scene [data-life][aria-pressed=true] .data-label{stroke:none!important}
+.scene [data-life][aria-pressed=true] .data-label text{fill:#111}
+.configuration button[aria-pressed=true]{background:var(--hi);color:#111}
+.head{cursor:default;position:sticky;top:-19px;background:inherit;z-index:1}
+.source-code .active{background:var(--hi);color:#151515}.source-code .active em{color:#444}
+.audit-item[aria-pressed=true]{background:var(--hi);color:#151515}
+.configuration{--dock-inset:4px;padding:var(--dock-inset);flex-wrap:nowrap;max-width:calc(100vw - 190px)}
+:root{--hi:#fff}
+/* RMS_ACTIONS_CSS */
+.top-actions{--action-size:36px;gap:8px}
+.top-actions .icon{width:var(--action-size);height:var(--action-size);min-height:var(--action-size);padding:0;border-radius:50%}
+.top-actions .icon svg{width:20px;height:20px}
+.action-panel{border:0;border-radius:20px;padding:19px;overflow:auto}
+.action-panel .head{min-height:36px;gap:4px;background:none;margin-bottom:10px}
+.action-panel .head button{height:36px;min-height:36px;padding:0 12px;color:#bbb;font-size:12px}
+.action-panel .head button:last-child,#back{margin-left:auto}
+#sourcePanel .head button:last-child{margin-left:0}
+#sourcePanel.action-panel{left:auto;right:28px;top:88px;bottom:auto;max-height:calc(100vh - 180px)}
+#usageWindow.action-panel{position:fixed;inset:0;margin:auto;width:min(690px,calc(100vw - 56px));max-height:calc(100vh - 64px)}
+#usageWindow .head{position:static}
+#usageWindow .usage-body{max-height:calc(100vh - 150px);padding-bottom:6px}
+#audits .audit-group{margin:8px 0;background:#ffffff08;border-radius:12px}
+.audit-group summary{padding:10px 12px}
+.audit-group summary strong{font-size:13px;font-weight:550}
+.audit-group .audit-summary{display:block;margin:4px 0 0 15px;color:#bbb}
+.audit-evidence{padding:0 8px 6px}
+@media(max-width:750px){
+ .top-actions{right:16px;gap:6px}
+ #sourcePanel.action-panel{right:14px;top:85px;width:calc(100vw - 28px)}
+ #usageWindow.action-panel{width:calc(100vw - 28px)}
+}
+.source-tabs{margin-top:8px}
+.dock-divider{width:1px;height:18px;flex:none;background:#ffffff20}
+/* RMS_MODULE_CSS */
+.canvas [data-buffer-id]{cursor:pointer}
+.canvas [data-buffer-id]:focus-visible{filter:brightness(1.45)}
+#hardwarePanel .head{position:static;background:none;cursor:move}
+@media(max-width:900px){
+ .configuration{height:auto;min-height:44px;max-width:calc(100vw - 40px);bottom:76px;flex-wrap:wrap}
+ #hardwarePanel{bottom:138px!important}
+}
+@media(max-width:750px){
+ .configuration{bottom:70px}
+ #hardwarePanel{min-width:0;max-width:calc(100vw - 28px);left:14px!important}
+}
+#progress{min-width:50px;text-align:center;font:12px ui-monospace}
+
+</style>
+<header><small>ASCEND 950 · DAV_3510 · 源码步骤轴</small><h1>LayerNormV4 <span style="color:#aaa">Tiling 与 UB</span></h1><p id="identity"></p></header>
+<div id="canvas" class="canvas"><svg id="workspace" aria-label="LayerNormV4 执行泳道与缓冲区间"><g id="scene" class="scene"><g id="business"></g></g></svg></div>
+/* RMS_TOP_ACTIONS */
+<div class="configuration" data-liquid-glass="control" id="config">
+<button data-case="0"></button><button data-case="1"></button>
+<button id="prev" data-tip="上一个源码步骤" aria-label="上一步">‹</button>
+<button id="play" data-tip="播放或暂停源码步骤" aria-pressed="false">播放</button>
+<button id="next" data-tip="下一个源码步骤" aria-label="下一步">›</button>
+<output id="progress"></output>
+<span class="dock-divider" aria-hidden="true"></span>
+/* RMS_MODULE_BUTTONS */
+</div>
+<div class="zoom-controls" data-liquid-glass="control"><button id="minus" data-tip="缩小画布" aria-label="缩小">−</button><output id="zoom"></output><button id="plus" data-tip="放大画布" aria-label="放大">+</button><button id="fit" class="fit" data-tip="适配完整画布">适配</button></div>
+<aside id="auditPanel" class="panel action-panel" data-liquid-glass="panel" hidden><div class="head"><strong>Host tiling ↔ Kernel</strong><button data-close data-tip="关闭核查面板">关闭</button></div><div id="audits"></div></aside>
+<aside id="inspector" class="panel action-panel" data-liquid-glass="panel" hidden><div class="head"><strong>当前选择</strong><button data-close data-tip="关闭选择面板">关闭</button></div><div id="detail"></div>
+<label class="question">继续调查<textarea id="question" data-tip="编辑要随当前证据交接的问题"></textarea></label>
+<details><summary data-tip="查看可复制的当前选择和源码依据">交接预览</summary><pre id="handoff"></pre></details>
+<button id="copy" class="primary" data-tip="复制当前选择和证据">复制证据</button>
+<button id="export" data-tip="导出当前选择和证据">导出 JSON</button>
+<div id="copyStatus" class="status" role="status"></div></aside>
+<aside id="sourcePanel" class="panel action-panel" data-liquid-glass="panel" hidden><div class="head"><strong>固定提交 · <span id="revision"></span></strong><button id="back" data-tip="回到当前证据对象">返回</button><button data-close data-tip="关闭源码面板">关闭</button></div><div class="source-tabs" aria-label="源码与证据">
+<button data-src="kernel" data-tip="定位当前 Kernel 语句">Kernel</button>
+<button data-src="host" data-tip="查看当前 Host tiling 分支实现">Host tiling</button>
+<button data-src="test" data-tip="查看上游 Host 单测断言">Host 单测</button>
+<button data-src="dispatch" data-tip="查看 tiling key 对应的 Kernel 派发">Kernel 派发</button>
+<button data-src="raw" data-tip="查看当前配置与选择的结构化证据">原始数据</button>
+</div><div id="sourceMeta"></div><pre id="sourceCode" class="source-code"></pre></aside>
+<dialog id="usageWindow" class="action-panel" data-liquid-glass="panel" aria-labelledby="usageTitle">
+<div class="head"><strong id="usageTitle">LayerNormV4 · 使用与扩展</strong><button id="usageClose" data-tip="关闭教程并回到当前视角">关闭</button></div>
+<div class="usage-body">
+<h3>价值</h3>
+<p>两组 FP32 都沿 R=16 归一化。A=65,536 时，Host 选 Transpose（800），NDDMA 将 X 搬入 RA，并在首块写回前预取尾块。A=28,672 时恰好落在每核 512 行的阈值，Host 选 Two-Pass Perf（500），在单个 UB tile 内保存中心化 X 供仿射复用。</p>
+<h3>使用</h3>
+<ol><li>切换左下角配置，点选或播放源码步骤。点亮的 Tensor 和 UB 区间对应当前步骤。</li><li>展开「缓冲生命周期」查看逻辑偏移与占用范围，打开「硬件映射」查看当前步骤在 AIV 中的逻辑路径。</li><li>右上「核查」串联 Host 断言、tiling 计算和 Kernel 派发。「当前选择」可复制或导出证据，「源码」可切换 Kernel、Host tiling、单测与派发。</li></ol>
+<div class="prompt"><button id="promptCopy" class="icon" aria-label="复制继续调查 prompt" data-tip="复制带当前配置和步骤的调查 prompt">/* RMS_COPY_ICON */</button><pre id="usagePrompt"></pre></div>
+<div id="promptStatus" class="status" role="status"></div>
+<h3>扩展</h3>
+<p>新增配置时，先核对 Host 分支和对应 Key，再推导实际 tile、InitBuffer 与 Kernel 使用区间。接入 Ascend 950 设备 Trace 后可核对步骤时序、搬运重叠及耗时。</p>
+<h3>证据与口径</h3>
+<p>使用 ai-infra-investigation，固定 <code id="usageRevision"></code>。本页横轴为源码步骤，UB 纵轴是根据 InitBuffer 预留推导的逻辑偏移。两条路径的依据为上游 Host 单测和 Kernel 源码。</p>
+</div></dialog>
+/* RMS_HARDWARE_PANEL */
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+<script>/* PATTERN_JS */</script>
+<script>const DATA=/* MODEL_JSON */;</script>
+<script>/* APP_JS */</script>
+<script>/* GLASS_JS */</script>
+</html>

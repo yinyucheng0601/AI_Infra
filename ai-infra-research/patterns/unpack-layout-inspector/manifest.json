@@ -1,7 +1,7 @@
 {
   "authoritativeSource": "prototypes/compute-investigation-trial/unpack.html",
-  "sourceSha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
-  "outputSha256": "c9adabcc49bc9ab88331873a733021abd5bc764fe08d096d706855b497f2458b",
+  "sourceSha256": "148bbd86223305c11efc679ba60dcd0d977d18c6b5d1a505771e1bf756bc35ef",
+  "outputSha256": "148bbd86223305c11efc679ba60dcd0d977d18c6b5d1a505771e1bf756bc35ef",
   "cover": "web/media/unpack-mapping-inspector-cover.svg",
   "coverSha256": "5f0c0db1563ac73d9e984a2d40fd19e5bfb4bdb86deb1fb6aa0c5ac410d7091f",
   "coverMethod": "export of actual SVG scene from delivered application; not a browser screenshot",
