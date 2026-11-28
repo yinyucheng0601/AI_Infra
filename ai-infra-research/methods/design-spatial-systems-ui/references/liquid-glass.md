@@ -24,7 +24,7 @@ panel：24px blur、深色 RGB 44 / 44 / 44、86% 不透明度，浅色白底 74
 
 ## 接入与 API
 
-加载../assets/liquid-glass-controls/ liquid-glass.css、liquid-glass.js，保留 LICENSE。
+加载 `../assets/liquid-glass-controls/liquid-glass.css`、`liquid-glass.js`，保留 LICENSE。
 宿主负责布局、圆角与定位；控件需 relative/absolute/fixed 定位上下文。
 在整组背板上添加 data-liquid-glass="control"，独立按钮用 icon，磨砂面板用 panel。
 不要在整组背板和内部按钮重复添加滤镜。

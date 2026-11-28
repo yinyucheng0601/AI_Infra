@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Infra Evidence Graph",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "objects",
+    "edges"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/object"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    }
+  },
+  "$defs": {
+    "object": {
+      "type": "object",
+      "required": [
+        "object_id",
+        "object_type",
+        "layer",
+        "name",
+        "evidence_level",
+        "source_ref"
+      ],
+      "properties": {
+        "object_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object_type": {
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            "model",
+            "operator",
+            "compiler",
+            "instruction",
+            "memory",
+            "hardware",
+            "runtime"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "evidence_level": {
+          "enum": [
+            "observed",
+            "derived",
+            "assumed",
+            "unknown"
+          ]
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "shape": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "dtype": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "layout": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rank": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": [
+        "edge_id",
+        "from",
+        "to",
+        "relation",
+        "evidence_level",
+        "source_ref"
+      ],
+      "properties": {
+        "edge_id": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "consumes",
+            "produces",
+            "transforms",
+            "shards_to",
+            "placed_on",
+            "stored_in",
+            "communicates_with",
+            "derived_from",
+            "observed_during",
+            "same_logical_value_as"
+          ]
+        },
+        "evidence_level": {
+          "enum": [
+            "observed",
+            "derived",
+            "assumed",
+            "unknown"
+          ]
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

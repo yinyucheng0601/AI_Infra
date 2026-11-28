@@ -7,21 +7,21 @@ description: 用于 AI Infra 领域分析、机制讲解、结构浏览、实验
 
 ## 发起任务
 
-开发者可以显式调用 ai-infra-investigation，也可以由支持意图匹配的宿主触发。输入可以是问题、选中的代码或已有产物，按需附项目配置、Trace 和界面要求。先读项目约束与现有材料，只问无法从上下文补全的阻塞项。[首次任务](references/first-task.md) 提供从算子代码发起调查的示范 Prompt。
-
-**识别任务与交付目标 → 建立领域模型与证据 → 定义呈现契约 → 选择并实现界面 → 按任务验收**
+输入可为问题、代码或已有产物；按需带配置、Trace 和界面约束。先读项目材料，只补阻塞信息。见[首次任务](references/first-task.md)。
 
 ## 1. 识别任务与交付目标
 
-明确开发者要完成的任务、对象、交付范围及完成标准。初查可按 [Pattern 路由](references/pattern-routing.md) 和 catalog 对照完整 Pattern 的数据、结构与交互，找出所需输入。参考资产的示例数据不能作为本案事实。
+确定问题、对象、交付物与完成标准。界面任务区分从零生成、同类迁移和局部修改。迁移时按 [工程工具](references/engineering-tools.md#design-system-资产登记)从 catalog ID 核对定稿入口、依赖和实际构建源，将参考工作台列为必选；局部修改验收受影响项。资产示例仅用于核对接口。
 
-产出**调用约束**，记录适用的布局、Pattern、组件、坐标轴和操作能力，分别标明必选、偏好或由 Skill 决定。按任务标明约束适用在哪条交付路径。用户只给问题和代码时，由 Skill 推导合适能力。保留用户明确指定的必选项。将这份记录传给界面实现和验收。
+记录调用约束：布局、Pattern、组件、轴及操作能力分别标为必选、偏好或由 Skill 决定。按 [Pattern 路由](references/pattern-routing.md) 核对数据前提，传给实现与验收。
 
 ## 2. 建立领域模型与证据
 
-按领域路由与 [任务契约](references/task-contract.md) 交付稳定对象 ID、关系、来源、版本、成立条件和未确认项。结论可追溯到具体对象及适用条件。领域对象和关系确认后，按需由 ai-infra-glyphs 接入正式图元。
+按下方领域路由及[任务契约](references/task-contract.md)产出对象、关系、来源、版本、条件和缺口。
 
-**按缺口补证。** 有待补证的调查，在领域分析阶段检索 CANNBot Skills 等可用工具。说明每个候选工具能补哪项证据，检查输入、框架、硬件和适用范围后再决定是否调用。把有效结果关联回相应对象及来源，新证据可以收敛或改变范围。工具不可用或不适用时记录缺口和原因，继续可确认的部分。
+对固定 Unpack、DeepSeek、PyPTO Trace 或交换证据图，按[工程工具](references/engineering-tools.md)确认版本、输入与依赖，再运行适用的适配或校验。先处理非法图和来源不符，再把确认关系、合法未知和原始定位传给后续阶段。
+
+证据不足时按缺口找 CANNBot Skills 等工具，核对输入、框架、硬件与适用范围。可用结果回绑对象及来源；不可用时说明缺口并继续已确认部分。
 
 **选择交付路径。**
 
@@ -31,15 +31,11 @@ description: 用于 AI Infra 领域分析、机制讲解、结构浏览、实验
 
 ## 3. 定义呈现契约
 
-按 [呈现语义契约](references/presentation-semantics.md) 从开发者任务出发，交付一份**组件无关、界面实现必读的呈现契约**。用 observability-design-style 组织机制讲解、结构浏览、实验对照或交互调查。两条界面路径都定义定位对象与核查依据，交互调查再定义发起上下文和结果更新条件。对象或证据有误时回领域分析。
-
-同时核对指定能力的数据前提。例如源码步骤播放需要离散步骤，设备时间播放需要对应 Trace 与时间单位。把呈现契约和调用约束一起交给实现者。
+由 observability-design-style 按[呈现语义契约](references/presentation-semantics.md)定义组件无关的定位与核查。交互调查补发起上下文和结果更新。核对调用前提，例如步骤播放需离散步骤，设备时间播放需带单位的 Trace。
 
 ## 4. 选择并实现界面
 
-先读取**调用约束与呈现契约**，再匹配实际支持的布局、Pattern、组件及数据。已有可调用入口时，按 [Pattern 路由](references/pattern-routing.md) 读取正式资产的调用说明，先校验再挂载，将必选、偏好及未启用能力纳入验收。缺输入时回领域分析补证，契约缺项时回定义呈现契约。必选能力仍无法满足时走阶段性交付。偏好调整时记录选择和原因。
-
-由 design-spatial-systems-ui 实现画布、控件、视角和交互。 先按[页面交付约定](references/ui-delivery.md#分层约束)锁定控件契约，再匹配承载内容的完整 Pattern，并将当前领域数据绑定到 Pattern 接口。先验证代表操作，再完善数据和视觉。按任务采用结构图、对照视图或调查工作台；优先复用完整 Pattern 与项目定稿布局。算子工作台可参考 checkout 中的 `prototypes/logsumexp-case5/page.html`。教程和跨页规范见 [页面交付约定](references/ui-delivery.md)。
+由 design-spatial-systems-ui 使用呈现契约和调用约束。按[页面交付约定](references/ui-delivery.md)固定工作台组件；按 [Pattern 路由](references/pattern-routing.md)校验并挂载完整资产，再绑定正式图元和领域数据。先走代表操作，记录偏好调整和未启用能力。必选能力无法满足时走阶段性交付。
 
 ## 5. 按任务验收
 
@@ -51,9 +47,7 @@ description: 用于 AI Infra 领域分析、机制讲解、结构浏览、实验
 | 结构呈现／对照 | 能定位关键对象并核查依据；对照核对共同基准、单位和口径。 |
 | 交互调查 | 走通定位、核查、继续调查与结果返回。对象 ID 贯穿路径；反馈和结果更新符合契约；关闭或返回后按约定恢复选择和视角。使用候选时按 [候选复核](references/candidate-review.md) 验证。 |
 
-证据不足的界面反馈应说明“仍需验证”、具体缺口及下一步。该项通过只证明反馈正确；本轮交付缺少必要证据时仍须补证或阶段性交付。验收问题按根因回退：**领域证据**缺失或有误回领域分析，**呈现契约**遗漏绑定或更新规则回契约，**界面实现**不符合约定回实现。
-
-交付实际结果、所依据的模型和来源、已通过的任务路径、适用范围与未验证项。区分脚本、真实渲染、设备和 Runtime 验证。项目约束决定可用验证手段。Runtime 仅涉及交接边界，接入细节见 [候选复核的案例实现说明](references/candidate-review.md#runtime-接入说明)。
+证据缺口显示具体原因及下一步；必要证据未补齐时阶段性交付。按根因返回证据、呈现或实现阶段。分别记录脚本、真实渲染、设备与 Runtime 状态。Runtime 交接见[候选复核](references/candidate-review.md#runtime-接入说明)。
 
 ## 领域路由
 
@@ -67,4 +61,4 @@ description: 用于 AI Infra 领域分析、机制讲解、结构浏览、实验
 | 编译与 IR / Pass | 前后快照、对象身份、变换、控制作用域、内存绑定 | compiler-objects 参考；Pass Field、Memory Inspector、诊断 Pattern |
 | 性能调优 | 目标指标、配置、实现版本、测量样本、退化、瓶颈候选与方案验证 | profiling/实验分析器；RSFA 比较、请求/多核泳道及相关领域 Pattern |
 
-领域 Skill 负责工程语义和证据；项目已有解析器优先，不支持的 IR、Trace 或 API 降到可确认范围。用户和项目规则优先。按需读取 checkout 的 `ai-infra-research/methods/<name>/SKILL.md` 或实际安装路径；单独入口包只含调度规则。固定案例不可声称已适配新配置。试用见 [首次任务](references/first-task.md)。
+优先使用项目已有解析器。遇到不支持的 IR、Trace 或 API，收敛到可验证范围。按需从同组安装目录或 checkout 读取领域 Skill；总入口独立包提供工作流和工程工具。

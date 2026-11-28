@@ -1,0 +1,4 @@
+[
+  {"id": "matrix-compact", "shape": [33, 3], "axis": 1, "dtype": "FP16", "bytes": 2},
+  {"id": "compact-2065x5", "shape": [2065, 5], "axis": 1, "dtype": "FP16", "bytes": 2}
+]

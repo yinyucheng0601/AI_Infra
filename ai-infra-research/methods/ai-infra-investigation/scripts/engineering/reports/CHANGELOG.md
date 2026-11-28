@@ -1,0 +1,29 @@
+# AI Infra Agent Engineering 更新日志
+
+## v1.3.1
+
+Added catalog-based Design System registration with source fingerprints, static dependency checks and entry-specific browser regression for Unpack and DeepSeek V4.
+
+## v1.3.0
+
+### 新增
+- 增加固定版本的 Compact FP16 Unpack 源码适配器。校验 Kernel 文件指纹，从配置推导 Task、源码步骤及候选绑定，并检验配置作用域和源码版本。
+- 接入 AI_Infra checkout 中的现有 Unpack 工作台。切换到 2065 × 5 配置时重新绑定两个 Task。可从 L430 返回当前配置对应的 Task，并查看未绑定的尾行。
+- 新配置可导出带证据的调查上下文。已有配置的复核回放按原上下文保留。
+
+### 兼容性与验证
+- 沿用 1.2 图格式，补充 3 类对象和 3 类关系。保留 1.0、1.1 图格式与固定 DeepSeek Trace 校验入口。
+- 发布前解包验证通过 29 项测试，枚举检查 4,913 种端点类型组合。新增配置核查了 10,325 个元素的索引，DOM 测试覆盖配置切换、源码往返和尾行断点。
+- 源码适配范围为固定 Kernel 版本、二维 Compact FP16、axis 1。设备运行与浏览器视觉验收另行记录。ZIP 包含源码与用例配置，原始采集和生成页面留在本地。
+
+## v1.2.0
+
+### 新增
+- 集中维护有方向的关系端点规则，覆盖 14 类对象与 14 类关系。按关系核对作用域、运行上下文、时间、基数和证据引用。
+- 关系校验支持五种结果。非法关系阻止生成，候选、歧义和证据不足分别保留。
+- 调查工作流在选择 Pattern 前执行校验。离线示例可由通过校验的关系图生成。
+
+### 兼容性与验证
+- 保留 1.0 图格式和 1.1 固定 DeepSeek Trace 接入。
+- 发布前解包验证通过 28 项测试，枚举检查 2,744 种端点类型组合。
+- RMSNorm 使用合成用例验证生成流程，实际 UB 驻留与设备行为仍需采集证据。

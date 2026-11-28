@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Visualization Plan",
+  "type": "object",
+  "required": [
+    "task_type",
+    "objects",
+    "relationships",
+    "pattern_id",
+    "glyph_bindings",
+    "evidence_summary"
+  ],
+  "properties": {
+    "task_type": {
+      "type": "string"
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pattern_id": {
+      "type": "string"
+    },
+    "glyph_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "object_type",
+          "glyph_id",
+          "reason"
+        ],
+        "properties": {
+          "object_type": {
+            "type": "string"
+          },
+          "glyph_id": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidence_summary": {
+      "type": "object"
+    },
+    "drilldowns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "agent_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

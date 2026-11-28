@@ -17,7 +17,7 @@
 
 完整 workflow 包含六个同级 Skill 目录，分别提供总入口、两个领域能力、计算图元、呈现设计与 Systems UI。
 
-[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)
 
 从 `$ai-infra-investigation` 发起任务，提供源码、配置或 Trace。内置工具支持固定 Unpack 源码投影、DeepSeek 原始 Trace 复核、PyPTO 事件规范化与证据图校验。根据任务直接答复或交给呈现与界面阶段。
 

@@ -1,0 +1,11 @@
+interface:
+  display_name: 算子映射调查
+  short_description: 核查算子多维索引、线性地址、分块布局与计算集合并输出可验证源码证据
+  default_prompt: 使用 $operator-mapping-investigation 固定版本核查指定算子的索引、地址、分块与计算范围。
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

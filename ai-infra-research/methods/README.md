@@ -18,7 +18,7 @@
 
 ## 开始试用
 
-[首次试用与 prompt](../docs/operator-visualization-trial.md)。在 checkout 中可直接让 agent 读取总 workflow；需要安装时[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)，其中六个同级目录分别是完整 Skill。总入口独立包提供工作流和随包工程工具。需要配套领域、呈现、实现及图元 Skill 时安装组合包。组合包不包含 Case05 原型源码，需要复用时读取 checkout。
+[首次试用与 prompt](../docs/operator-visualization-trial.md)。在 checkout 中可直接让 agent 读取总 workflow；需要安装时[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)，其中六个同级目录分别是完整 Skill。总入口独立包提供工作流和随包工程工具。需要配套领域、呈现、实现及图元 Skill 时安装组合包。组合包不包含 Case05 原型源码，需要复用时读取 checkout。
 
 ## 单一维护源与兼容
 

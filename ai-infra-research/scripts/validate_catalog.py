@@ -33,6 +33,16 @@ def validate(data):
         target = (ROOT / p).resolve()
         assert target.is_relative_to(ROOT) and target.is_file(), 'content file missing or outside repository'
         assert not any(s.startswith('.local') for s in p.parts), 'local-only content forbidden'
+        resources = a.get('integrationResources', {})
+        assert isinstance(resources, dict), 'integrationResources must map roles to paths'
+        for role, paths in resources.items():
+            assert role in ('glyphInventory', 'renderer', 'usageContract', 'tokens', 'component'), 'invalid resource role'
+            assert isinstance(paths, list) and paths, 'resource role requires paths'
+            for path in paths:
+                rp = Path(path)
+                assert not rp.is_absolute() and not any(part.startswith('.') for part in rp.parts), 'resource must be portable'
+                target = (ROOT / rp).resolve()
+                assert target.is_relative_to(ROOT) and target.is_file(), 'resource missing or outside repository'
         if 'entries' in a:
             assert isinstance(a['entries'], list) and len(a['entries']) >= 2, 'group requires multiple entries'
             paths = set()

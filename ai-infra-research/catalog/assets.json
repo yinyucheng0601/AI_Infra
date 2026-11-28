@@ -198,7 +198,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/ai-infra-investigation/SKILL.md",
-          "sha256": "f64959d722935ff5c366ed0fe4aaeae7602ea30d8ba998a6dff592c24928ac00",
+          "sha256": "7c7306a3a180f6453e576b9afaf7006d9b3833f2238cb7b8f4a51a74fba63e12",
           "url": null,
           "revision": null
         }
@@ -259,7 +259,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/operator-mapping-investigation/SKILL.md",
-          "sha256": "7f802b88f99b5fa9eec59fb84546462b8c6386f393660b75961552b96f1721f1",
+          "sha256": "9ddfcccc06cea3cd6ea5eb5c907902dc606c75291343cdae5e335b3d5dfe5649",
           "url": null,
           "revision": null
         }
@@ -315,7 +315,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/ai-infra-glyphs/SKILL.md",
-          "sha256": "8d27152d9c2b9caacf77f52d9e11db9ab9dbbbf67aa33138214851549c4ab325",
+          "sha256": "128a3f216fa8f042b2e2710dbf80cfa14a1b8df3cd88ab7428fe8c87d076306a",
           "url": null,
           "revision": null
         }
@@ -1207,6 +1207,18 @@
     },
     {
       "id": "diagram-legend-library",
+      "integrationResources": {
+        "glyphInventory": [
+          "reports/llm-compute/diagram-legend-library/inventory.json"
+        ],
+        "renderer": [
+          "reports/llm-compute/diagram-legend-library/visual-system.js",
+          "reports/llm-compute/diagram-legend-library/op-icons.js"
+        ],
+        "usageContract": [
+          "reports/llm-compute/diagram-legend-library/OBJECT-SYSTEM.md"
+        ]
+      },
       "title": "AI Infra · 图例与 Pattern 库",
       "form": "交互 Pattern",
       "type": "pattern",
@@ -1704,6 +1716,15 @@
     },
     {
       "id": "spatial-systems-ui-style-guide",
+      "integrationResources": {
+        "tokens": [
+          "methods/design-spatial-systems-ui/assets/design-tokens.css"
+        ],
+        "component": [
+          "methods/design-spatial-systems-ui/assets/liquid-glass-controls/liquid-glass.css",
+          "methods/design-spatial-systems-ui/assets/liquid-glass-controls/liquid-glass.js"
+        ]
+      },
       "title": "Spatial Systems UI",
       "form": "Skill",
       "packagePath": "methods/design-spatial-systems-ui",
@@ -1734,7 +1755,7 @@
           "url": null,
           "path": "ai-infra-research/methods/design-spatial-systems-ui/SKILL.md",
           "revision": null,
-          "sha256": "4be4ade9115a3b1695193fb7433d164db451722c1856d91ac8112b85d6d52fd3"
+          "sha256": "133e00e25e9530428a00245df847778bb8e3174586ddd15a0609afa6705d4ac2"
         }
       ],
       "validation": [
@@ -1877,7 +1898,7 @@
         {
           "repository": "ai-infra",
           "path": "ai-infra-research/methods/observability-design-style/SKILL.md",
-          "sha256": "4e136d0856be5e4dead29ae008012ba5989a3df8af2ef28a42b004a12ffd850f",
+          "sha256": "0644366cff4b8d3b5a47f18820baee73b4d3a68f971dff04cc96c085650c50e4",
           "url": null,
           "revision": null
         },
@@ -1942,7 +1963,7 @@
           "url": null,
           "path": "ai-infra-research/methods/llm-compute-diagrams/SKILL.md",
           "revision": null,
-          "sha256": "aa1614872cae0ffdfff19393bc9aaee6366bdb85771b9a726b6195a03b466b4f"
+          "sha256": "2b56f4efa8638729aa74f0873020fe94860505316bfbe9ba177cf3b01e405a1f"
         }
       ],
       "validation": [
@@ -1960,7 +1981,9 @@
       ],
       "author": "Yucheng",
       "skillRole": "机制讲解 · 渐进式图解",
-      "readmePath": "methods/llm-compute-diagrams/README.md"
+      "readmePath": "methods/llm-compute-diagrams/README.md",
+      "packagePath": "methods/llm-compute-diagrams",
+      "downloadUrl": "methods/llm-compute-diagrams.zip"
     },
     {
       "id": "dense-ffn-to-moe",

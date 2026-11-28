@@ -1,0 +1,23 @@
+{
+  "ranks": [
+    {
+      "rank": 0,
+      "tensor": "grad:w",
+      "shard": "slice[0:1024]"
+    },
+    {
+      "rank": 1,
+      "tensor": "grad:w",
+      "shard": "slice[1024:2048]"
+    }
+  ],
+  "collective": {
+    "name": "all_reduce",
+    "participants": [
+      0,
+      1
+    ],
+    "evidence_level": "assumed",
+    "source_ref": "fixture:rank-sharding-collective"
+  }
+}

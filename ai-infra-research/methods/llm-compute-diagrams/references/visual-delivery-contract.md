@@ -1,5 +1,7 @@
 # 可视化交付契约
 
+> 规范主维护源位于 `design-spatial-systems-ui/references/visual-delivery-contract.md`；本文件保留同步摘要供 `llm-compute-diagrams` 独立安装与离线检索使用。
+
 ## 职责与选择
 
 领域规则决定对象、集合、地址、依赖和证据边界；Spatial Systems UI 决定整体布局与外围交互。结合使用时不继承讲解报告的分页、封面或常驻说明。用户要求调查工具时，先定义一条最短操作路径：选择对象 → 看关联 → 查证据 → 继续调查。无需为小改动重新制定计划或请求审批。
@@ -24,3 +26,11 @@ renderer 负责内部几何、标签与图标，layout 负责位置、分组、�
 - 视觉：在交付文件上检查默认、普通、边界、证据展开状态。文字包围盒、遮挡、命中面积需要真实渲染验证，静态或 VM 检查不能替代。浏览器验证遵循项目许可，未验证的项目明确保留。
 
 仅重复验证受改动影响的契约；一次性局部 UI 调整不要求全量回归。不要把某个案例的坐标、按钮材质、固定面板位置或提示卡提升为所有项目的规则。
+
+## 分层约束与参考页验收（摘要）
+
+1. **控件与外壳（最严）**：直接复用共享按钮、工具栏、面板、菜单、提示与 token；局部 CSS 不覆盖已确认的控件默认值。面板采用 `design-spatial-systems-ui/references/liquid-glass.md` 的 Liquid Glass v2（`control/icon` 默认 1px blur + 5% 白色背板，`panel` 24px blur + 86% 深色磨砂）。若本 Skill 独立安装而同级目录不存在，以项目已确认设计系统与当前呈现契约为准。
+2. **内容与联动**：优先复用完整 Pattern 的呈现结构、坐标轴口径与对象联动。
+3. **领域数据与证据**：按当前源码、配置或 Trace 独立求证。
+
+更完整的既有 Demo 迁移与指定参考页并排验收要求，见 `design-spatial-systems-ui/references/visual-delivery-contract.md`。

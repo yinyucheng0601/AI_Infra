@@ -42,7 +42,7 @@ class ResourceParser(HTMLParser):
             self.refs.extend(re.findall(r'url\([\s\'"]*([^\)\'"\s]+)', a['style']))
 
 
-def dependency_refs(file):
+def dependency_refs(file, *, document_fetches=None):
     if file.suffix.lower() not in ('.html', '.htm', '.css', '.js', '.mjs'):
         return []
     text = file.read_text(encoding='utf-8', errors='replace')
@@ -57,28 +57,34 @@ def dependency_refs(file):
     refs.extend(re.findall(r'url\([\s\'"]*([^\)\'"\s]+)', text))
     refs.extend(re.findall(r'@import\s+[\'"]([^\'"]+)', text))
     if file.suffix.lower() in ('.html', '.htm', '.js', '.mjs'):
-        refs.extend(re.findall(r'(?:fetch\s*\(|(?:import|from)\s*)[\'"]([^\'"]+)', text))
+        refs.extend(re.findall(r'''(?:import|from)\s*['"]([^'"]+)''', text))
+        fetches = re.findall(r'''fetch\s*\(\s*['"]([^'"]+)''', text)
+        (refs if document_fetches is None else document_fetches).extend(fetches)
     return refs
 
 
-def collect_files(root, entries):
+def collect_files(root, entries, *, exclude=None, browser_resolution=False):
     root = Path(root).resolve()
     allowed, missing, external = {}, [], []
-    queue = list(entries)
+    queue = [(entry, None) for entry in entries]
     seen = set()
     while queue:
-        rel = queue.pop()
-        if rel in seen:
+        rel, document = queue.pop()
+        if (rel, document) in seen:
             continue
-        seen.add(rel)
+        seen.add((rel, document))
         if len(seen) > 3000:
             raise ValueError('dependency graph too large; inspect before exposing more files')
         file = safe_file(root, rel)
-        if file is None:
+        if file is None or (exclude and exclude(file)):
             missing.append(rel)
             continue
         allowed[rel] = file
-        for ref in dependency_refs(file):
+        if browser_resolution and file.suffix.lower() in ('.html', '.htm'):
+            document = file.parent
+        fetches = []
+        refs = dependency_refs(file, document_fetches=fetches if document else None)
+        for ref, base in [(ref, file.parent) for ref in refs] + [(ref, document) for ref in fetches]:
             if not ref or ref.startswith(('#', 'data:', 'blob:')) or '${' in ref:
                 continue
             url = urlsplit(ref)
@@ -88,14 +94,14 @@ def collect_files(root, entries):
             raw = unquote(url.path)
             if not raw:
                 continue
-            candidate = (root / raw.lstrip('/')) if raw.startswith('/') else (file.parent / raw)
+            candidate = (root / raw.lstrip('/')) if raw.startswith('/') else (base / raw)
             candidate = candidate.resolve()
             if not candidate.is_relative_to(root):
                 missing.append(ref)
                 continue
             child = candidate.relative_to(root).as_posix()
             if candidate.suffix.lower() in STATIC_EXT:
-                queue.append(child)
+                queue.append((child, document))
     return allowed, sorted(set(missing)), sorted(set(external))
 
 

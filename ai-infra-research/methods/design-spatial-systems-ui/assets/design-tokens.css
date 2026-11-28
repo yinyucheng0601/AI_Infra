@@ -29,15 +29,15 @@
   --ss-line-focus: 2px;
   --ss-radius-control: 2px;
   --ss-radius-panel: 4px;
-  /* Dark spatial-canvas Liquid Glass materials. Optical parameters live in the bundled JS presets. */
-  --ss-ui-fill: rgb(26 26 26 / 28%);
-  --ss-ui-border: rgb(255 255 255 / 28%); /* Decorative, not the sole affordance. */
-  --ss-ui-blur: blur(12px); /* CSS fallback; control optical blur is 4px in JS. */
-  --ss-ui-panel-fill: rgb(26 26 26 / 94%);
-  --ss-ui-panel-border: rgb(255 255 255 / 18%);
-  --ss-ui-panel-blur: blur(18px);
-  --ss-ui-icon-fill: rgb(26 26 26 / 72%);
-  --ss-ui-icon-border: rgb(255 255 255 / 18%);
+  /* Dark spatial-canvas Liquid Glass v2 materials (aligned with liquid-glass.css). */
+  --ss-ui-fill: rgb(255 255 255 / 5%);
+  --ss-ui-border: transparent; /* v2 uses directional shine, no full border. */
+  --ss-ui-blur: blur(1px);
+  --ss-ui-panel-fill: rgb(44 44 44 / 86%);
+  --ss-ui-panel-border: transparent;
+  --ss-ui-panel-blur: blur(24px);
+  --ss-ui-icon-fill: rgb(255 255 255 / 5%);
+  --ss-ui-icon-border: transparent;
   --ss-ui-fallback: #242424;
   --ss-ui-radius: 999px;
   --ss-ui-panel-radius: 20px;

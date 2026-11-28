@@ -20,4 +20,12 @@
 组合 Pattern 时共享稳定对象 ID 和选择上下文；例如模型层→Rank 分片→服务器→运行事件，必须有真实映射依据。跨尺度或跨视图关系不存在时不要只为展示而连线。统一设计语言不等于统一成一种图或一个算子工作台。
 ## 可调用资产
 
+分开绑定三类对象。领域呈现契约提供对象、关系、证据和操作场景；业务 Pattern 承载轴、图元、视图和双向联动；定稿工作台提供 Toolbar、Icon Buttons、Info、Inspector、导航、缩放与 Liquid UI。复用图元只覆盖业务 Pattern 的一部分。
+
+同类迁移沿用可调用 Pattern 接口，或读取定稿 HTML 的构建入口。每个必选项在调用约束中记录「目标行为或呈现 → Pattern / 工作台组件 → 源文件与挂载点 → 数据适配与验收动作」。例如固定源码核查应绑定当前步骤与源码锚点，并复用参考 Inspector 的结构、打开与返回行为。保留现有接口；没有独立 renderer 的工作台同样可复用实际 HTML、SVG、CSS 和 JS。
+
 在有 AI Infra 资产 checkout 时，从 catalog 的内容入口进入对应 Pattern。若随资产提供接口，先读取该资产的 README 与声明，核实实际数据和支持能力。首例位于 `patterns/critical-path-swimlane/`，其 `pattern.json` 的 `workbench` 项和 README 定义声明、输入、两个 renderer 及校验方法。交付读取呈现契约和用户调用约束，先校验必选项，再挂载并记录可选项的省略。资产不可用时记录缺口与恢复条件；单独安装 Skill 时按任务提供资产 checkout 或目录允许的资产包。
+
+## 工程包路由候选
+
+工程工具中的 `adapters.catalog_adapter.route_semantic_object(object_type, task_type)` 保留 1.3.0 的候选映射供已有消费者使用。返回候选时，根据任务和调用约束进入 catalog 检查实际入口、支持能力与数据，再由 ai-infra-glyphs 核对正式 item、variant、SVG 或 renderer 及来源。候选 ID 未在目录确认时保持待确认。没有精确图元时使用带语义名称的中性占位，并记录未解析映射。未知对象返回 unresolved。

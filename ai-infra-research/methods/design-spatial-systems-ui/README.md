@@ -15,7 +15,7 @@
 
 ## 快速开始
 
-[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)
 
 用 `$design-spatial-systems-ui` 实现或评审已有视图。按呈现契约绑定对象、证据和操作，复用定稿工作台、Pattern 及控件，核查选择与视角保持。
 

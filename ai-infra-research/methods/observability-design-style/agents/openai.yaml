@@ -1,0 +1,11 @@
+interface:
+  display_name: 证据工作台 · 信息组织
+  short_description: 将领域对象与证据组织为组件无关的呈现契约与可追溯调查工作台
+  default_prompt: 使用 $observability-design-style 整理分析对象的定位、核查依据与问题交接结构。
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

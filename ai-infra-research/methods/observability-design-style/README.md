@@ -15,7 +15,7 @@
 
 ## 快速开始
 
-[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)
 
 用 `$observability-design-style` 为讲解、浏览、对照或调查定义呈现契约。把证据定位、缺口和调查交接交给界面实现。
 

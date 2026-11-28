@@ -15,7 +15,7 @@
 
 ## 快速开始
 
-[下载 v1.3.0 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.0/ai-infra-investigation-workflow.zip)
+[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)
 
 用 `$llm-compute-diagrams` 组织模型、编译、并行与推理图解。配合总入口可读取 PyPTO 事件及固定 DeepSeek 证据，按采集覆盖解释 Host 路径和时间。
 

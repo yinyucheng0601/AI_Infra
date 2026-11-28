@@ -4,6 +4,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import hashlib
 import json
 import re
+import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ("ai-infra-investigation", "operator-mapping-investigation", "ai-infra-glyphs",
@@ -14,14 +15,28 @@ GLYPH_SOURCES = {
     "visual-system.js": "reports/llm-compute/diagram-legend-library/visual-system.js",
     "op-icons.js": "reports/llm-compute/diagram-legend-library/op-icons.js",
 }
-PRESENTATION_REFS = ("presentation-semantics.md", "task-contract.md", "candidate-review.md")
+CONTRACT_REFS = ("presentation-semantics.md", "task-contract.md", "candidate-review.md")
+STANDALONE_CONTRACT_REFS = {
+    "observability-design-style": CONTRACT_REFS,
+    "design-spatial-systems-ui": CONTRACT_REFS,
+    "operator-mapping-investigation": CONTRACT_REFS,
+    "llm-compute-diagrams": CONTRACT_REFS,
+}
+ENGINEERING = Path("scripts/engineering")
+LOCAL_ENGINEERING_OUTPUTS = {
+    "examples/artifact/deepseek-trace.html",
+    "examples/deepseek-trace-excerpt.json",
+    "examples/trace-evidence-graph.json",
+    "reports/pypto-data-scan.json",
+    "reports/regression-report.json",
+    "reports/regression-report.md",
+}
 
 
 def standalone_references(skill_root):
-    """Give the standalone presentation Skill the same contracts as the workflow bundle."""
-    if skill_root.name == "observability-design-style":
-        for name in PRESENTATION_REFS:
-            yield ROOT / "methods/ai-infra-investigation/references" / name, Path(skill_root.name) / "references" / name
+    """Give standalone skill zips the shared contracts referenced in workflow mode."""
+    for name in STANDALONE_CONTRACT_REFS.get(skill_root.name, ()):
+        yield ROOT / "methods/ai-infra-investigation/references" / name, Path(skill_root.name) / "references" / name
 
 def collect():
     dest = ROOT / "methods/ai-infra-glyphs/assets"
@@ -58,16 +73,54 @@ def collect():
     }, ensure_ascii=False, indent=2) + "\n")
 
 
+def distribution_files(folder):
+    for file in sorted(folder.rglob("*")):
+        rel = file.relative_to(folder)
+        if not file.is_file() or any(p.startswith(".") or p == "__pycache__" for p in rel.parts):
+            continue
+        if rel.is_relative_to(ENGINEERING) and rel.relative_to(ENGINEERING).as_posix() in LOCAL_ENGINEERING_OUTPUTS:
+            continue
+        yield file
+
+
+def write_engineering_manifest(folder):
+    runtime = folder / ENGINEERING
+    files = [
+        {"path": file.relative_to(runtime).as_posix(),
+         "bytes": file.stat().st_size,
+         "sha256": hashlib.sha256(file.read_bytes()).hexdigest()}
+        for file in distribution_files(folder)
+        if file.is_relative_to(runtime) and file != runtime / "manifest.json"
+    ]
+    (runtime / "manifest.json").write_text(json.dumps({
+        "package": "aiinfra-agent-engineering",
+        "version": (runtime / "VERSION").read_text().strip(),
+        "source_lock": "config/repository-lock.json",
+        "files": files,
+    }, indent=2) + "\n")
+
+
+def add_skill(archive, folder):
+    assert (folder / "SKILL.md").is_file(), folder
+    for file in distribution_files(folder):
+        archive.write(file, Path(folder.name) / file.relative_to(folder))
+
+
 def package():
     collect()
-    with ZipFile(ROOT / "methods/ai-infra-investigation-workflow.zip", "w", ZIP_DEFLATED) as archive:
+    methods = ROOT / "methods"
+    write_engineering_manifest(methods / "ai-infra-investigation")
+    bundle = methods / "ai-infra-investigation-workflow.zip"
+    with ZipFile(bundle, "w", ZIP_DEFLATED) as archive:
         for name in SKILLS:
-            folder = ROOT / "methods" / name
-            assert (folder / "SKILL.md").is_file(), name
-            for file in sorted(folder.rglob("*")):
-                rel = file.relative_to(folder)
-                if file.is_file() and not any(p.startswith(".") or p == "__pycache__" for p in rel.parts):
-                    archive.write(file, Path(name) / rel)
+            add_skill(archive, methods / name)
+    shutil.copyfile(bundle, methods / "ai-infra-skill-workflow.zip")
+    for name in SKILLS:
+        folder = methods / name
+        with ZipFile(methods / (name + ".zip"), "w", ZIP_DEFLATED) as archive:
+            add_skill(archive, folder)
+            for source, target in standalone_references(folder):
+                archive.write(source, target)
     print("Packaged investigation workflow: six skills, formal glyph snapshot")
 
 if __name__ == "__main__":

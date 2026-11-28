@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "fixtures": [
+    {
+      "id": "tensor-cross-layer",
+      "path": "tests/fixtures/tensor-cross-layer.json",
+      "kind": "synthetic-contract-fixture",
+      "purpose": "validate stable logical identity across model/operator/compiler/memory views"
+    },
+    {
+      "id": "pytorch-pypto-operator",
+      "path": "tests/fixtures/pytorch-pypto-operator.json",
+      "kind": "synthetic-contract-fixture",
+      "purpose": "validate compiler pass and kernel mapping"
+    },
+    {
+      "id": "rank-sharding-collective",
+      "path": "tests/fixtures/rank-sharding-collective.json",
+      "kind": "synthetic-contract-fixture",
+      "purpose": "validate rank-local shards and collective relationships"
+    },
+    {
+      "id": "glyph-pattern-routing",
+      "path": "tests/fixtures/glyph-pattern-routing.json",
+      "kind": "source-derived-catalog-fixture",
+      "purpose": "validate mapping from semantic object and task to glyph/pattern"
+    },
+    {
+      "id": "rmsnorm-relation-graph",
+      "path": "tests/fixtures/rmsnorm-relation-graph.json",
+      "kind": "synthetic-contract-fixture",
+      "purpose": "test accepted, candidate, ambiguous and insufficient-evidence projections"
+    }
+  ],
+  "upstream_scan": {
+    "expected_local_path": "PyPTO3-main/data",
+    "status": "run_separately_when_requested",
+    "required_behavior": "scan when path is provided; never fabricate data"
+  }
+}
