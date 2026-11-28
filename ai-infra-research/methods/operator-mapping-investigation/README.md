@@ -15,7 +15,7 @@
 
 ## 快速开始
 
-[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)
+[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/raw/refs/tags/ai-infra-skills-v1.3.1/ai-infra-research/methods/ai-infra-investigation-workflow.zip)
 
 用 `$operator-mapping-investigation` 核查当前配置的索引、地址、Task 和源码。固定 Compact FP16 Unpack 路径调用组合包中总入口的工程工具，保留源码证据与尾行缺口。
 

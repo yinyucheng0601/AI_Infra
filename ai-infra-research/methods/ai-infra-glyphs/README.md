@@ -21,7 +21,7 @@
 
 ## 快速开始
 
-[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/releases/download/ai-infra-skills-v1.3.1/ai-infra-investigation-workflow.zip)
+[下载 v1.3.1 六 Skill 组合包](https://github.com/yinyucheng0601/AI_Infra/raw/refs/tags/ai-infra-skills-v1.3.1/ai-infra-research/methods/ai-infra-investigation-workflow.zip)
 
 用 `$ai-infra-glyphs` 核对正式图元、variant、renderer 和来源指纹。完整 Pattern 由工作流按任务选择，未匹配对象保留中性占位和未解析记录。
 
