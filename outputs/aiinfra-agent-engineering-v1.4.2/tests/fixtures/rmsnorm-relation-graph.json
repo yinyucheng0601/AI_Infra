@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.2",
+  "objects": [
+    {
+      "ref": {
+        "scope": "model/fixture",
+        "id": "x"
+      },
+      "kind": "tensor",
+      "context": {
+        "build": "fixture-build"
+      }
+    },
+    {
+      "ref": {
+        "scope": "ir/fixture",
+        "id": "x"
+      },
+      "kind": "ir_value",
+      "context": {
+        "build": "fixture-build"
+      }
+    },
+    {
+      "ref": {
+        "scope": "ir/fixture",
+        "id": "ref"
+      },
+      "kind": "memref",
+      "context": {
+        "build": "fixture-build",
+        "run": "fixture-run",
+        "rank": 0,
+        "device": "fixture-npu"
+      }
+    },
+    {
+      "ref": {
+        "scope": "memory/fixture",
+        "id": "ub"
+      },
+      "kind": "allocation",
+      "context": {
+        "run": "fixture-run",
+        "rank": 0,
+        "device": "fixture-npu"
+      }
+    },
+    {
+      "ref": {
+        "scope": "runtime/fixture",
+        "id": "launch"
+      },
+      "kind": "kernel_launch",
+      "context": {
+        "run": "fixture-run",
+        "rank": 0,
+        "device": "fixture-npu"
+      }
+    },
+    {
+      "ref": {
+        "scope": "device/fixture",
+        "id": "npu"
+      },
+      "kind": "npu",
+      "context": {
+        "run": "fixture-run",
+        "rank": 0,
+        "device": "fixture-npu"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "lowered-value",
+      "from": {
+        "scope": "model/fixture",
+        "id": "x"
+      },
+      "to": {
+        "scope": "ir/fixture",
+        "id": "x"
+      },
+      "relation": "maps_to",
+      "mapping_status": "exact",
+      "evidence_ids": [
+        "compiler-fixture"
+      ]
+    },
+    {
+      "id": "bufferization",
+      "from": {
+        "scope": "ir/fixture",
+        "id": "x"
+      },
+      "to": {
+        "scope": "ir/fixture",
+        "id": "ref"
+      },
+      "relation": "bufferized_as",
+      "mapping_status": "candidate",
+      "evidence_ids": [],
+      "reason": "Need compiler bufferization output."
+    },
+    {
+      "id": "storage",
+      "from": {
+        "scope": "ir/fixture",
+        "id": "ref"
+      },
+      "to": {
+        "scope": "memory/fixture",
+        "id": "ub"
+      },
+      "relation": "references",
+      "mapping_status": "exact",
+      "evidence_ids": []
+    },
+    {
+      "id": "placement",
+      "from": {
+        "scope": "runtime/fixture",
+        "id": "launch"
+      },
+      "to": {
+        "scope": "device/fixture",
+        "id": "npu"
+      },
+      "relation": "executes_on",
+      "mapping_status": "ambiguous",
+      "evidence_ids": [],
+      "reason": "No pinned launch-to-device correlation."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "compiler-fixture",
+      "source": "synthetic RMSNorm contract fixture",
+      "locator": "compiler output row fixture-1",
+      "level": "derived",
+      "context": {
+        "build": "fixture-build"
+      },
+      "supports": [
+        "lowered-value"
+      ]
+    }
+  ]
+}

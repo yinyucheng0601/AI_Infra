@@ -1,0 +1,327 @@
+{
+  "package": "aiinfra-agent-engineering",
+  "version": "1.4.2",
+  "source_lock": "config/repository-lock.json",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "75a4f8edf2e8c1872c68d1dd54140b00e76044362272ef36af0dfd78262e366b",
+      "bytes": 1822
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "98b555e7422afc033bd34d83f908ab14bdbce0e731b559550578ec0b13ce9ceb",
+      "bytes": 258
+    },
+    {
+      "path": "README.md",
+      "sha256": "38483ffdb3ee79e582a71283908d3b5f7ca222e51c0872b1b850a3fc672b3ddd",
+      "bytes": 6155
+    },
+    {
+      "path": "VERSION",
+      "sha256": "b99b4c7cdf236f59bc9f65d963deaecae3b16a7dad87939cacb9057f7664daee",
+      "bytes": 6
+    },
+    {
+      "path": "adapters/catalog_adapter.py",
+      "sha256": "a8036c8183ac8ef5d4050a44813bfc943804f9a03555f733f3a794033604239e",
+      "bytes": 1209
+    },
+    {
+      "path": "adapters/contract.py",
+      "sha256": "3f20c4b02e8d013c1252f45981a107437e7de010cbe24aaba6be47be00e1c34f",
+      "bytes": 2117
+    },
+    {
+      "path": "adapters/deepseek_capture.py",
+      "sha256": "4270c78b3d1529a04ed188a8f8adde956db9daac5ada4baefdb66fc18103c815",
+      "bytes": 4035
+    },
+    {
+      "path": "adapters/legacy_bridge.py",
+      "sha256": "d6dcae03c0833a996784f09fa982b317afbe4a6e5e5a50f3d9aa943f6a242a20",
+      "bytes": 631
+    },
+    {
+      "path": "adapters/library_dependencies.py",
+      "sha256": "b6b94961f11c84bb74a0fabdbd7087ec24dfa50fb5090f62dea23f835f181489",
+      "bytes": 4379
+    },
+    {
+      "path": "adapters/pipeline.py",
+      "sha256": "f0c9863adfcc0d85d28a2f0e976125610caf387a81af2739723594a22797df27",
+      "bytes": 7381
+    },
+    {
+      "path": "adapters/pypto_trace_adapter.py",
+      "sha256": "d5eecfea1fe250f38040365179f6f624892b8b92489ec569b3ff847717701b74",
+      "bytes": 2029
+    },
+    {
+      "path": "adapters/unpack_source.py",
+      "sha256": "bd64c66dcaa8afa1893a0c262c519b1f48ff24e14eb643a0b0dd5301a979f713",
+      "bytes": 4973
+    },
+    {
+      "path": "config/fixture-lock.json",
+      "sha256": "832c051d765be1b68dbc9df03f9e955fac5120524b470050acb187597f3aadaf",
+      "bytes": 1427
+    },
+    {
+      "path": "config/repository-lock.json",
+      "sha256": "4fdc431960f1ba043e0c6e725b3a6bdca692e38ed9bbbef0d1ce07d1e1bca13b",
+      "bytes": 1149
+    },
+    {
+      "path": "examples/README.md",
+      "sha256": "fcad9e9b9bb4777f53a717a1d8a24df106539a297cc8c0a49791c08118082c68",
+      "bytes": 803
+    },
+    {
+      "path": "examples/artifact/index.html",
+      "sha256": "6139af44a4bc4eb4b4d6dea6dc7918ba594a2df2ceb30ce0f888951eb07a6bf6",
+      "bytes": 1554
+    },
+    {
+      "path": "examples/request.json",
+      "sha256": "9edfdc2f8a67f5450d1ce80ea00c77a222eb3b3639a533bb14df788956fd2203",
+      "bytes": 339
+    },
+    {
+      "path": "examples/unpack-configs.json",
+      "sha256": "98e0d43f720f7462cc5688b10c049dfb51d4eec687bd55e98ec8c25077b4e4d1",
+      "bytes": 177
+    },
+    {
+      "path": "examples/visualization-plan.json",
+      "sha256": "b6b1b4a2c4370d9328d2e42ee3b11eb77d88f2ff45d9fa142d0636130f8c17b4",
+      "bytes": 1145
+    },
+    {
+      "path": "reports/KNOWN-LIMITATIONS.md",
+      "sha256": "3d86320a97d72d2c3f8d03df9aeab9a82a5029cfebaa20523dad35e91c2cf89e",
+      "bytes": 1129
+    },
+    {
+      "path": "reports/baseline-audit.md",
+      "sha256": "748267f867a89eb80531b7a5d6c9f8e08a0cb1c209135b9b5815d96bd0a51b7d",
+      "bytes": 1290
+    },
+    {
+      "path": "reports/browser-regression.json",
+      "sha256": "403ef19bea476dd60e153628f5b5d683289f12c70584a093c188c14b45b437cb",
+      "bytes": 944
+    },
+    {
+      "path": "reports/capability-assessment.md",
+      "sha256": "c7fa92c18760aacde44a06193e1387ce634fe45649ebd574f94d13d0ff47811a",
+      "bytes": 2404
+    },
+    {
+      "path": "reports/diff-v1.3.1-to-v1.4.2.md",
+      "sha256": "70ff0d3204b38d9be388ac9cfc831da526a24ef08f67fcc3e3a0a2781148088c",
+      "bytes": 901
+    },
+    {
+      "path": "reports/real-data-coverage.md",
+      "sha256": "0fdf6d115ff7fadedea268aaffe34a41bbeb4521f00471f8d2b4136af2de8e77",
+      "bytes": 1056
+    },
+    {
+      "path": "reports/regression-report.json",
+      "sha256": "3ec3c726b564bd16e5972732b709c332c920882fb31ece68bff1bb32a241a546",
+      "bytes": 5815
+    },
+    {
+      "path": "reports/regression-report.md",
+      "sha256": "f23b3865e1cf6064355d4ea642b1eb7c77599805707a2d2d57b88a2ff8349c45",
+      "bytes": 5212
+    },
+    {
+      "path": "reports/scope-gap-review.md",
+      "sha256": "ae9ea3e9fa2a8f3f057e9c2f4edc5af2c3192a1815929de9db37f293e51de59d",
+      "bytes": 1404
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "4046ca1e3a64f4ea791fb4fb3d8566242086ff1c8e2431e2c349e1052ffc6ba0",
+      "bytes": 20
+    },
+    {
+      "path": "schemas/adapter-result.schema.json",
+      "sha256": "1ffd1e44f37edfeaf36fc3a213b1e7678323aae8cba0ec984c2af087aa26bc6e",
+      "bytes": 1818
+    },
+    {
+      "path": "schemas/evidence-graph.schema.json",
+      "sha256": "ac42d9900c34b3f509765cbc9489d63ab0d312c50e686740ec048a32a406eef7",
+      "bytes": 3026
+    },
+    {
+      "path": "schemas/relation-graph.schema.json",
+      "sha256": "830073ab7ac6011a0ffa5a85b4a5aaf3086897a4cac9b676b2727bd90a361056",
+      "bytes": 4921
+    },
+    {
+      "path": "schemas/scoped-execution-graph.schema.json",
+      "sha256": "5228ef6eb668c68bcbc4c16ff7bffd8e466dad42b92448b73b83c0ab86aebe86",
+      "bytes": 4800
+    },
+    {
+      "path": "schemas/visualization-plan.schema.json",
+      "sha256": "0c2c0c82ccd0da28b9d5e2059926d287988ab5f63a6543357a2b459bb35bacfd",
+      "bytes": 1368
+    },
+    {
+      "path": "scripts/adapt_unpack.py",
+      "sha256": "6c9c0624eaccfb73adad0f8b536c5999b8b8d6e57af4157d5be6995acfebcb6c",
+      "bytes": 1054
+    },
+    {
+      "path": "scripts/build_example.py",
+      "sha256": "62eb75b5b190bc7342e3e1f97e4e59299c19ea4f5e4d2d4baddbeb37eefc746b",
+      "bytes": 4316
+    },
+    {
+      "path": "scripts/build_package.py",
+      "sha256": "a05cba8b291c978768aa4003bf779a906b24eaff94adbec8dcd65278458288b2",
+      "bytes": 1773
+    },
+    {
+      "path": "scripts/build_trace_example.py",
+      "sha256": "cd4e5d082edf24f2f7754d8b5730b1db452f66acbcca6c9f75cf588644c1929c",
+      "bytes": 3727
+    },
+    {
+      "path": "scripts/inspect_source.py",
+      "sha256": "27dc4cd7428bab1901778c60c48ed0e02579f166eb3c1b025622c71f5d906277",
+      "bytes": 966
+    },
+    {
+      "path": "scripts/register_design_assets.py",
+      "sha256": "4fb5945b6bb32ddab64c589c77bffd0d42518efdf15439a422ab534b14e3f862",
+      "bytes": 6816
+    },
+    {
+      "path": "scripts/run_regression.py",
+      "sha256": "a7c73b3e448be3eabd0854f7b38dcdfef6a638c20c45525064c10d2c44e90573",
+      "bytes": 2013
+    },
+    {
+      "path": "scripts/scan_pypto_data.py",
+      "sha256": "91ae6ced422882d869ac0392984596bdd08ca78044fcc1adc8ff33e0ea14737c",
+      "bytes": 1037
+    },
+    {
+      "path": "scripts/validate_graph.py",
+      "sha256": "f1a0f9ef6611cf40c90c8e8bf2e1b49ebe0d589930d04092ede09a0717098461",
+      "bytes": 11619
+    },
+    {
+      "path": "scripts/validate_package.py",
+      "sha256": "5a2bde64e3d03f07567c94981a811c8573ddbc9d6820fc92522b510f79f7cb92",
+      "bytes": 2638
+    },
+    {
+      "path": "skills/ai-infra-glyphs/SKILL.md",
+      "sha256": "cc2bde64e4f0b8cf548c23acf5e381a70db8569fe64683af296f30f841646d42",
+      "bytes": 1328
+    },
+    {
+      "path": "skills/ai-infra-investigation/SKILL.md",
+      "sha256": "c5e7aad43aa1b0d2690906ca5b5cab9e164ebb83e48dd1aa399c7cd597e58d7c",
+      "bytes": 2814
+    },
+    {
+      "path": "skills/design-spatial-systems-ui/SKILL.md",
+      "sha256": "4079676279a57d6e3fa96d0edd22062276a527eec2f7c51fe6b2169ad4d34296",
+      "bytes": 1362
+    },
+    {
+      "path": "skills/llm-compute-diagrams/SKILL.md",
+      "sha256": "726479c4b1ae16777a4254f3f9a5225efc133feba62f3f9b7b500647f6c5de2c",
+      "bytes": 1426
+    },
+    {
+      "path": "skills/observability-design-style/SKILL.md",
+      "sha256": "9055fec53e847dc463aaf9c9f375aac4b582e2609920355e5433585ccb3ff028",
+      "bytes": 1374
+    },
+    {
+      "path": "skills/operator-mapping-investigation/SKILL.md",
+      "sha256": "9d7f7a7b588161a542d724eac9167329879a7d6cefd7008785f453bc73f5b024",
+      "bytes": 1510
+    },
+    {
+      "path": "specs/cross-layer-identity-contract.md",
+      "sha256": "a913cdae2752e7e59697209bcadb95071c340b3e82995e70e3d619908dda4e9f",
+      "bytes": 7553
+    },
+    {
+      "path": "specs/relation-rules.json",
+      "sha256": "747610903a0619cbeb21e57bc2a1484b4fa0fc3529b857cd1c2da134fdc347a1",
+      "bytes": 1747
+    },
+    {
+      "path": "tests/design_assets_browser.cjs",
+      "sha256": "0d4d7b18769d95d43206323c1af4913e71e3a2e54b3a630310de88f25dfc0192",
+      "bytes": 4817
+    },
+    {
+      "path": "tests/fixtures/glyph-pattern-routing.json",
+      "sha256": "541aebc0e48030c3aeac6bd8b544bcf9cd59030699bad13c1ca613c4c9de736c",
+      "bytes": 603
+    },
+    {
+      "path": "tests/fixtures/pytorch-pypto-operator.json",
+      "sha256": "0ead5c481008397c68078e2aee96bd0882c96688fd3b86a86c2737afaa034f82",
+      "bytes": 609
+    },
+    {
+      "path": "tests/fixtures/rank-sharding-collective.json",
+      "sha256": "4b9d85699069fd5cbcf34d4e47a71f4f531d2e8986ab370685eb4a3a07c7ef1b",
+      "bytes": 378
+    },
+    {
+      "path": "tests/fixtures/rmsnorm-relation-graph.json",
+      "sha256": "e7f943c924e571feb4b6aa044770e65aa1ae3fccbf5e61014217a44286387b62",
+      "bytes": 2943
+    },
+    {
+      "path": "tests/fixtures/tensor-cross-layer.json",
+      "sha256": "179557f0e813b0d1522f8be623bd29aea8c321862fb6fcb101d561fa60135a44",
+      "bytes": 1738
+    },
+    {
+      "path": "tests/test_contracts.py",
+      "sha256": "1d2469476bcea5e01ed1e9fb275db33a46fc338686969952ea950ba4a7e6235a",
+      "bytes": 6540
+    },
+    {
+      "path": "tests/test_inspection.py",
+      "sha256": "e3f0dee5867c68bfdd959ffe8db4564e2c5137d8ef1adc3b6157949b9178a57d",
+      "bytes": 2079
+    },
+    {
+      "path": "tests/test_library_dependencies.py",
+      "sha256": "01e7652f59ac64d57eabefb109593a7ac099a1e364799458af864181c4fbf751",
+      "bytes": 1469
+    },
+    {
+      "path": "tests/test_relation_rules.py",
+      "sha256": "3dca2a347313764f9c5b7967cb9821d17e8ff42296b8b04aa29e62a8a765843d",
+      "bytes": 7855
+    },
+    {
+      "path": "workflows/agent-workflow.md",
+      "sha256": "8612831138217b97df9ea828cdc8072f5146598036ac25edf5575d292b7c760a",
+      "bytes": 2839
+    },
+    {
+      "path": "workflows/output-contract.md",
+      "sha256": "845ca0bb14809974f85a0fc2cfac1233d2b8ea1f16f54afa5f39e167dfdd79d5",
+      "bytes": 883
+    }
+  ]
+}

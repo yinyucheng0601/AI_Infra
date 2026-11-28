@@ -1,0 +1,37 @@
+{
+  "catalog": {
+    "path": "ai-infra-research/catalog/assets.json",
+    "sha256": "be3d5c62e68e38fcafd86d619d911a646d0a5761721558c44a9540e1fd66b476",
+    "version": 1
+  },
+  "viewport": [
+    1440,
+    1000
+  ],
+  "results": [
+    {
+      "id": "unpack-layout-inspector",
+      "entry": "patterns/unpack-layout-inspector/index.html",
+      "sha256": "148bbd86223305c11efc679ba60dcd0d977d18c6b5d1a505771e1bf756bc35ef",
+      "checks": [
+        "zoom",
+        "drag pan",
+        "configuration change",
+        "source inspector"
+      ],
+      "status": "passed"
+    },
+    {
+      "id": "model-architecture-v41",
+      "entry": "patterns/model-architecture-v4/index.html",
+      "sha256": "8c2e613ab418071800fb58c7255a44ad51ccfd2523989a3f206961f80be69804",
+      "checks": [
+        "renderer mount and API",
+        "legend toggle",
+        "theme change",
+        "information-layer toggle"
+      ],
+      "status": "passed"
+    }
+  ]
+}

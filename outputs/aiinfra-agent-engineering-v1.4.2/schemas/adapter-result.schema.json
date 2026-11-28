@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract_version": {
+      "const": "1.0"
+    },
+    "adapter_id": {
+      "type": "string"
+    },
+    "adapter_version": {
+      "type": "string"
+    },
+    "extraction_status": {
+      "enum": [
+        "complete",
+        "partial",
+        "failed",
+        "unsupported",
+        "legacy-preserved"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "native_records": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "legacy_graph": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "contract_version",
+    "adapter_id",
+    "adapter_version",
+    "extraction_status"
+  ],
+  "if": {
+    "properties": {
+      "adapter_id": {
+        "const": "legacy-graph-envelope"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "legacy_graph",
+      "conversion_gaps"
+    ]
+  },
+  "else": {
+    "required": [
+      "sources",
+      "objects",
+      "relations",
+      "evidence",
+      "unresolved",
+      "diagnostics",
+      "native_records",
+      "coverage"
+    ]
+  }
+}
